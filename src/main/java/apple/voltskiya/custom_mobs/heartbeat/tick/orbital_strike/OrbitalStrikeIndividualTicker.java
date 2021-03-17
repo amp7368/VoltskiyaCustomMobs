@@ -3,7 +3,6 @@ package apple.voltskiya.custom_mobs.heartbeat.tick.orbital_strike;
 import apple.voltskiya.custom_mobs.DistanceUtils;
 import apple.voltskiya.custom_mobs.Pair;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import apple.voltskiya.custom_mobs.heartbeat.tick.main.TickGiverable;
 import apple.voltskiya.custom_mobs.heartbeat.tick.main.UpdatedPlayerList;
 import org.bukkit.*;
 import org.bukkit.entity.*;
@@ -39,7 +38,7 @@ public class OrbitalStrikeIndividualTicker {
         long now = System.currentTimeMillis();
         while (strikerUidIterator.hasNext()) {
             Pair<UUID, Long> strikerUid = strikerUidIterator.next();
-            if (now - strikerUid.getValue() < OrbitalStrikeManagerTicker.STRIKE_COOLDOWN) {
+            if (now - strikerUid.getValue() < OrbitalStrikeManagerTicker.get().STRIKE_COOLDOWN) {
                 continue;
             }
             Entity striker = Bukkit.getEntity(strikerUid.getKey());
@@ -66,7 +65,7 @@ public class OrbitalStrikeIndividualTicker {
 
     private void tickStriker(Entity striker, Pair<UUID, Long> strikerUid) {
         if (isCheckStrike) {
-            if (random.nextDouble() < OrbitalStrikeManagerTicker.STRIKE_CHANCE * closeness.getGiver().getTickSpeed()) {
+            if (random.nextDouble() < OrbitalStrikeManagerTicker.get().STRIKE_CHANCE * closeness.getGiver().getTickSpeed()) {
                 checkStrike(striker, strikerUid);
             }
         }
@@ -80,7 +79,7 @@ public class OrbitalStrikeIndividualTicker {
             if (closest != null) {
                 Location pLocation = closest.getLocation();
                 double d = DistanceUtils.distance(pLocation, strikerLocation);
-                if (d < OrbitalStrikeManagerTicker.STRIKE_DISTANCE && ((Mob) striker).hasLineOfSight(closest)) {
+                if (d < OrbitalStrikeManagerTicker.get().STRIKE_DISTANCE && ((Mob) striker).hasLineOfSight(closest)) {
                     target = closest;
                 }
             }
@@ -108,24 +107,24 @@ public class OrbitalStrikeIndividualTicker {
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
             ((Mob) striker).setAI(true);
             ((Mob) striker).setTarget(target);
-        }, STRIKE_TIME);
+        }, OrbitalStrikeManagerTicker.get().STRIKE_TIME);
     }
 
     private void fireball(double xt, double yt, double zt, World targetWorld) {
         double height = yt + 1;
-        for (; height < yt + STRIKE_TARGET_TOWER_HEIGHT; height++) {
+        for (; height < yt +  OrbitalStrikeManagerTicker.get().STRIKE_HEIGHT; height++) {
             if (!targetWorld.getBlockAt((int) xt, (int) height, (int) zt).getType().isAir()) {
                 height--;
                 break;
             }
         }
-        for (int time = STRIKE_TARGET_TIME; time < STRIKE_TIME; time += DESTRUCTION_BLAZE_INTERVAL) {
+        for (int time = OrbitalStrikeManagerTicker.get().STRIKE_TARGET_TIME; time < OrbitalStrikeManagerTicker.get().STRIKE_TIME; time += OrbitalStrikeManagerTicker.get().DESTRUCTION_BLAZE_INTERVAL) {
             final double finalHeight = height;
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                 for (int i = 0; i < 2; i++) {
                     if (i == 1 && random.nextBoolean()) return;
                     double theta = random.nextDouble() * 360;
-                    double radius = random.nextDouble() * OrbitalStrikeManagerTicker.STRIKE_TARGET_RADIUS;
+                    double radius = random.nextDouble() * OrbitalStrikeManagerTicker.get().STRIKE_TARGET_RADIUS;
                     double x = Math.cos(Math.toRadians(theta)) * radius;
                     double z = Math.sin(Math.toRadians(theta)) * radius;
                     Location location = new Location(targetWorld, xt + x, finalHeight, zt + z);
@@ -141,11 +140,11 @@ public class OrbitalStrikeIndividualTicker {
 
 
     private void target(double xt, double yt, double zt, World targetWorld) {
-        for (int time = 0; time < STRIKE_TIME; time += 5) {
+        for (int time = 0; time < OrbitalStrikeManagerTicker.get().STRIKE_TIME; time += 5) {
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                 for (int i = 0; i < 100; i++) {
                     double theta = random.nextDouble() * 360;
-                    double radius = random.nextDouble() * OrbitalStrikeManagerTicker.STRIKE_TARGET_RADIUS;
+                    double radius = random.nextDouble() * OrbitalStrikeManagerTicker.get().STRIKE_TARGET_RADIUS;
                     double x = Math.cos(Math.toRadians(theta)) * radius;
                     double z = Math.sin(Math.toRadians(theta)) * radius;
                     double y = random.nextDouble() * .3;
@@ -168,8 +167,8 @@ public class OrbitalStrikeIndividualTicker {
 //            }, time);
 //        }
         // make flame outerCircle
-        for (int time = 0; time < STRIKE_TIME; time += 5) {
-            final double radius = OrbitalStrikeManagerTicker.STRIKE_TARGET_RADIUS;
+        for (int time = 0; time < OrbitalStrikeManagerTicker.get().STRIKE_TIME; time += 5) {
+            final double radius = OrbitalStrikeManagerTicker.get().STRIKE_TARGET_RADIUS;
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                 for (int i = 0; i < 50; i++) {
                     double theta = random.nextDouble() * 360;
@@ -182,10 +181,10 @@ public class OrbitalStrikeIndividualTicker {
             }, time);
         }
         // make flame pentagram
-        for (int time = 0; time < STRIKE_TIME; time += 5) {
+        for (int time = 0; time < OrbitalStrikeManagerTicker.get().STRIKE_TIME; time += 5) {
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                 final int angle = 360 / 5;
-                double radius = OrbitalStrikeManagerTicker.STRIKE_TARGET_RADIUS * 1.5;
+                double radius = OrbitalStrikeManagerTicker.get().STRIKE_TARGET_RADIUS * 1.5;
                 for (int theta = 0; theta <= 360; theta += angle) {
                     // starting point is (x1,z1)
                     double x1 = Math.cos(Math.toRadians(theta)) * (radius);
@@ -211,7 +210,7 @@ public class OrbitalStrikeIndividualTicker {
     }
 
     private void sound(Location strikerLocation) {
-        for (int time = 0; time < STRIKE_TIME; time += 10) {
+        for (int time = 0; time < OrbitalStrikeManagerTicker.get().STRIKE_TIME; time += 10) {
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                 strikerLocation.getWorld().playSound(strikerLocation, Sound.ENTITY_ENDER_DRAGON_GROWL, SoundCategory.HOSTILE, 100f, .5f);
             }, time);

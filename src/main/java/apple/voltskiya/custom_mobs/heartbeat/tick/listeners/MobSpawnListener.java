@@ -10,6 +10,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,9 +19,17 @@ public class MobSpawnListener implements Listener {
 
     public MobSpawnListener() {
         Bukkit.getPluginManager().registerEvents(this, VoltskiyaPlugin.get());
-        spawnEater.put("lost_soul", new LostSoulManagerTicker());
-        spawnEater.put("blemish_gateway", new BlemishSpawnManager());
-        spawnEater.put("orbital_striker", new OrbitalStrikeManagerTicker());
+        try {
+            spawnEater.put("lost_soul", new LostSoulManagerTicker());
+            spawnEater.put("blemish_gateway", new BlemishSpawnManager());
+            spawnEater.put("orbital_striker", new OrbitalStrikeManagerTicker());
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassCastException e) {
+            System.err.println("There was an issue with one of the config settings.\n" +
+                    "You may have changed a setting that resulted in changing the type of data that was in one of the fields.");
+            e.printStackTrace();
+        }
     }
 
     @EventHandler(ignoreCancelled = true)

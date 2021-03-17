@@ -9,19 +9,22 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Vex;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.List;
 
-public class LostSoulManagerTicker implements SpawnEater {
+public class LostSoulManagerTicker extends SpawnEater {
+    protected final double DAMAGE_AMOUNT;
     private static LostSoulManagerTicker instance;
     private final Map<Closeness, LostSoulIndividualTicker> closenessToVexes = new HashMap<>() {{
         for (Closeness closeness : Closeness.values())
             put(closeness, new LostSoulIndividualTicker(closeness.getGiver(), closeness));
     }};
 
-    public LostSoulManagerTicker() {
+    public LostSoulManagerTicker() throws IOException {
         instance = this;
         closenessToVexes.get(Closeness.HIGH_CLOSE).setIsCheckCollision();
+        DAMAGE_AMOUNT = (double) getValueOrInit(YmlSettings.DAMAGE_AMOUNT.getPath());
     }
 
     public static LostSoulManagerTicker get() {
@@ -37,6 +40,17 @@ public class LostSoulManagerTicker implements SpawnEater {
             closenessToVexes.get(closeness).giveVex(vex);
         }
     }
+
+    @Override
+    public String getName() {
+        return "lost_soul";
+    }
+
+    @Override
+    public void initializeYml() throws IOException {
+        setValueIfNotExists("damageAmount", 2d);
+    }
+
 
     public boolean amIGivingVex(Vex vex, Closeness currentCloseness) {
         Closeness actualCloseness = determineConcern(vex);
@@ -89,5 +103,25 @@ public class LostSoulManagerTicker implements SpawnEater {
         public TickGiverable getGiver() {
             return giver;
         }
+    }
+
+    private enum YmlSettings {
+        DAMAGE_AMOUNT("damageAmount", 2d);
+
+        private final String path;
+        private final Object value;
+
+        YmlSettings(String path, Object value) {
+            this.path = path;
+            this.value = value;
         }
+
+        public String getPath() {
+            return path;
+        }
+
+        public Object getValue() {
+            return value;
+        }
+    }
 }

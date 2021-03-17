@@ -8,12 +8,9 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.*;
-import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Random;
 import java.util.UUID;
 
 public class LostSoulIndividualTicker implements Tickable {
@@ -23,7 +20,6 @@ public class LostSoulIndividualTicker implements Tickable {
     private boolean isTicking = false;
     private boolean isCheckCollision = false;
     private long myTickerUid = -1;
-    private final Random random = new Random();
 
     public LostSoulIndividualTicker(TickGiverable giver, LostSoulManagerTicker.Closeness closeness) {
         this.giver = giver;
@@ -68,7 +64,7 @@ public class LostSoulIndividualTicker implements Tickable {
                 Location location = vex.getLocation();
                 location.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, player.getEyeLocation(), 0);
                 location.getWorld().playSound(player.getEyeLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1, 1);
-                player.damage(2, vex);
+                player.damage(LostSoulManagerTicker.get().DAMAGE_AMOUNT, vex);
                 vex.remove();
             }
         }
