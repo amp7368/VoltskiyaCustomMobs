@@ -46,6 +46,11 @@ public class HighFrequencyTick implements Tickable, TickGiverable {
         }
     }
 
+    @Override
+    public int getTickSpeed() {
+        return TICKS_PER_TICK;
+    }
+
     public static HighFrequencyTick get() {
         return instance;
     }

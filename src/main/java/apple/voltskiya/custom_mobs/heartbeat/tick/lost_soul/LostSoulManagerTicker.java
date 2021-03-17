@@ -53,9 +53,7 @@ public class LostSoulManagerTicker implements SpawnEater {
         List<Player> players = UpdatedPlayerList.getPlayers();
         for (Player player : players) {
             Location playerLocation = player.getLocation();
-            Closeness closeness = Closeness.getCloseness(vexLocation, playerLocation);
-            //todo
-            return closeness;
+            return Closeness.getCloseness(vexLocation, playerLocation);
         }
         return Closeness.lowest();
     }
