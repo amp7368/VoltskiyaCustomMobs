@@ -29,7 +29,7 @@ public class OrbitalStrikeIndividualTicker {
     private final Random random = new Random();
     private final Plugin plugin = VoltskiyaPlugin.get();
 
-    public OrbitalStrikeIndividualTicker(TickGiverable giver, OrbitalStrikeManagerTicker.Closeness closeness) {
+    public OrbitalStrikeIndividualTicker(OrbitalStrikeManagerTicker.Closeness closeness) {
         this.closeness = closeness;
     }
 
@@ -48,7 +48,7 @@ public class OrbitalStrikeIndividualTicker {
                 strikerUidIterator.remove();
                 trim = true;
             } else {
-                tickStriker(striker);
+                tickStriker(striker, strikerUid);
                 if (OrbitalStrikeManagerTicker.get().amIGivingStriker(striker, closeness, strikerUid.getValue())) {
                     strikerUidIterator.remove();
                     trim = true;
@@ -64,15 +64,15 @@ public class OrbitalStrikeIndividualTicker {
         }
     }
 
-    private void tickStriker(Entity striker) {
+    private void tickStriker(Entity striker, Pair<UUID, Long> strikerUid) {
         if (isCheckStrike) {
             if (random.nextDouble() < OrbitalStrikeManagerTicker.STRIKE_CHANCE * closeness.getGiver().getTickSpeed()) {
-                checkStrike(striker);
+                checkStrike(striker, strikerUid);
             }
         }
     }
 
-    private void checkStrike(Entity striker) {
+    private void checkStrike(Entity striker, Pair<UUID, Long> strikerUid) {
         Location strikerLocation = striker.getLocation();
         @Nullable LivingEntity target = ((Mob) striker).getTarget();
         if (target == null) {
@@ -88,11 +88,11 @@ public class OrbitalStrikeIndividualTicker {
         if (target != null) {
             // we have the target. time to orbital strike it
             strike(striker, target);
+            strikerUid.setValue(System.currentTimeMillis());
         }
     }
 
     private void strike(Entity striker, LivingEntity target) {
-        System.out.println("strike!");
         final Location strikerLocation = striker.getLocation();
         final Location targetLocation = target.getLocation();
         double xt = targetLocation.getX();
@@ -100,20 +100,26 @@ public class OrbitalStrikeIndividualTicker {
         double zt = targetLocation.getZ();
         World targetWorld = targetLocation.getWorld();
         // make flames happen in a circle
+        ((Mob) striker).setAI(false);
+        ((Mob) striker).setTarget(null);
         sound(strikerLocation);
         target(xt, yt, zt, targetWorld);
         fireball(xt, yt, zt, targetWorld);
+        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+            ((Mob) striker).setAI(true);
+            ((Mob) striker).setTarget(target);
+        }, STRIKE_TIME);
     }
 
     private void fireball(double xt, double yt, double zt, World targetWorld) {
-        for (int time = STRIKE_TARGET_TIME; time < STRIKE_TIME; time += DESTRUCTION_BLAZE_INTERVAL) {
-            double height = yt;
-            for (; height < yt + STRIKE_TARGET_TOWER_HEIGHT; height++) {
-                if (!targetWorld.getBlockAt((int) xt, (int) height, (int) zt).getType().isAir()) {
-                    height--;
-                    break;
-                }
+        double height = yt + 1;
+        for (; height < yt + STRIKE_TARGET_TOWER_HEIGHT; height++) {
+            if (!targetWorld.getBlockAt((int) xt, (int) height, (int) zt).getType().isAir()) {
+                height--;
+                break;
             }
+        }
+        for (int time = STRIKE_TARGET_TIME; time < STRIKE_TIME; time += DESTRUCTION_BLAZE_INTERVAL) {
             final double finalHeight = height;
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                 for (int i = 0; i < 2; i++) {
@@ -148,25 +154,25 @@ public class OrbitalStrikeIndividualTicker {
             }, time);
         }
 
-        // make flame tower happen
-        for (int time = 0; time < STRIKE_TIME; time += 5) {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-                for (int i = 0; i < 100; i++) {
-                    double theta = random.nextDouble() * 360;
-                    double radius = random.nextDouble() * .35;
-                    double height = random.nextDouble() * OrbitalStrikeManagerTicker.STRIKE_TARGET_TOWER_HEIGHT;
-                    double x = Math.cos(Math.toRadians(theta)) * radius;
-                    double z = Math.sin(Math.toRadians(theta)) * radius;
-                    targetWorld.spawnParticle(Particle.FLAME, xt + x, yt + height, zt + z, 5, 0, 0, 0, 0);
-                }
-            }, time);
-        }
+//        // make flame tower happen
+//        for (int time = 0; time < STRIKE_TIME; time += 5) {
+//            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+//                for (int i = 0; i < 100; i++) {
+//                    double theta = random.nextDouble() * 360;
+//                    double radius = random.nextDouble() * .35;
+//                    double height = random.nextDouble() * OrbitalStrikeManagerTicker.STRIKE_TARGET_TOWER_HEIGHT;
+//                    double x = Math.cos(Math.toRadians(theta)) * radius;
+//                    double z = Math.sin(Math.toRadians(theta)) * radius;
+//                    targetWorld.spawnParticle(Particle.FLAME, xt + x, yt + height, zt + z, 5, 0, 0, 0, 0);
+//                }
+//            }, time);
+//        }
         // make flame outerCircle
         for (int time = 0; time < STRIKE_TIME; time += 5) {
+            final double radius = OrbitalStrikeManagerTicker.STRIKE_TARGET_RADIUS;
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                 for (int i = 0; i < 50; i++) {
                     double theta = random.nextDouble() * 360;
-                    double radius = OrbitalStrikeManagerTicker.STRIKE_TARGET_RADIUS;
                     double radiusOffset = random.nextDouble() * .3;
                     double x = Math.cos(Math.toRadians(theta)) * (radius + radiusOffset);
                     double z = Math.sin(Math.toRadians(theta)) * (radius + radiusOffset);
@@ -175,15 +181,28 @@ public class OrbitalStrikeIndividualTicker {
                 }
             }, time);
         }
-        // make flame X
+        // make flame pentagram
         for (int time = 0; time < STRIKE_TIME; time += 5) {
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-                for (int theta = 0; theta <= 360; theta += 90) {
-                    for (int i = 0; i < 15; i++) {
-                        double radius = random.nextDouble() * OrbitalStrikeManagerTicker.STRIKE_TARGET_RADIUS;
-                        double x = Math.cos(Math.toRadians(theta)) * radius;
-                        double z = Math.sin(Math.toRadians(theta)) * radius;
-                        double y = random.nextDouble() * .3;
+                final int angle = 360 / 5;
+                double radius = OrbitalStrikeManagerTicker.STRIKE_TARGET_RADIUS * 1.5;
+                for (int theta = 0; theta <= 360; theta += angle) {
+                    // starting point is (x1,z1)
+                    double x1 = Math.cos(Math.toRadians(theta)) * (radius);
+                    double z1 = Math.sin(Math.toRadians(theta)) * (radius);
+                    // ending point is (x2,z2)
+                    double x2 = Math.cos(Math.toRadians((theta + angle * 2) % 360)) * (radius);
+                    double z2 = Math.sin(Math.toRadians((theta + angle * 2) % 360)) * (radius);
+                    // x2 is bigger
+                    final int particles = 40;
+                    double xInterval = (x2 - x1) / particles;
+                    double zInterval = (z2 - z1) / particles;
+                    for (double i = 0, x = x1, z = z1; i < particles;
+                         x += xInterval,
+                                 z += zInterval,
+                                 i++) {
+                        System.out.println("run");
+                        double y = random.nextDouble() * 0.3;
                         targetWorld.spawnParticle(Particle.FLAME, xt + x, yt + y, zt + z, 5, 0, 0, 0, 0);
                     }
                 }

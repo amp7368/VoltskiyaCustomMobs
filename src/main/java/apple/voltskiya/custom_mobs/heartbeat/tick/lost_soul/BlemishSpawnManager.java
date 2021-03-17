@@ -47,7 +47,7 @@ public class BlemishSpawnManager implements Listener, SpawnEater {
                     event.setCancelled(true);
                     Location location = event.getEntity().getLocation();
                     Vector direction = location.getDirection();
-                    direction.multiply(0.5);
+                    direction.multiply(0.3);
 
                     Vector directionLeft = new Vector().copy(direction);
                     directionLeft.setX(directionLeft.getX() * Math.cos(Math.toRadians(30)) - Math.sin(Math.toRadians(30)) * directionLeft.getZ());
@@ -74,6 +74,7 @@ public class BlemishSpawnManager implements Listener, SpawnEater {
                             if (v == null) break;
                             ((Vex) entity).setSummoner((Mob) nearby);
                             entity.setVelocity(v);
+                            ((Vex) entity).setCharging(true);
                             System.out.println("set");
                         }
                     },1);

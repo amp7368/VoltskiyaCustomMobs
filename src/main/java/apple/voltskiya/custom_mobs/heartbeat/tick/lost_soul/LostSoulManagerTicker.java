@@ -59,13 +59,12 @@ public class LostSoulManagerTicker implements SpawnEater {
     }
 
     enum Closeness {
-        HIGH_CLOSE(15, HighFrequencyTick.get()),
-        NORMAL_CLOSE(30, NormalFrequencyTick.get()),
-        LOW_CLOSE(60, LowFrequencyTick.get()),
-        FAR_CLOSE(100, VeryLowFrequencyTick.get());
+        HIGH_CLOSE(30, HighFrequencyTick.get()),
+        NORMAL_CLOSE(60, NormalFrequencyTick.get()),
+        LOW_CLOSE(100, LowFrequencyTick.get());
 
         private final double distance;
-        private static final Closeness[] order = new Closeness[]{HIGH_CLOSE, NORMAL_CLOSE, LOW_CLOSE, FAR_CLOSE};
+        private static final Closeness[] order = new Closeness[]{HIGH_CLOSE, NORMAL_CLOSE, LOW_CLOSE};
         private final TickGiverable giver;
 
         Closeness(double distance, TickGiverable giver) {
@@ -90,5 +89,5 @@ public class LostSoulManagerTicker implements SpawnEater {
         public TickGiverable getGiver() {
             return giver;
         }
-    }
+        }
 }

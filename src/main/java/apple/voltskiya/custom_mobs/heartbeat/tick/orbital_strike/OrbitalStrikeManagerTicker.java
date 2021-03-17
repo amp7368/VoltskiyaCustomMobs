@@ -13,19 +13,19 @@ import java.util.List;
 
 public class OrbitalStrikeManagerTicker implements SpawnEater {
     public static final double STRIKE_CHANCE = 0.01;
-    public static final long STRIKE_COOLDOWN = 1000 / 20 * 30;
+    public static final long STRIKE_COOLDOWN = 1000 / 20 * 300;
     public static final double STRIKE_DISTANCE = 100;
 
-    public static final double STRIKE_TARGET_RADIUS = 7;
+    public static final double STRIKE_TARGET_RADIUS = 6;
     public static final double STRIKE_TARGET_TOWER_HEIGHT = 20;
-    public static final int STRIKE_TIME = 400;
-    public static final int STRIKE_TARGET_TIME = 200;
+    public static final int STRIKE_TIME = 300;
+    public static final int STRIKE_TARGET_TIME = 30;
     public static final double DESTRUCTION_BLAZE_INTERVAL = 1;
 
     private static OrbitalStrikeManagerTicker instance;
     private final Map<Closeness, OrbitalStrikeIndividualTicker> closenessToStrikeres = new HashMap<>() {{
         for (Closeness closeness : Closeness.values())
-            put(closeness, new OrbitalStrikeIndividualTicker(closeness.getGiver(), closeness));
+            put(closeness, new OrbitalStrikeIndividualTicker(closeness));
     }};
 
     public OrbitalStrikeManagerTicker() {

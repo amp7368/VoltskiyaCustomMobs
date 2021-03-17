@@ -40,8 +40,9 @@ public class UpdatedPlayerList implements Tickable {
                 for (Vector corner : corners) if (b.contains(corner)) return p;
                 if (b.contains(other)) return p;
                 b = other;
+                other = p.getBoundingBox();
                 corners = getCorners(p.getBoundingBox());
-                for (Vector corner : corners) if (other.contains(corner)) return p;
+                for (Vector corner : corners) if (b.contains(corner)) return p;
                 if (other.contains(b)) return p;
             }
         }

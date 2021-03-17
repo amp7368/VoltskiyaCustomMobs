@@ -25,7 +25,6 @@ public class MobSpawnListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onSpawn(CreatureSpawnEvent event) {
-        System.out.println("lkejflrk");
         for (String tag : event.getEntity().getScoreboardTags()) {
             System.out.println(tag);
             SpawnEater eater = spawnEater.get(tag);

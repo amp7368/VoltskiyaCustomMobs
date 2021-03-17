@@ -4,4 +4,5 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 
 public interface SpawnEater {
     void eatEvent(CreatureSpawnEvent event);
+
 }
