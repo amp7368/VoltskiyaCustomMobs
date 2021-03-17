@@ -7,9 +7,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.*;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Random;
 import java.util.UUID;
 
 public class LostSoulIndividualTicker implements Tickable {
@@ -19,6 +21,7 @@ public class LostSoulIndividualTicker implements Tickable {
     private boolean isTicking = false;
     private boolean isCheckCollision = false;
     private long myTickerUid = -1;
+    private final Random random = new Random();
 
     public LostSoulIndividualTicker(TickGiverable giver, LostSoulManagerTicker.Closeness closeness) {
         this.giver = giver;
@@ -40,7 +43,6 @@ public class LostSoulIndividualTicker implements Tickable {
                 Vex vex = (Vex) entity;
                 tickVex(vex);
                 if (LostSoulManagerTicker.get().amIGivingVex(vex, closeness)) {
-                    System.out.println("remove");
                     vexUidIterator.remove();
                     trim = true;
                 }
@@ -56,14 +58,19 @@ public class LostSoulIndividualTicker implements Tickable {
     }
 
     private synchronized void tickVex(Vex vex) {
-        System.out.println("tick");
         if (isCheckCollision) {
             Player player = UpdatedPlayerList.getCollision(vex.getBoundingBox());
-            System.out.println(player);
             if (player != null) {
                 Location location = vex.getLocation();
-                location.getWorld().spawnEntity(location, EntityType.WITHER_SKULL, CreatureSpawnEvent.SpawnReason.CUSTOM, e -> {
-                    ((WitherSkull) e).setCharged(true);
+                location.getWorld().spawnEntity(player.getEyeLocation(), EntityType.WITHER_SKULL, CreatureSpawnEvent.SpawnReason.CUSTOM, e -> {
+                    final WitherSkull skull = (WitherSkull) e;
+                    skull.setCharged(true);
+                    skull.setIsIncendiary(true);
+
+                    final Vector down = new Vector(0, -1, 0);
+                    skull.setDirection(down);
+                    e.setVelocity(down);
+
                 });
                 vex.remove();
             }
@@ -78,8 +85,8 @@ public class LostSoulIndividualTicker implements Tickable {
         }
     }
 
-    synchronized void setIsCheckCollision(boolean check) {
-        this.isCheckCollision = check;
+    synchronized void setIsCheckCollision() {
+        this.isCheckCollision = true;
     }
 
 }

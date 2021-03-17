@@ -1,9 +1,8 @@
 package apple.voltskiya.custom_mobs.heartbeat.tick.main;
 
-import apple.voltskiya.custom_mobs.DistanceUtils;
 import apple.voltskiya.custom_mobs.heartbeat.tick.Tickable;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
@@ -33,13 +32,41 @@ public class UpdatedPlayerList implements Tickable {
     @Nullable
     public static Player getCollision(BoundingBox other) {
         for (Player p : players) {
-            final BoundingBox b = p.getBoundingBox();
-            if (b.contains(other) ||
-                    b.contains(other.getMin()) ||
-                    b.contains(other.getMax())
-            ) return p;
+            if (p.getGameMode() == GameMode.SURVIVAL) {
+                BoundingBox b = p.getBoundingBox();
+                Vector[] corners = getCorners(other);
+                for (Vector corner : corners) if (b.contains(corner)) return p;
+                if (b.contains(other)) return p;
+                b = other;
+                corners = getCorners(p.getBoundingBox());
+                for (Vector corner : corners) if (other.contains(corner)) return p;
+                if (other.contains(b)) return p;
+            }
         }
         return null;
+    }
+
+    private static Vector[] getCorners(BoundingBox other) {
+        Vector[] corners = new Vector[8];
+        double xMin = other.getMinX();
+        double yMin = other.getMinY();
+        double zMin = other.getMinZ();
+        double xMax = other.getMaxX();
+        double yMax = other.getMaxY();
+        double zMax = other.getMaxZ();
+
+        int i = 0;
+        for (double x = xMin; x <= xMax; x = xMax) {
+            for (double y = yMin; y <= yMax; y = yMax) {
+                for (double z = zMin; z <= zMax; z = zMax) {
+                    corners[i++] = new Vector(x, y, z);
+                    if (z == zMax) break;
+                }
+                if (y == yMax) break;
+            }
+            if (x == xMax) break;
+        }
+        return corners;
     }
 
     @Override

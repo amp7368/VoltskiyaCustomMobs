@@ -21,7 +21,7 @@ public class LostSoulManagerTicker implements SpawnEater {
 
     public LostSoulManagerTicker() {
         instance = this;
-        closenessToVexes.get(Closeness.HIGH_CLOSE).setIsCheckCollision(true);
+        closenessToVexes.get(Closeness.HIGH_CLOSE).setIsCheckCollision();
     }
 
     public static LostSoulManagerTicker get() {
@@ -61,10 +61,10 @@ public class LostSoulManagerTicker implements SpawnEater {
     }
 
     enum Closeness {
-        HIGH_CLOSE(5, HighFrequencyTick.get()),
-        NORMAL_CLOSE(15, NormalFrequencyTick.get()),
-        LOW_CLOSE(30, LowFrequencyTick.get()),
-        FAR_CLOSE(50, VeryLowFrequencyTick.get());
+        HIGH_CLOSE(15, HighFrequencyTick.get()),
+        NORMAL_CLOSE(30, NormalFrequencyTick.get()),
+        LOW_CLOSE(60, LowFrequencyTick.get()),
+        FAR_CLOSE(100, VeryLowFrequencyTick.get());
 
         private final double distance;
         private static final Closeness[] order = new Closeness[]{HIGH_CLOSE, NORMAL_CLOSE, LOW_CLOSE, FAR_CLOSE};
