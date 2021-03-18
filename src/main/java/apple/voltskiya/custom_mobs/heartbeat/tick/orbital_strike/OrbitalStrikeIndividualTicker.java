@@ -200,7 +200,6 @@ public class OrbitalStrikeIndividualTicker {
                          x += xInterval,
                                  z += zInterval,
                                  i++) {
-                        System.out.println("run");
                         double y = random.nextDouble() * 0.3;
                         targetWorld.spawnParticle(Particle.FLAME, xt + x, yt + y, zt + z, 5, 0, 0, 0, 0);
                     }

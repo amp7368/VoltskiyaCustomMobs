@@ -36,7 +36,6 @@ public class VoltskiyaPlugin extends JavaPlugin {
     }
 
     private void loadDependencies() {
-        System.out.println("hi");
         getLogger().log(Level.INFO, "Starting dynamic dependency loading");
         File dependencies = new File(getDataFolder(), "dependencies");
         if (!dependencies.exists()) dependencies.mkdirs();

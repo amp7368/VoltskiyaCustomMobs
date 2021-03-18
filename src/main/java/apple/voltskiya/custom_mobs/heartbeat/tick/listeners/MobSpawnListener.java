@@ -30,12 +30,14 @@ public class MobSpawnListener implements Listener {
                     "You may have changed a setting that resulted in changing the type of data that was in one of the fields.");
             e.printStackTrace();
         }
+        for (SpawnEater spawnEater : spawnEater.values()) {
+            spawnEater.registerInDB();
+        }
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onSpawn(CreatureSpawnEvent event) {
         for (String tag : event.getEntity().getScoreboardTags()) {
-            System.out.println(tag);
             SpawnEater eater = spawnEater.get(tag);
             if (eater != null) eater.eatEvent(event);
         }

@@ -3,10 +3,12 @@ package apple.voltskiya.custom_mobs.heartbeat.tick.orbital_strike;
 import apple.voltskiya.custom_mobs.DistanceUtils;
 import apple.voltskiya.custom_mobs.heartbeat.tick.SpawnEater;
 import apple.voltskiya.custom_mobs.heartbeat.tick.main.*;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.*;
@@ -31,7 +33,7 @@ public class OrbitalStrikeManagerTicker extends SpawnEater {
 
     public OrbitalStrikeManagerTicker() throws IOException {
         this.STRIKE_CHANCE = (double) getValueOrInit(YmlSettings.STRIKE_CHANCE.getPath());
-        this.STRIKE_COOLDOWN =  (1000L / 20 * (int) getValueOrInit(YmlSettings.STRIKE_COOLDOWN.getPath()));
+        this.STRIKE_COOLDOWN = (1000L / 20 * (int) getValueOrInit(YmlSettings.STRIKE_COOLDOWN.getPath()));
         this.STRIKE_DISTANCE = (int) getValueOrInit(YmlSettings.STRIKE_DISTANCE.getPath());
         this.STRIKE_TARGET_RADIUS = (double) getValueOrInit(YmlSettings.STRIKE_TARGET_RADIUS.getPath());
         this.STRIKE_HEIGHT = (int) getValueOrInit(YmlSettings.STRIKE_HEIGHT.getPath());
@@ -40,6 +42,12 @@ public class OrbitalStrikeManagerTicker extends SpawnEater {
         this.DESTRUCTION_BLAZE_INTERVAL = (double) getValueOrInit(YmlSettings.DESTRUCTION_BLAZE_INTERVAL.getPath());
         instance = this;
         closenessToStrikeres.get(Closeness.HIGH_CLOSE).setIsCheckStrike();
+        for (UUID mob : getMobs()) {
+            @Nullable Entity striker = Bukkit.getEntity(mob);
+            if (striker == null) continue;
+            Closeness closeness = determineConcern(striker);
+            closenessToStrikeres.get(closeness).giveStriker(striker, 0);
+        }
     }
 
     public static OrbitalStrikeManagerTicker get() {
@@ -48,11 +56,11 @@ public class OrbitalStrikeManagerTicker extends SpawnEater {
 
     @Override
     public void eatEvent(CreatureSpawnEvent event) {
-        System.out.println("eat");
         // this is a striker
         final Entity striker = event.getEntity();
         Closeness closeness = determineConcern(striker);
         closenessToStrikeres.get(closeness).giveStriker(striker, 0);
+        addMobs(striker.getUniqueId());
     }
 
     @Override

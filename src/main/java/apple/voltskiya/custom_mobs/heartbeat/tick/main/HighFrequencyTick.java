@@ -42,7 +42,6 @@ public class HighFrequencyTick implements Tickable, TickGiverable {
     public void remove(long uid) {
         synchronized (tickering) {
             tickering.remove(uid);
-            System.out.println(uid);
         }
     }
 

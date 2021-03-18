@@ -59,8 +59,6 @@ public class LostSoulIndividualTicker implements Tickable {
         if (isCheckCollision) {
             Player player = UpdatedPlayerList.getCollision(vex.getBoundingBox());
             if (player != null) {
-                System.out.println(player.getLocation());
-                System.out.println(vex.getLocation());
                 Location location = vex.getLocation();
                 location.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, player.getEyeLocation(), 0);
                 location.getWorld().playSound(player.getEyeLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1, 1);

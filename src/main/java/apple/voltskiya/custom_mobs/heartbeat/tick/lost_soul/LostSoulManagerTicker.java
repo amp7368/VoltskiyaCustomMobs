@@ -3,11 +3,15 @@ package apple.voltskiya.custom_mobs.heartbeat.tick.lost_soul;
 import apple.voltskiya.custom_mobs.DistanceUtils;
 import apple.voltskiya.custom_mobs.heartbeat.tick.SpawnEater;
 import apple.voltskiya.custom_mobs.heartbeat.tick.main.*;
+import apple.voltskiya.custom_mobs.heartbeat.tick.orbital_strike.OrbitalStrikeManagerTicker;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Vex;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.*;
@@ -25,6 +29,12 @@ public class LostSoulManagerTicker extends SpawnEater {
         instance = this;
         closenessToVexes.get(Closeness.HIGH_CLOSE).setIsCheckCollision();
         DAMAGE_AMOUNT = (double) getValueOrInit(YmlSettings.DAMAGE_AMOUNT.getPath());
+        for (UUID mob : getMobs()) {
+            @Nullable Entity striker = Bukkit.getEntity(mob);
+            if (!(striker instanceof Vex)) continue;
+            Closeness closeness = determineConcern((Vex) striker);
+            closenessToVexes.get(closeness).giveVex((Vex) striker);
+        }
     }
 
     public static LostSoulManagerTicker get() {
@@ -38,6 +48,7 @@ public class LostSoulManagerTicker extends SpawnEater {
             final Vex vex = (Vex) event.getEntity();
             Closeness closeness = determineConcern(vex);
             closenessToVexes.get(closeness).giveVex(vex);
+            addMobs(vex.getUniqueId());
         }
     }
 

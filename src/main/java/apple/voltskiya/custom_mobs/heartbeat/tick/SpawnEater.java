@@ -9,8 +9,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.sql.SQLException;
+import java.util.*;
 
 public abstract class SpawnEater {
     private static final String defaultConfig = "config";
@@ -29,7 +29,7 @@ public abstract class SpawnEater {
 
     public void setValueIfNotExists(String fileName, String path, Object value) throws IOException {
         File file = new File(getDatafolder(), fileName + ".yml");
-        if(!file.exists()) file.createNewFile();
+        if (!file.exists()) file.createNewFile();
         YamlConfiguration yml = getConfig(fileName, file);
         @Nullable ConfigurationSection config = yml.getConfigurationSection(defaultConfig);
         if (config == null) {
@@ -50,7 +50,7 @@ public abstract class SpawnEater {
 
     public void setValue(String fileName, String path, Object value) throws IOException {
         File file = new File(getDatafolder(), fileName + ".yml");
-        if(!file.exists()) file.createNewFile();
+        if (!file.exists()) file.createNewFile();
         YamlConfiguration yml = getConfig(fileName, file);
         @Nullable ConfigurationSection config = yml.getConfigurationSection(defaultConfig);
         if (config == null) {
@@ -70,7 +70,7 @@ public abstract class SpawnEater {
     @Nullable
     protected Object getValue(String fileName, String path) throws IOException {
         File file = new File(getDatafolder(), fileName + ".yml");
-        if(!file.exists()) file.createNewFile();
+        if (!file.exists()) file.createNewFile();
         YamlConfiguration yml = getConfig(fileName, file);
         @Nullable ConfigurationSection config = yml.getConfigurationSection(defaultConfig);
         if (config == null) {
@@ -104,6 +104,33 @@ public abstract class SpawnEater {
         value = getValue(path);
         if (value == null) throw new IOException("Error initializing config " + getName());
         return value;
+    }
+
+    public List<UUID> getMobs() {
+        List<UUID> mobs = null;
+        try {
+            mobs = MobListSql.getMobs(getName());
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        if (mobs == null) return Collections.emptyList();
+        return mobs;
+    }
+
+    public void addMobs(UUID uuid) {
+        try {
+            MobListSql.addMob(getName(), uuid);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    public void registerInDB() {
+        try {
+            MobListSql.registerName(getName());
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
     }
 
     public File getDatafolder() {
