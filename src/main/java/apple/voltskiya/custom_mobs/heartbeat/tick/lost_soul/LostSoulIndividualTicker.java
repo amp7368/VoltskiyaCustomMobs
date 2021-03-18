@@ -42,7 +42,6 @@ public class LostSoulIndividualTicker implements Tickable {
                 Vex vex = (Vex) entity;
                 tickVex(vex);
                 if (LostSoulManagerTicker.get().amIGivingVex(vex, closeness)) {
-                    MobListSql.removeMob(vexUid);
                     vexUidIterator.remove();
                     trim = true;
                 }
