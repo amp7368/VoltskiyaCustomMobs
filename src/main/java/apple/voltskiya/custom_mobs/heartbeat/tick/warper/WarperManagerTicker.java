@@ -1,4 +1,4 @@
-package apple.voltskiya.custom_mobs.heartbeat.tick.warp;
+package apple.voltskiya.custom_mobs.heartbeat.tick.warper;
 
 import apple.voltskiya.custom_mobs.DistanceUtils;
 import apple.voltskiya.custom_mobs.heartbeat.tick.SpawnEater;

@@ -1,7 +1,5 @@
-package apple.voltskiya.custom_mobs.heartbeat.tick.warp;
+package apple.voltskiya.custom_mobs.heartbeat.tick.warper;
 
-import apple.voltskiya.custom_mobs.heartbeat.tick.main.NormalFrequencyTick;
-import apple.voltskiya.custom_mobs.heartbeat.tick.orbital_strike.OrbitalStrikeManagerTicker;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;

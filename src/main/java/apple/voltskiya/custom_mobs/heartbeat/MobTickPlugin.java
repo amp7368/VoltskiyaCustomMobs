@@ -3,6 +3,7 @@ package apple.voltskiya.custom_mobs.heartbeat;
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.heartbeat.tick.MobListSql;
+import apple.voltskiya.custom_mobs.heartbeat.tick.listeners.MobDeathListener;
 import apple.voltskiya.custom_mobs.heartbeat.tick.listeners.MobSpawnListener;
 import apple.voltskiya.custom_mobs.heartbeat.tick.main.HighFrequencyTick;
 import apple.voltskiya.custom_mobs.heartbeat.tick.main.LowFrequencyTick;
@@ -38,6 +39,7 @@ public class MobTickPlugin extends VoltskiyaModule {
                 new LowFrequencyTick(),
                 new VeryLowFrequencyTick()
         };
+        new MobDeathListener();
         new MobSpawnListener();
         tick();
     }
