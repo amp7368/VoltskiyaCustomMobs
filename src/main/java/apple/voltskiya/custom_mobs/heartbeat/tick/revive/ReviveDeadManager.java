@@ -61,15 +61,16 @@ public class ReviveDeadManager extends DeathEater {
         }
     }
 
-    public synchronized void revive(Location location) {
+    @Nullable
+    public synchronized RecordedMob revive(Location location) {
         Iterator<RecordedMob> iterator = dead.iterator();
         while (iterator.hasNext()) {
             RecordedMob mob = iterator.next();
             if (mob.isNearby(location)) {
-                revive(mob);
                 iterator.remove();
+                return mob;
             }
-        }
+        }return null;
     }
 
     private synchronized void revive(RecordedMob mob) {
@@ -127,7 +128,7 @@ public class ReviveDeadManager extends DeathEater {
         }
     }
 
-    private static class RecordedMob {
+    public static class RecordedMob {
 
         private final double health;
         private final Location location;

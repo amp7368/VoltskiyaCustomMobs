@@ -1,8 +1,14 @@
 package apple.voltskiya.custom_mobs.heartbeat.tick.revive;
 
 import apple.voltskiya.custom_mobs.heartbeat.tick.MobListSql;
+import com.destroystokyo.paper.entity.Pathfinder;
+import net.minecraft.server.v1_16_R3.BlockPosition;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftMob;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Mob;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -22,7 +28,7 @@ public class ReviverIndividualTicker {
         this.closeness = closeness;
     }
 
-    public void giveReviver(Entity reviver) {
+    public synchronized void giveReviver(Entity reviver) {
         this.revivers.add(reviver.getUniqueId());
         if (!isTicking) {
             isTicking = true;
@@ -30,7 +36,7 @@ public class ReviverIndividualTicker {
         }
     }
 
-    private void tick() {
+    private synchronized void tick() {
         boolean trim = false;
         Iterator<UUID> reviverIterator = revivers.iterator();
         while (reviverIterator.hasNext()) {
@@ -57,7 +63,7 @@ public class ReviverIndividualTicker {
         }
     }
 
-    private void tickReviver(Entity reviver) {
+    private synchronized void tickReviver(Entity reviver) {
         if (isReviving) {
             if (random.nextDouble() < ReviverManagerTicker.get().REVIVE_CHANCE * closeness.getGiver().getTickSpeed()) {
                 revive(reviver);
@@ -65,8 +71,18 @@ public class ReviverIndividualTicker {
         }
     }
 
-    private void revive(Entity reviver) {
-        ReviveDeadManager.get().revive(reviver.getLocation());
+    private synchronized void revive(Entity entity) {
+        ReviveDeadManager.RecordedMob mobToRevive = ReviveDeadManager.get().revive(entity.getLocation());
+        if (mobToRevive != null && entity instanceof Mob) {
+            CraftMob reviver = (CraftMob) entity;
+            @Nullable Pathfinder.PathResult path = reviver.getPathfinder().findPath(mobToRevive.getEntity().getLocation());
+            if (path != null) {
+                Location target = mobToRevive.getEntity().getLocation();
+                int x = target.getBlockX();
+                int y = target.getBlockY();
+                int z = target.getBlockZ();
+            }
+        }
     }
 
     public void setIsReviving() {

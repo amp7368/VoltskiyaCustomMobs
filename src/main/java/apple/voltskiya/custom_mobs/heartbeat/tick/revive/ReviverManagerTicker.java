@@ -26,6 +26,8 @@ public class ReviverManagerTicker extends SpawnEater {
         get(Closeness.HIGH_CLOSE).setIsReviving();
     }};
     private static ReviverManagerTicker instance;
+    private final long callerUid = UpdatedPlayerList.callerUid();
+
 
     public ReviverManagerTicker() throws IOException {
         instance = this;
@@ -80,7 +82,7 @@ public class ReviverManagerTicker extends SpawnEater {
     private Closeness determineConcern(Entity reviver) {
         Location reviverLocation = reviver.getLocation();
 
-        @Nullable Player player = UpdatedPlayerList.getClosestPlayer(reviverLocation);
+        @Nullable Player player = UpdatedPlayerList.getClosestPlayer(reviverLocation,callerUid);
         return player==null?Closeness.lowest(): Closeness.getCloseness(reviverLocation, player.getLocation());
     }
 

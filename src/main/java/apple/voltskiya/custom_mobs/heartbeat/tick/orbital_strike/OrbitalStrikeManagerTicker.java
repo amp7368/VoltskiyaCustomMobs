@@ -31,6 +31,7 @@ public class OrbitalStrikeManagerTicker extends SpawnEater {
         for (Closeness closeness : Closeness.values())
             put(closeness, new OrbitalStrikeIndividualTicker(closeness));
     }};
+    private final long callerUid = UpdatedPlayerList.callerUid();
 
     public OrbitalStrikeManagerTicker() throws IOException {
         this.STRIKE_CHANCE = (double) getValueOrInit(YmlSettings.STRIKE_CHANCE.getPath());
@@ -91,7 +92,7 @@ public class OrbitalStrikeManagerTicker extends SpawnEater {
     private Closeness determineConcern(Entity striker) {
         Location strikerLocation = striker.getLocation();
 
-        List<Player> players = UpdatedPlayerList.getPlayers();
+        List<Player> players = UpdatedPlayerList.getPlayers(callerUid);
         for (Player player : players) {
             Location playerLocation = player.getLocation();
             return Closeness.getCloseness(strikerLocation, playerLocation);

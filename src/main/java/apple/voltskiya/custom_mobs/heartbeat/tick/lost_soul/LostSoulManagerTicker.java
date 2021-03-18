@@ -23,6 +23,7 @@ public class LostSoulManagerTicker extends SpawnEater {
         for (Closeness closeness : Closeness.values())
             put(closeness, new LostSoulIndividualTicker(closeness.getGiver(), closeness));
     }};
+    private long callerUid = UpdatedPlayerList.callerUid();
 
     public LostSoulManagerTicker() throws IOException {
         instance = this;
@@ -74,7 +75,7 @@ public class LostSoulManagerTicker extends SpawnEater {
     private Closeness determineConcern(Vex vex) {
         Location vexLocation = vex.getLocation();
 
-        List<Player> players = UpdatedPlayerList.getPlayers();
+        List<Player> players = UpdatedPlayerList.getPlayers(callerUid);
         for (Player player : players) {
             Location playerLocation = player.getLocation();
             return Closeness.getCloseness(vexLocation, playerLocation);

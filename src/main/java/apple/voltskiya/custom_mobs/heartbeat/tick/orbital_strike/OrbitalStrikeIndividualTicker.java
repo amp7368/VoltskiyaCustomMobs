@@ -27,12 +27,14 @@ public class OrbitalStrikeIndividualTicker {
     private long myTickerUid;
     private final Random random = new Random();
     private final Plugin plugin = VoltskiyaPlugin.get();
+    private final long callerUid = UpdatedPlayerList.callerUid();
+
 
     public OrbitalStrikeIndividualTicker(OrbitalStrikeManagerTicker.Closeness closeness) {
         this.closeness = closeness;
     }
 
-    public void tick() {
+    public synchronized void tick() {
         Iterator<Pair<UUID, Long>> strikerUidIterator = strikers.iterator();
         boolean trim = false;
         long now = System.currentTimeMillis();
@@ -59,13 +61,13 @@ public class OrbitalStrikeIndividualTicker {
         if (trim) {
             strikers.trimToSize();
             if (isTicking && strikers.isEmpty()) {
-                isTicking = false;
                 closeness.getGiver().remove(myTickerUid);
+                isTicking = false;
             }
         }
     }
 
-    private void tickStriker(Entity striker, Pair<UUID, Long> strikerUid) {
+    private  synchronized void tickStriker(Entity striker, Pair<UUID, Long> strikerUid) {
         if (isCheckStrike) {
             if (random.nextDouble() < OrbitalStrikeManagerTicker.get().STRIKE_CHANCE * closeness.getGiver().getTickSpeed()) {
                 checkStrike(striker, strikerUid);
@@ -73,11 +75,11 @@ public class OrbitalStrikeIndividualTicker {
         }
     }
 
-    private void checkStrike(Entity striker, Pair<UUID, Long> strikerUid) {
+    private  synchronized void checkStrike(Entity striker, Pair<UUID, Long> strikerUid) {
         Location strikerLocation = striker.getLocation();
         @Nullable LivingEntity target = ((Mob) striker).getTarget();
         if (target == null) {
-            Player closest = UpdatedPlayerList.getClosestPlayer(striker.getLocation());
+            Player closest = UpdatedPlayerList.getClosestPlayer(striker.getLocation(),callerUid);
             if (closest != null) {
                 Location pLocation = closest.getLocation();
                 double d = DistanceUtils.distance(pLocation, strikerLocation);
@@ -93,7 +95,7 @@ public class OrbitalStrikeIndividualTicker {
         }
     }
 
-    private void strike(Entity striker, LivingEntity target) {
+    private synchronized  void strike(Entity striker, LivingEntity target) {
         final Location strikerLocation = striker.getLocation();
         final Location targetLocation = target.getLocation();
         double xt = targetLocation.getX();
@@ -112,7 +114,7 @@ public class OrbitalStrikeIndividualTicker {
         }, OrbitalStrikeManagerTicker.get().STRIKE_TIME);
     }
 
-    private void fireball(double xt, double yt, double zt, World targetWorld) {
+    private synchronized  void fireball(double xt, double yt, double zt, World targetWorld) {
         double height = yt + 1;
         for (; height < yt +  OrbitalStrikeManagerTicker.get().STRIKE_HEIGHT; height++) {
             if (!targetWorld.getBlockAt((int) xt, (int) height, (int) zt).getType().isAir()) {
@@ -141,7 +143,7 @@ public class OrbitalStrikeIndividualTicker {
     }
 
 
-    private void target(double xt, double yt, double zt, World targetWorld) {
+    private synchronized  void target(double xt, double yt, double zt, World targetWorld) {
         for (int time = 0; time < OrbitalStrikeManagerTicker.get().STRIKE_TIME; time += 5) {
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                 for (int i = 0; i < 100; i++) {
@@ -197,7 +199,7 @@ public class OrbitalStrikeIndividualTicker {
         }
     }
 
-    private void sound(Location strikerLocation) {
+    private  synchronized void sound(Location strikerLocation) {
         for (int time = 0; time < OrbitalStrikeManagerTicker.get().STRIKE_TIME; time += 10) {
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                 strikerLocation.getWorld().playSound(strikerLocation, Sound.ENTITY_ENDER_DRAGON_GROWL, SoundCategory.HOSTILE, 100f, .5f);
@@ -205,7 +207,7 @@ public class OrbitalStrikeIndividualTicker {
         }
     }
 
-    public void giveStriker(Entity striker, long lastShot) {
+    public synchronized  void giveStriker(Entity striker, long lastShot) {
         this.strikers.add(new Pair<>(striker.getUniqueId(), lastShot));
         if (!isTicking) {
             isTicking = true;
@@ -213,7 +215,7 @@ public class OrbitalStrikeIndividualTicker {
         }
     }
 
-    public void setIsCheckStrike() {
+    public synchronized  void setIsCheckStrike() {
         this.isCheckStrike = true;
     }
 

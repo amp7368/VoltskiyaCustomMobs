@@ -21,6 +21,7 @@ public class HellGuardManagerTicker extends SpawnEater {
         for (Closeness closeness : Closeness.values())
             put(closeness, new HellGuardIndividualTicker(closeness.getGiver(), closeness));
     }};
+    private final long callerUid = UpdatedPlayerList.callerUid();
 
     public HellGuardManagerTicker() throws IOException {
         instance = this;
@@ -68,7 +69,7 @@ public class HellGuardManagerTicker extends SpawnEater {
     private Closeness determineConcern(LivingEntity hellBlazer) {
         Location hellBlazerLocation = hellBlazer.getLocation();
 
-        List<Player> players = UpdatedPlayerList.getPlayers();
+        List<Player> players = UpdatedPlayerList.getPlayers(callerUid);
         for (Player player : players) {
             Location playerLocation = player.getLocation();
             return Closeness.getCloseness(hellBlazerLocation, playerLocation);

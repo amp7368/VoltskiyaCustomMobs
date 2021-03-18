@@ -42,7 +42,7 @@ public class BlemishSpawnManager extends SpawnEater implements Listener {
     }
 
     @Override
-    public void eatEvent(CreatureSpawnEvent event) {
+    public synchronized void eatEvent(CreatureSpawnEvent event) {
         if (event.getEntityType() == EntityType.GHAST) {
             final UUID uuid = event.getEntity().getUniqueId();
             ghasts.add(uuid);
@@ -51,19 +51,19 @@ public class BlemishSpawnManager extends SpawnEater implements Listener {
     }
 
     @Override
-    public String getName() {
+    public synchronized String getName() {
         return "blemish";
     }
 
     @Override
-    public void initializeYml() throws IOException {
+    public synchronized void initializeYml() throws IOException {
         for (YmlSettings setting : YmlSettings.values()) {
             setValueIfNotExists(setting.getPath(), setting.getValue());
         }
     }
 
     @EventHandler(ignoreCancelled = true)
-    public void shoot(ProjectileLaunchEvent event) {
+    public synchronized void shoot(ProjectileLaunchEvent event) {
         trim();
         if (event.getEntityType() == EntityType.FIREBALL) {
             @NotNull List<Entity> nearbyEntities = event.getEntity().getNearbyEntities(5, 5, 5);
@@ -113,10 +113,10 @@ public class BlemishSpawnManager extends SpawnEater implements Listener {
         }
     }
 
-    private void trim() {
+    private synchronized void trim() {
         ghasts.removeIf(u -> {
             Entity g = Bukkit.getEntity(u);
-            if( g == null || g.isDead()){
+            if (g == null || g.isDead()) {
                 MobListSql.removeMob(u);
                 return true;
             }

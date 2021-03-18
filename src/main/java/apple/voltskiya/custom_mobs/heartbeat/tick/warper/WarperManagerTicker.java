@@ -23,6 +23,7 @@ public class WarperManagerTicker extends SpawnEater {
         get(Closeness.HIGH_CLOSE).setIsWarping();
     }};
     private static WarperManagerTicker instance;
+    private final long callerUid = UpdatedPlayerList.callerUid();
 
     public WarperManagerTicker() throws IOException {
         instance = this;
@@ -68,7 +69,7 @@ public class WarperManagerTicker extends SpawnEater {
     private WarperManagerTicker.Closeness determineConcern(Entity warper) {
         Location warperLocation = warper.getLocation();
 
-        List<Player> players = UpdatedPlayerList.getPlayers();
+        List<Player> players = UpdatedPlayerList.getPlayers(callerUid);
         for (Player player : players) {
             Location playerLocation = player.getLocation();
             return WarperManagerTicker.Closeness.getCloseness(warperLocation, playerLocation);
