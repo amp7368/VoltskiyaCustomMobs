@@ -129,7 +129,7 @@ public class OrbitalStrikeManagerTicker extends SpawnEater {
 
     private enum YmlSettings {
         STRIKE_CHANCE("chancePerTick", 0.01d),
-        STRIKE_COOLDOWN("cooldown", 300),
+        STRIKE_COOLDOWN("cooldown", 800),
         STRIKE_DISTANCE("targetingRange", 100),
         STRIKE_TARGET_RADIUS("radius", 6d),
         STRIKE_HEIGHT("height", 20),
