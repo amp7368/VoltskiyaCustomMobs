@@ -1,6 +1,7 @@
 package apple.voltskiya.custom_mobs.heartbeat.tick.orbital_strike;
 
 import apple.voltskiya.custom_mobs.DistanceUtils;
+import apple.voltskiya.custom_mobs.heartbeat.tick.MobListSql;
 import apple.voltskiya.custom_mobs.heartbeat.tick.SpawnEater;
 import apple.voltskiya.custom_mobs.heartbeat.tick.main.*;
 import org.bukkit.Bukkit;
@@ -44,7 +45,10 @@ public class OrbitalStrikeManagerTicker extends SpawnEater {
         closenessToStrikeres.get(Closeness.HIGH_CLOSE).setIsCheckStrike();
         for (UUID mob : getMobs()) {
             @Nullable Entity striker = Bukkit.getEntity(mob);
-            if (striker == null) continue;
+            if (striker == null) {
+                MobListSql.removeMob(mob);
+                continue;
+            }
             Closeness closeness = determineConcern(striker);
             closenessToStrikeres.get(closeness).giveStriker(striker, 0);
         }

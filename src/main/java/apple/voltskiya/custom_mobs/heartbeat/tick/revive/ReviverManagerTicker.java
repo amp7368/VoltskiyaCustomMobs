@@ -1,21 +1,26 @@
 package apple.voltskiya.custom_mobs.heartbeat.tick.revive;
 
 import apple.voltskiya.custom_mobs.DistanceUtils;
+import apple.voltskiya.custom_mobs.heartbeat.tick.MobListSql;
 import apple.voltskiya.custom_mobs.heartbeat.tick.SpawnEater;
 import apple.voltskiya.custom_mobs.heartbeat.tick.main.*;
+import apple.voltskiya.custom_mobs.heartbeat.tick.orbital_strike.OrbitalStrikeManagerTicker;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class ReviverManagerTicker extends SpawnEater {
 
+    public double REVIVE_DISTANCE;
     public double REVIVE_CHANCE;
     private final Map<Closeness, ReviverIndividualTicker> closenessToReviveres = new HashMap<>() {{
         for (Closeness closeness : Closeness.values())
@@ -27,6 +32,16 @@ public class ReviverManagerTicker extends SpawnEater {
     public ReviverManagerTicker() throws IOException {
         instance = this;
         REVIVE_CHANCE = (double) getValueOrInit(getName(), YmlSettings.REVIVE_CHANCE.getPath(), "reviver");
+        REVIVE_DISTANCE = (int) getValueOrInit(getName(), YmlSettings.REVIVE_DISTANCE.getPath(), "reviver");
+        for (UUID mob : getMobs()) {
+            @Nullable Entity striker = Bukkit.getEntity(mob);
+            if (striker == null) {
+                MobListSql.removeMob(mob);
+                continue;
+            }
+            Closeness c = determineConcern(striker);
+            closenessToReviveres.get(c).giveReviver(striker);
+        }
     }
 
     public static ReviverManagerTicker get() {
@@ -50,7 +65,7 @@ public class ReviverManagerTicker extends SpawnEater {
     @Override
     public void initializeYml() throws IOException {
         for (YmlSettings setting : YmlSettings.values()) {
-            setValueIfNotExists(getName(), setting.getPath(), setting.value,"reviver");
+            setValueIfNotExists(getName(), setting.getPath(), setting.value, "reviver");
         }
     }
 
@@ -109,7 +124,8 @@ public class ReviverManagerTicker extends SpawnEater {
     }
 
     private enum YmlSettings {
-        REVIVE_CHANCE("reviveChance", .01d);
+        REVIVE_CHANCE("reviveChance", .01d),
+        REVIVE_DISTANCE("reviveDistance", 10);
 
         private final String path;
         private final Object value;

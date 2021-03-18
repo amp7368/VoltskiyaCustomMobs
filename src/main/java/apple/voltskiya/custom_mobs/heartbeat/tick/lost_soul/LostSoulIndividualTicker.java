@@ -1,5 +1,6 @@
 package apple.voltskiya.custom_mobs.heartbeat.tick.lost_soul;
 
+import apple.voltskiya.custom_mobs.heartbeat.tick.MobListSql;
 import apple.voltskiya.custom_mobs.heartbeat.tick.Tickable;
 import apple.voltskiya.custom_mobs.heartbeat.tick.main.TickGiverable;
 import apple.voltskiya.custom_mobs.heartbeat.tick.main.UpdatedPlayerList;
@@ -41,6 +42,7 @@ public class LostSoulIndividualTicker implements Tickable {
                 Vex vex = (Vex) entity;
                 tickVex(vex);
                 if (LostSoulManagerTicker.get().amIGivingVex(vex, closeness)) {
+                    MobListSql.removeMob(vexUid);
                     vexUidIterator.remove();
                     trim = true;
                 }
@@ -63,6 +65,7 @@ public class LostSoulIndividualTicker implements Tickable {
                 location.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, player.getEyeLocation(), 0);
                 location.getWorld().playSound(player.getEyeLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1, 1);
                 player.damage(LostSoulManagerTicker.get().DAMAGE_AMOUNT, vex);
+                MobListSql.removeMob(vex.getUniqueId());
                 vex.remove();
             }
         }

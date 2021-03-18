@@ -3,6 +3,7 @@ package apple.voltskiya.custom_mobs.heartbeat.tick.orbital_strike;
 import apple.voltskiya.custom_mobs.DistanceUtils;
 import apple.voltskiya.custom_mobs.Pair;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
+import apple.voltskiya.custom_mobs.heartbeat.tick.MobListSql;
 import apple.voltskiya.custom_mobs.heartbeat.tick.main.UpdatedPlayerList;
 import org.bukkit.*;
 import org.bukkit.entity.*;
@@ -43,11 +44,13 @@ public class OrbitalStrikeIndividualTicker {
             Entity striker = Bukkit.getEntity(strikerUid.getKey());
             if (striker == null) {
                 // remove this striker D:
+                MobListSql.removeMob(strikerUid.getKey());
                 strikerUidIterator.remove();
                 trim = true;
             } else {
                 tickStriker(striker, strikerUid);
                 if (OrbitalStrikeManagerTicker.get().amIGivingStriker(striker, closeness, strikerUid.getValue())) {
+                    MobListSql.removeMob(strikerUid.getKey());
                     strikerUidIterator.remove();
                     trim = true;
                 }

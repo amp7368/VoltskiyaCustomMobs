@@ -1,6 +1,7 @@
 package apple.voltskiya.custom_mobs.heartbeat.tick.lost_soul;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
+import apple.voltskiya.custom_mobs.heartbeat.tick.MobListSql;
 import apple.voltskiya.custom_mobs.heartbeat.tick.SpawnEater;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -32,7 +33,10 @@ public class BlemishSpawnManager extends SpawnEater implements Listener {
         Bukkit.getPluginManager().registerEvents(this, VoltskiyaPlugin.get());
         for (UUID mob : getMobs()) {
             @Nullable Entity ghast = Bukkit.getEntity(mob);
-            if (ghast == null) continue;
+            if (ghast == null) {
+                MobListSql.removeMob(mob);
+                continue;
+            }
             ghasts.add(mob);
         }
     }
@@ -112,7 +116,11 @@ public class BlemishSpawnManager extends SpawnEater implements Listener {
     private void trim() {
         ghasts.removeIf(u -> {
             Entity g = Bukkit.getEntity(u);
-            return g == null || g.isDead();
+            if( g == null || g.isDead()){
+                MobListSql.removeMob(u);
+                return true;
+            }
+            return false;
         });
     }
 

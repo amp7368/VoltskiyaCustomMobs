@@ -84,7 +84,7 @@ public class MobListSql {
             statement.execute(String.format(String.format(
                     "INSERT INTO %s (%s, %s)\n" +
                             "VALUES ((SELECT %s FROM %s WHERE %s = '%%s'), '%%s') ON CONFLICT (%s,%s) DO NOTHING",
-                    MOB_UID_TABLE, MOB_TYPE_UID, MOB_UUID, MOB_TYPE_UID, MOB_TYPE_TO_TYPE_UID_TABLE, MOB_TYPE_NAME,MOB_TYPE_UID,MOB_UUID),
+                    MOB_UID_TABLE, MOB_TYPE_UID, MOB_UUID, MOB_TYPE_UID, MOB_TYPE_TO_TYPE_UID_TABLE, MOB_TYPE_NAME, MOB_TYPE_UID, MOB_UUID),
                     name, uuid
             ));
             statement.close();
@@ -95,10 +95,23 @@ public class MobListSql {
         synchronized (syncDB) {
             Statement statement = database.createStatement();
             statement.execute(String.format("INSERT INTO %s (%s, %s)\n" +
-                    "VALUES ((SELECT max(%s) FROM %s) + 1, '%s')\n" +
-                    "ON CONFLICT (%s) DO NOTHING\n",
+                            "VALUES ((SELECT max(%s) FROM %s) + 1, '%s')\n" +
+                            "ON CONFLICT (%s) DO NOTHING\n",
                     MOB_TYPE_TO_TYPE_UID_TABLE, MOB_TYPE_UID, MOB_TYPE_NAME, MOB_TYPE_UID, MOB_TYPE_TO_TYPE_UID_TABLE, name, MOB_TYPE_NAME));
             statement.close();
+        }
+    }
+
+    public static void removeMob(UUID reviverUuid)  {
+        synchronized (syncDB) {
+            try {
+                Statement statement = database.createStatement();
+                statement.execute(String.format("DELETE FROM %s\n" +
+                        "WHERE %s = '%s'", MOB_UID_TABLE, MOB_UUID, reviverUuid.toString()));
+                statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

@@ -1,5 +1,7 @@
 package apple.voltskiya.custom_mobs.heartbeat.tick.revive;
 
+import apple.voltskiya.custom_mobs.heartbeat.MobTickPlugin;
+import apple.voltskiya.custom_mobs.heartbeat.tick.MobListSql;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.Nullable;
@@ -35,12 +37,14 @@ public class ReviverIndividualTicker {
             UUID reviverUuid = reviverIterator.next();
             @Nullable Entity reviver = Bukkit.getEntity(reviverUuid);
             if (reviver == null || reviver.isDead()) {
+                MobListSql.removeMob(reviverUuid);
                 reviverIterator.remove();
                 trim = true;
                 continue;
             }
             tickReviver(reviver);
             if (ReviverManagerTicker.get().amIGivingReviver(reviver, closeness)) {
+                MobListSql.removeMob(reviverUuid);
                 reviverIterator.remove();
                 trim = true;
             }
