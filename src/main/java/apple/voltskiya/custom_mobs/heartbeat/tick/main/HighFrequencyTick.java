@@ -42,8 +42,12 @@ public class HighFrequencyTick implements Tickable, TickGiverable {
     public void remove(long uid) {
         synchronized (tickering) {
             tickering.remove(uid);
-            System.out.println(uid);
         }
+    }
+
+    @Override
+    public int getTickSpeed() {
+        return TICKS_PER_TICK;
     }
 
     public static HighFrequencyTick get() {

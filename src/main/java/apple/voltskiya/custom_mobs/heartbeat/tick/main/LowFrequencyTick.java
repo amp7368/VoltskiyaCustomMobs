@@ -45,6 +45,11 @@ public class LowFrequencyTick implements Tickable, TickGiverable {
         }
     }
 
+    @Override
+    public int getTickSpeed() {
+        return TICKS_PER_TICK;
+    }
+
     public static LowFrequencyTick get() {
         return instance;
     }

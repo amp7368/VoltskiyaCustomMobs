@@ -1,8 +1,10 @@
 package apple.voltskiya.custom_mobs.heartbeat.tick.main;
 
+import apple.voltskiya.custom_mobs.DistanceUtils;
 import apple.voltskiya.custom_mobs.heartbeat.tick.Tickable;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
@@ -38,12 +40,30 @@ public class UpdatedPlayerList implements Tickable {
                 for (Vector corner : corners) if (b.contains(corner)) return p;
                 if (b.contains(other)) return p;
                 b = other;
+                other = p.getBoundingBox();
                 corners = getCorners(p.getBoundingBox());
-                for (Vector corner : corners) if (other.contains(corner)) return p;
+                for (Vector corner : corners) if (b.contains(corner)) return p;
                 if (other.contains(b)) return p;
             }
         }
         return null;
+    }
+
+    @Nullable
+    public static Player getClosestPlayer(Location location) {
+        Player closest = null;
+        double distance = -1;
+        for (Player p : players) {
+            if (p.getGameMode() == GameMode.SURVIVAL) {
+                Location pLocation = p.getLocation();
+                double d = DistanceUtils.distance(location, pLocation);
+                if (d < distance) {
+                    distance = d;
+                    closest = p;
+                }
+            }
+        }
+        return closest;
     }
 
     private static Vector[] getCorners(BoundingBox other) {
@@ -68,6 +88,7 @@ public class UpdatedPlayerList implements Tickable {
         }
         return corners;
     }
+
 
     @Override
     public void tick() {

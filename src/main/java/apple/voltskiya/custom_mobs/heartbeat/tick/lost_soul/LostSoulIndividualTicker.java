@@ -5,13 +5,12 @@ import apple.voltskiya.custom_mobs.heartbeat.tick.main.TickGiverable;
 import apple.voltskiya.custom_mobs.heartbeat.tick.main.UpdatedPlayerList;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.entity.*;
-import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Random;
 import java.util.UUID;
 
 public class LostSoulIndividualTicker implements Tickable {
@@ -21,7 +20,6 @@ public class LostSoulIndividualTicker implements Tickable {
     private boolean isTicking = false;
     private boolean isCheckCollision = false;
     private long myTickerUid = -1;
-    private final Random random = new Random();
 
     public LostSoulIndividualTicker(TickGiverable giver, LostSoulManagerTicker.Closeness closeness) {
         this.giver = giver;
@@ -62,16 +60,9 @@ public class LostSoulIndividualTicker implements Tickable {
             Player player = UpdatedPlayerList.getCollision(vex.getBoundingBox());
             if (player != null) {
                 Location location = vex.getLocation();
-                location.getWorld().spawnEntity(player.getEyeLocation(), EntityType.WITHER_SKULL, CreatureSpawnEvent.SpawnReason.CUSTOM, e -> {
-                    final WitherSkull skull = (WitherSkull) e;
-                    skull.setCharged(true);
-                    skull.setIsIncendiary(true);
-
-                    final Vector down = new Vector(0, -1, 0);
-                    skull.setDirection(down);
-                    e.setVelocity(down);
-
-                });
+                location.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, player.getEyeLocation(), 0);
+                location.getWorld().playSound(player.getEyeLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1, 1);
+                player.damage(LostSoulManagerTicker.get().DAMAGE_AMOUNT, vex);
                 vex.remove();
             }
         }

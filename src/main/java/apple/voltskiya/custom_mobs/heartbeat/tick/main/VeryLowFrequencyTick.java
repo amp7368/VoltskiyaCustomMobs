@@ -46,6 +46,11 @@ public class VeryLowFrequencyTick implements Tickable, TickGiverable {
         }
     }
 
+    @Override
+    public int getTickSpeed() {
+        return TICKS_PER_TICK;
+    }
+
     public static VeryLowFrequencyTick get() {
         return instance;
     }

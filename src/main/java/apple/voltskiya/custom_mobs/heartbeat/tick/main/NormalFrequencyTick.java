@@ -47,6 +47,11 @@ public class NormalFrequencyTick implements Tickable,TickGiverable {
         }
     }
 
+    @Override
+    public int getTickSpeed() {
+        return TICKS_PER_TICK;
+    }
+
     public static NormalFrequencyTick get() {
         return instance;
     }
