@@ -4,7 +4,6 @@ import apple.voltskiya.custom_mobs.DistanceUtils;
 import apple.voltskiya.custom_mobs.heartbeat.tick.MobListSql;
 import apple.voltskiya.custom_mobs.heartbeat.tick.SpawnEater;
 import apple.voltskiya.custom_mobs.heartbeat.tick.main.*;
-import apple.voltskiya.custom_mobs.heartbeat.tick.orbital_strike.OrbitalStrikeManagerTicker;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -14,7 +13,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -82,16 +80,12 @@ public class ReviverManagerTicker extends SpawnEater {
     private Closeness determineConcern(Entity reviver) {
         Location reviverLocation = reviver.getLocation();
 
-        List<Player> players = UpdatedPlayerList.getPlayers();
-        for (Player player : players) {
-            Location playerLocation = player.getLocation();
-            return Closeness.getCloseness(reviverLocation, playerLocation);
-        }
-        return Closeness.lowest();
+        @Nullable Player player = UpdatedPlayerList.getClosestPlayer(reviverLocation);
+        return player==null?Closeness.lowest(): Closeness.getCloseness(reviverLocation, player.getLocation());
     }
 
     enum Closeness {
-        HIGH_CLOSE(20, NormalFrequencyTick.get()),
+        HIGH_CLOSE(15, NormalFrequencyTick.get()),
         NORMAL_CLOSE(50, LowFrequencyTick.get()),
         LOW_CLOSE(70, VeryLowFrequencyTick.get());
 
@@ -124,8 +118,8 @@ public class ReviverManagerTicker extends SpawnEater {
     }
 
     private enum YmlSettings {
-        REVIVE_CHANCE("reviveChance", .01d),
-        REVIVE_DISTANCE("reviveDistance", 10);
+        REVIVE_CHANCE("reviveChance", 0.0125d),
+        REVIVE_DISTANCE("reviveDistance", 15);
 
         private final String path;
         private final Object value;

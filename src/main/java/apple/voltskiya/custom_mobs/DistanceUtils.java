@@ -4,6 +4,9 @@ import org.bukkit.Location;
 
 public class DistanceUtils {
     public static double distance(Location aLocation, Location bLocation) {
+        if (aLocation.getWorld().getUID() != bLocation.getWorld().getUID()) {
+            return Double.MAX_VALUE;
+        }
         int aX = aLocation.getBlockX();
         int aY = aLocation.getBlockY();
         int aZ = aLocation.getBlockZ();

@@ -52,7 +52,7 @@ public class UpdatedPlayerList implements Tickable {
     @Nullable
     public static Player getClosestPlayer(Location location) {
         Player closest = null;
-        double distance = -1;
+        double distance = Integer.MAX_VALUE;
         for (Player p : players) {
             if (p.getGameMode() == GameMode.SURVIVAL) {
                 Location pLocation = p.getLocation();
@@ -127,7 +127,7 @@ public class UpdatedPlayerList implements Tickable {
         VERY_LOW_400(400, null),
         LOW_20(20, VERY_LOW_400),
         MEDIUM_10(10, LOW_20),
-        HIGH_1(1, MEDIUM_10);
+        HIGH_1(2, MEDIUM_10);
 
         private final int ticks;
         private final Concern lower;

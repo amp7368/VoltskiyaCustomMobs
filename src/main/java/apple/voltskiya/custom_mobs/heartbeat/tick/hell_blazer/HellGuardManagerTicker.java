@@ -1,54 +1,48 @@
-package apple.voltskiya.custom_mobs.heartbeat.tick.lost_soul;
+package apple.voltskiya.custom_mobs.heartbeat.tick.hell_blazer;
 
 import apple.voltskiya.custom_mobs.DistanceUtils;
 import apple.voltskiya.custom_mobs.heartbeat.tick.SpawnEater;
 import apple.voltskiya.custom_mobs.heartbeat.tick.main.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Vex;
+import org.bukkit.entity.*;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
-public class LostSoulManagerTicker extends SpawnEater {
-    protected final double DAMAGE_AMOUNT;
-    private static LostSoulManagerTicker instance;
-    private final Map<Closeness, LostSoulIndividualTicker> closenessToVexes = new HashMap<>() {{
+public class HellGuardManagerTicker extends SpawnEater {
+    private static HellGuardManagerTicker instance;
+    private final Map<Closeness, HellGuardIndividualTicker> closenessToHellBlazeres = new HashMap<>() {{
         for (Closeness closeness : Closeness.values())
-            put(closeness, new LostSoulIndividualTicker(closeness.getGiver(), closeness));
+            put(closeness, new HellGuardIndividualTicker(closeness.getGiver(), closeness));
     }};
 
-    public LostSoulManagerTicker() throws IOException {
+    public HellGuardManagerTicker() throws IOException {
         instance = this;
-        closenessToVexes.get(Closeness.HIGH_CLOSE).setIsCheckCollision();
-        DAMAGE_AMOUNT = (double) getValueOrInit(YmlSettings.DAMAGE_AMOUNT.getPath());
         for (UUID mob : getMobs()) {
-            @Nullable Entity striker = Bukkit.getEntity(mob);
-            if (!(striker instanceof Vex)) continue;
-            Closeness closeness = determineConcern((Vex) striker);
-            closenessToVexes.get(closeness).giveVex((Vex) striker);
+            @Nullable Entity hellBlazer = Bukkit.getEntity(mob);
+            if (!(hellBlazer instanceof LivingEntity)) continue;
+            Closeness closeness = determineConcern((LivingEntity) hellBlazer);
+            closenessToHellBlazeres.get(closeness).giveHellBlazer((LivingEntity) hellBlazer);
         }
     }
 
-    public static LostSoulManagerTicker get() {
+    public static HellGuardManagerTicker get() {
         return instance;
     }
 
     @Override
     public void eatEvent(CreatureSpawnEvent event) {
-        if (event.getEntity().getType() == EntityType.VEX) {
-            // this is a vex
-            final Vex vex = (Vex) event.getEntity();
-            Closeness closeness = determineConcern(vex);
-            closenessToVexes.get(closeness).giveVex(vex);
-            addMobs(vex.getUniqueId());
-        }
+        // this is a hellBlazer
+        final LivingEntity hellBlazer = (LivingEntity) event.getEntity();
+        Closeness closeness = determineConcern(hellBlazer);
+        closenessToHellBlazeres.get(closeness).giveHellBlazer(hellBlazer);
+        addMobs(hellBlazer.getUniqueId());
     }
 
     @Override
@@ -62,22 +56,22 @@ public class LostSoulManagerTicker extends SpawnEater {
     }
 
 
-    public boolean amIGivingVex(Vex vex, Closeness currentCloseness) {
-        Closeness actualCloseness = determineConcern(vex);
+    public boolean amIGivingHellBlazer(LivingEntity hellBlazer, Closeness currentCloseness) {
+        Closeness actualCloseness = determineConcern(hellBlazer);
         if (actualCloseness != currentCloseness) {
-            closenessToVexes.get(actualCloseness).giveVex(vex);
+            closenessToHellBlazeres.get(actualCloseness).giveHellBlazer(hellBlazer);
             return true;
         }
         return false;
     }
 
-    private Closeness determineConcern(Vex vex) {
-        Location vexLocation = vex.getLocation();
+    private Closeness determineConcern(LivingEntity hellBlazer) {
+        Location hellBlazerLocation = hellBlazer.getLocation();
 
         List<Player> players = UpdatedPlayerList.getPlayers();
         for (Player player : players) {
             Location playerLocation = player.getLocation();
-            return Closeness.getCloseness(vexLocation, playerLocation);
+            return Closeness.getCloseness(hellBlazerLocation, playerLocation);
         }
         return Closeness.lowest();
     }
@@ -115,8 +109,9 @@ public class LostSoulManagerTicker extends SpawnEater {
         }
     }
 
+
     private enum YmlSettings {
-        DAMAGE_AMOUNT("damageAmount", 2d);
+        ;
 
         private final String path;
         private final Object value;
