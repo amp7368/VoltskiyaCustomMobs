@@ -17,7 +17,6 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.UUID;
 
-import static apple.voltskiya.custom_mobs.heartbeat.tick.orbital_strike.OrbitalStrikeManagerTicker.*;
 
 public class OrbitalStrikeIndividualTicker {
     private final OrbitalStrikeManagerTicker.Closeness closeness;
@@ -153,19 +152,6 @@ public class OrbitalStrikeIndividualTicker {
             }, time);
         }
 
-//        // make flame tower happen
-//        for (int time = 0; time < STRIKE_TIME; time += 5) {
-//            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-//                for (int i = 0; i < 100; i++) {
-//                    double theta = random.nextDouble() * 360;
-//                    double radius = random.nextDouble() * .35;
-//                    double height = random.nextDouble() * OrbitalStrikeManagerTicker.STRIKE_TARGET_TOWER_HEIGHT;
-//                    double x = Math.cos(Math.toRadians(theta)) * radius;
-//                    double z = Math.sin(Math.toRadians(theta)) * radius;
-//                    targetWorld.spawnParticle(Particle.FLAME, xt + x, yt + height, zt + z, 5, 0, 0, 0, 0);
-//                }
-//            }, time);
-//        }
         // make flame outerCircle
         for (int time = 0; time < OrbitalStrikeManagerTicker.get().STRIKE_TIME; time += 5) {
             final double radius = OrbitalStrikeManagerTicker.get().STRIKE_TARGET_RADIUS;

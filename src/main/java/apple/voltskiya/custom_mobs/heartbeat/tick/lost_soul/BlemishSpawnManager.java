@@ -78,20 +78,26 @@ public class BlemishSpawnManager extends SpawnEater implements Listener {
                     directionRight.setX(directionRight.getX() * Math.cos(Math.toRadians(-30)) - Math.sin(Math.toRadians(-30)) * directionRight.getZ());
                     directionRight.setZ(directionRight.getX() * Math.sin(Math.toRadians(-30)) + Math.cos(Math.toRadians(-30)) * directionRight.getZ());
 
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "summon vex " + location.getX() + " " + location.getY() + " " + location.getZ() + " " + SUMMON_VEX);
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "summon vex " + location.getX() + " " + location.getY() + " " + location.getZ() + " " + SUMMON_VEX);
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "summon vex " + location.getX() + " " + location.getY() + " " + location.getZ() + " " + SUMMON_VEX);
 
+                    String cmd = "execute at " + nearby.getUniqueId().toString() + " run summon vex " + location.getX() + " " + location.getY() + " " + location.getZ() + " " + SUMMON_VEX;
+                    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), cmd);
+                    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), cmd);
                     Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
                         @NotNull Collection<? extends Entity> vexes = location.getWorld().getNearbyEntitiesByType(EntityType.VEX.getEntityClass(), location, 2);
                         int i = 0;
                         for (Entity entity : vexes) {
-                            Vector v = switch (i++) {
-                                case 0 -> directionLeft;
-                                case 1 -> direction;
-                                case 2 -> directionRight;
-                                default -> null;
-                            };
+                            Vector v;
+                            switch (i++) {
+                                case 0:
+                                    v = directionLeft;
+                                    break;
+                                case 1:
+                                    v = directionRight;
+                                    break;
+                                default:
+                                    v = null;
+                                    break;
+                            }
                             if (v == null) break;
                             ((Vex) entity).setSummoner((Mob) nearby);
                             entity.setVelocity(v);

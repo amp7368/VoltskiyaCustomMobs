@@ -2,6 +2,7 @@ package apple.voltskiya.custom_mobs.heartbeat.tick.main;
 
 import apple.voltskiya.custom_mobs.heartbeat.tick.Tickable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,7 +23,7 @@ public class HighFrequencyTick implements Tickable, TickGiverable {
         if (currentTick++ % TICKS_PER_TICK == 0) {
             currentTick = 1;
             synchronized (tickering) {
-                for (Runnable runMe : tickering.values()) {
+                for (Runnable runMe : new ArrayList<>(tickering.values())) {
                     runMe.run();
                 }
             }
