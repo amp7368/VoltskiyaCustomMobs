@@ -31,7 +31,7 @@ public abstract class VoltskiyaModule {
 
     public File getDataFolder() {
         File dataFolder = new File(VoltskiyaPlugin.get().getDataFolder(), getName().toLowerCase());
-        if (!dataFolder.exists()) dataFolder.mkdir();
+        if (!dataFolder.exists()) dataFolder.mkdirs();
         return dataFolder;
     }
 

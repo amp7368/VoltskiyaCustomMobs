@@ -69,7 +69,6 @@ public class WarperIndividualTicker {
             Mob mob = (Mob) warper;
             @Nullable LivingEntity target = mob.getTarget();
             if (target == null) {
-
             } else {
                 Location warpTo = null;
                 for (int i = 0; i < 10; i++) {
@@ -78,7 +77,7 @@ public class WarperIndividualTicker {
                 }
                 if (warpTo != null) {
                     particles(warper.getLocation(), warpTo);
-                    mob.teleport(warpTo, PlayerTeleportEvent.TeleportCause.ENDER_PEARL);
+                    mob.teleport(warpTo, PlayerTeleportEvent.TeleportCause.COMMAND);
                     mob.setTarget(target);
                 }
             }

@@ -1,5 +1,6 @@
 package apple.voltskiya.custom_mobs;
 
+import apple.voltskiya.custom_mobs.heartbeat.MobTickPlugin;
 import co.aikar.commands.PaperCommandManager;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
@@ -32,7 +33,16 @@ public class VoltskiyaPlugin extends JavaPlugin {
         instance = this;
         loadDependencies();
         setupACF();
-        registerModules();
+        manuallyLoadModules();
+//        registerModules();
+    }
+
+    private void manuallyLoadModules() {
+        final VoltskiyaModule module = new MobTickPlugin();
+        registerModule(module);
+        if (module.shouldEnable()) {
+            enableModule(module);
+        }
     }
 
     private void loadDependencies() {
