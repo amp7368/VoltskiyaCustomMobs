@@ -1,14 +1,15 @@
 package apple.voltskiya.custom_mobs.heartbeat.tick.revive;
 
+import apple.voltskiya.custom_mobs.DistanceUtils;
+import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.heartbeat.tick.MobListSql;
-import com.destroystokyo.paper.entity.Pathfinder;
-import net.minecraft.server.v1_16_R3.BlockPosition;
+import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftMob;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Mob;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -66,26 +67,58 @@ public class ReviverIndividualTicker {
     private synchronized void tickReviver(Entity reviver) {
         if (isReviving) {
             if (random.nextDouble() < ReviverManagerTicker.get().REVIVE_CHANCE * closeness.getGiver().getTickSpeed()) {
-                revive(reviver);
+                reviveGoal(reviver);
             }
         }
     }
 
-    private synchronized void revive(Entity entity) {
-        ReviveDeadManager.RecordedMob mobToRevive = ReviveDeadManager.get().revive(entity.getLocation());
-        if (mobToRevive != null && entity instanceof Mob) {
-            CraftMob reviver = (CraftMob) entity;
-            @Nullable Pathfinder.PathResult path = reviver.getPathfinder().findPath(mobToRevive.getEntity().getLocation());
-            if (path != null) {
-                Location target = mobToRevive.getEntity().getLocation();
-                int x = target.getBlockX();
-                int y = target.getBlockY();
-                int z = target.getBlockZ();
-            }
-        }
-    }
 
     public void setIsReviving() {
         this.isReviving = true;
+    }
+
+    private synchronized void reviveGoal(Entity entity) {
+        ReviveDeadManager.RecordedMob mobToRevive = ReviveDeadManager.get().reviveStart(entity.getLocation());
+        if (mobToRevive != null && entity instanceof CraftMob) {
+            CraftMob reviver = (CraftMob) entity;
+            Location target = mobToRevive.getEntity().getLocation();
+            new MoveToTarget(mobToRevive, target, reviver, 0).run();
+        }
+    }
+
+    private static class MoveToTarget implements Runnable {
+        private final ReviveDeadManager.RecordedMob reviveMe;
+        private final Location target;
+        private final CraftMob reviver;
+        private final int count;
+        private static final int MAX_COUNT = 200;
+
+        public MoveToTarget(ReviveDeadManager.RecordedMob reviveMe, Location target, CraftMob reviver, int count) {
+            this.reviveMe = reviveMe;
+            this.target = target;
+            this.reviver = reviver;
+            this.count = count;
+        }
+
+        @Override
+        public void run() {
+            if (reviver.isDead() || count == MAX_COUNT) {
+                return;
+            }
+            int x = target.getBlockX();
+            int y = target.getBlockY();
+            int z = target.getBlockZ();
+            PotionEffect speed = new PotionEffect(PotionEffectType.SPEED, 20, 1, false, false);
+            reviver.addPotionEffect(speed);
+            final PathEntity path = reviver.getHandle().getNavigation().a(new BlockPosition(x, y, z), 1);
+            if (DistanceUtils.distance(reviver.getLocation(), target) > 2) {
+                Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
+                    new MoveToTarget(reviveMe, target, reviver, count + 1).run();
+                }, 1);
+            } else {
+                ReviveDeadManager.get().reviveStart(reviveMe, reviver);
+            }
+            reviver.getHandle().getNavigation().a(path, 1f);
+        }
     }
 }

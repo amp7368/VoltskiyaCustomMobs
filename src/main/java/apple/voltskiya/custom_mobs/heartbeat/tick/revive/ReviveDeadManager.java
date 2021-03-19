@@ -6,12 +6,20 @@ import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.*;
 import org.bukkit.Particle;
 import org.bukkit.SoundCategory;
+import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftCreature;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftMob;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Mob;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.loot.LootTable;
+import org.bukkit.loot.LootTables;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -62,7 +70,7 @@ public class ReviveDeadManager extends DeathEater {
     }
 
     @Nullable
-    public synchronized RecordedMob revive(Location location) {
+    public synchronized RecordedMob reviveStart(Location location) {
         Iterator<RecordedMob> iterator = dead.iterator();
         while (iterator.hasNext()) {
             RecordedMob mob = iterator.next();
@@ -70,33 +78,75 @@ public class ReviveDeadManager extends DeathEater {
                 iterator.remove();
                 return mob;
             }
-        }return null;
+        }
+        return null;
     }
 
-    private synchronized void revive(RecordedMob mob) {
-        final net.minecraft.server.v1_16_R3.Entity original = ((CraftEntity) mob.getEntity()).getHandle();
+    public synchronized void reviveStart(RecordedMob reviveMe, CraftMob reviver) {
+        reviver.setAI(false);
+
+        final Location reviverLocation = reviver.getLocation();
+        final Location reviveMeLocation = reviveMe.getEntity().getLocation();
+        double x = reviveMeLocation.getX() - reviverLocation.getX();
+        double z = reviveMeLocation.getZ() - reviverLocation.getZ();
+        double magnitude = x * x + z * z;
+
+        Location newLoc = reviverLocation.setDirection(new Vector(x / magnitude, -.5, z / magnitude));
+        reviver.teleport(newLoc);
+
+        final World world = reviverLocation.getWorld();
+        world.playSound(reviveMe.location, Sound.BLOCK_BEACON_DEACTIVATE, SoundCategory.HOSTILE, 35, .7f);
+        final int time = ReviverManagerTicker.get().REVIVE_RITUAL_TIME + TIME_TO_RISE;
+        for (int timeI = 0; timeI < time; timeI += 3) {
+            Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
+                double xLoc = reviverLocation.getX();
+                double yLoc = reviverLocation.getY();
+                double zLoc = reviverLocation.getZ();
+                for (int i = 0; i < 15; i++) {
+                    double xi = random.nextDouble() - .5;
+                    double yi = random.nextDouble() * 2;
+                    double zi = random.nextDouble() - .5;
+                    world.spawnParticle(Particle.REDSTONE, xLoc + xi, yLoc + yi, zLoc + zi, 1, new Particle.DustOptions(Color.RED, 1f));
+                }
+            }, timeI);
+        }
+        Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
+            if (!reviver.isDead()) {
+                reviver.setAI(true);
+                reviver.removePotionEffect(PotionEffectType.SPEED);
+                reviveProcess(reviveMe, reviver);
+            }
+        }, time);
+    }
+
+    public synchronized void reviveProcess(RecordedMob reviveMe, CraftMob reviver) {
+        final net.minecraft.server.v1_16_R3.Entity original = ((CraftEntity) reviveMe.getEntity()).getHandle();
         NBTTagCompound nbt = new NBTTagCompound();
         original.save(nbt);
-        mob.location.getWorld().spawnEntity(mob.location, mob.getEntity().getType(), CreatureSpawnEvent.SpawnReason.CUSTOM,
+        reviveMe.location.getWorld().spawnEntity(reviveMe.location, reviveMe.getEntity().getType(), CreatureSpawnEvent.SpawnReason.CUSTOM,
                 newMob -> {
                     final net.minecraft.server.v1_16_R3.Entity newMobHandle = ((CraftEntity) newMob).getHandle();
                     nbt.set("UUID", NBTTagString.a(newMobHandle.getUniqueIDString()));
                     nbt.set("DeathTime", NBTTagInt.a(0));
                     newMobHandle.load(nbt);
-                    ((LivingEntity) newMob).getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(mob.getHealth());
-                    ((LivingEntity) newMob).setHealth(mob.getHealth());
-                    if(newMob.getScoreboardTags().contains("was_revived_1")){
+                    ((LivingEntity) newMob).getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(reviveMe.getHealth());
+                    ((LivingEntity) newMob).setHealth(reviveMe.getHealth());
+                    if (newMob.getScoreboardTags().contains("was_revived_1")) {
                         newMob.addScoreboardTag("was_revived_2");
-                    }else{
+                    } else {
                         newMob.addScoreboardTag("was_revived_1");
                     }
                     ((LivingEntity) newMob).setAI(false);
                     newMob.setInvulnerable(true);
-                    mob.location.add(0, -3, 0);
-                    mob.location.setPitch(-55);
-                    newMob.teleport(mob.location);
+                    reviveMe.location.add(0, -3, 0);
+                    reviveMe.location.setPitch(-55);
+                    newMob.teleport(reviveMe.location);
                     double interval = 3d / TIME_TO_RISE;
                     for (int time = 0; time < TIME_TO_RISE; time++) {
+                        if (time % 3 == 0)
+                            Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
+                                reviver.getLocation().getWorld().playSound(reviver.getLocation(), Sound.BLOCK_GRAVEL_BREAK, 6, 0.75f);
+                            }, time);
                         Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
                             Location newLocation = newMob.getLocation();
                             particles(newLocation);
@@ -107,10 +157,10 @@ public class ReviveDeadManager extends DeathEater {
                     Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
                         ((LivingEntity) newMob).setAI(true);
                         newMob.setInvulnerable(false);
+                        ((Mob) newMob).setLootTable(LootTables.EMPTY.getLootTable());
                     }, TIME_TO_RISE);
                 }
         );
-        mob.location.getWorld().playSound(mob.location, Sound.BLOCK_BEACON_DEACTIVATE, SoundCategory.HOSTILE, 30, .7f);
 
     }
 

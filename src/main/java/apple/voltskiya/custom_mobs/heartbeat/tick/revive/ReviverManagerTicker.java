@@ -18,6 +18,7 @@ import java.util.UUID;
 
 public class ReviverManagerTicker extends SpawnEater {
 
+    public int REVIVE_RITUAL_TIME;
     public double REVIVE_DISTANCE;
     public double REVIVE_CHANCE;
     private final Map<Closeness, ReviverIndividualTicker> closenessToReviveres = new HashMap<>() {{
@@ -33,6 +34,7 @@ public class ReviverManagerTicker extends SpawnEater {
         instance = this;
         REVIVE_CHANCE = (double) getValueOrInit(getName(), YmlSettings.REVIVE_CHANCE.getPath(), "reviver");
         REVIVE_DISTANCE = (int) getValueOrInit(getName(), YmlSettings.REVIVE_DISTANCE.getPath(), "reviver");
+        REVIVE_RITUAL_TIME = (int) getValueOrInit(getName(), YmlSettings.REVIVE_RITUAL_TIME.getPath(), "reviver");
         for (UUID mob : getMobs()) {
             @Nullable Entity striker = Bukkit.getEntity(mob);
             if (striker == null) {
@@ -82,14 +84,14 @@ public class ReviverManagerTicker extends SpawnEater {
     private Closeness determineConcern(Entity reviver) {
         Location reviverLocation = reviver.getLocation();
 
-        @Nullable Player player = UpdatedPlayerList.getClosestPlayer(reviverLocation,callerUid);
-        return player==null?Closeness.lowest(): Closeness.getCloseness(reviverLocation, player.getLocation());
+        @Nullable Player player = UpdatedPlayerList.getClosestPlayer(reviverLocation, callerUid);
+        return player == null ? Closeness.lowest() : Closeness.getCloseness(reviverLocation, player.getLocation());
     }
 
     enum Closeness {
         HIGH_CLOSE(15, NormalFrequencyTick.get()),
-        NORMAL_CLOSE(50, LowFrequencyTick.get()),
-        LOW_CLOSE(70, VeryLowFrequencyTick.get());
+        NORMAL_CLOSE(50, NormalFrequencyTick.get()),
+        LOW_CLOSE(70, NormalFrequencyTick.get());
 
         private final double distance;
         private static final Closeness[] order = new Closeness[]{HIGH_CLOSE, NORMAL_CLOSE, LOW_CLOSE};
@@ -120,8 +122,9 @@ public class ReviverManagerTicker extends SpawnEater {
     }
 
     private enum YmlSettings {
-        REVIVE_CHANCE("reviveChance", 0.0125d),
-        REVIVE_DISTANCE("reviveDistance", 15);
+        REVIVE_CHANCE("reviveChance", 0.03),
+        REVIVE_DISTANCE("reviveDistance", 15),
+        REVIVE_RITUAL_TIME("reviveRitualTime", 13);
 
         private final String path;
         private final Object value;
