@@ -1,4 +1,4 @@
-package apple.voltskiya.custom_mobs.heartbeat.tick.orbital_strike;
+package apple.voltskiya.custom_mobs.heartbeat.tick.orbital_strike.large;
 
 import apple.voltskiya.custom_mobs.DistanceUtils;
 import apple.voltskiya.custom_mobs.heartbeat.tick.MobListSql;
@@ -13,9 +13,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.List;
 
 public class OrbitalStrikeManagerTicker extends SpawnEater {
+    public final double STRIKE_MOVEMENT_SPEED;
+    public final double STRIKE_MOVEMENT_LAG;
     public final double STRIKE_CHANCE;
     public final long STRIKE_COOLDOWN;
     public final double STRIKE_DISTANCE;
@@ -42,6 +43,8 @@ public class OrbitalStrikeManagerTicker extends SpawnEater {
         this.STRIKE_TIME = (int) getValueOrInit(YmlSettings.STRIKE_TIME.getPath());
         this.STRIKE_TARGET_TIME = (int) getValueOrInit(YmlSettings.STRIKE_TARGET_TIME.getPath());
         this.DESTRUCTION_BLAZE_INTERVAL = (double) getValueOrInit(YmlSettings.DESTRUCTION_BLAZE_INTERVAL.getPath());
+        this.STRIKE_MOVEMENT_SPEED = (double) getValueOrInit(YmlSettings.STRIKE_MOVEMENT_SPEED.getPath());
+        this.STRIKE_MOVEMENT_LAG = (int) getValueOrInit(YmlSettings.STRIKE_MOVEMENT_LAG.getPath());
         instance = this;
         closenessToStrikeres.get(Closeness.HIGH_CLOSE).setIsCheckStrike();
         for (UUID mob : getMobs()) {
@@ -92,12 +95,12 @@ public class OrbitalStrikeManagerTicker extends SpawnEater {
     private Closeness determineConcern(Entity striker) {
         Location strikerLocation = striker.getLocation();
 
-        List<Player> players = UpdatedPlayerList.getPlayers(callerUid);
-        for (Player player : players) {
-            Location playerLocation = player.getLocation();
-            return Closeness.getCloseness(strikerLocation, playerLocation);
-        }
-        return Closeness.lowest();
+
+        @Nullable Player player = UpdatedPlayerList.getClosestPlayer(strikerLocation, callerUid);
+        if (player == null)
+            return Closeness.lowest();
+        else
+            return Closeness.getCloseness(strikerLocation, player.getLocation());
     }
 
     enum Closeness {
@@ -140,7 +143,9 @@ public class OrbitalStrikeManagerTicker extends SpawnEater {
         STRIKE_HEIGHT("height", 20),
         STRIKE_TIME("totalTime", 300),
         STRIKE_TARGET_TIME("targetTime", 30),
-        DESTRUCTION_BLAZE_INTERVAL("shootInterval", 1d);
+        DESTRUCTION_BLAZE_INTERVAL("shootInterval", 1d),
+        STRIKE_MOVEMENT_SPEED("movementSpeed", .01),
+        STRIKE_MOVEMENT_LAG("movementTargetLag", 20);
 
         private final String path;
         private final Object value;

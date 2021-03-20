@@ -5,7 +5,7 @@ import apple.voltskiya.custom_mobs.heartbeat.tick.SpawnEater;
 import apple.voltskiya.custom_mobs.heartbeat.tick.hell_blazer.HellGuardManagerTicker;
 import apple.voltskiya.custom_mobs.heartbeat.tick.lost_soul.BlemishSpawnManager;
 import apple.voltskiya.custom_mobs.heartbeat.tick.lost_soul.LostSoulManagerTicker;
-import apple.voltskiya.custom_mobs.heartbeat.tick.orbital_strike.OrbitalStrikeManagerTicker;
+import apple.voltskiya.custom_mobs.heartbeat.tick.orbital_strike.large.OrbitalStrikeManagerTicker;
 import apple.voltskiya.custom_mobs.heartbeat.tick.revive.ReviverManagerTicker;
 import apple.voltskiya.custom_mobs.heartbeat.tick.warper.WarperManagerTicker;
 import org.bukkit.Bukkit;

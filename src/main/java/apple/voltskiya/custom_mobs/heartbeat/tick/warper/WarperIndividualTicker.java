@@ -14,7 +14,7 @@ import java.util.*;
 
 public class WarperIndividualTicker {
     private final WarperManagerTicker.Closeness closeness;
-    private boolean isWarping;
+    private boolean isWarping = false;
     private final ArrayList<UUID> warpers = new ArrayList<>();
     private boolean isTicking = false;
     private final Random random = new Random();
@@ -51,8 +51,10 @@ public class WarperIndividualTicker {
             }
         }
         if (trim) {
-            closeness.getGiver().remove(tickering);
-            this.isTicking = false;
+            if (warpers.isEmpty()) {
+                closeness.getGiver().remove(tickering);
+                this.isTicking = false;
+            }
             warpers.trimToSize();
         }
     }

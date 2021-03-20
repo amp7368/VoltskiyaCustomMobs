@@ -75,12 +75,11 @@ public class LostSoulManagerTicker extends SpawnEater {
     private Closeness determineConcern(Vex vex) {
         Location vexLocation = vex.getLocation();
 
-        List<Player> players = UpdatedPlayerList.getPlayers(callerUid);
-        for (Player player : players) {
-            Location playerLocation = player.getLocation();
-            return Closeness.getCloseness(vexLocation, playerLocation);
-        }
-        return Closeness.lowest();
+        @Nullable Player player = UpdatedPlayerList.getClosestPlayer(vexLocation, callerUid);
+        if (player == null)
+            return Closeness.lowest();
+        else
+            return Closeness.getCloseness(vexLocation, player.getLocation());
     }
 
     enum Closeness {
