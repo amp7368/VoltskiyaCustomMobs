@@ -2,6 +2,7 @@ package apple.voltskiya.custom_mobs.heartbeat.tick.listeners;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.heartbeat.tick.SpawnEater;
+import apple.voltskiya.custom_mobs.heartbeat.tick.charger.ChargerManagerTicker;
 import apple.voltskiya.custom_mobs.heartbeat.tick.hell_blazer.HellGuardManagerTicker;
 import apple.voltskiya.custom_mobs.heartbeat.tick.lost_soul.BlemishSpawnManager;
 import apple.voltskiya.custom_mobs.heartbeat.tick.lost_soul.LostSoulManagerTicker;
@@ -29,6 +30,7 @@ public class MobSpawnListener implements Listener {
             spawnEater.put("warper", new WarperManagerTicker());
             spawnEater.put("reviver", new ReviverManagerTicker());
             spawnEater.put("hell_blazer", new HellGuardManagerTicker());
+            spawnEater.put("charger", new ChargerManagerTicker());
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassCastException e) {

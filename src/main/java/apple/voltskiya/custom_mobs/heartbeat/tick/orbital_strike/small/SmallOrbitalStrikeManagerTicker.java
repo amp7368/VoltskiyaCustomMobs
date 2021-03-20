@@ -1,4 +1,4 @@
-package apple.voltskiya.custom_mobs.heartbeat.tick.orbital_strike.large;
+package apple.voltskiya.custom_mobs.heartbeat.tick.orbital_strike.small;
 
 import apple.voltskiya.custom_mobs.DistanceUtils;
 import apple.voltskiya.custom_mobs.heartbeat.tick.MobListSql;
@@ -12,9 +12,11 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
-public class OrbitalStrikeManagerTicker extends SpawnEater {
+public class SmallOrbitalStrikeManagerTicker extends SpawnEater {
     public final double STRIKE_MOVEMENT_SPEED;
     public final double STRIKE_MOVEMENT_LAG;
     public final double STRIKE_CHANCE;
@@ -27,24 +29,24 @@ public class OrbitalStrikeManagerTicker extends SpawnEater {
     public final int STRIKE_TARGET_TIME;
     public final double DESTRUCTION_BLAZE_INTERVAL;
 
-    private static OrbitalStrikeManagerTicker instance;
-    private final Map<Closeness, OrbitalStrikeIndividualTicker> closenessToStrikeres = new HashMap<>() {{
+    private static SmallOrbitalStrikeManagerTicker instance;
+    private final Map<Closeness, SmallOrbitalStrikeIndividualTicker> closenessToStrikeres = new HashMap<>() {{
         for (Closeness closeness : Closeness.values())
-            put(closeness, new OrbitalStrikeIndividualTicker(closeness));
+            put(closeness, new SmallOrbitalStrikeIndividualTicker(closeness));
     }};
     private final long callerUid = UpdatedPlayerList.callerUid();
 
-    public OrbitalStrikeManagerTicker() throws IOException {
-        this.STRIKE_CHANCE = (double) getValueOrInit("large", YmlSettings.STRIKE_CHANCE.getPath());
-        this.STRIKE_COOLDOWN = (1000L / 20 * (int) getValueOrInit("large", YmlSettings.STRIKE_COOLDOWN.getPath()));
-        this.STRIKE_DISTANCE = (int) getValueOrInit("large", YmlSettings.STRIKE_DISTANCE.getPath());
-        this.STRIKE_TARGET_RADIUS = (double) getValueOrInit("large", YmlSettings.STRIKE_TARGET_RADIUS.getPath());
-        this.STRIKE_HEIGHT = (int) getValueOrInit("large", YmlSettings.STRIKE_HEIGHT.getPath());
-        this.STRIKE_TIME = (int) getValueOrInit("large", YmlSettings.STRIKE_TIME.getPath());
-        this.STRIKE_TARGET_TIME = (int) getValueOrInit("large", YmlSettings.STRIKE_TARGET_TIME.getPath());
-        this.DESTRUCTION_BLAZE_INTERVAL = (double) getValueOrInit("large", YmlSettings.DESTRUCTION_BLAZE_INTERVAL.getPath());
-        this.STRIKE_MOVEMENT_SPEED = (double) getValueOrInit("large", YmlSettings.STRIKE_MOVEMENT_SPEED.getPath());
-        this.STRIKE_MOVEMENT_LAG = (int) getValueOrInit("large", YmlSettings.STRIKE_MOVEMENT_LAG.getPath());
+    public SmallOrbitalStrikeManagerTicker() throws IOException {
+        this.STRIKE_CHANCE = (double) getValueOrInit("small", YmlSettings.STRIKE_CHANCE.getPath());
+        this.STRIKE_COOLDOWN = (1000L / 20 * (int) getValueOrInit("small", YmlSettings.STRIKE_COOLDOWN.getPath()));
+        this.STRIKE_DISTANCE = (int) getValueOrInit("small", YmlSettings.STRIKE_DISTANCE.getPath());
+        this.STRIKE_TARGET_RADIUS = (double) getValueOrInit("small", YmlSettings.STRIKE_TARGET_RADIUS.getPath());
+        this.STRIKE_HEIGHT = (int) getValueOrInit("small", YmlSettings.STRIKE_HEIGHT.getPath());
+        this.STRIKE_TIME = (int) getValueOrInit("small", YmlSettings.STRIKE_TIME.getPath());
+        this.STRIKE_TARGET_TIME = (int) getValueOrInit("small", YmlSettings.STRIKE_TARGET_TIME.getPath());
+        this.DESTRUCTION_BLAZE_INTERVAL = (double) getValueOrInit("small", YmlSettings.DESTRUCTION_BLAZE_INTERVAL.getPath());
+        this.STRIKE_MOVEMENT_SPEED = (double) getValueOrInit("small", YmlSettings.STRIKE_MOVEMENT_SPEED.getPath());
+        this.STRIKE_MOVEMENT_LAG = (int) getValueOrInit("small", YmlSettings.STRIKE_MOVEMENT_LAG.getPath());
         instance = this;
         closenessToStrikeres.get(Closeness.HIGH_CLOSE).setIsCheckStrike();
         for (UUID mob : getMobs()) {
@@ -58,7 +60,7 @@ public class OrbitalStrikeManagerTicker extends SpawnEater {
         }
     }
 
-    public static OrbitalStrikeManagerTicker get() {
+    public static SmallOrbitalStrikeManagerTicker get() {
         return instance;
     }
 
@@ -79,7 +81,7 @@ public class OrbitalStrikeManagerTicker extends SpawnEater {
     @Override
     public void initializeYml() throws IOException {
         for (YmlSettings setting : YmlSettings.values()) {
-            setValueIfNotExists("large",setting.getPath(), setting.value);
+            setValueIfNotExists("small",setting.getPath(), setting.value);
         }
     }
 
@@ -104,11 +106,12 @@ public class OrbitalStrikeManagerTicker extends SpawnEater {
     }
 
     enum Closeness {
-        HIGH_CLOSE(100, LowFrequencyTick.get()),
-        NORMAL_CLOSE(200, VeryLowFrequencyTick.get());
+        HIGH_CLOSE(50, NormalFrequencyTick.get()),
+        NORMAL_CLOSE(100, LowFrequencyTick.get()),
+        LOW_CLOSE(200, VeryLowFrequencyTick.get());
 
         private final double distance;
-        private static final Closeness[] order = new Closeness[]{HIGH_CLOSE, NORMAL_CLOSE};
+        private static final Closeness[] order = new Closeness[]{HIGH_CLOSE, NORMAL_CLOSE, LOW_CLOSE};
         private final TickGiverable giver;
 
         Closeness(double distance, TickGiverable giver) {

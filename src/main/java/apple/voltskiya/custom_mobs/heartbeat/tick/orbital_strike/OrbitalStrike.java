@@ -30,7 +30,7 @@ public class OrbitalStrike {
     private final List<Location> previousLocations = new ArrayList<>();
     private int currentTick = 0;
 
-    public OrbitalStrike(Entity striker, LivingEntity target, long callerUid) {
+    public OrbitalStrike(Entity striker, LivingEntity target, long callerUid, OrbitalStrikeType type) {
         this.striker = striker;
         this.target = target;
         this.callerUid = callerUid;
@@ -62,7 +62,6 @@ public class OrbitalStrike {
             System.out.println("return");
             return;
         }
-        System.out.println(currentTick);
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, this::strike, 1);
     }
 
@@ -180,5 +179,10 @@ public class OrbitalStrike {
                 strikerLocation.getWorld().playSound(strikerLocation, Sound.ENTITY_ENDER_DRAGON_GROWL, SoundCategory.HOSTILE, 100f, .5f);
             }, time);
         }
+    }
+
+    public enum OrbitalStrikeType {
+        SMALL,
+        LARGE
     }
 }

@@ -83,5 +83,4 @@ public class LostSoulIndividualTicker implements Tickable {
     synchronized void setIsCheckCollision() {
         this.isCheckCollision = true;
     }
-
 }

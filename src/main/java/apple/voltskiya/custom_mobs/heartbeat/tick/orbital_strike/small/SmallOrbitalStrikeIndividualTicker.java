@@ -1,12 +1,17 @@
-package apple.voltskiya.custom_mobs.heartbeat.tick.orbital_strike.large;
+package apple.voltskiya.custom_mobs.heartbeat.tick.orbital_strike.small;
 
 import apple.voltskiya.custom_mobs.DistanceUtils;
 import apple.voltskiya.custom_mobs.Pair;
 import apple.voltskiya.custom_mobs.heartbeat.tick.MobListSql;
+import apple.voltskiya.custom_mobs.heartbeat.tick.Tickable;
 import apple.voltskiya.custom_mobs.heartbeat.tick.main.UpdatedPlayerList;
 import apple.voltskiya.custom_mobs.heartbeat.tick.orbital_strike.OrbitalStrike;
-import org.bukkit.*;
-import org.bukkit.entity.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Mob;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -14,9 +19,9 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.UUID;
 
+public class SmallOrbitalStrikeIndividualTicker implements Tickable {
 
-public class OrbitalStrikeIndividualTicker {
-    private final OrbitalStrikeManagerTicker.Closeness closeness;
+    private final SmallOrbitalStrikeManagerTicker.Closeness closeness;
     private boolean isCheckStrike = false;
     private final ArrayList<Pair<UUID, Long>> strikers = new ArrayList<>();
     private boolean isTicking = false;
@@ -25,7 +30,7 @@ public class OrbitalStrikeIndividualTicker {
     private final long callerUid = UpdatedPlayerList.callerUid();
 
 
-    public OrbitalStrikeIndividualTicker(OrbitalStrikeManagerTicker.Closeness closeness) {
+    public SmallOrbitalStrikeIndividualTicker(SmallOrbitalStrikeManagerTicker.Closeness closeness) {
         this.closeness = closeness;
     }
 
@@ -37,13 +42,14 @@ public class OrbitalStrikeIndividualTicker {
         }
     }
 
+    @Override
     public synchronized void tick() {
         Iterator<Pair<UUID, Long>> strikerUidIterator = strikers.iterator();
         boolean trim = false;
         long now = System.currentTimeMillis();
         while (strikerUidIterator.hasNext()) {
             Pair<UUID, Long> strikerUid = strikerUidIterator.next();
-            if (now - strikerUid.getValue() < OrbitalStrikeManagerTicker.get().STRIKE_COOLDOWN) {
+            if (now - strikerUid.getValue() < SmallOrbitalStrikeManagerTicker.get().STRIKE_COOLDOWN) {
                 continue;
             }
             Entity striker = Bukkit.getEntity(strikerUid.getKey());
@@ -54,7 +60,7 @@ public class OrbitalStrikeIndividualTicker {
                 trim = true;
             } else {
                 tickStriker(striker, strikerUid);
-                if (OrbitalStrikeManagerTicker.get().amIGivingStriker(striker, closeness, strikerUid.getValue())) {
+                if (SmallOrbitalStrikeManagerTicker.get().amIGivingStriker(striker, closeness, strikerUid.getValue())) {
                     MobListSql.removeMob(strikerUid.getKey());
                     strikerUidIterator.remove();
                     trim = true;
@@ -72,7 +78,7 @@ public class OrbitalStrikeIndividualTicker {
 
     private synchronized void tickStriker(Entity striker, Pair<UUID, Long> strikerUid) {
         if (isCheckStrike) {
-            if (random.nextDouble() < OrbitalStrikeManagerTicker.get().STRIKE_CHANCE * closeness.getGiver().getTickSpeed()) {
+            if (random.nextDouble() < SmallOrbitalStrikeManagerTicker.get().STRIKE_CHANCE * closeness.getGiver().getTickSpeed()) {
                 checkStrike(striker, strikerUid);
             }
         }
@@ -86,14 +92,14 @@ public class OrbitalStrikeIndividualTicker {
             if (closest != null) {
                 Location pLocation = closest.getLocation();
                 double d = DistanceUtils.distance(pLocation, strikerLocation);
-                if (d < OrbitalStrikeManagerTicker.get().STRIKE_DISTANCE && ((Mob) striker).hasLineOfSight(closest)) {
+                if (d < SmallOrbitalStrikeManagerTicker.get().STRIKE_DISTANCE && ((Mob) striker).hasLineOfSight(closest)) {
                     target = closest;
                 }
             }
         }
         if (target != null) {
             // we have the target. time to orbital strike it
-            new OrbitalStrike(striker, target,callerUid, OrbitalStrike.OrbitalStrikeType.LARGE);
+            new OrbitalStrike(striker, target, callerUid, OrbitalStrike.OrbitalStrikeType.SMALL);
             strikerUid.setValue(System.currentTimeMillis());
         }
     }
@@ -103,3 +109,4 @@ public class OrbitalStrikeIndividualTicker {
     }
 
 }
+
