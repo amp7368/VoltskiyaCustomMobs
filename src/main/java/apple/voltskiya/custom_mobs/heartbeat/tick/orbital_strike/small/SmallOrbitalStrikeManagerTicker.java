@@ -17,13 +17,14 @@ import java.util.Map;
 import java.util.UUID;
 
 public class SmallOrbitalStrikeManagerTicker extends SpawnEater {
+    public final double STRIKE_MIN_HEIGHT;
     public final double STRIKE_MOVEMENT_SPEED;
     public final double STRIKE_MOVEMENT_LAG;
     public final double STRIKE_CHANCE;
     public final long STRIKE_COOLDOWN;
     public final double STRIKE_DISTANCE;
 
-    public final double STRIKE_TARGET_RADIUS;
+    public final double STRIKE_TARGET_LARGER_RADIUS;
     public final double STRIKE_HEIGHT;
     public final int STRIKE_TIME;
     public final int STRIKE_TARGET_TIME;
@@ -40,8 +41,9 @@ public class SmallOrbitalStrikeManagerTicker extends SpawnEater {
         this.STRIKE_CHANCE = (double) getValueOrInit("small", YmlSettings.STRIKE_CHANCE.getPath());
         this.STRIKE_COOLDOWN = (1000L / 20 * (int) getValueOrInit("small", YmlSettings.STRIKE_COOLDOWN.getPath()));
         this.STRIKE_DISTANCE = (int) getValueOrInit("small", YmlSettings.STRIKE_DISTANCE.getPath());
-        this.STRIKE_TARGET_RADIUS = (double) getValueOrInit("small", YmlSettings.STRIKE_TARGET_RADIUS.getPath());
+        this.STRIKE_TARGET_LARGER_RADIUS = (double) getValueOrInit("small", YmlSettings.STRIKE_TARGET_RADIUS.getPath());
         this.STRIKE_HEIGHT = (int) getValueOrInit("small", YmlSettings.STRIKE_HEIGHT.getPath());
+        this.STRIKE_MIN_HEIGHT = (int) getValueOrInit("small", YmlSettings.STRIKE_MIN_HEIGHT.getPath());
         this.STRIKE_TIME = (int) getValueOrInit("small", YmlSettings.STRIKE_TIME.getPath());
         this.STRIKE_TARGET_TIME = (int) getValueOrInit("small", YmlSettings.STRIKE_TARGET_TIME.getPath());
         this.DESTRUCTION_BLAZE_INTERVAL = (double) getValueOrInit("small", YmlSettings.DESTRUCTION_BLAZE_INTERVAL.getPath());
@@ -81,7 +83,7 @@ public class SmallOrbitalStrikeManagerTicker extends SpawnEater {
     @Override
     public void initializeYml() throws IOException {
         for (YmlSettings setting : YmlSettings.values()) {
-            setValueIfNotExists("small",setting.getPath(), setting.value);
+            setValueIfNotExists("small", setting.getPath(), setting.value);
         }
     }
 
@@ -143,7 +145,8 @@ public class SmallOrbitalStrikeManagerTicker extends SpawnEater {
         STRIKE_COOLDOWN("cooldown", 800),
         STRIKE_DISTANCE("targetingRange", 100),
         STRIKE_TARGET_RADIUS("radius", 6d),
-        STRIKE_HEIGHT("height", 20),
+        STRIKE_HEIGHT("height", 15),
+        STRIKE_MIN_HEIGHT("min_height", 5),
         STRIKE_TIME("totalTime", 300),
         STRIKE_TARGET_TIME("targetTime", 30),
         DESTRUCTION_BLAZE_INTERVAL("shootInterval", 1d),

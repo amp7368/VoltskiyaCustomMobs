@@ -5,7 +5,6 @@ import apple.voltskiya.custom_mobs.Pair;
 import apple.voltskiya.custom_mobs.heartbeat.tick.MobListSql;
 import apple.voltskiya.custom_mobs.heartbeat.tick.Tickable;
 import apple.voltskiya.custom_mobs.heartbeat.tick.main.UpdatedPlayerList;
-import apple.voltskiya.custom_mobs.heartbeat.tick.orbital_strike.OrbitalStrike;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -99,7 +98,7 @@ public class SmallOrbitalStrikeIndividualTicker implements Tickable {
         }
         if (target != null) {
             // we have the target. time to orbital strike it
-            new OrbitalStrike(striker, target, callerUid, OrbitalStrike.OrbitalStrikeType.SMALL);
+            new OrbitalStrikeSmall(striker, target, callerUid);
             strikerUid.setValue(System.currentTimeMillis());
         }
     }

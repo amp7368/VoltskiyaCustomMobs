@@ -4,7 +4,7 @@ import apple.voltskiya.custom_mobs.DistanceUtils;
 import apple.voltskiya.custom_mobs.Pair;
 import apple.voltskiya.custom_mobs.heartbeat.tick.MobListSql;
 import apple.voltskiya.custom_mobs.heartbeat.tick.main.UpdatedPlayerList;
-import apple.voltskiya.custom_mobs.heartbeat.tick.orbital_strike.OrbitalStrike;
+import apple.voltskiya.custom_mobs.heartbeat.tick.orbital_strike.OrbitalStrikeLarge;
 import org.bukkit.*;
 import org.bukkit.entity.*;
 import org.jetbrains.annotations.Nullable;
@@ -93,7 +93,7 @@ public class OrbitalStrikeIndividualTicker {
         }
         if (target != null) {
             // we have the target. time to orbital strike it
-            new OrbitalStrike(striker, target,callerUid, OrbitalStrike.OrbitalStrikeType.LARGE);
+            new OrbitalStrikeLarge(striker, target,callerUid);
             strikerUid.setValue(System.currentTimeMillis());
         }
     }

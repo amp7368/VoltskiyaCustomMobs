@@ -7,6 +7,7 @@ import apple.voltskiya.custom_mobs.heartbeat.tick.hell_blazer.HellGuardManagerTi
 import apple.voltskiya.custom_mobs.heartbeat.tick.lost_soul.BlemishSpawnManager;
 import apple.voltskiya.custom_mobs.heartbeat.tick.lost_soul.LostSoulManagerTicker;
 import apple.voltskiya.custom_mobs.heartbeat.tick.orbital_strike.large.OrbitalStrikeManagerTicker;
+import apple.voltskiya.custom_mobs.heartbeat.tick.orbital_strike.small.SmallOrbitalStrikeManagerTicker;
 import apple.voltskiya.custom_mobs.heartbeat.tick.revive.ReviverManagerTicker;
 import apple.voltskiya.custom_mobs.heartbeat.tick.warper.WarperManagerTicker;
 import org.bukkit.Bukkit;
@@ -27,6 +28,7 @@ public class MobSpawnListener implements Listener {
             spawnEater.put("lost_soul", new LostSoulManagerTicker());
             spawnEater.put("blemish_gateway", new BlemishSpawnManager());
             spawnEater.put("orbital_striker", new OrbitalStrikeManagerTicker());
+            spawnEater.put("orbital_striker_small", new SmallOrbitalStrikeManagerTicker());
             spawnEater.put("warper", new WarperManagerTicker());
             spawnEater.put("reviver", new ReviverManagerTicker());
             spawnEater.put("hell_blazer", new HellGuardManagerTicker());
