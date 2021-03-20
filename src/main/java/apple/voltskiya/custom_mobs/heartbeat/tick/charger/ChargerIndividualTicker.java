@@ -72,7 +72,7 @@ public class ChargerIndividualTicker implements Tickable {
             Player playerToChargeAt = null;
             double chargeError = Double.MAX_VALUE;
             for (Player player : UpdatedPlayerList.getPlayers(callerUid)) {
-                if (player.getGameMode() == GameMode.SURVIVAL) {
+                if (player.getGameMode() == GameMode.SURVIVAL && chargerLocation.getWorld().getUID().equals(player.getWorld().getUID())) {
                     // check that the player is in the facing direction of the charger
                     Location playerLocation = player.getLocation();
                     Location change = playerLocation.clone().subtract(chargerLocation);

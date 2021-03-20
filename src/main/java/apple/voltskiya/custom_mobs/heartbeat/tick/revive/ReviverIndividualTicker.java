@@ -105,20 +105,15 @@ public class ReviverIndividualTicker {
             if (reviver.isDead() || count == MAX_COUNT) {
                 return;
             }
-            int x = target.getBlockX();
-            int y = target.getBlockY();
-            int z = target.getBlockZ();
-            PotionEffect speed = new PotionEffect(PotionEffectType.SPEED, 20, 1, false, false);
-            reviver.addPotionEffect(speed);
-            final PathEntity path = reviver.getHandle().getNavigation().a(new BlockPosition(x, y, z), 1);
-            if (DistanceUtils.distance(reviver.getLocation(), target) > 2) {
-                Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
-                    new MoveToTarget(reviveMe, target, reviver, count + 1).run();
-                }, 1);
+            double x = target.getX();
+            double y = target.getY();
+            double z = target.getZ();
+            if (DistanceUtils.distance(reviver.getLocation(), target) > 1.5) {
+                Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), new MoveToTarget(reviveMe, target, reviver, count + 1), 1);
             } else {
                 ReviveDeadManager.get().reviveStart(reviveMe, reviver);
             }
-            reviver.getHandle().getNavigation().a(path, 1f);
+            reviver.getHandle().getNavigation().a(x,y,z, 1.6f);
         }
     }
 }

@@ -25,6 +25,7 @@ public class SmallOrbitalStrikeManagerTicker extends SpawnEater {
     public final double STRIKE_DISTANCE;
 
     public final double STRIKE_TARGET_LARGER_RADIUS;
+    public final double STRIKE_TARGET_RADIUS;
     public final double STRIKE_HEIGHT;
     public final int STRIKE_TIME;
     public final int STRIKE_TARGET_TIME;
@@ -41,7 +42,8 @@ public class SmallOrbitalStrikeManagerTicker extends SpawnEater {
         this.STRIKE_CHANCE = (double) getValueOrInit("small", YmlSettings.STRIKE_CHANCE.getPath());
         this.STRIKE_COOLDOWN = (1000L / 20 * (int) getValueOrInit("small", YmlSettings.STRIKE_COOLDOWN.getPath()));
         this.STRIKE_DISTANCE = (int) getValueOrInit("small", YmlSettings.STRIKE_DISTANCE.getPath());
-        this.STRIKE_TARGET_LARGER_RADIUS = (double) getValueOrInit("small", YmlSettings.STRIKE_TARGET_RADIUS.getPath());
+        this.STRIKE_TARGET_RADIUS = (double) getValueOrInit("small", YmlSettings.STRIKE_TARGET_RADIUS.getPath());
+        this.STRIKE_TARGET_LARGER_RADIUS = (double) getValueOrInit("small", YmlSettings.STRIKE_TARGET_LARGER_RADIUS.getPath());
         this.STRIKE_HEIGHT = (int) getValueOrInit("small", YmlSettings.STRIKE_HEIGHT.getPath());
         this.STRIKE_MIN_HEIGHT = (int) getValueOrInit("small", YmlSettings.STRIKE_MIN_HEIGHT.getPath());
         this.STRIKE_TIME = (int) getValueOrInit("small", YmlSettings.STRIKE_TIME.getPath());
@@ -68,6 +70,7 @@ public class SmallOrbitalStrikeManagerTicker extends SpawnEater {
 
     @Override
     public void eatEvent(CreatureSpawnEvent event) {
+        System.out.println("eaten");
         // this is a striker
         final Entity striker = event.getEntity();
         Closeness closeness = determineConcern(striker);
@@ -77,7 +80,7 @@ public class SmallOrbitalStrikeManagerTicker extends SpawnEater {
 
     @Override
     public String getName() {
-        return "orbital_strike";
+        return "small_orbital_strike";
     }
 
     @Override
@@ -141,17 +144,18 @@ public class SmallOrbitalStrikeManagerTicker extends SpawnEater {
     }
 
     private enum YmlSettings {
-        STRIKE_CHANCE("chancePerTick", 0.01d),
+        STRIKE_CHANCE("chancePerTick", 0.003d),
         STRIKE_COOLDOWN("cooldown", 800),
-        STRIKE_DISTANCE("targetingRange", 100),
-        STRIKE_TARGET_RADIUS("radius", 6d),
+        STRIKE_DISTANCE("targetingRange", 30),
+        STRIKE_TARGET_RADIUS("radius", 1d),
         STRIKE_HEIGHT("height", 15),
         STRIKE_MIN_HEIGHT("min_height", 5),
-        STRIKE_TIME("totalTime", 300),
-        STRIKE_TARGET_TIME("targetTime", 30),
-        DESTRUCTION_BLAZE_INTERVAL("shootInterval", 1d),
-        STRIKE_MOVEMENT_SPEED("movementSpeed", 2.2),
-        STRIKE_MOVEMENT_LAG("movementTargetLag", 1);
+        STRIKE_TIME("totalTime", 200),
+        STRIKE_TARGET_TIME("targetTime", 40),
+        DESTRUCTION_BLAZE_INTERVAL("shootInterval", 10d),
+        STRIKE_MOVEMENT_SPEED("movementSpeed", 0d),
+        STRIKE_MOVEMENT_LAG("movementTargetLag", 0),
+        STRIKE_TARGET_LARGER_RADIUS("targetVariationRadius", 8.0);
 
         private final String path;
         private final Object value;

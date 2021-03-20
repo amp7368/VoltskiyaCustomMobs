@@ -15,6 +15,8 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftMob;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,6 +35,8 @@ public class ChargerCharge {
         y *= 3;
         z *= 3;
         Location finalLocation = chargerLocation.clone().add(x, y, z);
+        PotionEffect strength = new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 20, 1);
+        charger.addPotionEffect(strength);
         Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(),
                 new MoveToTarget(charger, finalLocation, 0), 0); // get out of this stack trace
     }
@@ -56,7 +60,7 @@ public class ChargerCharge {
             @Nullable Vector direction = DistanceUtils.unitVector(finalLocationSameY.subtract(charger.getLocation()).toVector());
             if (direction != null) {
                 Vector looking = direction.clone().multiply(2); // look closer than a block away
-                final @NotNull Location blockInFront = charger.getLocation().add(looking);
+                final @NotNull Location blockInFront = charger.getLocation().add(looking).add(0, 1, 0);
                 if (blockInFront.getBlock().getType().isSolid()) {
                     // if the block directly in front of the mob is a block, stop charging
                     final Location chargerLocation = charger.getLocation();
@@ -69,6 +73,7 @@ public class ChargerCharge {
                     charger.setVelocity(new Vector(0, 0, 0));
                     particles(charger.getEyeLocation(), blockInFront.getBlock().getType());
                     ChargerManagerTicker.get().eatMob(charger);
+                    charger.removePotionEffect(PotionEffectType.INCREASE_DAMAGE);
                     return;
                 }
             }
@@ -78,6 +83,7 @@ public class ChargerCharge {
                 // we're done
                 // add this back to the charge manager
                 ChargerManagerTicker.get().eatMob(charger);
+                charger.removePotionEffect(PotionEffectType.INCREASE_DAMAGE);
             }
             double x;
             double y;

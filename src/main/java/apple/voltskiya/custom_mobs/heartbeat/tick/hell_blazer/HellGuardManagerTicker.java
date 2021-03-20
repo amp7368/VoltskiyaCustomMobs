@@ -48,7 +48,7 @@ public class HellGuardManagerTicker extends SpawnEater {
 
     @Override
     public String getName() {
-        return "lost_soul";
+        return "breakable";
     }
 
     @Override

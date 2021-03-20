@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.util.*;
 
-public class OrbitalStrikeManagerTicker extends SpawnEater {
+public class LargeOrbitalStrikeManagerTicker extends SpawnEater {
     public final double STRIKE_MOVEMENT_SPEED;
     public final double STRIKE_MOVEMENT_LAG;
     public final double STRIKE_CHANCE;
@@ -27,14 +27,14 @@ public class OrbitalStrikeManagerTicker extends SpawnEater {
     public final int STRIKE_TARGET_TIME;
     public final double DESTRUCTION_BLAZE_INTERVAL;
 
-    private static OrbitalStrikeManagerTicker instance;
-    private final Map<Closeness, OrbitalStrikeIndividualTicker> closenessToStrikeres = new HashMap<>() {{
+    private static LargeOrbitalStrikeManagerTicker instance;
+    private final Map<Closeness, LargeOrbitalStrikeIndividualTicker> closenessToStrikeres = new HashMap<>() {{
         for (Closeness closeness : Closeness.values())
-            put(closeness, new OrbitalStrikeIndividualTicker(closeness));
+            put(closeness, new LargeOrbitalStrikeIndividualTicker(closeness));
     }};
     private final long callerUid = UpdatedPlayerList.callerUid();
 
-    public OrbitalStrikeManagerTicker() throws IOException {
+    public LargeOrbitalStrikeManagerTicker() throws IOException {
         this.STRIKE_CHANCE = (double) getValueOrInit("large", YmlSettings.STRIKE_CHANCE.getPath());
         this.STRIKE_COOLDOWN = (1000L / 20 * (int) getValueOrInit("large", YmlSettings.STRIKE_COOLDOWN.getPath()));
         this.STRIKE_DISTANCE = (int) getValueOrInit("large", YmlSettings.STRIKE_DISTANCE.getPath());
@@ -58,7 +58,7 @@ public class OrbitalStrikeManagerTicker extends SpawnEater {
         }
     }
 
-    public static OrbitalStrikeManagerTicker get() {
+    public static LargeOrbitalStrikeManagerTicker get() {
         return instance;
     }
 
@@ -73,7 +73,7 @@ public class OrbitalStrikeManagerTicker extends SpawnEater {
 
     @Override
     public String getName() {
-        return "orbital_strike";
+        return "large_orbital_strike";
     }
 
     @Override
