@@ -1,4 +1,4 @@
-package apple.voltskiya.custom_mobs.heartbeat.tick.listeners;
+package apple.voltskiya.custom_mobs.heartbeat.tick.main.listeners;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.heartbeat.tick.DeathEater;

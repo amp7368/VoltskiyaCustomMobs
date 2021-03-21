@@ -4,22 +4,22 @@ import apple.voltskiya.custom_mobs.DistanceUtils;
 import apple.voltskiya.custom_mobs.heartbeat.tick.MobListSql;
 import apple.voltskiya.custom_mobs.heartbeat.tick.SpawnEater;
 import apple.voltskiya.custom_mobs.heartbeat.tick.main.*;
-import apple.voltskiya.custom_mobs.heartbeat.tick.orbital_strike.OrbitalStrikeManagerTicker;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 public class ReviverManagerTicker extends SpawnEater {
 
+    public int REVIVE_RITUAL_TIME;
     public double REVIVE_DISTANCE;
     public double REVIVE_CHANCE;
     private final Map<Closeness, ReviverIndividualTicker> closenessToReviveres = new HashMap<>() {{
@@ -28,19 +28,22 @@ public class ReviverManagerTicker extends SpawnEater {
         get(Closeness.HIGH_CLOSE).setIsReviving();
     }};
     private static ReviverManagerTicker instance;
+    private final long callerUid = UpdatedPlayerList.callerUid();
+
 
     public ReviverManagerTicker() throws IOException {
         instance = this;
         REVIVE_CHANCE = (double) getValueOrInit(getName(), YmlSettings.REVIVE_CHANCE.getPath(), "reviver");
         REVIVE_DISTANCE = (int) getValueOrInit(getName(), YmlSettings.REVIVE_DISTANCE.getPath(), "reviver");
+        REVIVE_RITUAL_TIME = (int) getValueOrInit(getName(), YmlSettings.REVIVE_RITUAL_TIME.getPath(), "reviver");
         for (UUID mob : getMobs()) {
-            @Nullable Entity striker = Bukkit.getEntity(mob);
-            if (striker == null) {
+            @Nullable Entity reviver = Bukkit.getEntity(mob);
+            if (reviver == null) {
                 MobListSql.removeMob(mob);
                 continue;
             }
-            Closeness c = determineConcern(striker);
-            closenessToReviveres.get(c).giveReviver(striker);
+            Closeness c = determineConcern(reviver);
+            closenessToReviveres.get(c).giveReviver(new Reviver(reviver));
         }
     }
 
@@ -53,7 +56,7 @@ public class ReviverManagerTicker extends SpawnEater {
         // this is a reviver
         final Entity reviver = event.getEntity();
         Closeness closeness = determineConcern(reviver);
-        closenessToReviveres.get(closeness).giveReviver(reviver);
+        closenessToReviveres.get(closeness).giveReviver(new Reviver(reviver));
         addMobs(reviver.getUniqueId());
     }
 
@@ -70,30 +73,28 @@ public class ReviverManagerTicker extends SpawnEater {
     }
 
 
-    public boolean amIGivingReviver(Entity entity, Closeness currentCloseness) {
-        Closeness actualCloseness = determineConcern(entity);
+    public boolean amIGivingReviver(Reviver reviver, Closeness currentCloseness) {
+        Closeness actualCloseness = determineConcern(reviver.getEntity());
         if (actualCloseness != currentCloseness) {
-            closenessToReviveres.get(actualCloseness).giveReviver(entity);
+            closenessToReviveres.get(actualCloseness).giveReviver(reviver);
             return true;
         }
         return false;
     }
 
-    private Closeness determineConcern(Entity reviver) {
+    @NotNull
+    private Closeness determineConcern(@Nullable Entity reviver) {
+        if (reviver == null) return Closeness.lowest();
         Location reviverLocation = reviver.getLocation();
 
-        List<Player> players = UpdatedPlayerList.getPlayers();
-        for (Player player : players) {
-            Location playerLocation = player.getLocation();
-            return Closeness.getCloseness(reviverLocation, playerLocation);
-        }
-        return Closeness.lowest();
+        @Nullable Player player = UpdatedPlayerList.getClosestPlayer(reviverLocation, callerUid);
+        return player == null ? Closeness.lowest() : Closeness.getCloseness(reviverLocation, player.getLocation());
     }
 
     enum Closeness {
-        HIGH_CLOSE(20, NormalFrequencyTick.get()),
-        NORMAL_CLOSE(50, LowFrequencyTick.get()),
-        LOW_CLOSE(70, VeryLowFrequencyTick.get());
+        HIGH_CLOSE(15, NormalFrequencyTick.get()),
+        NORMAL_CLOSE(50, NormalFrequencyTick.get()),
+        LOW_CLOSE(70, NormalFrequencyTick.get());
 
         private final double distance;
         private static final Closeness[] order = new Closeness[]{HIGH_CLOSE, NORMAL_CLOSE, LOW_CLOSE};
@@ -124,8 +125,9 @@ public class ReviverManagerTicker extends SpawnEater {
     }
 
     private enum YmlSettings {
-        REVIVE_CHANCE("reviveChance", .01d),
-        REVIVE_DISTANCE("reviveDistance", 10);
+        REVIVE_CHANCE("reviveChance", 0.03),
+        REVIVE_DISTANCE("reviveDistance", 15),
+        REVIVE_RITUAL_TIME("reviveRitualTime", 13);
 
         private final String path;
         private final Object value;

@@ -1,10 +1,13 @@
-package apple.voltskiya.custom_mobs.heartbeat.tick.listeners;
+package apple.voltskiya.custom_mobs.heartbeat.tick.main.listeners;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.heartbeat.tick.SpawnEater;
+import apple.voltskiya.custom_mobs.heartbeat.tick.charger.ChargerManagerTicker;
+import apple.voltskiya.custom_mobs.heartbeat.tick.hell_blazer.HellGuardManagerTicker;
 import apple.voltskiya.custom_mobs.heartbeat.tick.lost_soul.BlemishSpawnManager;
 import apple.voltskiya.custom_mobs.heartbeat.tick.lost_soul.LostSoulManagerTicker;
-import apple.voltskiya.custom_mobs.heartbeat.tick.orbital_strike.OrbitalStrikeManagerTicker;
+import apple.voltskiya.custom_mobs.heartbeat.tick.orbital_strike.large.LargeOrbitalStrikeManagerTicker;
+import apple.voltskiya.custom_mobs.heartbeat.tick.orbital_strike.small.SmallOrbitalStrikeManagerTicker;
 import apple.voltskiya.custom_mobs.heartbeat.tick.revive.ReviverManagerTicker;
 import apple.voltskiya.custom_mobs.heartbeat.tick.warper.WarperManagerTicker;
 import org.bukkit.Bukkit;
@@ -24,9 +27,12 @@ public class MobSpawnListener implements Listener {
         try {
             spawnEater.put("lost_soul", new LostSoulManagerTicker());
             spawnEater.put("blemish_gateway", new BlemishSpawnManager());
-            spawnEater.put("orbital_striker", new OrbitalStrikeManagerTicker());
+            spawnEater.put("orbital_striker", new LargeOrbitalStrikeManagerTicker());
+            spawnEater.put("orbital_striker_small", new SmallOrbitalStrikeManagerTicker());
             spawnEater.put("warper", new WarperManagerTicker());
             spawnEater.put("reviver", new ReviverManagerTicker());
+            spawnEater.put("hell_blazer", new HellGuardManagerTicker());
+            spawnEater.put("charger", new ChargerManagerTicker());
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassCastException e) {

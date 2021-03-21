@@ -21,6 +21,8 @@ public class LostSoulIndividualTicker implements Tickable {
     private boolean isTicking = false;
     private boolean isCheckCollision = false;
     private long myTickerUid = -1;
+    private final long callerUid = UpdatedPlayerList.callerUid();
+
 
     public LostSoulIndividualTicker(TickGiverable giver, LostSoulManagerTicker.Closeness closeness) {
         this.giver = giver;
@@ -50,15 +52,15 @@ public class LostSoulIndividualTicker implements Tickable {
         if (trim) {
             vexes.trimToSize();
             if (isTicking && vexes.isEmpty()) {
-                isTicking = false;
                 giver.remove(myTickerUid);
+                isTicking = false;
             }
         }
     }
 
     private synchronized void tickVex(Vex vex) {
         if (isCheckCollision) {
-            Player player = UpdatedPlayerList.getCollision(vex.getBoundingBox());
+            Player player = UpdatedPlayerList.getCollision(vex.getBoundingBox(),callerUid);
             if (player != null) {
                 Location location = vex.getLocation();
                 location.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, player.getEyeLocation(), 0);
@@ -81,5 +83,4 @@ public class LostSoulIndividualTicker implements Tickable {
     synchronized void setIsCheckCollision() {
         this.isCheckCollision = true;
     }
-
 }

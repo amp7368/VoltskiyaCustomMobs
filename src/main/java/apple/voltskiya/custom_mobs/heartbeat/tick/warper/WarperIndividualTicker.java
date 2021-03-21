@@ -14,24 +14,25 @@ import java.util.*;
 
 public class WarperIndividualTicker {
     private final WarperManagerTicker.Closeness closeness;
-    private boolean isWarping;
+    private boolean isWarping = false;
     private final ArrayList<UUID> warpers = new ArrayList<>();
     private boolean isTicking = false;
     private final Random random = new Random();
+    private long tickering;
 
     public WarperIndividualTicker(WarperManagerTicker.Closeness closeness) {
         this.closeness = closeness;
     }
 
-    public void giveWarper(Entity warper) {
+    public synchronized void giveWarper(Entity warper) {
         this.warpers.add(warper.getUniqueId());
         if (!isTicking) {
             isTicking = true;
-            closeness.getGiver().add(this::tick);
+            this.tickering = closeness.getGiver().add(this::tick);
         }
     }
 
-    private void tick() {
+    private synchronized void tick() {
         boolean trim = false;
         Iterator<UUID> warperIterator = warpers.iterator();
         while (warperIterator.hasNext()) {
@@ -50,11 +51,15 @@ public class WarperIndividualTicker {
             }
         }
         if (trim) {
+            if (warpers.isEmpty()) {
+                closeness.getGiver().remove(tickering);
+                this.isTicking = false;
+            }
             warpers.trimToSize();
         }
     }
 
-    private void tickWarper(Entity warper) {
+    private synchronized void tickWarper(Entity warper) {
         if (isWarping) {
             if (random.nextDouble() < WarperManagerTicker.get().WARP_CHANCE * closeness.getGiver().getTickSpeed()) {
                 warp(warper);
@@ -62,7 +67,7 @@ public class WarperIndividualTicker {
         }
     }
 
-    private void warp(Entity warper) {
+    private synchronized void warp(Entity warper) {
         if (warper instanceof Mob) {
             Mob mob = (Mob) warper;
             @Nullable LivingEntity target = mob.getTarget();
@@ -82,7 +87,7 @@ public class WarperIndividualTicker {
         }
     }
 
-    private void particles(Location now, Location to) {
+    private synchronized void particles(Location now, Location to) {
         double x = now.getX();
         double y = now.getY();
         double z = now.getZ();
@@ -100,7 +105,7 @@ public class WarperIndividualTicker {
     }
 
     @Nullable
-    private Location findWarpTo(Location targetLocation) {
+    private synchronized Location findWarpTo(Location targetLocation) {
         double theta = random.nextDouble() * 360;
         double thetay = random.nextDouble() * 360;
         double radius = random.nextDouble() * WarperManagerTicker.get().WARP_RADIUS;

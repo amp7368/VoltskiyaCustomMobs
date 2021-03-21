@@ -7,6 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -23,12 +24,13 @@ public class WarperManagerTicker extends SpawnEater {
         get(Closeness.HIGH_CLOSE).setIsWarping();
     }};
     private static WarperManagerTicker instance;
+    private final long callerUid = UpdatedPlayerList.callerUid();
 
     public WarperManagerTicker() throws IOException {
         instance = this;
         WARP_CHANCE = (double) getValueOrInit(YmlSettings.WARP_CHANCE.getPath());
         WARP_RADIUS = (int) getValueOrInit(YmlSettings.WARP_RADIUS.getPath());
-        PARTICLES= (int) getValueOrInit(YmlSettings.PARTICLES.getPath());
+        PARTICLES = (int) getValueOrInit(YmlSettings.PARTICLES.getPath());
     }
 
     public static WarperManagerTicker get() {
@@ -68,16 +70,15 @@ public class WarperManagerTicker extends SpawnEater {
     private WarperManagerTicker.Closeness determineConcern(Entity warper) {
         Location warperLocation = warper.getLocation();
 
-        List<Player> players = UpdatedPlayerList.getPlayers();
-        for (Player player : players) {
-            Location playerLocation = player.getLocation();
-            return WarperManagerTicker.Closeness.getCloseness(warperLocation, playerLocation);
-        }
-        return WarperManagerTicker.Closeness.lowest();
+        @Nullable Player player = UpdatedPlayerList.getClosestPlayer(warperLocation, callerUid);
+        if (player == null)
+            return WarperManagerTicker.Closeness.lowest();
+        else
+            return WarperManagerTicker.Closeness.getCloseness(warperLocation, player.getLocation());
     }
 
     enum Closeness {
-        HIGH_CLOSE(20, HighFrequencyTick.get()),
+        HIGH_CLOSE(30, HighFrequencyTick.get()),
         NORMAL_CLOSE(40, NormalFrequencyTick.get()),
         LOW_CLOSE(70, LowFrequencyTick.get());
 
