@@ -24,6 +24,7 @@ public class ChargerIndividualTicker implements Tickable {
     private boolean isTicking = false;
     private long myTickerUid = -1;
     private final long callerUid = UpdatedPlayerList.callerUid();
+    private boolean isCharging = false;
 
 
     public ChargerIndividualTicker(TickGiverable giver, ChargerManagerTicker.Closeness closeness) {
@@ -61,6 +62,7 @@ public class ChargerIndividualTicker implements Tickable {
     }
 
     private synchronized boolean tickCharger(Mob charger) {
+        if (!isCharging) return false;
         synchronized (chargersToLastChargeSync) {
             long lastCharge = chargersToLastCharge.getOrDefault(charger.getUniqueId(), 0L);
             if (System.currentTimeMillis() - lastCharge < ChargerManagerTicker.CHARGE_COOLDOWN) {
@@ -125,5 +127,9 @@ public class ChargerIndividualTicker implements Tickable {
             chargersToLastCharge.values().removeIf(lastCharge -> now - lastCharge > ChargerManagerTicker.CHARGE_COOLDOWN);
             chargersToLastCharge = new HashMap<>(chargersToLastCharge);
         }
+    }
+
+    public void setChargeTick() {
+        this.isCharging = true;
     }
 }

@@ -95,12 +95,9 @@ public class LargeOrbitalStrikeIndividualTicker {
         if (target != null) {
             // we have the target. time to orbital strike it
             final Location targetLocation = target.getLocation();
-            new OrbitalStrike(striker, target.getWorld(), targetLocation.getX(), targetLocation.getY(), targetLocation.getZ(), OrbitalStrike.OrbitalStrikeType.LARGE, callerUid);
-            for (int time = 0; time < LargeOrbitalStrikeManagerTicker.get().STRIKE_TIME; time += 10) {
-                Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
-                    strikerLocation.getWorld().playSound(strikerLocation, Sound.ENTITY_ENDER_DRAGON_GROWL, SoundCategory.HOSTILE, 100f, .5f);
-                }, time);
-            }
+            ((Mob) striker).setAI(false);
+            ((Mob) striker).setTarget(null);
+            new OrbitalStrike(target.getWorld(), targetLocation.getX(), targetLocation.getY(), targetLocation.getZ(), OrbitalStrike.OrbitalStrikeType.LARGE, callerUid);
             strikerUid.setValue(System.currentTimeMillis());
             @Nullable LivingEntity finalTarget = target;
             Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {

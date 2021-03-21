@@ -3,13 +3,10 @@ package apple.voltskiya.custom_mobs.heartbeat.tick.revive;
 import apple.voltskiya.custom_mobs.DistanceUtils;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.heartbeat.tick.MobListSql;
-import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftMob;
 import org.bukkit.entity.Entity;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -20,7 +17,7 @@ import java.util.UUID;
 public class ReviverIndividualTicker {
     private final ReviverManagerTicker.Closeness closeness;
     private boolean isReviving;
-    private final ArrayList<UUID> revivers = new ArrayList<>();
+    private final ArrayList<Reviver> revivers = new ArrayList<>();
     private boolean isTicking = false;
     private final Random random = new Random();
     private long ticker;
@@ -29,8 +26,8 @@ public class ReviverIndividualTicker {
         this.closeness = closeness;
     }
 
-    public synchronized void giveReviver(Entity reviver) {
-        this.revivers.add(reviver.getUniqueId());
+    public synchronized void giveReviver(Reviver reviver) {
+        this.revivers.add(reviver);
         if (!isTicking) {
             isTicking = true;
             this.ticker = closeness.getGiver().add(this::tick);
@@ -39,18 +36,20 @@ public class ReviverIndividualTicker {
 
     private synchronized void tick() {
         boolean trim = false;
-        Iterator<UUID> reviverIterator = revivers.iterator();
+        Iterator<Reviver> reviverIterator = revivers.iterator();
         while (reviverIterator.hasNext()) {
-            UUID reviverUuid = reviverIterator.next();
+            Reviver reviverObject = reviverIterator.next();
+            UUID reviverUuid = reviverObject.getUniqueId();
             @Nullable Entity reviver = Bukkit.getEntity(reviverUuid);
             if (reviver == null || reviver.isDead()) {
+                reviverObject.kill();
                 MobListSql.removeMob(reviverUuid);
                 reviverIterator.remove();
                 trim = true;
                 continue;
             }
-            tickReviver(reviver);
-            if (ReviverManagerTicker.get().amIGivingReviver(reviver, closeness)) {
+            tickReviver(reviver, reviverObject);
+            if (ReviverManagerTicker.get().amIGivingReviver(reviverObject, closeness)) {
                 reviverIterator.remove();
                 trim = true;
             }
@@ -64,10 +63,10 @@ public class ReviverIndividualTicker {
         }
     }
 
-    private synchronized void tickReviver(Entity reviver) {
+    private synchronized void tickReviver(Entity reviver, Reviver reviverObject) {
         if (isReviving) {
             if (random.nextDouble() < ReviverManagerTicker.get().REVIVE_CHANCE * closeness.getGiver().getTickSpeed()) {
-                reviveGoal(reviver);
+                reviveGoal(reviver, reviverObject);
             }
         }
     }
@@ -77,12 +76,12 @@ public class ReviverIndividualTicker {
         this.isReviving = true;
     }
 
-    private synchronized void reviveGoal(Entity entity) {
+    private synchronized void reviveGoal(Entity entity, Reviver reviverObject) {
         ReviveDeadManager.RecordedMob mobToRevive = ReviveDeadManager.get().reviveStart(entity.getLocation());
         if (mobToRevive != null && entity instanceof CraftMob) {
             CraftMob reviver = (CraftMob) entity;
             Location target = mobToRevive.getEntity().getLocation();
-            new MoveToTarget(mobToRevive, target, reviver, 0).run();
+            new MoveToTarget(mobToRevive, target, reviver, reviverObject, 0).run();
         }
     }
 
@@ -90,30 +89,35 @@ public class ReviverIndividualTicker {
         private final ReviveDeadManager.RecordedMob reviveMe;
         private final Location target;
         private final CraftMob reviver;
+        private final Reviver reviverObject;
         private final int count;
         private static final int MAX_COUNT = 200;
 
-        public MoveToTarget(ReviveDeadManager.RecordedMob reviveMe, Location target, CraftMob reviver, int count) {
+        public MoveToTarget(ReviveDeadManager.RecordedMob reviveMe, Location target, CraftMob reviver, Reviver reviverObject, int count) {
             this.reviveMe = reviveMe;
             this.target = target;
             this.reviver = reviver;
+            this.reviverObject = reviverObject;
             this.count = count;
         }
 
         @Override
         public void run() {
-            if (reviver.isDead() || count == MAX_COUNT) {
+            if (reviver.isDead()) {
+                MobListSql.removeMob(reviver.getUniqueId());
+                reviverObject.kill();
                 return;
             }
+            if (count == MAX_COUNT) return;
             double x = target.getX();
             double y = target.getY();
             double z = target.getZ();
             if (DistanceUtils.distance(reviver.getLocation(), target) > 1.5) {
-                Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), new MoveToTarget(reviveMe, target, reviver, count + 1), 1);
+                Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), new MoveToTarget(reviveMe, target, reviver, reviverObject, count + 1), 1);
             } else {
-                ReviveDeadManager.get().reviveStart(reviveMe, reviver);
+                ReviveDeadManager.get().reviveStart(reviveMe, reviver, reviverObject);
             }
-            reviver.getHandle().getNavigation().a(x,y,z, 1.6f);
+            reviver.getHandle().getNavigation().a(x, y, z, 1.6f);
         }
     }
 }

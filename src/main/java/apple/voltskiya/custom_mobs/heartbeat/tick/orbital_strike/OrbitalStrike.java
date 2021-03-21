@@ -27,18 +27,29 @@ public class OrbitalStrike {
     private final VoltskiyaPlugin plugin = VoltskiyaPlugin.get();
     private static final Random random = new Random();
     private final List<Location> previousLocations = new ArrayList<>();
+    private final double targetRadius;
 
-    public OrbitalStrike(Entity striker, World targetWorld, double xt, double yt, double zt, OrbitalStrike.OrbitalStrikeType type, long callerUid) {
+    public OrbitalStrike(World targetWorld, double xt, double yt, double zt, OrbitalStrike.OrbitalStrikeType type, long callerUid) {
         this.callerUid = callerUid;
+        this.targetRadius = type.getTargetRadius();
         this.xt = xt;
         this.yt = yt;
         this.zt = zt;
         this.targetWorld = targetWorld;
         this.type = type;
         // make flames happen in a circle
-        ((Mob) striker).setAI(false);
-        ((Mob) striker).setTarget(null);
+        sound(new Location(targetWorld, xt, yt, zt));
         strike();
+    }
+
+    public synchronized void sound(Location strikerLocation) {
+        if (type == OrbitalStrikeType.SMALL) {
+            strikerLocation.getWorld().playSound(strikerLocation, Sound.ENTITY_WITHER_SPAWN, SoundCategory.HOSTILE, 30, 2f);
+        } else if (type == OrbitalStrikeType.MEDIUM) {
+            strikerLocation.getWorld().playSound(strikerLocation, Sound.ENTITY_WITHER_SPAWN, SoundCategory.HOSTILE, 30, 1.2f);
+        } else if (type == OrbitalStrikeType.LARGE) {
+            strikerLocation.getWorld().playSound(strikerLocation, Sound.BLOCK_END_PORTAL_SPAWN, SoundCategory.HOSTILE, 50, 1.5f);
+        }
     }
 
     public synchronized void strike() {
@@ -67,7 +78,7 @@ public class OrbitalStrike {
         final double finalHeight = height;
         for (int i = 0; i < 2; i++) {
             double theta = random.nextDouble() * 360;
-            double radius = random.nextDouble() * type.getTargetRadius();
+            double radius = random.nextDouble() * targetRadius;
             double x = Math.cos(Math.toRadians(theta)) * radius;
             double z = Math.sin(Math.toRadians(theta)) * radius;
             Location location = new Location(targetWorld, xt + x, finalHeight, zt + z);
@@ -78,7 +89,11 @@ public class OrbitalStrike {
             targetWorld.spawnEntity(location,
                     firebll,
                     CreatureSpawnEvent.SpawnReason.CUSTOM,
-                    fire -> fire.setVelocity(direction)
+                    fire -> {
+                        if (random.nextDouble() < .8)
+                            ((Fireball) fire).setIsIncendiary(false);
+                        fire.setVelocity(direction);
+                    }
             );
         }
     }
@@ -95,20 +110,20 @@ public class OrbitalStrike {
         int particles = type.getParticles();
         for (int i = 0; i < particles; i++) {
             double theta = random.nextDouble() * 360;
-            double radius = random.nextDouble() * type.getTargetRadius();
+            double radius = random.nextDouble() * targetRadius;
             double x = Math.cos(Math.toRadians(theta)) * radius;
             double z = Math.sin(Math.toRadians(theta)) * radius;
             double y = random.nextDouble() * .3;
-            if (random.nextDouble() < 0.1) {
+            if (type == OrbitalStrikeType.LARGE && random.nextDouble() < 0.1) {
                 targetWorld.spawnParticle(Particle.LAVA, xt + x, yt + y, zt + z, 1);
             }
             targetWorld.spawnParticle(Particle.REDSTONE, xt + x, yt + y, zt + z, 5, 0, 0, 0, 1,
-                    new Particle.DustOptions(Color.fromBGR(0, 0, 99), 1.5f)
+                    new Particle.DustOptions(Color.fromBGR(0, 0, 99), type.getParticleSize())
             );
         }
 
         // make flame outerCircle
-        double radius = type.getTargetRadius();
+        double radius = targetRadius;
         for (int i = 0; i < particles / 2; i++) {
             double theta = random.nextDouble() * 360;
             double radiusOffset = random.nextDouble() * .3;
@@ -116,7 +131,7 @@ public class OrbitalStrike {
             double z = Math.sin(Math.toRadians(theta)) * (radius + radiusOffset);
             double y = random.nextDouble() * .3;
             targetWorld.spawnParticle(Particle.REDSTONE, xt + x, yt + y, zt + z, 5, 0, 0, 0, 1,
-                    new Particle.DustOptions(Color.fromBGR(0, 0, 36), 1.5f)
+                    new Particle.DustOptions(Color.fromBGR(0, 0, 36), type.getParticleSize())
             );
 //            targetWorld.spawnParticle(Particle.FLAME, xt + x, yt + y, zt + z, 5, 0, 0, 0, 0);
         }
@@ -140,7 +155,7 @@ public class OrbitalStrike {
                          i++) {
                 double y = random.nextDouble() * 0.3;
                 targetWorld.spawnParticle(Particle.REDSTONE, xt + x, yt + y, zt + z, 5, 0, 0, 0, 1,
-                        new Particle.DustOptions(Color.fromBGR(0, 0, 36), 1.5f)
+                        new Particle.DustOptions(Color.fromBGR(0, 0, 36), type.getParticleSize())
                 );
 //                targetWorld.spawnParticle(Particle.FLAME, xt + x, yt + y, zt + z, 5, 0, 0, 0, 0);
             }
@@ -182,7 +197,7 @@ public class OrbitalStrike {
                 0,
                 SmallOrbitalStrikeManagerTicker.get().STRIKE_TARGET_RADIUS,
                 SmallOrbitalStrikeManagerTicker.get().DESTRUCTION_BLAZE_INTERVAL,
-                10,
+                40, 0.5f,
                 (i) -> i == 0 ? EntityType.SMALL_FIREBALL : null
         ),
         LARGE(LargeOrbitalStrikeManagerTicker.get().STRIKE_TARGET_TIME,
@@ -192,10 +207,20 @@ public class OrbitalStrike {
                 LargeOrbitalStrikeManagerTicker.get().STRIKE_HEIGHT,
                 LargeOrbitalStrikeManagerTicker.get().STRIKE_TARGET_RADIUS,
                 LargeOrbitalStrikeManagerTicker.get().DESTRUCTION_BLAZE_INTERVAL,
-                100,
+                100, 1.5f,
                 (i) -> i == 1 ?
                         random.nextDouble() < .5 ? null : EntityType.FIREBALL :
                         EntityType.SMALL_FIREBALL
+        ), MEDIUM(
+                SmallOrbitalStrikeManagerTicker.get().STRIKE_TARGET_TIME,
+                0,
+                0,
+                SmallOrbitalStrikeManagerTicker.get().STRIKE_TIME,
+                0,
+                SmallOrbitalStrikeManagerTicker.get().STRIKE_TARGET_RADIUS * 2,
+                SmallOrbitalStrikeManagerTicker.get().DESTRUCTION_BLAZE_INTERVAL,
+                60, .75f,
+                (i) -> i == 0 ? EntityType.SMALL_FIREBALL : null
         );
 
         private final int strikeTargetTime;
@@ -206,11 +231,12 @@ public class OrbitalStrike {
         private final double strikeTargetRadius;
         private final Function<Integer, EntityType> fireball;
         private final double fireballInterval;
-        private int particles;
+        private final int particles;
+        private final float particleSize;
 
         OrbitalStrikeType(int strikeTargetTime, double strikeMovementSpeed, double strikeMovementLag,
                           int strikeTime, double strikeHeight, double strikeTargetRadius,
-                          double fireballInterval, int particles,
+                          double fireballInterval, int particles, float particleSize,
                           Function<Integer, EntityType> fireball
         ) {
             this.strikeTargetTime = strikeTargetTime;
@@ -221,6 +247,7 @@ public class OrbitalStrike {
             this.strikeTargetRadius = strikeTargetRadius;
             this.fireball = fireball;
             this.particles = particles;
+            this.particleSize = particleSize;
             this.fireballInterval = fireballInterval;
         }
 
@@ -262,6 +289,10 @@ public class OrbitalStrike {
 
         public int getParticles() {
             return particles;
+        }
+
+        public float getParticleSize() {
+            return particleSize;
         }
     }
 }

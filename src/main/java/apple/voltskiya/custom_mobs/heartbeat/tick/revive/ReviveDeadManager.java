@@ -82,7 +82,7 @@ public class ReviveDeadManager extends DeathEater {
         return null;
     }
 
-    public synchronized void reviveStart(RecordedMob reviveMe, CraftMob reviver) {
+    public synchronized void reviveStart(RecordedMob reviveMe, CraftMob reviver,Reviver reviverObject) {
         reviver.setAI(false);
 
         final Location reviverLocation = reviver.getLocation();
@@ -114,17 +114,18 @@ public class ReviveDeadManager extends DeathEater {
             if (!reviver.isDead()) {
                 reviver.setAI(true);
                 reviver.removePotionEffect(PotionEffectType.SPEED);
-                reviveProcess(reviveMe, reviver);
+                reviveProcess(reviveMe, reviver,reviverObject);
             }
         }, time);
     }
 
-    public synchronized void reviveProcess(RecordedMob reviveMe, CraftMob reviver) {
+    public synchronized void reviveProcess(RecordedMob reviveMe, CraftMob reviver, Reviver reviverObject) {
         final net.minecraft.server.v1_16_R3.Entity original = ((CraftEntity) reviveMe.getEntity()).getHandle();
         NBTTagCompound nbt = new NBTTagCompound();
         original.save(nbt);
         reviveMe.location.getWorld().spawnEntity(reviveMe.location, reviveMe.getEntity().getType(), CreatureSpawnEvent.SpawnReason.CUSTOM,
                 newMob -> {
+                    reviverObject.addMob(newMob);
                     final net.minecraft.server.v1_16_R3.Entity newMobHandle = ((CraftEntity) newMob).getHandle();
                     nbt.set("UUID", NBTTagString.a(newMobHandle.getUniqueIDString()));
                     nbt.set("DeathTime", NBTTagInt.a(0));

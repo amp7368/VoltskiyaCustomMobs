@@ -17,9 +17,12 @@ import java.util.Map;
 import java.util.UUID;
 
 public class ChargerManagerTicker extends SpawnEater {
+    public static long CHARGE_STUN_TIME;
+    public static int CHARGE_UP_TIME;
     public static long CHARGE_COOLDOWN;
     public static double CHARGE_CHANCE;
     public static int MAX_CHARGE_TIME;
+    public static long CHARGE_TIRED_TIME;
     protected static double TOO_CLOSE_TO_CHARGE;
     protected static double MARGIN_OF_ERROR;
     protected static double OVERSHOOT_SPEED;
@@ -28,6 +31,7 @@ public class ChargerManagerTicker extends SpawnEater {
     private final Map<Closeness, ChargerIndividualTicker> closenessToChargeres = new HashMap<>() {{
         for (Closeness closeness : Closeness.values())
             put(closeness, new ChargerIndividualTicker(closeness.getGiver(), closeness));
+        get(Closeness.HIGH_CHARGE_CLOSE).setChargeTick();
     }};
     private final long callerUid = UpdatedPlayerList.callerUid();
 
@@ -40,6 +44,9 @@ public class ChargerManagerTicker extends SpawnEater {
         MAX_CHARGE_TIME = (int) getValueOrInit(YmlSettings.MAX_CHARGE_TIME.getPath());
         CHARGE_CHANCE = (double) getValueOrInit(YmlSettings.CHARGE_CHANCE.getPath());
         CHARGE_COOLDOWN = ((int) getValueOrInit(YmlSettings.CHARGE_COOLDOWN.getPath())) * 1000 / 20;
+        CHARGE_UP_TIME = ((int) getValueOrInit(YmlSettings.CHARGE_UP_TIME.getPath()));
+        CHARGE_STUN_TIME = ((int) getValueOrInit(YmlSettings.CHARGE_STUN_TIME.getPath()));
+        CHARGE_TIRED_TIME = ((int) getValueOrInit(YmlSettings.CHARGE_TIRED_TIME.getPath()));
         for (UUID mob : getMobs()) {
             @Nullable Entity striker = Bukkit.getEntity(mob);
             if (!(striker instanceof Mob)) continue;
@@ -102,12 +109,13 @@ public class ChargerManagerTicker extends SpawnEater {
     }
 
     enum Closeness {
+        HIGH_CHARGE_CLOSE(15, HighFrequencyTick.get()),
         HIGH_CLOSE(40, HighFrequencyTick.get()),
         NORMAL_CLOSE(80, NormalFrequencyTick.get()),
         LOW_CLOSE(150, LowFrequencyTick.get());
 
         private final double distance;
-        private static final Closeness[] order = new Closeness[]{HIGH_CLOSE, NORMAL_CLOSE, LOW_CLOSE};
+        private static final Closeness[] order = new Closeness[]{HIGH_CHARGE_CLOSE, HIGH_CLOSE, NORMAL_CLOSE, LOW_CLOSE};
         private final TickGiverable giver;
 
         Closeness(double distance, TickGiverable giver) {
@@ -141,7 +149,10 @@ public class ChargerManagerTicker extends SpawnEater {
         MARGIN_OF_ERROR("margin_of_error_in_charge_choice", 2.5),
         MAX_CHARGE_TIME("charge_exit_failsafe", 20 * 5),
         CHARGE_CHANCE("charge_chance", 0.02),
-        CHARGE_COOLDOWN("charge_cooldown", 90);
+        CHARGE_COOLDOWN("charge_cooldown", 90),
+        CHARGE_UP_TIME("charge_up_time", 20),
+        CHARGE_STUN_TIME("charge_stun_time", 100),
+        CHARGE_TIRED_TIME("charge_tired_time", 50);
 
         private final String path;
         private final Object value;

@@ -152,7 +152,7 @@ public class SmallOrbitalStrikeManagerTicker extends SpawnEater {
         STRIKE_MIN_HEIGHT("min_height", 5),
         STRIKE_TIME("totalTime", 200),
         STRIKE_TARGET_TIME("targetTime", 40),
-        DESTRUCTION_BLAZE_INTERVAL("shootInterval", 10d),
+        DESTRUCTION_BLAZE_INTERVAL("shootInterval", 3d),
         STRIKE_MOVEMENT_SPEED("movementSpeed", 0d),
         STRIKE_MOVEMENT_LAG("movementTargetLag", 0),
         STRIKE_TARGET_LARGER_RADIUS("targetVariationRadius", 8.0);

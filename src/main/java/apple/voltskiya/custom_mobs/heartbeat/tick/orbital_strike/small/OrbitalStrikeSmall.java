@@ -1,13 +1,10 @@
 package apple.voltskiya.custom_mobs.heartbeat.tick.orbital_strike.small;
 
-import apple.voltskiya.custom_mobs.Pair;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.heartbeat.tick.orbital_strike.OrbitalStrike;
-import apple.voltskiya.custom_mobs.heartbeat.tick.orbital_strike.large.LargeOrbitalStrikeManagerTicker;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Mob;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -20,7 +17,7 @@ public class OrbitalStrikeSmall {
     public static final double STRIKE_MIN_HEIGHT = SmallOrbitalStrikeManagerTicker.get().STRIKE_MIN_HEIGHT;
     private final long callerUid;
     private final World targetWorld;
-    private List<Pair<Vector, Integer>> xyzsToTime = new ArrayList<>();
+    private List<Integer> xyzsToTime = new ArrayList<>();
     private int currentTick = 0;
     private final VoltskiyaPlugin plugin = VoltskiyaPlugin.get();
     private static final Random random = new Random();
@@ -28,59 +25,34 @@ public class OrbitalStrikeSmall {
 
     public OrbitalStrikeSmall(Entity striker, LivingEntity target, long callerUid) {
         this.callerUid = callerUid;
-        Location strikerLocation = striker.getLocation();
         Location targetLocation = target.getLocation();
-        xyzsToTime.add(
-                new Pair<>(
-                        findRandomCenter(
-                                targetLocation.getX(),
-                                targetLocation.getY(),
-                                targetLocation.getZ()
-                        ), 0
-                )
-        );
-        xyzsToTime.add(
-                new Pair<>(
-                        findRandomCenter(
-                                targetLocation.getX(),
-                                targetLocation.getY(),
-                                targetLocation.getZ()
-                        ), 35
-                )
-        );
-        xyzsToTime.add(
-                new Pair<>(
-                        findRandomCenter(
-                                targetLocation.getX(),
-                                targetLocation.getY(),
-                                targetLocation.getZ()
-                        ), 50
-                )
-        );
-        targetWorld = targetLocation.getWorld();
-        ((Mob) striker).setAI(false);
-        ((Mob) striker).setTarget(null);
-        // make flames happen in a circle
-        sound(strikerLocation);
-        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-            ((Mob) striker).setAI(true);
-            ((Mob) striker).setTarget(target);
-        }, SmallOrbitalStrikeManagerTicker.get().STRIKE_TIME + 50);
-        for (Pair<Vector, Integer> xyzToTime : xyzsToTime) {
-            final Vector xyz = xyzToTime.getKey();
-            Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(),
-                    () -> new OrbitalStrike(
-                            striker, targetWorld, xyz.getX(), xyz.getY(), xyz.getZ(), OrbitalStrike.OrbitalStrikeType.SMALL, callerUid
-                    ), xyzToTime.getValue()
+        for (int i = 0; i < 5; i++) {
+            xyzsToTime.add(
+                    random.nextInt(SmallOrbitalStrikeManagerTicker.get().STRIKE_TIME / 5) + SmallOrbitalStrikeManagerTicker.get().STRIKE_TIME / 5 * i
             );
         }
-    }
-
-    private synchronized void sound(Location strikerLocation) {
-        for (int time = 0; time < LargeOrbitalStrikeManagerTicker.get().STRIKE_TIME; time += 10) {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-                strikerLocation.getWorld().playSound(strikerLocation, Sound.BLOCK_CAMPFIRE_CRACKLE, SoundCategory.HOSTILE, 200f, .5f);
-            }, time);
+        targetWorld = targetLocation.getWorld();
+        // make flames happen in a circle
+        for (Integer xyzToTime : xyzsToTime) {
+            Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(),
+                    () -> {
+                        if (striker.isDead()) return;
+                        final OrbitalStrike.OrbitalStrikeType type = random.nextDouble() < 1f / 3 ? OrbitalStrike.OrbitalStrikeType.MEDIUM : OrbitalStrike.OrbitalStrikeType.SMALL;
+                        Location tLocation = target.getLocation();
+                        Vector center = findRandomCenter(
+                                tLocation.getX(),
+                                tLocation.getY(),
+                                tLocation.getZ()
+                        );
+                        new OrbitalStrike(
+                                targetWorld,
+                                center.getX(),
+                                center.getY(),
+                                center.getZ(),
+                                type, callerUid
+                        );
+                    }, xyzToTime
+            );
         }
     }
 

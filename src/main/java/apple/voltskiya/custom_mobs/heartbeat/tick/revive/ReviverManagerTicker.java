@@ -9,6 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -36,13 +37,13 @@ public class ReviverManagerTicker extends SpawnEater {
         REVIVE_DISTANCE = (int) getValueOrInit(getName(), YmlSettings.REVIVE_DISTANCE.getPath(), "reviver");
         REVIVE_RITUAL_TIME = (int) getValueOrInit(getName(), YmlSettings.REVIVE_RITUAL_TIME.getPath(), "reviver");
         for (UUID mob : getMobs()) {
-            @Nullable Entity striker = Bukkit.getEntity(mob);
-            if (striker == null) {
+            @Nullable Entity reviver = Bukkit.getEntity(mob);
+            if (reviver == null) {
                 MobListSql.removeMob(mob);
                 continue;
             }
-            Closeness c = determineConcern(striker);
-            closenessToReviveres.get(c).giveReviver(striker);
+            Closeness c = determineConcern(reviver);
+            closenessToReviveres.get(c).giveReviver(new Reviver(reviver));
         }
     }
 
@@ -55,7 +56,7 @@ public class ReviverManagerTicker extends SpawnEater {
         // this is a reviver
         final Entity reviver = event.getEntity();
         Closeness closeness = determineConcern(reviver);
-        closenessToReviveres.get(closeness).giveReviver(reviver);
+        closenessToReviveres.get(closeness).giveReviver(new Reviver(reviver));
         addMobs(reviver.getUniqueId());
     }
 
@@ -72,16 +73,18 @@ public class ReviverManagerTicker extends SpawnEater {
     }
 
 
-    public boolean amIGivingReviver(Entity entity, Closeness currentCloseness) {
-        Closeness actualCloseness = determineConcern(entity);
+    public boolean amIGivingReviver(Reviver reviver, Closeness currentCloseness) {
+        Closeness actualCloseness = determineConcern(reviver.getEntity());
         if (actualCloseness != currentCloseness) {
-            closenessToReviveres.get(actualCloseness).giveReviver(entity);
+            closenessToReviveres.get(actualCloseness).giveReviver(reviver);
             return true;
         }
         return false;
     }
 
-    private Closeness determineConcern(Entity reviver) {
+    @NotNull
+    private Closeness determineConcern(@Nullable Entity reviver) {
+        if (reviver == null) return Closeness.lowest();
         Location reviverLocation = reviver.getLocation();
 
         @Nullable Player player = UpdatedPlayerList.getClosestPlayer(reviverLocation, callerUid);
