@@ -42,8 +42,8 @@ public class VoltskiyaPlugin extends JavaPlugin {
 
     private void manuallyLoadModules() {
         final VoltskiyaModule[] modules = new VoltskiyaModule[]{
+                new Ticking(), // this has to go first
                 new MobTickPlugin(),
-                new Ticking(),
                 new LeapPlugin()
         };
         for (VoltskiyaModule module : modules) {

@@ -15,12 +15,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+
 public class LeapConfigManager extends ConfigManager {
     private final Map<String, LeapConfig> leapTypeNames = new HashMap<>();
 
     public LeapConfigManager() throws IOException {
-        new LeapListenerTemp();
-        @NotNull YamlConfiguration configMain = getConfig("leaps", new File(getDatafolder(), getName()));
+        initializeYml();
+        @NotNull YamlConfiguration configMain = getConfig("leaps", getDatafolder());
         configMain.getConfigurationSection("main");
         @NotNull Set<String> typeNames = configMain.getKeys(false);
         for (String leapTypeName : typeNames) {
@@ -42,7 +43,10 @@ public class LeapConfigManager extends ConfigManager {
 
     @Override
     public void initializeYml() throws IOException {
-
+        setValueIfNotExists("leaps", "leap_example." + YmlSettings.LEAP_TIME.path, 20);
+        setValueIfNotExists("leaps", "leap_example." + YmlSettings.LEAP_PEAK.path, 5);
+        setValueIfNotExists("leaps", "leap_example." + YmlSettings.DISTANCE_MIN.path, 10);
+        setValueIfNotExists("leaps", "leap_example." + YmlSettings.DISTANCE_MAX.path, 20);
     }
 
     @Override

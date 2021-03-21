@@ -1,6 +1,8 @@
 package apple.voltskiya.custom_mobs.mob_tick.tick.lost_soul;
 
+import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
+import apple.voltskiya.custom_mobs.mob_tick.MobTickPlugin;
 import apple.voltskiya.custom_mobs.mob_tick.tick.MobListSql;
 import apple.voltskiya.custom_mobs.mob_tick.tick.SpawnEater;
 import org.bukkit.Bukkit;
@@ -59,6 +61,11 @@ public class BlemishSpawnManager extends SpawnEater implements Listener {
         for (YmlSettings setting : YmlSettings.values()) {
             setValueIfNotExists(setting.getPath(), setting.getValue());
         }
+    }
+
+    @Override
+    protected VoltskiyaModule getPlugin() {
+        return MobTickPlugin.get();
     }
 
     @EventHandler(ignoreCancelled = true)

@@ -1,5 +1,7 @@
 package apple.voltskiya.custom_mobs.mob_tick.tick.orbital_strike.small;
 
+import apple.voltskiya.custom_mobs.VoltskiyaModule;
+import apple.voltskiya.custom_mobs.mob_tick.MobTickPlugin;
 import apple.voltskiya.custom_mobs.ticking.LowFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.NormalFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.TickGiverable;
@@ -92,6 +94,11 @@ public class SmallOrbitalStrikeManagerTicker extends SpawnEater {
         for (YmlSettings setting : YmlSettings.values()) {
             setValueIfNotExists("small", setting.getPath(), setting.value);
         }
+    }
+
+    @Override
+    protected VoltskiyaModule getPlugin() {
+        return MobTickPlugin.get();
     }
 
     public boolean amIGivingStriker(Entity entity, Closeness currentCloseness, long lastStrike) {

@@ -35,9 +35,9 @@ public class Leap implements Runnable {
         // xf = xi + (vi-vf)(t)/2
         // peakHeight = (vi)(t)/2
         // peakHeight/t*2 = vi`
-        this.yVelocityInitial = this.yVelocity = ((double) peakHeight) / timeFullArc;
-        // vf = vi + at
-        // a = (vf - vi)/t
+        this.yVelocityInitial = this.yVelocity = ((double) peakHeight) / timeFullArc * 4;
+        // vf = vi + at/2
+        // a = (vf - vi)/t/2
         this.acceleration = -this.yVelocityInitial / timeFullArc * 2;
 
         this.timeFinal = timeFullArc;

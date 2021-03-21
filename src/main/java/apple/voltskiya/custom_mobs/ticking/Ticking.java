@@ -2,17 +2,11 @@ package apple.voltskiya.custom_mobs.ticking;
 
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import apple.voltskiya.custom_mobs.mob_tick.MobTickPlugin;
 import apple.voltskiya.custom_mobs.mob_tick.tick.Tickable;
 import org.bukkit.Bukkit;
 
 public class Ticking extends VoltskiyaModule {
     private Tickable[] tickables;
-    private static MobTickPlugin instance;
-
-    public static MobTickPlugin get() {
-        return instance;
-    }
 
     public void tick() {
         for (Tickable tickable : tickables) {
@@ -23,6 +17,12 @@ public class Ticking extends VoltskiyaModule {
 
     @Override
     public void enable() {
+        tickables = new Tickable[]{
+                new HighFrequencyTick(),
+                new NormalFrequencyTick(),
+                new LowFrequencyTick(),
+                new VeryLowFrequencyTick(),
+        };
         tick();
     }
 

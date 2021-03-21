@@ -1,5 +1,7 @@
 package apple.voltskiya.custom_mobs.mob_tick.tick.hell_blazer;
 
+import apple.voltskiya.custom_mobs.VoltskiyaModule;
+import apple.voltskiya.custom_mobs.mob_tick.MobTickPlugin;
 import apple.voltskiya.custom_mobs.ticking.HighFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.LowFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.NormalFrequencyTick;
@@ -58,6 +60,11 @@ public class HellGuardManagerTicker extends SpawnEater {
     @Override
     public void initializeYml() throws IOException {
         setValueIfNotExists("damageAmount", 2d);
+    }
+
+    @Override
+    protected VoltskiyaModule getPlugin() {
+        return MobTickPlugin.get();
     }
 
 

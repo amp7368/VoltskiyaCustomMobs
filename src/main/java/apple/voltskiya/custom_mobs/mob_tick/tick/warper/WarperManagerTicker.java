@@ -1,5 +1,7 @@
 package apple.voltskiya.custom_mobs.mob_tick.tick.warper;
 
+import apple.voltskiya.custom_mobs.VoltskiyaModule;
+import apple.voltskiya.custom_mobs.mob_tick.MobTickPlugin;
 import apple.voltskiya.custom_mobs.ticking.HighFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.LowFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.NormalFrequencyTick;
@@ -59,6 +61,11 @@ public class WarperManagerTicker extends SpawnEater {
         for (WarperManagerTicker.YmlSettings setting : WarperManagerTicker.YmlSettings.values()) {
             setValueIfNotExists(setting.getPath(), setting.value);
         }
+    }
+
+    @Override
+    protected VoltskiyaModule getPlugin() {
+        return MobTickPlugin.get();
     }
 
     public boolean amIGivingWarper(Entity entity, WarperManagerTicker.Closeness currentCloseness) {

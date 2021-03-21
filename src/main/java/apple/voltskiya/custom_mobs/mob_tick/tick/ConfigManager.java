@@ -34,9 +34,13 @@ public abstract class ConfigManager {
         YamlConfiguration yml = getConfig(fileName, file);
         @Nullable ConfigurationSection config = yml.getConfigurationSection(defaultConfig);
         if (config == null) {
-            initializeYml();
+            yml.createSection(defaultConfig);
             config = yml.getConfigurationSection(defaultConfig);
-            if (config == null) throw new IOException("Error creating the config for " + getName());
+            if(config == null){
+                initializeYml();
+                config = yml.getConfigurationSection(defaultConfig);
+                if (config == null) throw new IOException("Error creating the config for " + getName());
+            }
         }
         if (config.get(path) == null) {
             config.set(path, value);

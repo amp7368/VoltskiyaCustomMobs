@@ -10,7 +10,7 @@ import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
 public class MobTickPlugin extends VoltskiyaModule {
 
 
-    private MobTickPlugin instance;
+    private static MobTickPlugin instance;
 
     @Override
     public void enable() {
@@ -21,7 +21,7 @@ public class MobTickPlugin extends VoltskiyaModule {
         new MobSpawnListener();
     }
 
-    public MobTickPlugin get() {
+    public static MobTickPlugin get() {
         return instance;
     }
 
