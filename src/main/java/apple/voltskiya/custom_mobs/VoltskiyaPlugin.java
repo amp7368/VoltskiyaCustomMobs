@@ -1,6 +1,6 @@
 package apple.voltskiya.custom_mobs;
 
-import apple.voltskiya.custom_mobs.heartbeat.MobTickPlugin;
+import apple.voltskiya.custom_mobs.main.ticking.MobTickPlugin;
 import co.aikar.commands.PaperCommandManager;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
