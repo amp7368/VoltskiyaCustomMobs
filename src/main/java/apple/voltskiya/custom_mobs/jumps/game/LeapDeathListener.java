@@ -1,14 +1,12 @@
-package apple.voltskiya.custom_mobs.jumps.listeners;
+package apple.voltskiya.custom_mobs.jumps.game;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.mob_tick.tick.DeathEater;
-import apple.voltskiya.custom_mobs.mob_tick.tick.revive.ReviveDeadManager;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,7 +25,7 @@ public class LeapDeathListener implements Listener {
 //            e.printStackTrace();
 //        }
         for (DeathEater spawnEater : deathEater.values()) {
-            spawnEater.registerInDB();
+//            spawnEater.registerInDB();
         }
     }
 

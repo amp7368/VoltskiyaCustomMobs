@@ -37,6 +37,7 @@ public class VoltskiyaPlugin extends JavaPlugin {
         setupACF();
         manuallyLoadModules();
 //        registerModules();
+        new Snowball();
     }
 
 

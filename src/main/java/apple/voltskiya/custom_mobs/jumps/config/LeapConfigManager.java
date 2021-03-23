@@ -2,14 +2,12 @@ package apple.voltskiya.custom_mobs.jumps.config;
 
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import apple.voltskiya.custom_mobs.jumps.LeapPlugin;
-import apple.voltskiya.custom_mobs.jumps.tick.LeapListenerTemp;
-import apple.voltskiya.custom_mobs.mob_tick.tick.ConfigManager;
+import apple.voltskiya.custom_mobs.ConfigManager;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;

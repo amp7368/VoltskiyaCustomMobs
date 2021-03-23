@@ -25,7 +25,7 @@ public class LeapListenerTemp implements Listener {
     public void click(PlayerInteractAtEntityEvent event) {
         if (finalLocation != null) {
             int time = 60;
-            int height = 5;
+            int height = 10;
             new Leap(event.getRightClicked(), finalLocation, height, time);
         }
     }
