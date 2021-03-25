@@ -1,7 +1,7 @@
 package apple.voltskiya.custom_mobs;
 
 import apple.voltskiya.custom_mobs.jumps.LeapPlugin;
-import apple.voltskiya.custom_mobs.mob_tick.MobTickPlugin;
+import apple.voltskiya.custom_mobs.mobs.MobTickPlugin;
 import apple.voltskiya.custom_mobs.ticking.*;
 import co.aikar.commands.PaperCommandManager;
 import net.luckperms.api.LuckPerms;

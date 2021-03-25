@@ -2,7 +2,7 @@ package apple.voltskiya.custom_mobs.ticking;
 
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import apple.voltskiya.custom_mobs.mob_tick.tick.Tickable;
+import apple.voltskiya.custom_mobs.mobs.tick.Tickable;
 import org.bukkit.Bukkit;
 
 public class Ticking extends VoltskiyaModule {

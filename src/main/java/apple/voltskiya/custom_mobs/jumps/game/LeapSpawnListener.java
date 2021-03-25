@@ -1,8 +1,8 @@
 package apple.voltskiya.custom_mobs.jumps.game;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import apple.voltskiya.custom_mobs.mob_tick.tick.SpawnEater;
-import apple.voltskiya.custom_mobs.mob_tick.tick.charger.ChargerManagerTicker;
+import apple.voltskiya.custom_mobs.mobs.tick.SpawnEater;
+import apple.voltskiya.custom_mobs.mobs.tick.charger.ChargerManagerTicker;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

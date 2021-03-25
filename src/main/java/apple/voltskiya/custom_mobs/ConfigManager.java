@@ -1,6 +1,6 @@
 package apple.voltskiya.custom_mobs;
 
-import apple.voltskiya.custom_mobs.mob_tick.tick.MobListSql;
+import apple.voltskiya.custom_mobs.mobs.tick.MobListSql;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;

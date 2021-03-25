@@ -1,7 +1,7 @@
 package apple.voltskiya.custom_mobs.jumps.game;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import apple.voltskiya.custom_mobs.mob_tick.tick.DeathEater;
+import apple.voltskiya.custom_mobs.mobs.tick.DeathEater;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
