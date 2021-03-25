@@ -1,6 +1,7 @@
 package apple.voltskiya.custom_mobs.mob_tick.tick.lost_soul;
 
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
+import apple.voltskiya.custom_mobs.YmlSettings;
 import apple.voltskiya.custom_mobs.ticking.HighFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.LowFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.NormalFrequencyTick;
@@ -60,6 +61,11 @@ public class LostSoulManagerTicker extends SpawnEater {
     @Override
     public String getName() {
         return "lost_soul";
+    }
+
+    @Override
+    public apple.voltskiya.custom_mobs.YmlSettings[] getSettings() {
+        return YmlSettings.values();
     }
 
     @Override
@@ -125,7 +131,7 @@ public class LostSoulManagerTicker extends SpawnEater {
         }
     }
 
-    private enum YmlSettings {
+    private enum YmlSettings implements apple.voltskiya.custom_mobs.YmlSettings {
         DAMAGE_AMOUNT("damageAmount", 2d);
 
         private final String path;

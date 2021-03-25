@@ -1,6 +1,7 @@
 package apple.voltskiya.custom_mobs.mob_tick.tick.orbital_strike.large;
 
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
+import apple.voltskiya.custom_mobs.YmlSettings;
 import apple.voltskiya.custom_mobs.mob_tick.MobTickPlugin;
 import apple.voltskiya.custom_mobs.ticking.LowFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.TickGiverable;
@@ -82,9 +83,14 @@ public class LargeOrbitalStrikeManagerTicker extends SpawnEater {
     }
 
     @Override
+    public apple.voltskiya.custom_mobs.YmlSettings[] getSettings() {
+        return YmlSettings.values();
+    }
+
+    @Override
     public void initializeYml() throws IOException {
         for (YmlSettings setting : YmlSettings.values()) {
-            setValueIfNotExists("large",setting.getPath(), setting.value);
+            setValueIfNotExists("large", setting.getPath(), setting.value);
         }
     }
 
@@ -145,7 +151,7 @@ public class LargeOrbitalStrikeManagerTicker extends SpawnEater {
         }
     }
 
-    private enum YmlSettings {
+    private enum YmlSettings implements apple.voltskiya.custom_mobs.YmlSettings {
         STRIKE_CHANCE("chancePerTick", 0.01d),
         STRIKE_COOLDOWN("cooldown", 800),
         STRIKE_DISTANCE("targetingRange", 100),

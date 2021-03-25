@@ -1,6 +1,7 @@
 package apple.voltskiya.custom_mobs.mob_tick.tick.warper;
 
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
+import apple.voltskiya.custom_mobs.YmlSettings;
 import apple.voltskiya.custom_mobs.mob_tick.MobTickPlugin;
 import apple.voltskiya.custom_mobs.ticking.HighFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.LowFrequencyTick;
@@ -54,6 +55,11 @@ public class WarperManagerTicker extends SpawnEater {
     @Override
     public String getName() {
         return "warper";
+    }
+
+    @Override
+    public apple.voltskiya.custom_mobs.YmlSettings[] getSettings() {
+        return YmlSettings.values();
     }
 
     @Override
@@ -120,7 +126,7 @@ public class WarperManagerTicker extends SpawnEater {
         }
     }
 
-    private enum YmlSettings {
+    private enum YmlSettings implements apple.voltskiya.custom_mobs.YmlSettings {
         WARP_RADIUS("warpRadius", 10),
         WARP_CHANCE("warpChance", .04d),
         PARTICLES("particles", 40);

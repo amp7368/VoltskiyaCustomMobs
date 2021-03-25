@@ -25,7 +25,7 @@ public class LeapConfigManager extends ConfigManager {
         for (String leapTypeName : typeNames) {
             ConfigurationSection config = configMain.getConfigurationSection(leapTypeName);
             if (config != null)
-                this.leapTypeNames.put(leapTypeName, YmlSettings.getLeapConfig(config));
+                this.leapTypeNames.put(leapTypeName, LeapYmlSettings.getLeapConfig(config));
         }
     }
 
@@ -40,11 +40,16 @@ public class LeapConfigManager extends ConfigManager {
     }
 
     @Override
+    public apple.voltskiya.custom_mobs.YmlSettings[] getSettings() {
+        return LeapYmlSettings.values();
+    }
+
+    @Override
     public void initializeYml() throws IOException {
-        setValueIfNotExists("leaps", "leap_example." + YmlSettings.LEAP_TIME.path, 20);
-        setValueIfNotExists("leaps", "leap_example." + YmlSettings.LEAP_PEAK.path, 5);
-        setValueIfNotExists("leaps", "leap_example." + YmlSettings.DISTANCE_MIN.path, 10);
-        setValueIfNotExists("leaps", "leap_example." + YmlSettings.DISTANCE_MAX.path, 20);
+        setValueIfNotExists("leaps", "leap_example." + LeapYmlSettings.LEAP_TIME.path, 20);
+        setValueIfNotExists("leaps", "leap_example." + LeapYmlSettings.LEAP_PEAK.path, 5);
+        setValueIfNotExists("leaps", "leap_example." + LeapYmlSettings.DISTANCE_MIN.path, 10);
+        setValueIfNotExists("leaps", "leap_example." + LeapYmlSettings.DISTANCE_MAX.path, 20);
     }
 
     @Override
@@ -52,16 +57,18 @@ public class LeapConfigManager extends ConfigManager {
         return LeapPlugin.get();
     }
 
-    private enum YmlSettings {
-        LEAP_TIME("leap_time"),
-        LEAP_PEAK("leap_peak"),
-        DISTANCE_MIN("distance_min"),
-        DISTANCE_MAX("distance_max");
+    private enum LeapYmlSettings implements apple.voltskiya.custom_mobs.YmlSettings {
+        LEAP_TIME("leap_time", 20),
+        LEAP_PEAK("leap_peak", 40),
+        DISTANCE_MIN("distance_min", 20),
+        DISTANCE_MAX("distance_max", 50);
 
         private final String path;
+        private final Object value;
 
-        YmlSettings(String path) {
+        LeapYmlSettings(String path, Object value) {
             this.path = path;
+            this.value = value;
         }
 
         public static LeapConfig getLeapConfig(ConfigurationSection config) {
@@ -71,6 +78,16 @@ public class LeapConfigManager extends ConfigManager {
                     config.getInt(DISTANCE_MIN.path),
                     config.getInt(DISTANCE_MAX.path)
             );
+        }
+
+        @Override
+        public String getPath() {
+            return path;
+        }
+
+        @Override
+        public Object getValue() {
+            return value;
         }
     }
 }

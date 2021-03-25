@@ -1,7 +1,5 @@
 package apple.voltskiya.custom_mobs.jumps;
 
-import apple.voltskiya.custom_mobs.jumps.tick.LeapListenerTemp;
-import apple.voltskiya.custom_mobs.jumps.tick.small_leap.LeapSmallMobListener;
 import org.bukkit.entity.LivingEntity;
 
 import java.util.HashMap;

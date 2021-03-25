@@ -2,6 +2,7 @@ package apple.voltskiya.custom_mobs.mob_tick.tick.revive;
 
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
+import apple.voltskiya.custom_mobs.YmlSettings;
 import apple.voltskiya.custom_mobs.mob_tick.MobTickPlugin;
 import apple.voltskiya.custom_mobs.mob_tick.tick.DeathEater;
 import net.minecraft.server.v1_16_R3.*;
@@ -60,6 +61,11 @@ public class ReviveDeadManager extends DeathEater {
     @Override
     public String getName() {
         return "revive";
+    }
+
+    @Override
+    public apple.voltskiya.custom_mobs.YmlSettings[] getSettings() {
+        return YmlSettings.values();
     }
 
     @Override
@@ -211,7 +217,7 @@ public class ReviveDeadManager extends DeathEater {
         }
     }
 
-    private enum YmlSettings {
+    private enum YmlSettings implements apple.voltskiya.custom_mobs.YmlSettings {
         MAX_DEAD_TIME("max_dead_time", 600),
         TIME_TO_RISE("time_to_rise", 50);
 

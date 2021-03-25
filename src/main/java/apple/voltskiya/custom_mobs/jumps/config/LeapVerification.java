@@ -14,7 +14,7 @@ public class LeapVerification {
      * @param leapConfig      the config containing constraints for possible leaps
      * @param minVector       the starting vector to look at
      * @param angle           the angle in the x-z plane to the new vector
-     * @return
+     * @return all the possible leap ranges
      */
     public List<LeapRange> verifyLeap(Location currentLocation, LeapConfig leapConfig, Vector minVector, double angle) {
         World world = currentLocation.getWorld();

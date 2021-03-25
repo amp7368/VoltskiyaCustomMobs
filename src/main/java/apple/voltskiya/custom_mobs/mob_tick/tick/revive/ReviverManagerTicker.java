@@ -1,6 +1,7 @@
 package apple.voltskiya.custom_mobs.mob_tick.tick.revive;
 
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
+import apple.voltskiya.custom_mobs.YmlSettings;
 import apple.voltskiya.custom_mobs.mob_tick.MobTickPlugin;
 import apple.voltskiya.custom_mobs.ticking.NormalFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.TickGiverable;
@@ -70,6 +71,11 @@ public class ReviverManagerTicker extends SpawnEater {
     }
 
     @Override
+    public apple.voltskiya.custom_mobs.YmlSettings[] getSettings() {
+        return YmlSettings.values();
+    }
+
+    @Override
     public void initializeYml() throws IOException {
         for (YmlSettings setting : YmlSettings.values()) {
             setValueIfNotExists(getName(), setting.getPath(), setting.value, "reviver");
@@ -133,7 +139,7 @@ public class ReviverManagerTicker extends SpawnEater {
         }
     }
 
-    private enum YmlSettings {
+    private enum YmlSettings implements apple.voltskiya.custom_mobs.YmlSettings {
         REVIVE_CHANCE("reviveChance", 0.03),
         REVIVE_DISTANCE("reviveDistance", 15),
         REVIVE_RITUAL_TIME("reviveRitualTime", 13);

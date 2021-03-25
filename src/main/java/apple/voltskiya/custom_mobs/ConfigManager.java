@@ -1,5 +1,6 @@
 package apple.voltskiya.custom_mobs;
 
+import apple.voltskiya.custom_mobs.mob_tick.tick.MobListSql;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
@@ -7,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.*;
 
 public abstract class ConfigManager {
@@ -22,7 +24,7 @@ public abstract class ConfigManager {
     /**
      * @return the default values for the config file
      */
-//    abstract public YmlSettings[] getSettings();
+    abstract public YmlSettings[] getSettings();
 
     /**
      * initializes the .yml file with default values
@@ -30,9 +32,9 @@ public abstract class ConfigManager {
      * @throws IOException if something goes wrong with the value insertion
      */
     public void initializeYml() throws IOException {
-//        for (YmlSettings settings : getSettings()) {
-//            setValueIfNotExists(settings.getPath(), settings.getValue());
-//        }
+        for (YmlSettings settings : getSettings()) {
+            setValueIfNotExists(settings.getPath(), settings.getValue());
+        }
     }
 
     /**
@@ -227,5 +229,31 @@ public abstract class ConfigManager {
         return this.folder;
     }
 
+    public List<UUID> getMobs() {
+        List<UUID> mobs = null;
+        try {
+            mobs = MobListSql.getMobs(getName());
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        if (mobs == null) return Collections.emptyList();
+        return mobs;
+    }
+
+    public void addMobs(UUID uuid) {
+        try {
+            MobListSql.addMob(getName(), uuid);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    public void registerInDB() {
+        try {
+            MobListSql.registerName(getName());
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
 
 }

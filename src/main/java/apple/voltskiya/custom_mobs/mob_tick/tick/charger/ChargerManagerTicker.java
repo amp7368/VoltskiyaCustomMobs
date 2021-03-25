@@ -1,6 +1,7 @@
 package apple.voltskiya.custom_mobs.mob_tick.tick.charger;
 
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
+import apple.voltskiya.custom_mobs.YmlSettings;
 import apple.voltskiya.custom_mobs.mob_tick.MobTickPlugin;
 import apple.voltskiya.custom_mobs.ticking.HighFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.LowFrequencyTick;
@@ -89,6 +90,11 @@ public class ChargerManagerTicker extends SpawnEater {
     }
 
     @Override
+    public apple.voltskiya.custom_mobs.YmlSettings[] getSettings() {
+        return YmlSettings.values();
+    }
+
+    @Override
     public void initializeYml() throws IOException {
         for (YmlSettings setting : YmlSettings.values())
             setValueIfNotExists(setting.getPath(), setting.getValue());
@@ -153,7 +159,7 @@ public class ChargerManagerTicker extends SpawnEater {
         }
     }
 
-    private enum YmlSettings {
+    private enum YmlSettings implements apple.voltskiya.custom_mobs.YmlSettings {
         OVERSHOOT_DISTANCE("overshoot_distance", 10),
         OVERSHOOT_SPEED("charge_speed", 2.0d),
         TOO_CLOSE_TO_CHARGE("too_close_to_charge", 4d),
