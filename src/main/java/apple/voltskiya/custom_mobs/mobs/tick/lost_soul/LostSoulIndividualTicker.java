@@ -1,6 +1,6 @@
 package apple.voltskiya.custom_mobs.mobs.tick.lost_soul;
 
-import apple.voltskiya.custom_mobs.mobs.tick.MobListSql;
+import apple.voltskiya.custom_mobs.sql.MobListSql;
 import apple.voltskiya.custom_mobs.mobs.tick.Tickable;
 import apple.voltskiya.custom_mobs.ticking.TickGiverable;
 import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;

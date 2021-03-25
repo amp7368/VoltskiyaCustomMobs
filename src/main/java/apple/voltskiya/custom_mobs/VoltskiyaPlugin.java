@@ -3,6 +3,7 @@ package apple.voltskiya.custom_mobs;
 import apple.voltskiya.custom_mobs.jumps.LeapPlugin;
 import apple.voltskiya.custom_mobs.mobs.MobTickPlugin;
 import apple.voltskiya.custom_mobs.ticking.*;
+import apple.voltskiya.custom_mobs.turrets.TurretPlugin;
 import co.aikar.commands.PaperCommandManager;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
@@ -45,7 +46,8 @@ public class VoltskiyaPlugin extends JavaPlugin {
         final VoltskiyaModule[] modules = new VoltskiyaModule[]{
                 new Ticking(), // this has to go first
                 new MobTickPlugin(),
-                new LeapPlugin()
+                new LeapPlugin(),
+                new TurretPlugin()
         };
         for (VoltskiyaModule module : modules) {
             registerModule(module);

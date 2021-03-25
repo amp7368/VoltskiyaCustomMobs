@@ -5,7 +5,7 @@ import apple.voltskiya.custom_mobs.mobs.MobTickPlugin;
 import apple.voltskiya.custom_mobs.ticking.NormalFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.TickGiverable;
 import apple.voltskiya.custom_mobs.util.DistanceUtils;
-import apple.voltskiya.custom_mobs.mobs.tick.MobListSql;
+import apple.voltskiya.custom_mobs.sql.MobListSql;
 import apple.voltskiya.custom_mobs.mobs.tick.SpawnEater;
 import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
 import org.bukkit.Bukkit;

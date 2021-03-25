@@ -3,7 +3,7 @@ package apple.voltskiya.custom_mobs.mobs.tick.lost_soul;
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.mobs.MobTickPlugin;
-import apple.voltskiya.custom_mobs.mobs.tick.MobListSql;
+import apple.voltskiya.custom_mobs.sql.MobListSql;
 import apple.voltskiya.custom_mobs.mobs.tick.SpawnEater;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

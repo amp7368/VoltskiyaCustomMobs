@@ -2,7 +2,7 @@ package apple.voltskiya.custom_mobs.mobs.tick.orbital_strike.small;
 
 import apple.voltskiya.custom_mobs.util.DistanceUtils;
 import apple.voltskiya.custom_mobs.util.Pair;
-import apple.voltskiya.custom_mobs.mobs.tick.MobListSql;
+import apple.voltskiya.custom_mobs.sql.MobListSql;
 import apple.voltskiya.custom_mobs.mobs.tick.Tickable;
 import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
 import org.bukkit.Bukkit;

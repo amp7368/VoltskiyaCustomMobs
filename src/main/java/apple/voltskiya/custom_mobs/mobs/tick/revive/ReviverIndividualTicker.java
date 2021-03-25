@@ -2,7 +2,7 @@ package apple.voltskiya.custom_mobs.mobs.tick.revive;
 
 import apple.voltskiya.custom_mobs.util.DistanceUtils;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import apple.voltskiya.custom_mobs.mobs.tick.MobListSql;
+import apple.voltskiya.custom_mobs.sql.MobListSql;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftMob;
