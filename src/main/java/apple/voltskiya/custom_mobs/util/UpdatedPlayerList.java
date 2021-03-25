@@ -99,7 +99,7 @@ public class UpdatedPlayerList implements Tickable {
         call(callerUid);
         synchronized (PLAYER_SYNC) {
             Player closest = null;
-            double distance = Integer.MAX_VALUE;
+            double distance = Double.MAX_VALUE;
             for (Player p : players) {
                 if (p.getGameMode() == GameMode.SURVIVAL) {
                     Location pLocation = p.getLocation();

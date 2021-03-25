@@ -54,13 +54,21 @@ public class MobListSql {
 
     public static void removeMob(UUID reviverUuid) {
         synchronized (MobsSql.syncDB) {
+            Statement statement = null;
             try {
-                Statement statement = MobsSql.database.createStatement();
+                statement = MobsSql.database.createStatement();
                 statement.execute(String.format("DELETE FROM %s\n" +
                         "WHERE %s = '%s'", MobNames.MOB_UID_TABLE, MobNames.MOB_UUID, reviverUuid.toString()));
-                statement.close();
             } catch (SQLException e) {
                 e.printStackTrace();
+            } finally {
+                if (statement != null) {
+                    try {
+                        statement.close();
+                    } catch (SQLException throwables) {
+                        throwables.printStackTrace();
+                    }
+                }
             }
         }
     }

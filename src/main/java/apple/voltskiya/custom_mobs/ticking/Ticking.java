@@ -19,6 +19,7 @@ public class Ticking extends VoltskiyaModule {
     public void enable() {
         tickables = new Tickable[]{
                 new HighFrequencyTick(),
+                new NormalHighFrequencyTick(),
                 new NormalFrequencyTick(),
                 new LowFrequencyTick(),
                 new VeryLowFrequencyTick(),
@@ -28,6 +29,6 @@ public class Ticking extends VoltskiyaModule {
 
     @Override
     public String getName() {
-        return null;
+        return "Ticking";
     }
 }

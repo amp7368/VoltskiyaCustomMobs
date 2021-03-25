@@ -69,6 +69,9 @@ public class MobsSql {
     private static final String TURRET_TO_ENTITY_CONTENT = String.format(
             "    %s BIGINT    NOT NULL,\n" +
                     "    %s NCHAR(36) NOT NULL,\n" +
+                    "    x          DOUBLE    NOT NULL,\n" +
+                    "    y          DOUBLE    NOT NULL,\n" +
+                    "    z          DOUBLE    NOT NULL,\n" +
                     "    UNIQUE (%s, %s),\n" +
                     "    PRIMARY KEY (%s, %s)",
             TurretNames.TURRET_UID, TurretNames.ENTITY_UID,

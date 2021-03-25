@@ -27,6 +27,10 @@ public class TurretCommand extends BaseCommand {
         world.spawnEntity(location, EntityType.ARMOR_STAND, CreatureSpawnEvent.SpawnReason.CUSTOM, turretMob::addRefilledEntity);
         world.spawnEntity(location, EntityType.ARMOR_STAND, CreatureSpawnEvent.SpawnReason.CUSTOM, turretMob::addBowEntity);
         world.spawnEntity(location, EntityType.ARMOR_STAND, CreatureSpawnEvent.SpawnReason.CUSTOM, turretMob::addDurabilityEntity);
-        new Thread(turretMob.build()).start();
+        new Thread(() -> {
+            final TurretMob built = turretMob.build();
+            built.run();
+            TurretManagerTicker.get().addTurret(built);
+        }).start();
     }
 }

@@ -10,10 +10,11 @@ import java.util.UUID;
 
 public class TurretBuilder {
     private final Location location;
-    private final List<UUID> turretEntities = new ArrayList<>();
-    private UUID durabilityEntity;
-    private UUID refilledEntity;
-    private UUID bowEntity;
+    private final List<EntityLocation> turretEntities = new ArrayList<>();
+    private EntityLocation durabilityEntity;
+    private Entity durabilityEntityReal;
+    private EntityLocation refilledEntity;
+    private EntityLocation bowEntity;
 
     /**
      * create a new TurretMob and register it as a new turret
@@ -25,19 +26,24 @@ public class TurretBuilder {
     }
 
     public synchronized void addEntity(Entity e) {
-        this.turretEntities.add(e.getUniqueId());
+        this.turretEntities.add(new EntityLocation(e));
+        e.addScoreboardTag(TurretMob.TURRET_TAG);
     }
 
     public synchronized void addDurabilityEntity(Entity e) {
-        this.durabilityEntity = e.getUniqueId();
+        this.durabilityEntity = new EntityLocation(e);
+        this.durabilityEntityReal = e;
+        e.addScoreboardTag(TurretMob.TURRET_TAG);
     }
 
     public synchronized void addRefilledEntity(Entity e) {
-        this.refilledEntity = e.getUniqueId();
+        this.refilledEntity = new EntityLocation(e);
+        e.addScoreboardTag(TurretMob.TURRET_TAG);
     }
 
     public synchronized void addBowEntity(Entity e) {
-        this.bowEntity = e.getUniqueId();
+        this.bowEntity = new EntityLocation(e);
+        e.addScoreboardTag(TurretMob.TURRET_TAG);
     }
 
     public TurretMob build() {
@@ -53,6 +59,7 @@ public class TurretBuilder {
                 facingY,
                 facingZ,
                 turretEntities,
+                durabilityEntityReal,
                 durabilityEntity,
                 refilledEntity,
                 bowEntity,
