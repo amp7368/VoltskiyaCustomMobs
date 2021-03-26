@@ -19,9 +19,11 @@ import java.util.UUID;
 
 public class TurretMob implements Runnable {
     public static final String TURRET_TAG = "player.turret";
-    private final static int MAX_SIGHT = 50;
+    private final static int MAX_SIGHT = 180;
     protected static final int MAX_HEALTH = 200;
-    protected static final double MAX_ANGLE = Math.toRadians(20);
+    protected static final double MAX_ANGLE = Math.toRadians(40);
+    private static final double VELOCITY = 7.0; // velocity of the arrow
+    private static final double GRAVITY = -1.0; // gravity
     private final Location center;
     private Vector facing;
     private final Entity durabilityEntityReal;
@@ -110,15 +112,19 @@ public class TurretMob implements Runnable {
                     if (rotate(newFacing)) {
                         target = player;
                         return;
+                    } else {
+                        rotate(center.getDirection());
                     }
                 }
             }
         } else {
             double distance = DistanceUtils.distance(target.getLocation(), center);
             if (distance <= MAX_SIGHT && target.hasLineOfSight(durabilityEntityReal)) {
-                final Vector newFacing = target.getLocation().subtract(center).getDirection().setY(0).normalize();
+                final Vector newFacing = target.getLocation().subtract(center).toVector().setY(0).normalize();
                 if (rotate(newFacing)) {
                     shoot(target);
+                } else {
+                    rotate(center.getDirection());
                 }
             } else {
                 target = null;
@@ -130,11 +136,19 @@ public class TurretMob implements Runnable {
         newFacing = newFacing.clone();
         Vector oldFacing = this.center.getDirection();
         newFacing.setY(oldFacing.getY());
+        oldFacing.setY(0).normalize();
         double xn = newFacing.getX();
         double zn = newFacing.getZ();
         double xo = oldFacing.getX();
         double zo = oldFacing.getZ();
-        double angle = (xo * zo + xn * zn) / (Math.sqrt(xo * xo + zo * zo) * Math.sqrt(xn * xn + zn * zn));
+
+        double angle1 = Math.atan2(zn, xn);
+        double angle2 = Math.atan2(zo, xo);
+        double angle = Math.abs(angle1 - angle2);
+        for (int i = -1; i <= 1; i += 2) {
+            angle = Math.min(Math.abs(angle1 - angle2 + Math.PI * 2 * i), angle);
+        }
+        System.out.println(angle);
         if (Math.abs(angle) < MAX_ANGLE) {
             // rotate by "angle" degrees
             for (EntityLocation entity : turretEntities) {
@@ -168,7 +182,32 @@ public class TurretMob implements Runnable {
 
 
     private void shoot(Player target) {
+        double distance = DistanceUtils.distance(target.getLocation(), center);
+        if (distance < MAX_SIGHT) {
+            Location spawnLocation = center.clone();
+            spawnLocation.add(facing).add(facing).add(facing);
+            spawnLocation.add(0, 3, 0);
+            // c = g*x/(2*v*v)
+            //
+            //            -1 +/- sqrt( 1 - 4(c)(c-(y/x)) )
+            // tan(O) =   --------------------------------
+            //                         2(c)
+            double a = target.getLocation().getX() - spawnLocation.getX();
+            double b = target.getLocation().getZ() - spawnLocation.getZ();
+            double x = Math.sqrt(a * a + b * b);
+            double y = target.getLocation().getY() - spawnLocation.getY();
+            double v = VELOCITY;
+            double c = GRAVITY * x / (2 * v * v);
+            // this could be a minus as well
+            double theta = Math.atan((-1 + Math.sqrt(1 - 4 * c * (c - y / x))) / (2 * c));
+            double vxz = v * Math.cos(theta);
+            double vy = v * Math.sin(theta);
 
+            double xzTheta = Math.atan2(b, a);
+            double vx = vxz * Math.cos(xzTheta);
+            double vz = vxz * Math.sin(xzTheta);
+            spawnLocation.getWorld().spawnArrow(spawnLocation, new Vector(vx, vy, vz), (float) (v * 0.25), 0);
+        }
     }
 
     /**

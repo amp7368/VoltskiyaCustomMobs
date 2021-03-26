@@ -100,7 +100,7 @@ public class TurretManagerTicker implements Listener {
     }
 
     enum Closeness {
-        HIGH_CLOSE(50, NormalHighFrequencyTick.get()),
+        HIGH_CLOSE(100, NormalHighFrequencyTick.get()),
         NORMAL_CLOSE(75, NormalFrequencyTick.get()),
         LOW_CLOSE(150, LowFrequencyTick.get()),
         VERY_LOW_CLOSE(160, VeryLowFrequencyTick.get());

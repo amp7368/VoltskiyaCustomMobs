@@ -12,6 +12,7 @@ public class NormalHighFrequencyTick implements Tickable, TickGiverable {
 
     private final Map<Long, Runnable> tickering = new HashMap<>();
     private long uid = 0;
+    private int count = 0;
 
     public NormalHighFrequencyTick() {
         instance = this;
@@ -20,8 +21,11 @@ public class NormalHighFrequencyTick implements Tickable, TickGiverable {
     @Override
     public void tick() {
         synchronized (tickering) {
-            for (Runnable runMe : new ArrayList<>(tickering.values())) {
-                runMe.run();
+            if (count++ % TICKS_PER_TICK == 0) {
+                count = 1;
+                for (Runnable runMe : new ArrayList<>(tickering.values())) {
+                    runMe.run();
+                }
             }
         }
     }
