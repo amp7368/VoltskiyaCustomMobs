@@ -10,6 +10,8 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
+import java.sql.SQLException;
+
 @CommandAlias("turret")
 public class TurretCommand extends BaseCommand {
     public TurretCommand() {
@@ -28,9 +30,14 @@ public class TurretCommand extends BaseCommand {
         world.spawnEntity(location, EntityType.ARMOR_STAND, CreatureSpawnEvent.SpawnReason.CUSTOM, turretMob::addBowEntity);
         world.spawnEntity(location, EntityType.ARMOR_STAND, CreatureSpawnEvent.SpawnReason.CUSTOM, turretMob::addDurabilityEntity);
         new Thread(() -> {
-            final TurretMob built = turretMob.build();
-            built.run();
-            TurretManagerTicker.get().addTurret(built);
+            final TurretMob built;
+            try {
+                built = turretMob.build();
+                built.run();
+                TurretManagerTicker.get().addTurret(built);
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
         }).start();
     }
 }

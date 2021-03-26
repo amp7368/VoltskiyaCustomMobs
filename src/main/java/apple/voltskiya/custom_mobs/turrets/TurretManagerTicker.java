@@ -1,6 +1,7 @@
 package apple.voltskiya.custom_mobs.turrets;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
+import apple.voltskiya.custom_mobs.sql.TurretsSql;
 import apple.voltskiya.custom_mobs.ticking.*;
 import apple.voltskiya.custom_mobs.util.DistanceUtils;
 import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
@@ -14,6 +15,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.jetbrains.annotations.Nullable;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -33,6 +35,14 @@ public class TurretManagerTicker implements Listener {
 
     public TurretManagerTicker() {
         instance = this;
+        try {
+            for (TurretMob turretMob : TurretsSql.getTurrets()) {
+                System.out.println("added");
+                addTurret(turretMob);
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
         Bukkit.getPluginManager().registerEvents(this, VoltskiyaPlugin.get());
     }
 

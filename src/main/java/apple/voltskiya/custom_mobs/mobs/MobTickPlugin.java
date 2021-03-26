@@ -3,7 +3,7 @@ package apple.voltskiya.custom_mobs.mobs;
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import apple.voltskiya.custom_mobs.mobs.listeners.MobDeathListener;
 import apple.voltskiya.custom_mobs.mobs.listeners.MobSpawnListener;
-import apple.voltskiya.custom_mobs.sql.MobsSql;
+import apple.voltskiya.custom_mobs.sql.VerifyMobsSql;
 import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
 
 
@@ -15,7 +15,7 @@ public class MobTickPlugin extends VoltskiyaModule {
     @Override
     public void enable() {
         instance = this;
-        MobsSql.initialize();
+        VerifyMobsSql.initialize();
         new UpdatedPlayerList();
         new MobDeathListener();
         new MobSpawnListener();

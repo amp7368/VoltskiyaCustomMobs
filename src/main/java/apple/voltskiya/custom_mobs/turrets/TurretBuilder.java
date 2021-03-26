@@ -1,16 +1,28 @@
 package apple.voltskiya.custom_mobs.turrets;
 
+import apple.voltskiya.custom_mobs.sql.DBUtils;
+import apple.voltskiya.custom_mobs.util.Pair;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class TurretBuilder {
     private final Location location;
-    private final List<EntityLocation> turretEntities = new ArrayList<>();
+    private final double health;
+    private final List<Pair<Material, Integer>> arrows;
+    private final int bowDurability;
+    private final long uid;
+    private final int bowUid;
+    private List<EntityLocation> turretEntities = new ArrayList<>();
     private EntityLocation durabilityEntity;
     private Entity durabilityEntityReal;
     private EntityLocation refilledEntity;
@@ -23,7 +35,38 @@ public class TurretBuilder {
      */
     public TurretBuilder(Player player) {
         this.location = player.getLocation();
+        this.arrows = new ArrayList<>();
+        this.health = TurretMob.MAX_HEALTH;
+        this.bowUid = -1;
+        this.bowDurability = 0;
+        this.uid = -1;
     }
+
+    public TurretBuilder(UUID worldUid, double x, double y, double z,
+                         double facingX, double facingY, double facingZ,
+                         List<EntityLocation> turretEntities,
+                         EntityLocation durabilityEntity, EntityLocation refilledEntity, EntityLocation bowEntity,
+                         double health,
+                         List<Pair<Material, Integer>> arrows,
+                         int bowUid,
+                         int bowDurability,
+                         long uid
+    ) {
+        final World world = Bukkit.getWorld(worldUid);
+        this.location = new Location(world, x, y, z);
+        this.location.setDirection(new Vector(facingX, facingY, facingZ));
+        this.turretEntities = turretEntities;
+        this.durabilityEntityReal = Bukkit.getEntity(durabilityEntity.uuid);
+        this.durabilityEntity = durabilityEntity;
+        this.refilledEntity = refilledEntity;
+        this.bowEntity = bowEntity;
+        this.health = health;
+        this.arrows = arrows;
+        this.bowUid = bowUid;
+        this.bowDurability = bowDurability;
+        this.uid = uid;
+    }
+
 
     public synchronized void addEntity(Entity e) {
         this.turretEntities.add(new EntityLocation(e));
@@ -46,7 +89,7 @@ public class TurretBuilder {
         e.addScoreboardTag(TurretMob.TURRET_TAG);
     }
 
-    public TurretMob build() {
+    public TurretMob build() throws SQLException {
         UUID world = location.getWorld().getUID();
         double x = location.getX();
         double y = location.getY();
@@ -54,7 +97,8 @@ public class TurretBuilder {
         double facingX = location.getDirection().getX();
         double facingY = location.getDirection().getY();
         double facingZ = location.getDirection().getZ();
-        return new TurretMob(world, x, y, z,
+
+        return uid < 0 ? new TurretMob(world, x, y, z,
                 facingX,
                 facingY,
                 facingZ,
@@ -63,10 +107,23 @@ public class TurretBuilder {
                 durabilityEntity,
                 refilledEntity,
                 bowEntity,
-                TurretMob.MAX_HEALTH,
-                new ArrayList<>(),
-                null,
-                0
+                health,
+                arrows,
+                Material.AIR,
+                bowDurability
+        ) : new TurretMob(world, x, y, z,
+                facingX,
+                facingY,
+                facingZ,
+                turretEntities,
+                durabilityEntity,
+                refilledEntity,
+                bowEntity,
+                health,
+                arrows,
+                DBUtils.getMaterialName(bowUid),
+                bowDurability,
+                uid
         );
     }
 }

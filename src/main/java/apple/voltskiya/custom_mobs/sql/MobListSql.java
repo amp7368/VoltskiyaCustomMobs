@@ -11,8 +11,8 @@ import static apple.voltskiya.custom_mobs.sql.DBNames.*;
 
 public class MobListSql {
     public static List<UUID> getMobs(String name) throws SQLException {
-        synchronized (MobsSql.syncDB) {
-            Statement statement = MobsSql.database.createStatement();
+        synchronized (VerifyMobsSql.syncDB) {
+            Statement statement = VerifyMobsSql.database.createStatement();
             ResultSet response = statement.executeQuery(String.format("SELECT %s.%s\n" +
                             "FROM %s\n" +
                             "         INNER JOIN %s ON %s.%s = %s.%s\n" +
@@ -29,8 +29,8 @@ public class MobListSql {
     }
 
     public static void addMob(String name, UUID uuid) throws SQLException {
-        synchronized (MobsSql.syncDB) {
-            Statement statement = MobsSql.database.createStatement();
+        synchronized (VerifyMobsSql.syncDB) {
+            Statement statement = VerifyMobsSql.database.createStatement();
             statement.execute(String.format(String.format(
                     "INSERT INTO %s (%s, %s)\n" +
                             "VALUES ((SELECT %s FROM %s WHERE %s = '%%s'), '%%s') ON CONFLICT (%s,%s) DO NOTHING",
@@ -42,8 +42,8 @@ public class MobListSql {
     }
 
     public static void registerName(String name) throws SQLException {
-        synchronized (MobsSql.syncDB) {
-            Statement statement = MobsSql.database.createStatement();
+        synchronized (VerifyMobsSql.syncDB) {
+            Statement statement = VerifyMobsSql.database.createStatement();
             statement.execute(String.format("INSERT INTO %s (%s, %s)\n" +
                             "VALUES ((SELECT max(%s) FROM %s) + 1, '%s')\n" +
                             "ON CONFLICT (%s) DO NOTHING\n",
@@ -53,10 +53,10 @@ public class MobListSql {
     }
 
     public static void removeMob(UUID reviverUuid) {
-        synchronized (MobsSql.syncDB) {
+        synchronized (VerifyMobsSql.syncDB) {
             Statement statement = null;
             try {
-                statement = MobsSql.database.createStatement();
+                statement = VerifyMobsSql.database.createStatement();
                 statement.execute(String.format("DELETE FROM %s\n" +
                         "WHERE %s = '%s'", MobNames.MOB_UID_TABLE, MobNames.MOB_UUID, reviverUuid.toString()));
             } catch (SQLException e) {

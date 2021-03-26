@@ -101,7 +101,6 @@ public class TurretMob implements Runnable {
     }
 
     public void tick() {
-        System.out.println("tick");
         if (target == null) {
             List<Player> players = UpdatedPlayerList.getPlayers(callerUid);
             for (Player player : players) {

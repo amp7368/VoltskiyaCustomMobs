@@ -12,7 +12,7 @@ import java.util.logging.Level;
 
 import static apple.voltskiya.custom_mobs.sql.DBNames.*;
 
-public class MobsSql {
+public class VerifyMobsSql {
     private static final String MOB_UID_CONTENT = String.format("    %s INTEGER   NOT NULL,\n" +
             "    %s NCHAR(36) NOT NULL,\n" +
             "    PRIMARY KEY (%s, %s)," +
@@ -22,6 +22,7 @@ public class MobsSql {
             "    PRIMARY KEY (%s)", MobNames.MOB_TYPE_UID, MobNames.MOB_TYPE_NAME, MobNames.MOB_TYPE_UID);
     private static final String TURRETS_CONTENT = String.format(
             "    %s              BIGINT    NOT NULL PRIMARY KEY,\n" +
+                    "    %s        NCHAR(36) NOT NULL,\n" +
                     "    %s                DOUBLE    NOT NULL,\n" +
                     "    %s                DOUBLE    NOT NULL,\n" +
                     "    %s                DOUBLE    NOT NULL,\n" +
@@ -35,6 +36,7 @@ public class MobsSql {
                     "    %s    INTEGER   NOT NULL,\n" +
                     "    %s           DOUBLE    NOT NULL",
             TurretNames.TURRET_UID,
+            TurretNames.WORLD_UID,
             TurretNames.X,
             TurretNames.Y,
             TurretNames.Z,
@@ -62,7 +64,7 @@ public class MobsSql {
     );
     private static final String MATERIALS_CONTENT = String.format(
             "    %s  INTEGER     NOT NULL PRIMARY KEY,\n" +
-                    "    %s VARCHAR(50) NOT NULL UNIQUE",
+                    "    %s VARCHAR(50) UNIQUE",
             MaterialNames.MATERIAL_UID,
             MaterialNames.MATERIAL_NAME
     );
@@ -91,18 +93,18 @@ public class MobsSql {
      * do any setup and make sure the static part of this class is completed
      */
     public static void initialize() {
-        synchronized (MobsSql.syncDB) {
+        synchronized (VerifyMobsSql.syncDB) {
             VoltskiyaModule voltskiyaModule = MobTickPlugin.get();
             try {
                 Class.forName("org.sqlite.JDBC");
                 // never close this because we're always using it
-                MobsSql.database = DriverManager.getConnection("jdbc:sqlite:" + voltskiyaModule.getDataFolder() + File.separator + MobNames.DATABASE_NAME);
-                MobsSql.verifyTables();
+                VerifyMobsSql.database = DriverManager.getConnection("jdbc:sqlite:" + voltskiyaModule.getDataFolder() + File.separator + MobNames.DATABASE_NAME);
+                VerifyMobsSql.verifyTables();
                 voltskiyaModule.log(Level.INFO, "The sql database for mobs is connected");
             } catch (ClassNotFoundException | SQLException e) {
                 e.printStackTrace();
                 voltskiyaModule.log(Level.SEVERE, "The sql database for mobs is not properly set up");
-                MobsSql.database = null;
+                VerifyMobsSql.database = null;
             }
         }
     }
