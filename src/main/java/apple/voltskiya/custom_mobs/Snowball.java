@@ -1,7 +1,5 @@
 package apple.voltskiya.custom_mobs;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import org.bukkit.*;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
@@ -32,12 +30,10 @@ public class Snowball implements Listener {
                 // we might have a snowball? O.o
                 final ItemMeta itemMeta = item.getItemMeta();
                 if (itemMeta != null) {
-                    @Nullable Component name = itemMeta.displayName();
-                    if (name instanceof TextComponent) {
-                        if (((TextComponent) name).content().toLowerCase().contains(SNOWBALL)) {
-                            // we have a snowball!
-                            snowball(event);
-                        }
+                    String name = itemMeta.getDisplayName();
+                    if (name.equals(SNOWBALL)) {
+                        // we have a snowball!
+                        snowball(event);
                     }
                 }
             }

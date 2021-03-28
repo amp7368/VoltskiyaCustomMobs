@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'base'
 }
 
 group 'org.example'
@@ -17,9 +18,16 @@ repositories {
     mavenLocal()
 }
 
-
+configurations{
+    toCopy
+}
+task download(type: Copy) {
+    from configurations.toCopy
+    into 'lib'
+}
 dependencies {
-    compileOnly 'com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT'
+    implementation 'org.jetbrains:annotations:20.1.0'
+    compileOnly 'com.destroystokyo.paper:paper-api:1.16.4-R0.1-SNAPSHOT'
     implementation 'co.aikar:acf-paper:0.5.0-SNAPSHOT'
     compileOnly 'org.spigotmc:spigot:1.16.5-R0.1-SNAPSHOT' // The full Spigot server with no shadowing. Requires mavenLocal.
     implementation 'net.luckperms:api:5.0'
@@ -31,7 +39,4 @@ dependencies {
 
 jar {
     destinationDirectory = new File('C:\\Users\\Aaron\\Desktop\\server\\plugins\\')
-}
-test {
-    useJUnitPlatform()
 }

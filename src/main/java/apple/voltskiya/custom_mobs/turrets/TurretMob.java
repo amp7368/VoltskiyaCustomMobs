@@ -19,7 +19,7 @@ import java.util.UUID;
 
 public class TurretMob implements Runnable {
     public static final String TURRET_TAG = "player.turret";
-    private final static int MAX_SIGHT = 180;
+    private final static int MAX_SIGHT = 50;
     protected static final int MAX_HEALTH = 200;
     protected static final double MAX_ANGLE = Math.toRadians(40);
     private static final double VELOCITY = 7.0; // velocity of the arrow
@@ -199,7 +199,7 @@ public class TurretMob implements Runnable {
             double v = VELOCITY;
             double c = GRAVITY * x / (2 * v * v);
             // this could be a minus as well
-            double theta = Math.atan((-1 + Math.sqrt(1 - 4 * c * (c - y / x))) / (2 * c));
+            double theta = Math.atan((-1 - Math.sqrt(1 + 4 * c * (c - y / x))) / (2 * c));
             double vxz = v * Math.cos(theta);
             double vy = v * Math.sin(theta);
 

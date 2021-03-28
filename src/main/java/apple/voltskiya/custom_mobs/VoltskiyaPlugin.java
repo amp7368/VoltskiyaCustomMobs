@@ -1,5 +1,6 @@
 package apple.voltskiya.custom_mobs;
 
+import apple.voltskiya.custom_mobs.custom_model.CustomModelPlugin;
 import apple.voltskiya.custom_mobs.jumps.LeapPlugin;
 import apple.voltskiya.custom_mobs.mobs.MobTickPlugin;
 import apple.voltskiya.custom_mobs.ticking.*;
@@ -9,7 +10,7 @@ import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.NotNull;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 
@@ -47,7 +48,8 @@ public class VoltskiyaPlugin extends JavaPlugin {
                 new Ticking(), // this has to go first
                 new MobTickPlugin(),
                 new LeapPlugin(),
-                new TurretPlugin()
+                new TurretPlugin(),
+                new CustomModelPlugin()
         };
         for (VoltskiyaModule module : modules) {
             registerModule(module);
@@ -149,7 +151,7 @@ public class VoltskiyaPlugin extends JavaPlugin {
         return instance;
     }
 
-    public @NonNull LuckPerms getLuckPerms() {
+    public @NotNull LuckPerms getLuckPerms() {
         return luckPerms;
     }
 

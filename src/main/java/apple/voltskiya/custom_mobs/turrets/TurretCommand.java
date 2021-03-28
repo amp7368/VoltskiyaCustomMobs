@@ -3,6 +3,7 @@ package apple.voltskiya.custom_mobs.turrets;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
+import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Default;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -13,6 +14,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import java.sql.SQLException;
 
 @CommandAlias("turret")
+@CommandPermission("turret")
 public class TurretCommand extends BaseCommand {
     public TurretCommand() {
         VoltskiyaPlugin.get().getCommandManager().registerCommand(this);
