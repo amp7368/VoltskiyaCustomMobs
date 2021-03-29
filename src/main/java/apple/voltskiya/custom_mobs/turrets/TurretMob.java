@@ -4,10 +4,8 @@ import apple.voltskiya.custom_mobs.sql.TurretsSql;
 import apple.voltskiya.custom_mobs.util.DistanceUtils;
 import apple.voltskiya.custom_mobs.util.Pair;
 import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import apple.voltskiya.custom_mobs.util.VectorUtils;
+import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -21,7 +19,7 @@ public class TurretMob implements Runnable {
     public static final String TURRET_TAG = "player.turret";
     private final static int MAX_SIGHT = 50;
     protected static final int MAX_HEALTH = 200;
-    protected static final double MAX_ANGLE = Math.toRadians(40);
+    protected static final double MAX_ANGLE = Math.toRadians(90);
     private static final double VELOCITY = 7.0; // velocity of the arrow
     private static final double GRAVITY = -1.0; // gravity
     private final Location center;
@@ -40,7 +38,6 @@ public class TurretMob implements Runnable {
     private final long callerUid = UpdatedPlayerList.callerUid();
     private Player target = null;
 
-
     public TurretMob(UUID worldUid, double x, double y, double z,
                      double facingX, double facingY, double facingZ,
                      List<EntityLocation> turretEntities,
@@ -54,7 +51,7 @@ public class TurretMob implements Runnable {
         final World world = Bukkit.getWorld(worldUid);
         this.center = new Location(world, x, y, z);
         this.center.setDirection(new Vector(facingX, facingY, facingZ));
-        this.facing = center.getDirection();
+        this.facing = center.getDirection().clone();
         this.turretEntities = turretEntities;
         this.durabilityEntityReal = durabilityEntityReal;
         this.durabilityEntity = durabilityEntity;
@@ -80,7 +77,7 @@ public class TurretMob implements Runnable {
         final World world = Bukkit.getWorld(worldUid);
         this.center = new Location(world, x, y, z);
         this.center.setDirection(new Vector(facingX, facingY, facingZ));
-        this.facing = center.getDirection();
+        this.facing = center.getDirection().clone();
         this.turretEntities = turretEntities;
         this.durabilityEntityReal = Bukkit.getEntity(durabilityEntity.uuid);
         if (this.durabilityEntityReal == null) isDead = true;
@@ -102,13 +99,14 @@ public class TurretMob implements Runnable {
         new Thread(this).start();
     }
 
+
     public void tick() {
         if (target == null) {
             List<Player> players = UpdatedPlayerList.getPlayers(callerUid);
             for (Player player : players) {
                 double distance = DistanceUtils.distance(player.getLocation(), center);
                 if (distance <= MAX_SIGHT && player.hasLineOfSight(durabilityEntityReal)) {
-                    final Vector newFacing = player.getLocation().subtract(center).getDirection().setY(0).normalize();
+                    final Vector newFacing = player.getLocation().subtract(center).toVector().setY(0).normalize();
                     if (rotate(newFacing)) {
                         target = player;
                         return;
@@ -119,7 +117,7 @@ public class TurretMob implements Runnable {
             }
         } else {
             double distance = DistanceUtils.distance(target.getLocation(), center);
-            if (distance <= MAX_SIGHT && target.hasLineOfSight(durabilityEntityReal)) {
+            if (distance <= MAX_SIGHT && target.hasLineOfSight(durabilityEntityReal) && target.getGameMode() == GameMode.SURVIVAL) {
                 final Vector newFacing = target.getLocation().subtract(center).toVector().setY(0).normalize();
                 if (rotate(newFacing)) {
                     shoot(target);
@@ -132,9 +130,15 @@ public class TurretMob implements Runnable {
         }
     }
 
+    /**
+     * rotates the turret to face the newFacing vector
+     *
+     * @param newFacing the new vector to face
+     * @return whether the turret can rotate to that degree
+     */
     private boolean rotate(Vector newFacing) {
         newFacing = newFacing.clone();
-        Vector oldFacing = this.center.getDirection();
+        Vector oldFacing = this.center.getDirection().clone();
         newFacing.setY(oldFacing.getY());
         oldFacing.setY(0).normalize();
         double xn = newFacing.getX();
@@ -142,38 +146,43 @@ public class TurretMob implements Runnable {
         double xo = oldFacing.getX();
         double zo = oldFacing.getZ();
 
-        double angle1 = Math.atan2(zn, xn);
-        double angle2 = Math.atan2(zo, xo);
-        double angle = Math.abs(angle1 - angle2);
-        for (int i = -1; i <= 1; i += 2) {
-            angle = Math.min(Math.abs(angle1 - angle2 + Math.PI * 2 * i), angle);
-        }
-        System.out.println(angle);
-        if (Math.abs(angle) < MAX_ANGLE) {
-            // rotate by "angle" degrees
+        double angleN = Math.atan2(zn, xn);
+        double angleO = Math.atan2(zo, xo);
+        double angle = Math.abs(angleN - angleO);
+        angle %= Math.PI * 2;
+        while (angle < 0) angle += Math.PI * 2;
+        System.out.println(Math.toDegrees(angle));
+        if (angle < MAX_ANGLE || Math.abs(Math.PI * 2 - angle) < MAX_ANGLE) {
+            // rotate by "angleN" degrees
             for (EntityLocation entity : turretEntities) {
-                rotate(entity, newFacing, center, angle);
+                rotate(entity, newFacing, center);
             }
-            rotate(bowEntity, newFacing, center, angle);
-            rotate(durabilityEntity, newFacing, center, angle);
-            rotate(refilledEntity, newFacing, center, angle);
             this.facing = newFacing;
             return true;
         }
         return false;
     }
 
-    private static void rotate(EntityLocation entityLocation, Vector newFacing, Location center, double angle) {
-        double radians = Math.toRadians(angle);
-        double radius = DistanceUtils.magnitude(
-                center.getX() - entityLocation.x,
-                center.getY() - entityLocation.y,
-                center.getZ() - entityLocation.z);
+
+    private static void rotate(EntityLocation entityLocation, Vector newFacing, Location center) {
         @Nullable Entity entity = Bukkit.getEntity(entityLocation.uuid);
         if (entity != null) {
-            double x = Math.cos(radians) * radius + center.getX();
-            double z = Math.sin(radians) * radius + center.getZ();
-            Location newLocation = entity.getLocation().setDirection(newFacing);
+            double radius = DistanceUtils.magnitude(
+                    entityLocation.x,
+                    0,
+                    entityLocation.z);
+
+            // do the position rotation
+            double angle = Math.atan2(entityLocation.z, entityLocation.x);
+            angle += Math.atan2(newFacing.getZ(), newFacing.getX());
+            double x = Math.cos(angle) * radius + center.getX();
+            double z = Math.sin(angle) * radius + center.getZ();
+
+            // do the facing rotation
+            double theta = Math.atan2(newFacing.getZ(), newFacing.getX()) - Math.toRadians(90); // todo make this 0
+            while (theta < 0) theta += Math.PI * 2;
+            Vector newEntityFacing = VectorUtils.rotateVector(entityLocation.x, entityLocation.z, entityLocation.xFacing, entityLocation.zFacing, entityLocation.yFacing, theta);
+            Location newLocation = entity.getLocation().setDirection(newEntityFacing);
             newLocation.setX(x);
             newLocation.setZ(z);
             entity.teleport(newLocation);
@@ -185,8 +194,9 @@ public class TurretMob implements Runnable {
         double distance = DistanceUtils.distance(target.getLocation(), center);
         if (distance < MAX_SIGHT) {
             Location spawnLocation = center.clone();
-            spawnLocation.add(facing).add(facing).add(facing);
-            spawnLocation.add(0, 3, 0);
+            Vector forward = facing.clone().setY(0);
+            spawnLocation.add(forward).add(forward).add(forward);
+            spawnLocation.add(0, 1.5, 0);
             // c = g*x/(2*v*v)
             //
             //            -1 +/- sqrt( 1 - 4(c)(c-(y/x)) )

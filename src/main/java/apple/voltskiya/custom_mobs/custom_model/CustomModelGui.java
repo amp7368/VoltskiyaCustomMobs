@@ -44,9 +44,9 @@ class CustomModelGui implements InventoryHolder {
     private final ArrayList<Inventory> inventory = new ArrayList<>();
     private Runnable action = null;
 
-    public CustomModelGui(Player player, Consumer<CustomModelGui> runOnSave) {
+    public CustomModelGui(Player player, Vector direction, Consumer<CustomModelGui> runOnSave) {
         this.runOnSave = runOnSave;
-        this.hitBoxCenter = this.eyeLocation = this.selectionCenter = player.getLocation();
+        this.hitBoxCenter = this.eyeLocation = this.selectionCenter = player.getLocation().setDirection(direction);
         this.selectionRadius = 0.5;
         this.hitbox = new BoundingBox(
                 -selectionRadius,
@@ -91,7 +91,7 @@ class CustomModelGui implements InventoryHolder {
                     double x = Math.cos(theta) * radiusAtY;
                     double z = Math.sin(theta) * radiusAtY;
                     spawnArmorStand(selectionCenter.clone().add(
-                            x*selectionRadius, y*selectionRadius, z*selectionRadius
+                            x * selectionRadius, y * selectionRadius, z * selectionRadius
                     ), Material.OAK_BUTTON);
                 }
         }
@@ -130,6 +130,10 @@ class CustomModelGui implements InventoryHolder {
                 validEntities.add(entity);
         }
         return validEntities;
+    }
+
+    public Location getCenter() {
+        return selectionCenter;
     }
 
     private static class Page1 implements ModelGuiPage {

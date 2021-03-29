@@ -74,6 +74,9 @@ public class VerifyMobsSql {
                     "    x          DOUBLE    NOT NULL,\n" +
                     "    y          DOUBLE    NOT NULL,\n" +
                     "    z          DOUBLE    NOT NULL,\n" +
+                    "    x_facing    DOUBLE    NOT NULL,\n" +
+                    "    y_facing    DOUBLE    NOT NULL,\n" +
+                    "    z_facing    DOUBLE    NOT NULL,\n" +
                     "    UNIQUE (%s, %s),\n" +
                     "    PRIMARY KEY (%s, %s)",
             TurretNames.TURRET_UID, TurretNames.ENTITY_UID,

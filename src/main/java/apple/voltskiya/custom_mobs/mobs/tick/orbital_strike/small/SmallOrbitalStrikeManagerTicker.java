@@ -76,7 +76,6 @@ public class SmallOrbitalStrikeManagerTicker extends SpawnEater {
 
     @Override
     public void eatEvent(CreatureSpawnEvent event) {
-        System.out.println("eaten");
         // this is a striker
         final Entity striker = event.getEntity();
         Closeness closeness = determineConcern(striker);

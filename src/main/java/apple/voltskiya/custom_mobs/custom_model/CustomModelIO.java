@@ -5,7 +5,9 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Default;
+import co.aikar.commands.annotation.Subcommand;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -17,6 +19,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,13 +37,16 @@ public class CustomModelIO extends BaseCommand implements Listener {
     }
 
     @Default
-    public void model(Player player) {
+    public void model(Player player, double vx, double vy, double vz) {
+        if (Math.abs(vx) < 0.01 && Math.abs(vy) < 0.01 && Math.abs(vz) < 0.01) {
+            player.sendMessage(ChatColor.RED + "You should use a vector that's not equal to zero.");
+        }
         @NotNull ItemStack item = new ItemStack(Material.STICK);
         ItemMeta im = item.getItemMeta();
         im.getPersistentDataContainer().set(guiNameKey,
                 PersistentDataType.STRING,
                 CustomModelGuiList.put(
-                        new CustomModelGui(player,
+                        new CustomModelGui(player,new Vector(vx,vy,vz),
                                 (gui) -> {
                                     try {
                                         CustomModelPlugin.get().saveSchematic(gui);
@@ -53,6 +59,11 @@ public class CustomModelIO extends BaseCommand implements Listener {
         im.setLocalizedName("Modeling tool");
         item.setItemMeta(im);
         player.getInventory().addItem(item);
+    }
+
+    @Subcommand("offset")
+    public void offset(double x, double y, double z) {
+        CustomModelPlugin.get().adjustSchematic(x, y, z);
     }
 
     @EventHandler

@@ -69,24 +69,28 @@ public class TurretBuilder {
 
 
     public synchronized void addEntity(Entity e) {
-        this.turretEntities.add(new EntityLocation(e));
         e.addScoreboardTag(TurretMob.TURRET_TAG);
+        this.turretEntities.add(new EntityLocation(e,
+                -this.location.getX(), -this.location.getY(), -this.location.getZ()));
     }
 
     public synchronized void addDurabilityEntity(Entity e) {
-        this.durabilityEntity = new EntityLocation(e);
+        this.durabilityEntity = new EntityLocation(e,
+                -this.location.getX(), -this.location.getY(), -this.location.getZ());
         this.durabilityEntityReal = e;
-        e.addScoreboardTag(TurretMob.TURRET_TAG);
+        addEntity(e);
     }
 
     public synchronized void addRefilledEntity(Entity e) {
-        this.refilledEntity = new EntityLocation(e);
-        e.addScoreboardTag(TurretMob.TURRET_TAG);
+        this.refilledEntity = new EntityLocation(e,
+                -this.location.getX(), -this.location.getY(), -this.location.getZ());
+        addEntity(e);
     }
 
     public synchronized void addBowEntity(Entity e) {
-        this.bowEntity = new EntityLocation(e);
-        e.addScoreboardTag(TurretMob.TURRET_TAG);
+        this.bowEntity = new EntityLocation(e,
+                -this.location.getX(), -this.location.getY(), -this.location.getZ());
+        addEntity(e);
     }
 
     public TurretMob build() throws SQLException {

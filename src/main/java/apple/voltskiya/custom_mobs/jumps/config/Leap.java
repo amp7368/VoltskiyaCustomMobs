@@ -53,7 +53,6 @@ public class Leap implements Runnable {
     public void run() {
         if (entity.isDead() || ++currentTime == timeFullArc) return;
         // set the yVelocity to what it should
-//        System.out.println("" + xVelocity + " " + yVelocity + " " + zVelocity);
         yVelocity = yVelocityInitial + acceleration * currentTime;
         entity.setVelocity(new Vector(xVelocity, yVelocity, zVelocity));
 

@@ -43,9 +43,6 @@ public class TurretsSql {
             for (EntityLocation entityUid : turretMob.getTurretEntities()) {
                 insertEntity(turretUid, statement, entityUid);
             }
-            insertEntity(turretUid, statement, turretMob.getBowEntity());
-            insertEntity(turretUid, statement, turretMob.getRefilledEntity());
-            insertEntity(turretUid, statement, turretMob.getDurabilityEntity());
             statement.close();
             VerifyMobsSql.database.commit();
             VerifyMobsSql.database.setAutoCommit(true);
@@ -55,14 +52,17 @@ public class TurretsSql {
 
     private static void insertEntity(long turretUid, Statement statement, EntityLocation entityUid) throws SQLException {
         statement.execute(String.format(
-                "INSERT INTO %s (%s,%s,%s,%s,%s) VALUES (%d,'%s',%f,%f,%f) ON CONFLICT (%s,%s) DO NOTHING",
+                "INSERT INTO %s (%s,%s,%s,%s,%s,%s,%s,%s) VALUES (%d,'%s',%f,%f,%f,%f,%f,%f) ON CONFLICT (%s,%s) DO NOTHING",
                 TURRET_TO_ENTITY_TABLE,
-                TURRET_UID, ENTITY_UID, X, Y, Z,
+                TURRET_UID, ENTITY_UID, X, Y, Z, X_FACING, Y_FACING, Z_FACING,
                 turretUid,
                 entityUid.uuid.toString(),
                 entityUid.x,
                 entityUid.y,
                 entityUid.z,
+                entityUid.xFacing,
+                entityUid.yFacing,
+                entityUid.zFacing,
                 TURRET_UID, ENTITY_UID
         ));
     }
@@ -117,7 +117,6 @@ public class TurretsSql {
             statement.close();
             List<TurretMob> turretMobs = new ArrayList<>();
             for (TurretBuilder turretMob : turrets) turretMobs.add(turretMob.build());
-            System.out.println(turrets.size());
             return turretMobs;
         }
     }
@@ -151,7 +150,10 @@ public class TurretsSql {
                                 UUID.fromString(response.getString(ENTITY_UID)),
                                 response.getDouble(X),
                                 response.getDouble(Y),
-                                response.getDouble(Z)
+                                response.getDouble(Z),
+                                response.getDouble(X_FACING),
+                                response.getDouble(Y_FACING),
+                                response.getDouble(Z_FACING)
                         )
                 );
             }

@@ -37,7 +37,6 @@ public class TurretManagerTicker implements Listener {
         instance = this;
         try {
             for (TurretMob turretMob : TurretsSql.getTurrets()) {
-                System.out.println("added");
                 addTurret(turretMob);
             }
         } catch (SQLException throwables) {
@@ -60,7 +59,6 @@ public class TurretManagerTicker implements Listener {
     public void onDamage(EntityDamageByEntityEvent event) {
         final Entity entity = event.getEntity();
         if (entity.getScoreboardTags().contains(TURRET_TAG)) {
-            System.out.println("PlayerInteractAtEntityEvent");
             @Nullable Long uid = entityToTurret.get(entity.getUniqueId());
             if (uid != null) {
                 @Nullable TurretMob turret = turrets.get(uid);
