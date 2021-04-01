@@ -161,4 +161,15 @@ public class TurretsSql {
             return entities;
         }
     }
+
+    public static void removeTurret(long uid) throws SQLException {
+        synchronized (VerifyMobsSql.syncDB) {
+            Statement statement = VerifyMobsSql.database.createStatement();
+            statement.execute(
+                    "DELETE\n" +
+                            "FROM " + TURRETS_TABLE +
+                            " WHERE " + TURRET_UID + " = " + uid);
+            statement.close();
+        }
+    }
 }

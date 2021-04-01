@@ -44,10 +44,10 @@ class CustomModelGui implements InventoryHolder {
     private final ArrayList<Inventory> inventory = new ArrayList<>();
     private Runnable action = null;
 
-    public CustomModelGui(Player player, Vector direction, Consumer<CustomModelGui> runOnSave) {
+    public CustomModelGui(Player player, Vector direction, Double startingRadius, Consumer<CustomModelGui> runOnSave) {
         this.runOnSave = runOnSave;
         this.hitBoxCenter = this.eyeLocation = this.selectionCenter = player.getLocation().setDirection(direction);
-        this.selectionRadius = 0.5;
+        this.selectionRadius = startingRadius == null ? 0.5 : startingRadius;
         this.hitbox = new BoundingBox(
                 -selectionRadius,
                 -selectionRadius,

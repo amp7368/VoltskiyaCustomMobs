@@ -8,10 +8,6 @@ import org.jetbrains.annotations.NotNull;
 public class TurretGui implements InventoryHolder {
     @NotNull Inventory inventory;
 
-    public TurretGui() {
-        this.inventory = Bukkit.createInventory(this, 54);
-    }
-
     public TurretGui(TurretMob turret) {
         this.inventory = Bukkit.createInventory(this, 54);
     }

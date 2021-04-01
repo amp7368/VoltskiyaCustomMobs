@@ -2,18 +2,15 @@ package apple.voltskiya.custom_mobs.custom_model;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Default;
-import co.aikar.commands.annotation.Subcommand;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
+import co.aikar.commands.annotation.*;
+import co.aikar.commands.bukkit.contexts.OnlinePlayer;
+import org.bukkit.*;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
@@ -24,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 @CommandAlias("model")
@@ -37,16 +35,23 @@ public class CustomModelIO extends BaseCommand implements Listener {
     }
 
     @Default
-    public void model(Player player, double vx, double vy, double vz) {
+    @CommandCompletion("facingX facingY facingZ startingRadius")
+    public void model(Player player, @Optional Double vx, @Optional Double vy, @Optional Double vz, @Optional Double radius) {
+        if (vx == null || vy == null || vz == null) {
+            vx = 1d;
+            vy = 0d;
+            vz = 0d;
+        }
         if (Math.abs(vx) < 0.01 && Math.abs(vy) < 0.01 && Math.abs(vz) < 0.01) {
             player.sendMessage(ChatColor.RED + "You should use a vector that's not equal to zero.");
+            return;
         }
         @NotNull ItemStack item = new ItemStack(Material.STICK);
         ItemMeta im = item.getItemMeta();
         im.getPersistentDataContainer().set(guiNameKey,
                 PersistentDataType.STRING,
                 CustomModelGuiList.put(
-                        new CustomModelGui(player,new Vector(vx,vy,vz),
+                        new CustomModelGui(player, new Vector(vx, vy, vz), radius,
                                 (gui) -> {
                                     try {
                                         CustomModelPlugin.get().saveSchematic(gui);
@@ -64,6 +69,38 @@ public class CustomModelIO extends BaseCommand implements Listener {
     @Subcommand("offset")
     public void offset(double x, double y, double z) {
         CustomModelPlugin.get().adjustSchematic(x, y, z);
+    }
+
+    @Subcommand("spawn")
+    public void spawn(Player player) {
+        Location location = player.getLocation();
+        World world = location.getWorld();
+        CustomModel model = CustomModelPlugin.get().loadSchematic();
+        if (model != null) {
+            List<CustomModel.CustomEntity> entities = model.entities;
+            for (CustomModel.CustomEntity entity : entities) {
+                world.spawnEntity(location.clone().add(entity.x, entity.y, entity.z).setDirection(
+                        new Vector(
+                                entity.facingX,
+                                entity.facingY,
+                                entity.facingZ
+                        )
+                ), entity.type, CreatureSpawnEvent.SpawnReason.CUSTOM, spawned -> {
+                    Location loc = spawned.getLocation();
+                    ((CraftEntity) spawned).getHandle().load(entity.nbt);
+                    spawned.teleport(loc);
+                });
+            }
+        }
+    }
+
+    @Subcommand("rotate")
+    public void rotate(double rotation) {
+        try {
+            CustomModelPlugin.get().rotate(rotation);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @EventHandler

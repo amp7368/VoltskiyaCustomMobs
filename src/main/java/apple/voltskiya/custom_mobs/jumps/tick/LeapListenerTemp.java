@@ -12,7 +12,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 public class LeapListenerTemp implements Listener {
     private Location finalLocation = null;
     public LeapListenerTemp(){
-        Bukkit.getPluginManager().registerEvents(this, VoltskiyaPlugin.get());
+//        Bukkit.getPluginManager().registerEvents(this, VoltskiyaPlugin.get());
     }
     @EventHandler
     public void click(PlayerInteractEvent event) {
@@ -24,8 +24,8 @@ public class LeapListenerTemp implements Listener {
     @EventHandler
     public void click(PlayerInteractAtEntityEvent event) {
         if (finalLocation != null) {
-            int time = 300;
-            int height = 200;
+            int time = 100;
+            int height = 40;
             new Leap(event.getRightClicked(), finalLocation, height, time);
         }
     }

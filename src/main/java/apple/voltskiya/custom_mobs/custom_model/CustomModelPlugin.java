@@ -37,6 +37,42 @@ public class CustomModelPlugin extends VoltskiyaModule {
         return instance;
     }
 
+    public void rotate(double rotation) throws IOException {
+        rotation = Math.toRadians(rotation);
+        CustomModel model = loadSchematic();
+        File file = new File(this.getDataFolder(), YML_FILENAME);
+        if (!file.exists()) file.createNewFile();
+        YamlConfiguration yml = YamlConfiguration.loadConfiguration(file);
+        if (!yml.contains("models")) yml.createSection("models");
+        @Nullable ConfigurationSection config = yml.getConfigurationSection("models");
+        if (config == null) return;
+        List<CustomModel.CustomEntity> entities = model.entities;
+        final int size = entities.size();
+        // convert the center.getDirection() vector to <1,0,0> and with it, all of the entities
+        for (int i = 0; i < size; i++) {
+            CustomModel.CustomEntity entity = entities.get(i);
+
+            double x = entity.x;
+            double z = entity.z;
+            double radius = Math.sqrt(z * z + x * x);
+            double angle = Math.atan2(z, x) - rotation;
+            double xNew = Math.cos(angle) * radius;
+            double zNew = Math.sin(angle) * radius;
+            @NotNull Vector facingNew = VectorUtils.rotateVector(x, z, entity.facingX, entity.facingZ, entity.facingY, -rotation);
+            @NotNull ConfigurationSection c = config.createSection("entity" + i);
+            c.set("x", xNew);
+            c.set("y", entity.y);
+            c.set("z", zNew);
+            c.set("facingX", facingNew.getX());
+            c.set("facingY", facingNew.getY());
+            c.set("facingZ", facingNew.getZ());
+            c.set("entityType", entity.type.name());
+            NBTTagCompound nbt = entity.nbt;
+            c.set("nbt", nbt.toString());
+        }
+        yml.save(file);
+    }
+
     public void saveSchematic(CustomModelGui gui) throws IOException {
         File file = new File(this.getDataFolder(), YML_FILENAME);
         if (!file.exists()) file.createNewFile();
@@ -71,7 +107,6 @@ public class CustomModelPlugin extends VoltskiyaModule {
             CraftEntity e = (CraftEntity) entity;
             NBTTagCompound nbt = new NBTTagCompound();
             e.getHandle().save(nbt);
-            new NBTTagCompound();
             c.set("nbt", nbt.toString());
         }
         yml.save(file);
@@ -155,5 +190,11 @@ public class CustomModelPlugin extends VoltskiyaModule {
     @Override
     public String getName() {
         return "Custom Model";
+    }
+
+    public CustomModel loadSchematic() {
+        File file = new File(this.getDataFolder(), YML_FILENAME);
+        @Nullable CustomModel schematic = loadSchematic(file);
+        return schematic;
     }
 }

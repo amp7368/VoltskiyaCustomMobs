@@ -17,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -95,6 +96,15 @@ public class TurretManagerTicker implements Listener {
             return Closeness.lowest();
         else
             return Closeness.getCloseness(turretLocation, player.getLocation());
+    }
+
+    public void removeTurret(long uid, List<EntityLocation> turretEntities) {
+        this.turrets.remove(uid);
+        for (EntityLocation e : turretEntities) {
+            Entity entity = Bukkit.getEntity(e.uuid);
+            if (entity != null) entity.remove();
+            this.entityToTurret.remove(e.uuid);
+        }
     }
 
     enum Closeness {

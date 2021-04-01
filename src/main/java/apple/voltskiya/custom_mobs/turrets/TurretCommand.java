@@ -7,10 +7,10 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Default;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.util.Vector;
@@ -155,6 +155,7 @@ public class TurretCommand extends BaseCommand {
             final TurretMob built;
             try {
                 built = turretMob.build();
+                Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), built::resetRotate);
                 built.run();
                 TurretManagerTicker.get().addTurret(built);
             } catch (SQLException throwables) {

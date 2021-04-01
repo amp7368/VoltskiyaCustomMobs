@@ -7,11 +7,14 @@ import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
 import apple.voltskiya.custom_mobs.util.VectorUtils;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,6 +25,8 @@ public class TurretMob implements Runnable {
     protected static final double MAX_ANGLE = Math.toRadians(90);
     private static final double VELOCITY = 7.0; // velocity of the arrow
     private static final double GRAVITY = -1.0; // gravity
+    private static final long BUFFER_TIME_TO_UPDATE = 10000;
+    private static final int MAX_TARGET_RECORDING = 5;
     private final Location center;
     private Vector facing;
     private final Entity durabilityEntityReal;
@@ -37,6 +42,8 @@ public class TurretMob implements Runnable {
     private boolean isDead = false;
     private final long callerUid = UpdatedPlayerList.callerUid();
     private Player target = null;
+    private List<Vector> targetLastLocation = new ArrayList<Vector>();
+    private boolean isUpdatingDB = false;
 
     public TurretMob(UUID worldUid, double x, double y, double z,
                      double facingX, double facingY, double facingZ,
@@ -93,12 +100,28 @@ public class TurretMob implements Runnable {
 
     public synchronized void damage(double damage) {
         this.health -= damage;
+        System.out.println(this.health);
         if (health <= 0) {
             isDead = true;
+            remove();
         }
-        new Thread(this).start();
+        if (!this.setIsUpdatingDB()) {
+            new Thread(this).start();
+        }
     }
 
+    private void remove() {
+        TurretManagerTicker.get().removeTurret(this.uid, this.turretEntities);
+        try {
+            TurretsSql.removeTurret(uid);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    public void resetRotate() {
+        rotate(center.getDirection());
+    }
 
     public void tick() {
         if (target == null) {
@@ -123,6 +146,7 @@ public class TurretMob implements Runnable {
                     shoot(target);
                 } else {
                     rotate(center.getDirection());
+                    target = null;
                 }
             } else {
                 target = null;
@@ -151,7 +175,6 @@ public class TurretMob implements Runnable {
         double angle = Math.abs(angleN - angleO);
         angle %= Math.PI * 2;
         while (angle < 0) angle += Math.PI * 2;
-        System.out.println(Math.toDegrees(angle));
         if (angle < MAX_ANGLE || Math.abs(Math.PI * 2 - angle) < MAX_ANGLE) {
             // rotate by "angleN" degrees
             for (EntityLocation entity : turretEntities) {
@@ -191,33 +214,63 @@ public class TurretMob implements Runnable {
 
 
     private void shoot(Player target) {
-        double distance = DistanceUtils.distance(target.getLocation(), center);
-        if (distance < MAX_SIGHT) {
+        Location goal = target.getLocation();
+        this.targetLastLocation.add(goal.toVector());
+        int lastLocationSize = this.targetLastLocation.size();
+        if (lastLocationSize > MAX_TARGET_RECORDING) {
+            this.targetLastLocation.remove(0);
+            lastLocationSize--;
+        }
+        double distanceToTarget = DistanceUtils.distance(goal, center);
+
+        if (distanceToTarget < MAX_SIGHT) {
             Location spawnLocation = center.clone();
-            Vector forward = facing.clone().setY(0);
-            spawnLocation.add(forward).add(forward).add(forward);
+            spawnLocation.add(facing);
+            spawnLocation.add(facing);
+            spawnLocation.add(facing);
             spawnLocation.add(0, 1.5, 0);
+            double v = velocity(distanceToTarget);
+            double timeToTarget = distanceToTarget / v * .9;
+            Vector movement = lastLocationSize <= 1 ?
+                    new Vector(0, 0, 0) :
+                    this.targetLastLocation.get(lastLocationSize - 1).clone().subtract(
+                            this.targetLastLocation.get(0)
+                    ).divide(
+                            new Vector(lastLocationSize - 1, lastLocationSize - 1, lastLocationSize - 1)
+                    ).multiply(timeToTarget);
+            goal.add(movement);
+
             // c = g*x/(2*v*v)
             //
             //            -1 +/- sqrt( 1 - 4(c)(c-(y/x)) )
             // tan(O) =   --------------------------------
             //                         2(c)
-            double a = target.getLocation().getX() - spawnLocation.getX();
-            double b = target.getLocation().getZ() - spawnLocation.getZ();
+            double a = goal.getX() - spawnLocation.getX();
+            double b = goal.getZ() - spawnLocation.getZ();
             double x = Math.sqrt(a * a + b * b);
-            double y = target.getLocation().getY() - spawnLocation.getY();
-            double v = VELOCITY;
+            double y = goal.getY() - spawnLocation.getY();
             double c = GRAVITY * x / (2 * v * v);
             // this could be a minus as well
-            double theta = Math.atan((-1 - Math.sqrt(1 + 4 * c * (c - y / x))) / (2 * c));
+            double theta = Math.atan((-1 + Math.sqrt(1 + 4 * c * (c - y / x))) / (2 * c));
             double vxz = v * Math.cos(theta);
-            double vy = v * Math.sin(theta);
+            double vy = v * -Math.sin(theta);
 
             double xzTheta = Math.atan2(b, a);
             double vx = vxz * Math.cos(xzTheta);
             double vz = vxz * Math.sin(xzTheta);
-            spawnLocation.getWorld().spawnArrow(spawnLocation, new Vector(vx, vy, vz), (float) (v * 0.25), 0);
+            spawnLocation.getWorld().spawnEntity(spawnLocation, EntityType.ARROW, CreatureSpawnEvent.SpawnReason.CUSTOM, (arrow) -> {
+                arrow.setVelocity(new Vector(vx * .25, vy * .25, vz * .25));
+                arrow.addScoreboardTag("no_stick");
+            });
         }
+    }
+
+    private double velocity(double distanceToTarget) {
+        //  20     distance
+        // ---- = ----------
+        //   V         ?
+        // v*distance/20;
+        return Math.max(VELOCITY,VELOCITY * distanceToTarget / 15);
     }
 
     /**
@@ -226,9 +279,16 @@ public class TurretMob implements Runnable {
     @Override
     public void run() {
         try {
-            TurretsSql.registerOrUpdate(this);
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+            Thread.sleep(BUFFER_TIME_TO_UPDATE);
+        } catch (InterruptedException e) {
+        }
+        synchronized (this) {
+            try {
+                TurretsSql.registerOrUpdate(this);
+                this.isUpdatingDB = false;
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
         }
     }
 
@@ -241,6 +301,14 @@ public class TurretMob implements Runnable {
     @Override
     public boolean equals(Object obj) {
         return obj instanceof TurretMob && this.uid == ((TurretMob) obj).uid;
+    }
+
+    public boolean setIsUpdatingDB() {
+        synchronized (this) {
+            boolean old = this.isUpdatingDB;
+            this.isUpdatingDB = true;
+            return old;
+        }
     }
 
     public Location getCenter() {
