@@ -28,6 +28,7 @@ public class CustomModel {
     }
 
     public static class CustomEntity {
+        public final String nameInYml;
         public double x;
         public double y;
         public double z;
@@ -37,8 +38,12 @@ public class CustomModel {
         public final EntityType type;
         public final NBTTagCompound nbt;
         public final Map<String, Object> otherData;
+        public double rotationX;
+        public double rotationY;
+        public double rotationZ;
 
-        public CustomEntity(double x, double y, double z, double facingX, double facingY, double facingZ, EntityType type, NBTTagCompound nbt, Map<String, Object> otherData) {
+        public CustomEntity(String nameInYml, double x, double y, double z, double facingX, double facingY, double facingZ, EntityType type, NBTTagCompound nbt, Map<String, Object> otherData) {
+            this.nameInYml = nameInYml;
             this.x = x;
             this.y = y;
             this.z = z;
@@ -52,9 +57,10 @@ public class CustomModel {
 //                            Math.atan2(facingX, facingY);
                     // todo do the y rotation
 
-                    this.facingX = Math.cos(facingXZ);
-                    this.facingZ = Math.sin(facingXZ);
-                    this.facingY = facing.getY();
+                    this.facingX = (this.rotationX = Math.cos(facingXZ)) + facingX;
+                    this.facingY = (this.rotationY = facing.getY()) + facingY;
+                    this.facingZ = (this.rotationZ = Math.sin(facingXZ)) + facingZ;
+                    nbt.remove("Rotation");
                 } else {
                     this.facingX = facingX;
                     this.facingY = facingY;

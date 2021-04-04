@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.*;
 
 public class CustomModelPlugin extends VoltskiyaModule {
-    private static final String YML_FILENAME = "models.yml";
+    private static final String YML_FILENAME = "model.yml";
     private static CustomModelPlugin instance;
     private static final Set<String> normalData = new HashSet<>() {{
         add("x");
@@ -37,44 +37,10 @@ public class CustomModelPlugin extends VoltskiyaModule {
         return instance;
     }
 
-    public void rotate(double rotation) throws IOException {
-        rotation = Math.toRadians(rotation);
-        CustomModel model = loadSchematic();
-        File file = new File(this.getDataFolder(), YML_FILENAME);
-        if (!file.exists()) file.createNewFile();
-        YamlConfiguration yml = YamlConfiguration.loadConfiguration(file);
-        if (!yml.contains("models")) yml.createSection("models");
-        @Nullable ConfigurationSection config = yml.getConfigurationSection("models");
-        if (config == null) return;
-        List<CustomModel.CustomEntity> entities = model.entities;
-        final int size = entities.size();
-        // convert the center.getDirection() vector to <1,0,0> and with it, all of the entities
-        for (int i = 0; i < size; i++) {
-            CustomModel.CustomEntity entity = entities.get(i);
-
-            double x = entity.x;
-            double z = entity.z;
-            double radius = Math.sqrt(z * z + x * x);
-            double angle = Math.atan2(z, x) - rotation;
-            double xNew = Math.cos(angle) * radius;
-            double zNew = Math.sin(angle) * radius;
-            @NotNull Vector facingNew = VectorUtils.rotateVector(x, z, entity.facingX, entity.facingZ, entity.facingY, -rotation);
-            @NotNull ConfigurationSection c = config.createSection("entity" + i);
-            c.set("x", xNew);
-            c.set("y", entity.y);
-            c.set("z", zNew);
-            c.set("facingX", facingNew.getX());
-            c.set("facingY", facingNew.getY());
-            c.set("facingZ", facingNew.getZ());
-            c.set("entityType", entity.type.name());
-            NBTTagCompound nbt = entity.nbt;
-            c.set("nbt", nbt.toString());
-        }
-        yml.save(file);
-    }
 
     public void saveSchematic(CustomModelGui gui) throws IOException {
         File file = new File(this.getDataFolder(), YML_FILENAME);
+        file.delete();
         if (!file.exists()) file.createNewFile();
         YamlConfiguration yml = YamlConfiguration.loadConfiguration(file);
         if (!yml.contains("models")) yml.createSection("models");
@@ -87,6 +53,7 @@ public class CustomModelPlugin extends VoltskiyaModule {
         double standardizingAngle = Math.atan2(center.getDirection().getZ(), center.getDirection().getX());
         for (int i = 0; i < size; i++) {
             Entity entity = entities.get(i);
+            if (entity.getType() == EntityType.PLAYER) continue;
             final Location location = entity.getLocation();
 
             double x = location.getX() - center.getX();
@@ -143,12 +110,12 @@ public class CustomModelPlugin extends VoltskiyaModule {
                     otherData.put(otherKey, entity.get(otherKey));
                 }
             }
-            model.add(new CustomModel.CustomEntity(x, y, z, facingX, facingY, facingZ, type, nbt, otherData));
+            model.add(new CustomModel.CustomEntity(key, x, y, z, facingX, facingY, facingZ, type, nbt, otherData));
         }
         return model;
     }
 
-    public void adjustSchematic(double x, double y, double z) {
+    public void adjustSchematicOffsetXYZ(double x, double y, double z) {
         File file = new File(this.getDataFolder(), YML_FILENAME);
         @Nullable CustomModel schematic = loadSchematic(file);
         if (schematic != null) {
@@ -161,10 +128,8 @@ public class CustomModelPlugin extends VoltskiyaModule {
         @Nullable ConfigurationSection config = yml.getConfigurationSection("models");
         if (config == null) return;
         List<CustomModel.CustomEntity> entities = schematic.entities;
-        final int size = entities.size();
-        for (int i = 0; i < size; i++) {
-            CustomModel.CustomEntity entity = entities.get(i);
-            ConfigurationSection c = config.getConfigurationSection("entity" + i);
+        for (CustomModel.CustomEntity entity : entities) {
+            ConfigurationSection c = config.getConfigurationSection(entity.nameInYml);
             if (c != null) {
                 c.set("x", entity.x);
                 c.set("y", entity.y);
@@ -181,6 +146,42 @@ public class CustomModelPlugin extends VoltskiyaModule {
         }
     }
 
+    public void adjustSchematicRotateXYZ(double rotation, String fileName) throws IOException {
+        rotation = Math.toRadians(rotation);
+        CustomModel model = loadSchematic(fileName);
+        File file = new File(this.getDataFolder(), fileName);
+        if (!file.exists() || model == null) {
+            throw new IllegalArgumentException("The provided model file " + fileName + ".yml" + " does not exist");
+        }
+        YamlConfiguration yml = YamlConfiguration.loadConfiguration(file);
+        if (!yml.contains("models")) yml.createSection("models");
+        @Nullable ConfigurationSection config = yml.getConfigurationSection("models");
+        if (config == null) return;
+        List<CustomModel.CustomEntity> entities = model.entities;
+        // convert the center.getDirection() vector to <1,0,0> and with it, all of the entities
+        for (CustomModel.CustomEntity entity : entities) {
+            double x = entity.x;
+            double z = entity.z;
+            double radius = Math.sqrt(z * z + x * x);
+            double angle = Math.atan2(z, x) + rotation;
+            double xNew = Math.cos(angle) * radius;
+            double zNew = Math.sin(angle) * radius;
+            @NotNull Vector facingNew = VectorUtils.rotateVector(x, z, entity.facingX, entity.facingZ, entity.facingY, rotation);
+            @NotNull ConfigurationSection c = config.createSection(entity.nameInYml);
+            c.set("x", xNew);
+            c.set("y", entity.y);
+            c.set("z", zNew);
+            c.set("facingX", facingNew.getX());
+            c.set("facingY", facingNew.getY());
+            c.set("facingZ", facingNew.getZ());
+            c.set("entityType", entity.type.name());
+            NBTTagCompound nbt = entity.nbt;
+            c.set("nbt", nbt.toString());
+        }
+        yml.save(file);
+    }
+
+
     @Override
     public void enable() {
         instance = this;
@@ -192,9 +193,46 @@ public class CustomModelPlugin extends VoltskiyaModule {
         return "Custom Model";
     }
 
-    public CustomModel loadSchematic() {
-        File file = new File(this.getDataFolder(), YML_FILENAME);
+    public CustomModel loadSchematic(String schematicFile) {
+        File file = new File(this.getDataFolder(), schematicFile);
         @Nullable CustomModel schematic = loadSchematic(file);
         return schematic;
+    }
+
+    public void adjustSchematicRotateAll(double rotation, String fileName) throws IOException {
+        rotation = Math.toRadians(rotation);
+        CustomModel model = loadSchematic(fileName);
+        File file = new File(this.getDataFolder(), fileName);
+        if (!file.exists() || model == null) {
+            throw new IllegalArgumentException("The provided model file " + fileName + ".yml" + " does not exist");
+        }
+        YamlConfiguration yml = YamlConfiguration.loadConfiguration(file);
+        if (!yml.contains("models")) yml.createSection("models");
+        @Nullable ConfigurationSection config = yml.getConfigurationSection("models");
+        if (config == null) return;
+        List<CustomModel.CustomEntity> entities = model.entities;
+        for (CustomModel.CustomEntity entity : entities) {
+            double x = entity.x;
+            double z = entity.z;
+            double radius = Math.sqrt(z * z + x * x);
+            double angle = Math.atan2(z, x) + rotation;
+            double xNew = Math.cos(angle) * radius;
+            double zNew = Math.sin(angle) * radius;
+            @NotNull Vector facingNew = VectorUtils.rotateVector(entity.facingX, entity.facingZ, entity.facingY, rotation);
+            ConfigurationSection c = config.getConfigurationSection(entity.nameInYml);
+            if (c == null) c = config.createSection(entity.nameInYml);
+            c.set("x", xNew);
+            c.set("y", entity.y);
+            c.set("z", zNew);
+            c.set("facingX", facingNew.getX());
+            c.set("facingY", facingNew.getY());
+            c.set("facingZ", facingNew.getZ());
+            c.set("entityType", entity.type.name());
+            NBTTagCompound nbt = entity.nbt;
+            c.set("nbt", nbt.toString());
+        }
+        file.delete();
+        yml.save(file);
+
     }
 }

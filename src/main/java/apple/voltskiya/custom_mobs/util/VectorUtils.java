@@ -15,4 +15,10 @@ public class VectorUtils {
         double z2New = z2Old * Math.cos(theta) + x2Old * Math.sin(theta);
         return new Vector(x2New - x1New, y, z2New - z1New);
     }
+
+    public static Vector rotateVector(double facingX, double facingZ, double facingY, double rotation) {
+        double angleStarting = Math.atan2(facingZ, facingX);
+        angleStarting += rotation;
+        return new Vector(Math.cos(angleStarting), facingY, Math.sin(angleStarting));
+    }
 }
