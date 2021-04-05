@@ -18,6 +18,9 @@ public class VectorUtils {
 
     public static Vector rotateVector(double facingX, double facingZ, double facingY, double rotation) {
         double angleStarting = Math.atan2(facingZ, facingX);
+        System.out.println(facingX + " " + facingZ);
+        System.out.println(Math.toDegrees(angleStarting));
+        System.out.println();
         angleStarting += rotation;
         return new Vector(Math.cos(angleStarting), facingY, Math.sin(angleStarting));
     }

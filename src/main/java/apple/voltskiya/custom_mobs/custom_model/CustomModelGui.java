@@ -2,6 +2,7 @@ package apple.voltskiya.custom_mobs.custom_model;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.util.DistanceUtils;
+import apple.voltskiya.custom_mobs.util.InventoryManagement;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -12,7 +13,6 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -144,7 +144,7 @@ class CustomModelGui implements InventoryHolder {
 
         public Inventory createInventory(CustomModelGui holder) {
             final Inventory inventory = Bukkit.createInventory(holder, 54);
-            inventory.setItem(4, makeItem(Material.LIME_TERRACOTTA, 1, "Page 1 Overview",
+            inventory.setItem(4, InventoryManagement.makeItem(Material.LIME_TERRACOTTA, 1, "Page 1 Overview",
                     Arrays.asList(
                             "This page deals with the center of the model.",
                             "You can increase the radius of the selection.",
@@ -152,24 +152,24 @@ class CustomModelGui implements InventoryHolder {
                             "Note: This only impacts the selection of entities."
                     )
             ));
-            inventory.setItem(InventorySelection.NEXT_PAGE.index, makeItem(Material.ARROW, 1, "Page 2", null));
+            inventory.setItem(InventorySelection.NEXT_PAGE.index, InventoryManagement.makeItem(Material.ARROW, 1, "Page 2", null));
 
             // radius
-            inventory.setItem(10, makeItem(Material.OAK_SIGN, 1, "Radius",
+            inventory.setItem(10, InventoryManagement.makeItem(Material.OAK_SIGN, 1, "Radius",
                     Arrays.asList(
                             "This section increases or decreases the selection size",
                             "Note: Only sphere selections can be made"
                     )
             ));
-            inventory.setItem(InventorySelection.INCREASE_RADIUS.index, makeItem(Material.IRON_BLOCK, 1, "Increase Radius", null));
-            inventory.setItem(InventorySelection.DECREASE_RADIUS.index, makeItem(Material.IRON_INGOT, 1, "Decrease Radius", null));
-            inventory.setItem(InventorySelection.SHOW_RADIUS.index, makeItem(Material.BLACK_TERRACOTTA, 1, "Radius",
+            inventory.setItem(InventorySelection.INCREASE_RADIUS.index, InventoryManagement.makeItem(Material.IRON_BLOCK, 1, "Increase Radius", null));
+            inventory.setItem(InventorySelection.DECREASE_RADIUS.index, InventoryManagement.makeItem(Material.IRON_INGOT, 1, "Decrease Radius", null));
+            inventory.setItem(InventorySelection.SHOW_RADIUS.index, InventoryManagement.makeItem(Material.BLACK_TERRACOTTA, 1, "Radius",
                     Collections.singletonList(
                             "Radius: " + holder.selectionRadius
                     )
             ));
             // center xz
-            inventory.setItem(21, makeItem(Material.OAK_SIGN, 1, "Center",
+            inventory.setItem(21, InventoryManagement.makeItem(Material.OAK_SIGN, 1, "Center",
                     Arrays.asList(
                             "This section changes the center location of the selection.",
                             "Note: Only movements in the x z plane can be made here",
@@ -177,11 +177,11 @@ class CustomModelGui implements InventoryHolder {
                             "and are not relative to facing direction"
                     )
             ));
-            inventory.setItem(InventorySelection.PLUS_X.index, makeItem(Material.BLUE_TERRACOTTA, 1, "+X", null));
-            inventory.setItem(InventorySelection.MINUS_Z.index, makeItem(Material.BLUE_TERRACOTTA, 1, "-Z", null));
-            inventory.setItem(InventorySelection.PLUS_Z.index, makeItem(Material.BLUE_TERRACOTTA, 1, "+Z", null));
-            inventory.setItem(InventorySelection.MINUS_X.index, makeItem(Material.BLUE_TERRACOTTA, 1, "-X", null));
-            inventory.setItem(InventorySelection.SHOW_CENTER.index, makeItem(Material.BLACK_TERRACOTTA, 1, "Center",
+            inventory.setItem(InventorySelection.PLUS_X.index, InventoryManagement.makeItem(Material.BLUE_TERRACOTTA, 1, "+X", null));
+            inventory.setItem(InventorySelection.MINUS_Z.index, InventoryManagement.makeItem(Material.BLUE_TERRACOTTA, 1, "-Z", null));
+            inventory.setItem(InventorySelection.PLUS_Z.index, InventoryManagement.makeItem(Material.BLUE_TERRACOTTA, 1, "+Z", null));
+            inventory.setItem(InventorySelection.MINUS_X.index, InventoryManagement.makeItem(Material.BLUE_TERRACOTTA, 1, "-X", null));
+            inventory.setItem(InventorySelection.SHOW_CENTER.index, InventoryManagement.makeItem(Material.BLACK_TERRACOTTA, 1, "Center",
                     Arrays.asList(
                             "x: " + holder.selectionCenter.getX(),
                             "y: " + holder.selectionCenter.getY(),
@@ -190,15 +190,15 @@ class CustomModelGui implements InventoryHolder {
             ));
 
             // center y
-            inventory.setItem(24, makeItem(Material.OAK_SIGN, 1, "Center",
+            inventory.setItem(24, InventoryManagement.makeItem(Material.OAK_SIGN, 1, "Center",
                     Arrays.asList(
                             "This section only changes the center of the selection.",
                             "Note: only movements along the y axis can be made here."
                     )
             ));
-            inventory.setItem(InventorySelection.PLUS_Y.index, makeItem(Material.BLUE_TERRACOTTA, 1, " +Y", null));
-            inventory.setItem(InventorySelection.MINUS_Y.index, makeItem(Material.BLUE_TERRACOTTA, 1, " -Y", null));
-            inventory.setItem(InventorySelection.SAVE.index, makeItem(Material.GREEN_CONCRETE, 1, " Save", null));
+            inventory.setItem(InventorySelection.PLUS_Y.index, InventoryManagement.makeItem(Material.BLUE_TERRACOTTA, 1, " +Y", null));
+            inventory.setItem(InventorySelection.MINUS_Y.index, InventoryManagement.makeItem(Material.BLUE_TERRACOTTA, 1, " -Y", null));
+            inventory.setItem(InventorySelection.SAVE.index, InventoryManagement.makeItem(Material.GREEN_CONCRETE, 1, " Save", null));
             return inventory;
         }
 
@@ -305,13 +305,4 @@ class CustomModelGui implements InventoryHolder {
         SELECTION_CENTER
     }
 
-    private static ItemStack makeItem(Material material, int amount, String name, @Nullable List<String> lore) {
-        final ItemStack item = new ItemStack(material, amount);
-
-        ItemMeta itemMeta = item.getItemMeta();
-        itemMeta.setLore(lore);
-        itemMeta.setDisplayName(name);
-        item.setItemMeta(itemMeta);
-        return item;
-    }
 }

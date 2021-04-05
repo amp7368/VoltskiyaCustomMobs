@@ -1,6 +1,8 @@
 package apple.voltskiya.custom_mobs.turrets;
 
 import apple.voltskiya.custom_mobs.sql.TurretsSql;
+import apple.voltskiya.custom_mobs.sql.VerifyMobsSql;
+import apple.voltskiya.custom_mobs.turrets.gui.TurretGuiManager;
 import apple.voltskiya.custom_mobs.util.DistanceUtils;
 import apple.voltskiya.custom_mobs.util.Pair;
 import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
@@ -22,6 +24,7 @@ public class TurretMob implements Runnable {
     public static final String TURRET_TAG = "player.turret";
     private final static int MAX_SIGHT = 50;
     protected static final int MAX_HEALTH = 200;
+    public static final double HEALTH_PER_REPAIR = 10;
     protected static final double MAX_ANGLE = Math.toRadians(90);
     private static final double VELOCITY = 7.0; // velocity of the arrow
     private static final double GRAVITY = -1.0; // gravity
@@ -34,15 +37,15 @@ public class TurretMob implements Runnable {
     private final EntityLocation durabilityEntity;
     private final EntityLocation refilledEntity;
     private final EntityLocation bowEntity;
-    private final List<Pair<Material, Integer>> arrows;
+    private List<Pair<Material, Integer>> arrows;
     private final Material bow;
-    private final int bowDurability;
+    private int bowDurability;
     private double health;
     private long uid;
     private boolean isDead = false;
     private final long callerUid = UpdatedPlayerList.callerUid();
     private Player target = null;
-    private List<Vector> targetLastLocation = new ArrayList<Vector>();
+    private final List<Vector> targetLastLocation = new ArrayList<Vector>();
     private boolean isUpdatingDB = false;
 
     public TurretMob(UUID worldUid, double x, double y, double z,
@@ -104,10 +107,16 @@ public class TurretMob implements Runnable {
         if (health <= 0) {
             isDead = true;
             remove();
+            try {
+                TurretsSql.removeTurret(uid);
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
         }
-        if (!this.setIsUpdatingDB()) {
+        if (!this.isOkayToStart()) {
             new Thread(this).start();
         }
+        TurretGuiManager.get().updateGui(getUniqueId());
     }
 
     private void remove() {
@@ -214,6 +223,7 @@ public class TurretMob implements Runnable {
 
 
     private void shoot(Player target) {
+        if (arrowsEmpty()) return;
         Location goal = target.getLocation();
         this.targetLastLocation.add(goal.toVector());
         int lastLocationSize = this.targetLastLocation.size();
@@ -258,11 +268,81 @@ public class TurretMob implements Runnable {
             double xzTheta = Math.atan2(b, a);
             double vx = vxz * Math.cos(xzTheta);
             double vz = vxz * Math.sin(xzTheta);
-            spawnLocation.getWorld().spawnEntity(spawnLocation, EntityType.ARROW, CreatureSpawnEvent.SpawnReason.CUSTOM, (arrow) -> {
+            @Nullable Material removedArrow = removeArrow();
+            if (removedArrow == null || removedArrow.isAir()) {
+                return;
+            }
+            EntityType arrowEntity;
+            try {
+                arrowEntity = EntityType.valueOf(removedArrow.name());
+            } catch (IllegalArgumentException e) {
+                // this arrow doesn't exist
+                e.printStackTrace();
+                return;
+            }
+            spawnLocation.getWorld().spawnEntity(spawnLocation, arrowEntity, CreatureSpawnEvent.SpawnReason.CUSTOM, (arrow) -> {
                 arrow.setVelocity(new Vector(vx * .25, vy * .25, vz * .25));
                 arrow.addScoreboardTag("no_stick");
             });
+            if (!this.isOkayToStart()) {
+                new Thread(this).start();
+            }
+            TurretGuiManager.get().updateGui(getUniqueId());
+            this.bowDurability--;
         }
+    }
+
+    @Nullable
+    private Material removeArrow() {
+        for (Pair<Material, Integer> arrow : arrows) {
+            final int count = arrow.getValue();
+            if (arrow.getKey() != Material.AIR && count != 0) {
+                arrow.setValue(count - 1);
+                if (count == 1) {
+                    arrow.setKey(Material.AIR);
+                }
+                if (!isOkayToStart()) {
+                    new Thread(this).start();
+                }
+                TurretGuiManager.get().updateGui(getUniqueId());
+                return arrow.getKey();
+            }
+        }
+        return null;
+    }
+
+    public void setArrows(List<Pair<Material, Integer>> arrows) {
+        this.arrows = arrows;
+        if (!isOkayToStart()) {
+            new Thread(this).start();
+        }
+        TurretGuiManager.get().updateGui(getUniqueId());
+    }
+
+
+    public void repair(int repairAmount) {
+        this.health = Math.min(MAX_HEALTH, repairAmount * HEALTH_PER_REPAIR + health);
+        if (!isOkayToStart()) {
+            new Thread(this).start();
+        }
+        TurretGuiManager.get().updateGui(getUniqueId());
+    }
+
+    public void rotateCenter(double degrees) {
+        final Vector direction = center.getDirection();
+        center.setDirection(VectorUtils.rotateVector(direction.getX(), direction.getZ(), direction.getY(), degrees));
+        resetRotate();
+        if (!isOkayToStart()) {
+            new Thread(this).start();
+        }
+        TurretGuiManager.get().updateGui(getUniqueId());
+    }
+
+    private boolean arrowsEmpty() {
+        for (Pair<Material, Integer> arrow : arrows) {
+            if (arrow.getKey() != Material.AIR && arrow.getValue() != 0) return false;
+        }
+        return true;
     }
 
     private double velocity(double distanceToTarget) {
@@ -270,7 +350,7 @@ public class TurretMob implements Runnable {
         // ---- = ----------
         //   V         ?
         // v*distance/20;
-        return Math.max(VELOCITY,VELOCITY * distanceToTarget / 15);
+        return Math.max(VELOCITY, VELOCITY * distanceToTarget / 15);
     }
 
     /**
@@ -282,14 +362,19 @@ public class TurretMob implements Runnable {
             Thread.sleep(BUFFER_TIME_TO_UPDATE);
         } catch (InterruptedException e) {
         }
-        synchronized (this) {
-            try {
-                TurretsSql.registerOrUpdate(this);
+
+        synchronized (VerifyMobsSql.syncDB) {
+            synchronized (this) {
                 this.isUpdatingDB = false;
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
             }
         }
+        try {
+            TurretsSql.registerOrUpdate(this);
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        System.out.println("updated");
     }
 
 
@@ -303,7 +388,10 @@ public class TurretMob implements Runnable {
         return obj instanceof TurretMob && this.uid == ((TurretMob) obj).uid;
     }
 
-    public boolean setIsUpdatingDB() {
+    /**
+     * @return the old value of isUpdatingDB
+     */
+    public boolean isOkayToStart() {
         synchronized (this) {
             boolean old = this.isUpdatingDB;
             this.isUpdatingDB = true;
@@ -357,5 +445,9 @@ public class TurretMob implements Runnable {
 
     public boolean isDead() {
         return isDead;
+    }
+
+    public int getRepairCost() {
+        return (int) Math.ceil((MAX_HEALTH - health) / HEALTH_PER_REPAIR);
     }
 }

@@ -3,6 +3,7 @@ package apple.voltskiya.custom_mobs.turrets;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.sql.TurretsSql;
 import apple.voltskiya.custom_mobs.ticking.*;
+import apple.voltskiya.custom_mobs.turrets.gui.TurretGuiManager;
 import apple.voltskiya.custom_mobs.util.DistanceUtils;
 import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
 import org.bukkit.Bukkit;
@@ -25,8 +26,8 @@ import static apple.voltskiya.custom_mobs.turrets.TurretMob.*;
 
 public class TurretManagerTicker implements Listener {
     private static TurretManagerTicker instance;
-    private HashMap<Long, TurretMob> turrets = new HashMap<>();
-    private HashMap<UUID, Long> entityToTurret = new HashMap<>();
+    private final HashMap<Long, TurretMob> turrets = new HashMap<>();
+    private final HashMap<UUID, Long> entityToTurret = new HashMap<>();
     private final Map<Closeness, TurretIndividualTicker> closenessToTurrets = new HashMap<>() {{
         for (Closeness closeness : Closeness.values())
             put(closeness, new TurretIndividualTicker(closeness));
@@ -72,7 +73,17 @@ public class TurretManagerTicker implements Listener {
 
     @EventHandler
     public void onClick(PlayerInteractAtEntityEvent event) {
-        System.out.println("interact");
+        final Entity entity = event.getRightClicked();
+        if (entity.getScoreboardTags().contains(TURRET_TAG)) {
+            @Nullable Long uid = entityToTurret.get(entity.getUniqueId());
+            if (uid != null) {
+                @Nullable TurretMob turret = turrets.get(uid);
+                if (turret != null) {
+                    TurretGuiManager.get().open(event.getPlayer(), turret);
+                    event.setCancelled(true);
+                }
+            }
+        }
     }
 
     public static TurretManagerTicker get() {
@@ -109,12 +120,11 @@ public class TurretManagerTicker implements Listener {
 
     enum Closeness {
         HIGH_CLOSE(100, NormalHighFrequencyTick.get()),
-        NORMAL_CLOSE(75, NormalFrequencyTick.get()),
-        LOW_CLOSE(150, LowFrequencyTick.get()),
-        VERY_LOW_CLOSE(160, VeryLowFrequencyTick.get());
+        NORMAL_CLOSE(150, NormalFrequencyTick.get()),
+        LOW_CLOSE(160, LowFrequencyTick.get());
 
         private final double distance;
-        private static final Closeness[] order = new Closeness[]{HIGH_CLOSE, NORMAL_CLOSE, LOW_CLOSE, VERY_LOW_CLOSE};
+        private static final Closeness[] order = new Closeness[]{HIGH_CLOSE, NORMAL_CLOSE, LOW_CLOSE};
         private final TickGiverable giver;
 
         Closeness(double distance, TickGiverable giver) {

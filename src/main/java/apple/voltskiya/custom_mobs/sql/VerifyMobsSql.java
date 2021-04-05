@@ -51,15 +51,17 @@ public class VerifyMobsSql {
             TurretNames.HEALTH
     );
     private static final String ARROWS_CONTENT = String.format(
-            "    %s          BIGINT  NOT NULL,\n" +
+            "    %s         BIGINT  NOT NULL,\n" +
                     "    %s INTEGER NOT NULL,\n" +
-                    "    %s        INTEGER NOT NULL,\n" +
+                    "    %s INTEGER NOT NULL,\n" +
+                    "    %s INTEGER NOT NULL,\n" +
                     "    PRIMARY KEY (%s, %s)",
             TurretNames.TURRET_UID,
+            TurretNames.ARROW_SLOT_INDEX,
             MaterialNames.MATERIAL_UID,
             TurretNames.ARROW_COUNT,
             TurretNames.TURRET_UID,
-            MaterialNames.MATERIAL_UID
+            TurretNames.ARROW_SLOT_INDEX
 
     );
     private static final String MATERIALS_CONTENT = String.format(

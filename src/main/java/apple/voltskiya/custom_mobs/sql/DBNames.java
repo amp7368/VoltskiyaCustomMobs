@@ -30,6 +30,7 @@ public class DBNames {
         public static final String ARROW_COUNT = "arrow_count";
         public static final String ENTITY_UID = "entity_uid";
         public static final String WORLD_UID = "world_uid";
+        public static final String ARROW_SLOT_INDEX = "slot_index";
     }
 
     public static class MaterialNames {

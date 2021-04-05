@@ -3,6 +3,8 @@ package apple.voltskiya.custom_mobs.sql;
 import apple.voltskiya.custom_mobs.turrets.EntityLocation;
 import apple.voltskiya.custom_mobs.turrets.TurretBuilder;
 import apple.voltskiya.custom_mobs.turrets.TurretMob;
+import apple.voltskiya.custom_mobs.util.Pair;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.util.Vector;
@@ -43,10 +45,28 @@ public class TurretsSql {
             for (EntityLocation entityUid : turretMob.getTurretEntities()) {
                 insertEntity(turretUid, statement, entityUid);
             }
+            insertArrows(statement, turretMob.getUniqueId(), turretMob.getArrows());
             statement.close();
             VerifyMobsSql.database.commit();
             VerifyMobsSql.database.setAutoCommit(true);
             turretMob.setUniqueId(turretUid);
+        }
+    }
+
+    private static void insertArrows(Statement statement, long turretUid, List<Pair<Material, Integer>> arrows) throws SQLException {
+        statement.execute(String.format("DELETE FROM %s WHERE %s >= %d", ARROW_TABLE, ARROW_SLOT_INDEX, arrows.size()));
+        for (int i = 0; i < arrows.size(); i++) {
+            statement.execute(String.format("REPLACE INTO %s (%s, %s, %s, %s) VALUES (%d,%d,%d,%d)",
+                    ARROW_TABLE,
+                    TURRET_UID,
+                    ARROW_SLOT_INDEX,
+                    DBNames.MaterialNames.MATERIAL_UID,
+                    ARROW_COUNT,
+                    turretUid,
+                    i,
+                    DBUtils.getMyMaterialUid(arrows.get(i).getKey()),
+                    arrows.get(i).getValue()
+            ));
         }
     }
 
@@ -71,11 +91,13 @@ public class TurretsSql {
     public static List<TurretMob> getTurrets() throws SQLException {
         synchronized (VerifyMobsSql.syncDB) {
             @NotNull Map<Long, List<EntityLocation>> entities = getEntities();
+            @NotNull Map<Long, List<Pair<Material, Integer>>> arrows = getArrows();
             Statement statement = VerifyMobsSql.database.createStatement();
             ResultSet response = statement.executeQuery(
                     String.format("SELECT * FROM %s",
                             TURRETS_TABLE
-                    ));
+                    )
+            );
             List<TurretBuilder> turrets = new ArrayList<>();
             List<Long> turretsToRemove = new ArrayList<>();
             while (response.next()) {
@@ -87,7 +109,7 @@ public class TurretsSql {
                 EntityLocation durabilityEntity = getEntity(entities.get(turretUid), durabilityEntityUUID);
                 EntityLocation bowEnitity = getEntity(entities.get(turretUid), bowEnitiyUUID);
                 EntityLocation refilledEntity = getEntity(entities.get(turretUid), refilledEntityUUID);
-
+                List<Pair<Material, Integer>> arrow = arrows.getOrDefault(turretUid, new ArrayList<>());
                 if (durabilityEntity == null || bowEnitity == null || refilledEntity == null) {
                     turretsToRemove.add(turretUid);
                     continue;
@@ -106,7 +128,7 @@ public class TurretsSql {
                                 bowEnitity,
                                 refilledEntity,
                                 response.getDouble(HEALTH),
-                                new ArrayList<>(),
+                                arrow,
                                 response.getInt(BOW),
                                 response.getInt(BOW_DURABILITY),
                                 turretUid
@@ -121,8 +143,42 @@ public class TurretsSql {
         }
     }
 
-    private static void removeTurrets(List<Long> turretsToRemove) {
-        // todo
+    private static Map<Long, List<Pair<Material, Integer>>> getArrows() throws SQLException {
+        synchronized (VerifyMobsSql.syncDB) {
+            Map<Long, List<Pair<Material, Integer>>> arrows = new HashMap<>();
+            Statement statement = VerifyMobsSql.database.createStatement();
+            ResultSet response = statement.executeQuery(String.format("SELECT * FROM %s\n" +
+                    "ORDER BY %s,%s", ARROW_TABLE, TURRET_UID, ARROW_SLOT_INDEX));
+            while (response.next()) {
+                final long turretUid = response.getLong(TURRET_UID);
+                arrows.putIfAbsent(turretUid, new ArrayList<>());
+                List<Pair<Material, Integer>> arrow = arrows.get(turretUid);
+                int index = response.getInt(ARROW_SLOT_INDEX);
+                Material material = DBUtils.getMaterialName(response.getInt(DBNames.MaterialNames.MATERIAL_UID));
+                int arrowCount = response.getInt(ARROW_COUNT);
+                while (arrow.size() <= index) arrow.add(new Pair<>(Material.AIR, 0));
+                arrow.set(index, new Pair<>(material, arrowCount));
+            }
+            return arrows;
+        }
+    }
+
+    private static void removeTurrets(List<Long> turretsToRemove) throws SQLException {
+        synchronized (VerifyMobsSql.syncDB) {
+            Statement statement = VerifyMobsSql.database.createStatement();
+            for (Long turretUid : turretsToRemove) {
+                statement.execute(String.format("DELETE\n" +
+                        "FROM %s\n" +
+                        "WHERE %s = %d", TURRETS_TABLE, TURRET_UID, turretUid));
+                statement.execute(String.format("DELETE\n" +
+                        "FROM %s\n" +
+                        "WHERE %s = %d", ARROW_TABLE, TURRET_UID, turretUid));
+                statement.execute(String.format("DELETE\n" +
+                        "FROM %s\n" +
+                        "WHERE %s = %d", TURRET_TO_ENTITY_TABLE, TURRET_UID, turretUid));
+            }
+            statement.close();
+        }
     }
 
     @Nullable
@@ -145,9 +201,11 @@ public class TurretsSql {
             while (response.next()) {
                 final long turretUid = response.getLong(TURRET_UID);
                 entities.putIfAbsent(turretUid, new ArrayList<>());
+                final UUID entityUid = UUID.fromString(response.getString(ENTITY_UID));
+                if (Bukkit.getEntity(entityUid) == null) continue;
                 entities.get(turretUid).add(
                         new EntityLocation(
-                                UUID.fromString(response.getString(ENTITY_UID)),
+                                entityUid,
                                 response.getDouble(X),
                                 response.getDouble(Y),
                                 response.getDouble(Z),
@@ -163,13 +221,6 @@ public class TurretsSql {
     }
 
     public static void removeTurret(long uid) throws SQLException {
-        synchronized (VerifyMobsSql.syncDB) {
-            Statement statement = VerifyMobsSql.database.createStatement();
-            statement.execute(
-                    "DELETE\n" +
-                            "FROM " + TURRETS_TABLE +
-                            " WHERE " + TURRET_UID + " = " + uid);
-            statement.close();
-        }
+        removeTurrets(Collections.singletonList(uid));
     }
 }

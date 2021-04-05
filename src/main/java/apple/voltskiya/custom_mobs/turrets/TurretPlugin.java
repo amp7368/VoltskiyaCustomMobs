@@ -1,6 +1,9 @@
 package apple.voltskiya.custom_mobs.turrets;
 
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
+import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
+import apple.voltskiya.custom_mobs.turrets.gui.TurretGuiManager;
+import org.bukkit.Bukkit;
 
 public class TurretPlugin extends VoltskiyaModule {
     private static TurretPlugin instance;
@@ -8,8 +11,11 @@ public class TurretPlugin extends VoltskiyaModule {
     @Override
     public void enable() {
         instance = this;
-        new TurretManagerTicker();
-        new TurretCommand();
+        Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
+            new TurretManagerTicker();
+            new TurretGuiManager();
+            new TurretCommand();
+        },0);
     }
 
     @Override

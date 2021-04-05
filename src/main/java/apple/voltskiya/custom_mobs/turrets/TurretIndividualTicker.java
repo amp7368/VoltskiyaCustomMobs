@@ -1,11 +1,7 @@
 package apple.voltskiya.custom_mobs.turrets;
 
-import apple.voltskiya.custom_mobs.mobs.tick.warper.WarperManagerTicker;
 import apple.voltskiya.custom_mobs.ticking.TickGiverable;
 import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Entity;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Iterator;
