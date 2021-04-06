@@ -11,6 +11,7 @@ public class DBNames {
     }
 
     public static class TurretNames {
+        public static final String DATABASE_NAME = "turrets.db";
         public static final String TURRETS_TABLE = "turret";
         public static final String ARROW_TABLE = "arrow";
         public static final String TURRET_TO_ENTITY_TABLE = "turret_to_entity";

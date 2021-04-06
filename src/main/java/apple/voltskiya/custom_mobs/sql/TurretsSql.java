@@ -22,14 +22,14 @@ import static apple.voltskiya.custom_mobs.sql.DBNames.TurretNames.*;
 public class TurretsSql {
     public static void registerOrUpdate(TurretMob turretMob) throws SQLException {
         long turretUid = turretMob.getUniqueId();
-        turretUid = turretUid == -1 ? VerifyMobsSql.currentTurretUid++ : turretUid;
+        turretUid = turretUid == -1 ? VerifyTurretsSql.currentTurretUid++ : turretUid;
         Location center = turretMob.getCenter();
         Vector facing = center.getDirection();
-        synchronized (VerifyMobsSql.syncDB) {
+        synchronized (VerifyTurretsSql.syncDB) {
             final Material bow = turretMob.getBow();
             int bowId = bow == null ? DBUtils.getMyMaterialUid(Material.AIR) : DBUtils.getMyMaterialUid(bow);
-            VerifyMobsSql.database.setAutoCommit(false);
-            Statement statement = VerifyMobsSql.database.createStatement();
+            VerifyTurretsSql.database.setAutoCommit(false);
+            Statement statement = VerifyTurretsSql.database.createStatement();
             statement.execute(String.format(
                     "REPLACE INTO %s (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,\n" +
                             "                    %s, %s, %s)\n" +
@@ -48,8 +48,8 @@ public class TurretsSql {
             }
             insertArrows(statement, turretMob.getUniqueId(), turretMob.getArrows());
             statement.close();
-            VerifyMobsSql.database.commit();
-            VerifyMobsSql.database.setAutoCommit(true);
+            VerifyTurretsSql.database.commit();
+            VerifyTurretsSql.database.setAutoCommit(true);
             turretMob.setUniqueId(turretUid);
         }
     }
@@ -90,10 +90,10 @@ public class TurretsSql {
 
 
     public static List<TurretMob> getTurrets() throws SQLException {
-        synchronized (VerifyMobsSql.syncDB) {
+        synchronized (VerifyTurretsSql.syncDB) {
             @NotNull Map<Long, List<EntityLocation>> entities = getEntities();
             @NotNull Map<Long, List<Pair<Material, Integer>>> arrows = getArrows();
-            Statement statement = VerifyMobsSql.database.createStatement();
+            Statement statement = VerifyTurretsSql.database.createStatement();
             ResultSet response = statement.executeQuery(
                     String.format("SELECT * FROM %s",
                             TURRETS_TABLE
@@ -146,9 +146,9 @@ public class TurretsSql {
     }
 
     private static Map<Long, List<Pair<Material, Integer>>> getArrows() throws SQLException {
-        synchronized (VerifyMobsSql.syncDB) {
+        synchronized (VerifyTurretsSql.syncDB) {
             Map<Long, List<Pair<Material, Integer>>> arrows = new HashMap<>();
-            Statement statement = VerifyMobsSql.database.createStatement();
+            Statement statement = VerifyTurretsSql.database.createStatement();
             ResultSet response = statement.executeQuery(String.format("SELECT * FROM %s\n" +
                     "ORDER BY %s,%s", ARROW_TABLE, TURRET_UID, ARROW_SLOT_INDEX));
             while (response.next()) {
@@ -166,8 +166,8 @@ public class TurretsSql {
     }
 
     private static void removeTurrets(List<Long> turretsToRemove) throws SQLException {
-        synchronized (VerifyMobsSql.syncDB) {
-            Statement statement = VerifyMobsSql.database.createStatement();
+        synchronized (VerifyTurretsSql.syncDB) {
+            Statement statement = VerifyTurretsSql.database.createStatement();
             for (Long turretUid : turretsToRemove) {
                 statement.execute(String.format("DELETE\n" +
                         "FROM %s\n" +
@@ -193,8 +193,8 @@ public class TurretsSql {
 
     @NotNull
     private static Map<Long, List<EntityLocation>> getEntities() throws SQLException {
-        synchronized (VerifyMobsSql.syncDB) {
-            Statement statement = VerifyMobsSql.database.createStatement();
+        synchronized (VerifyTurretsSql.syncDB) {
+            Statement statement = VerifyTurretsSql.database.createStatement();
             ResultSet response = statement.executeQuery(String.format(
                     "SELECT * FROM %s",
                     TURRET_TO_ENTITY_TABLE

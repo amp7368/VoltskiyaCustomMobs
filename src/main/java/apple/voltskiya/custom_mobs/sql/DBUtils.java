@@ -22,8 +22,8 @@ public class DBUtils {
             Material real = myToBlockName.get(myBlockUid);
             if (real != null) return real;
         }
-        synchronized (VerifyMobsSql.syncDB) {
-            Statement statement = VerifyMobsSql.database.createStatement();
+        synchronized (VerifyTurretsSql.syncDB) {
+            Statement statement = VerifyTurretsSql.database.createStatement();
             ResultSet response = statement.executeQuery(String.format(String.format(
                     "SELECT %s FROM %s WHERE %s = %%d",
                     MATERIAL_NAME,
@@ -42,8 +42,8 @@ public class DBUtils {
             Integer my = blockNameToMy.get(blockName);
             if (my != null) return my;
         }
-        synchronized (VerifyMobsSql.syncDB) {
-            Statement statement = VerifyMobsSql.database.createStatement();
+        synchronized (VerifyTurretsSql.syncDB) {
+            Statement statement = VerifyTurretsSql.database.createStatement();
             statement.execute(String.format(String.format("INSERT INTO %s (%s, %s)\n" +
                             "VALUES ('%%s',(\n" +
                             "            SELECT ifnull(max(%s), 0)\n" +
