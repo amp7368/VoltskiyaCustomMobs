@@ -2,7 +2,6 @@ package apple.voltskiya.custom_mobs.turrets.gui;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.turrets.TurretMob;
-import apple.voltskiya.custom_mobs.util.InventoryManagement;
 import apple.voltskiya.custom_mobs.util.MaterialUtils;
 import apple.voltskiya.custom_mobs.util.Pair;
 import org.bukkit.Bukkit;
@@ -40,6 +39,7 @@ public class TurretGui implements InventoryHolder {
         for (int i : FillInventory.getRepair1()) put(i, InventoryAction.REPAIR);
 
         for (int i : FillInventory.getArrow()) put(i, InventoryAction.ARROW_SLOT);
+        for (int i : FillInventory.getBow()) put(i, InventoryAction.BOW_SLOT);
     }};
 
     public TurretGui(TurretMob turret) {
@@ -90,7 +90,7 @@ public class TurretGui implements InventoryHolder {
             Pair<Material, Integer> arrow = arrows.next();
             if (arrow != null && !arrow.getKey().isAir()) {
                 inventory.setItem(arrowIndex.next(), makeItem(arrow.getKey(), arrow.getValue(), null, null));
-            }else arrowIndex.next();
+            } else arrowIndex.next();
         }
     }
 
@@ -102,14 +102,19 @@ public class TurretGui implements InventoryHolder {
         action.dealWithClick.accept(event, this);
     }
 
+    private void bowStartChange(InventoryClickEvent event) {
+        //todo
+    }
+
     private void arrowStartChange(InventoryClickEvent event) {
         final ItemStack cursor = event.getCursor();
-        if (cursor != null && !MaterialUtils.isArrow(cursor.getType())) event.setCancelled(true);
+        if (cursor == null || cursor.getType().isAir()) {
+            Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), this::arrowChange, 0);
+        } else if (!MaterialUtils.isArrow(cursor.getType())) event.setCancelled(true);
         else Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), this::arrowChange, 0);
     }
 
     private void arrowChange() {
-        System.out.println("change");
         List<Pair<Material, Integer>> arrows = new ArrayList<>();
         for (int index : FillInventory.getArrow()) {
             final ItemStack item = inventory.getItem(index);
@@ -175,6 +180,9 @@ public class TurretGui implements InventoryHolder {
         }),
         ARROW_SLOT((click, turretGui) -> {
             turretGui.arrowStartChange(click);
+        }),
+        BOW_SLOT((click, turretGui) -> {
+            turretGui.bowStartChange(click);
         });
 
         private final BiConsumer<InventoryClickEvent, TurretGui> dealWithClick;
@@ -268,6 +276,10 @@ public class TurretGui implements InventoryHolder {
 
         public static Collection<Integer> getArrow() {
             return Arrays.asList(36, 37, 38, 45, 46, 47);
+        }
+
+        public static Collection<Integer> getBow() {
+            return Collections.singletonList(10);
         }
     }
 }

@@ -7,6 +7,7 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Default;
+import co.aikar.commands.annotation.Subcommand;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -21,9 +22,9 @@ import java.sql.SQLException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @CommandAlias("turret")
-@CommandPermission("turret")
+@CommandPermission("turret.create")
 public class TurretCommand extends BaseCommand {
-    private File turretFile;
+    private final File turretFile;
 
     public TurretCommand() {
         turretFile = new File(TurretPlugin.get().getDataFolder(), "turretModel.yml");
@@ -36,9 +37,14 @@ public class TurretCommand extends BaseCommand {
         VoltskiyaPlugin.get().getCommandManager().registerCommand(this);
     }
 
-    @Default
-    public void turret(Player player) {
-        createTurretEntities(player.getLocation(), new TurretBuilder(player));
+    @Subcommand("finite")
+    public void turretFinite(Player player) {
+        createTurretEntities(player.getLocation(), new TurretBuilder(player,TurretType.FINITE));
+        player.sendMessage("Turret Created");
+    }
+    @Subcommand("infinite")
+    public void turretInfinite(Player player) {
+        createTurretEntities(player.getLocation(), new TurretBuilder(player,TurretType.INFINITE));
         player.sendMessage("Turret Created");
     }
 

@@ -27,19 +27,21 @@ public class TurretBuilder {
     private Entity durabilityEntityReal;
     private EntityLocation refilledEntity;
     private EntityLocation bowEntity;
+    private final TurretType turretType;
 
     /**
      * create a new TurretMob and register it as a new turret
      *
      * @param player the player who spawned the turret
      */
-    public TurretBuilder(Player player) {
+    public TurretBuilder(Player player, TurretType turretType) {
         this.location = player.getLocation();
         this.arrows = new ArrayList<>();
         this.health = TurretMob.MAX_HEALTH;
         this.bowUid = -1;
         this.bowDurability = 0;
         this.uid = -1;
+        this.turretType = turretType;
     }
 
     public TurretBuilder(UUID worldUid, double x, double y, double z,
@@ -50,8 +52,10 @@ public class TurretBuilder {
                          List<Pair<Material, Integer>> arrows,
                          int bowUid,
                          int bowDurability,
-                         long uid
+                         long uid,
+                         TurretType turretType
     ) {
+        this.turretType = turretType;
         final World world = Bukkit.getWorld(worldUid);
         this.location = new Location(world, x, y, z);
         this.location.setDirection(new Vector(facingX, facingY, facingZ));
@@ -114,7 +118,8 @@ public class TurretBuilder {
                 health,
                 arrows,
                 Material.AIR,
-                bowDurability
+                bowDurability,
+                turretType
         ) : new TurretMob(world, x, y, z,
                 facingX,
                 facingY,
@@ -127,7 +132,8 @@ public class TurretBuilder {
                 arrows,
                 DBUtils.getMaterialName(bowUid),
                 bowDurability,
-                uid
+                uid,
+                turretType
         );
     }
 }

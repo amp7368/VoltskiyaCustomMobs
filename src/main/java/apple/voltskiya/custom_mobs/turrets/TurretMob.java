@@ -30,6 +30,7 @@ public class TurretMob implements Runnable {
     private static final double GRAVITY = -1.0; // gravity
     private static final long BUFFER_TIME_TO_UPDATE = 10000;
     private static final int MAX_TARGET_RECORDING = 5;
+    private static final double MIN_SIGHT = 3.5;
     private final Location center;
     private Vector facing;
     private final Entity durabilityEntityReal;
@@ -47,6 +48,7 @@ public class TurretMob implements Runnable {
     private Player target = null;
     private final List<Vector> targetLastLocation = new ArrayList<Vector>();
     private boolean isUpdatingDB = false;
+    private final TurretType turretType;
 
     public TurretMob(UUID worldUid, double x, double y, double z,
                      double facingX, double facingY, double facingZ,
@@ -56,7 +58,8 @@ public class TurretMob implements Runnable {
                      double health,
                      List<Pair<Material, Integer>> arrows,
                      Material bow,
-                     int bowDurability
+                     int bowDurability,
+                     TurretType turretType
     ) {
         final World world = Bukkit.getWorld(worldUid);
         this.center = new Location(world, x, y, z);
@@ -72,6 +75,7 @@ public class TurretMob implements Runnable {
         this.bow = bow;
         this.bowDurability = bowDurability;
         this.uid = -1;
+        this.turretType = turretType;
     }
 
     public TurretMob(UUID worldUid, double x, double y, double z,
@@ -82,7 +86,8 @@ public class TurretMob implements Runnable {
                      List<Pair<Material, Integer>> arrows,
                      Material bow,
                      int bowDurability,
-                     long uid
+                     long uid,
+                     TurretType turretType
     ) {
         final World world = Bukkit.getWorld(worldUid);
         this.center = new Location(world, x, y, z);
@@ -99,6 +104,7 @@ public class TurretMob implements Runnable {
         this.bow = bow;
         this.bowDurability = bowDurability;
         this.uid = uid;
+        this.turretType = turretType;
     }
 
     public synchronized void damage(double damage) {
@@ -233,7 +239,7 @@ public class TurretMob implements Runnable {
         }
         double distanceToTarget = DistanceUtils.distance(goal, center);
 
-        if (distanceToTarget < MAX_SIGHT) {
+        if (distanceToTarget < MAX_SIGHT && distanceToTarget>MIN_SIGHT) {
             Location spawnLocation = center.clone();
             spawnLocation.add(facing);
             spawnLocation.add(facing);
@@ -297,9 +303,11 @@ public class TurretMob implements Runnable {
         for (Pair<Material, Integer> arrow : arrows) {
             final int count = arrow.getValue();
             if (arrow.getKey() != Material.AIR && count != 0) {
-                arrow.setValue(count - 1);
-                if (count == 1) {
-                    arrow.setKey(Material.AIR);
+                if (turretType != TurretType.INFINITE) {
+                    arrow.setValue(count - 1);
+                    if (count == 1) {
+                        arrow.setKey(Material.AIR);
+                    }
                 }
                 if (!isOkayToStart()) {
                     new Thread(this).start();
@@ -449,5 +457,9 @@ public class TurretMob implements Runnable {
 
     public int getRepairCost() {
         return (int) Math.ceil((MAX_HEALTH - health) / HEALTH_PER_REPAIR);
+    }
+
+    public TurretType getTurretType() {
+        return turretType;
     }
 }

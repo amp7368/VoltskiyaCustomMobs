@@ -34,7 +34,8 @@ public class VerifyMobsSql {
                     "    %s   NCHAR(36) NOT NULL,\n" +
                     "    %s              INTEGER,\n" +
                     "    %s    INTEGER   NOT NULL,\n" +
-                    "    %s           DOUBLE    NOT NULL",
+                    "    %s           DOUBLE    NOT NULL,\n"+
+            "    %s           VARCHAR(15)    NOT NULL ",
             TurretNames.TURRET_UID,
             TurretNames.WORLD_UID,
             TurretNames.X,
@@ -48,7 +49,8 @@ public class VerifyMobsSql {
             TurretNames.REFILLED_ENTITY,
             TurretNames.BOW,
             TurretNames.BOW_DURABILITY,
-            TurretNames.HEALTH
+            TurretNames.HEALTH,
+            TurretNames.TURRET_TYPE
     );
     private static final String ARROWS_CONTENT = String.format(
             "    %s         BIGINT  NOT NULL,\n" +

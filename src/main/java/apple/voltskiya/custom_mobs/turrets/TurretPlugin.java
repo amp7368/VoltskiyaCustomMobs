@@ -11,10 +11,10 @@ public class TurretPlugin extends VoltskiyaModule {
     @Override
     public void enable() {
         instance = this;
+        new TurretCommand();
         Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
             new TurretManagerTicker();
             new TurretGuiManager();
-            new TurretCommand();
         },0);
     }
 

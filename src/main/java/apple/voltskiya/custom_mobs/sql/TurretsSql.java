@@ -3,6 +3,7 @@ package apple.voltskiya.custom_mobs.sql;
 import apple.voltskiya.custom_mobs.turrets.EntityLocation;
 import apple.voltskiya.custom_mobs.turrets.TurretBuilder;
 import apple.voltskiya.custom_mobs.turrets.TurretMob;
+import apple.voltskiya.custom_mobs.turrets.TurretType;
 import apple.voltskiya.custom_mobs.util.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -31,16 +32,16 @@ public class TurretsSql {
             Statement statement = VerifyMobsSql.database.createStatement();
             statement.execute(String.format(
                     "REPLACE INTO %s (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,\n" +
-                            "                    %s, %s)\n" +
-                            "VALUES (%d,'%s',%f,%f,%f,%f,%f,%f,'%s','%s','%s',%d,%d,%f);\n",
+                            "                    %s, %s, %s)\n" +
+                            "VALUES (%d,'%s',%f,%f,%f,%f,%f,%f,'%s','%s','%s',%d,%d,%f,'%s');\n",
                     TURRETS_TABLE, TURRET_UID, WORLD_UID, X, Y, Z,
                     X_FACING, Y_FACING, Z_FACING,
                     DURABILITY_ENTITY, BOW_ENTITY, REFILLED_ENTITY,
-                    BOW, BOW_DURABILITY, HEALTH,
+                    BOW, BOW_DURABILITY, HEALTH,TURRET_TYPE,
                     turretUid, center.getWorld().getUID().toString(), center.getX(), center.getY(), center.getZ(),
                     facing.getX(), facing.getY(), facing.getZ(),
                     turretMob.getDurabilityEntity().uuid.toString(), turretMob.getBowEntity().uuid.toString(), turretMob.getRefilledEntity().uuid.toString(),
-                    bow == null ? null : bowId, turretMob.getBowDurability(), turretMob.getHealth()
+                    bow == null ? null : bowId, turretMob.getBowDurability(), turretMob.getHealth(),turretMob.getTurretType().name()
             ));
             for (EntityLocation entityUid : turretMob.getTurretEntities()) {
                 insertEntity(turretUid, statement, entityUid);
@@ -131,7 +132,8 @@ public class TurretsSql {
                                 arrow,
                                 response.getInt(BOW),
                                 response.getInt(BOW_DURABILITY),
-                                turretUid
+                                turretUid,
+                                TurretType.valueOf(response.getString(TURRET_TYPE))
                         )
                 );
             }
