@@ -8,6 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import java.sql.SQLException;
@@ -19,9 +20,8 @@ public class TurretBuilder {
     private final Location location;
     private final double health;
     private final List<Pair<Material, Integer>> arrows;
-    private final int bowDurability;
     private final long uid;
-    private final int bowUid;
+    private final long bowUid;
     private List<EntityLocation> turretEntities = new ArrayList<>();
     private EntityLocation durabilityEntity;
     private Entity durabilityEntityReal;
@@ -39,7 +39,6 @@ public class TurretBuilder {
         this.arrows = new ArrayList<>();
         this.health = TurretMob.MAX_HEALTH;
         this.bowUid = -1;
-        this.bowDurability = 0;
         this.uid = -1;
         this.turretType = turretType;
     }
@@ -50,8 +49,7 @@ public class TurretBuilder {
                          EntityLocation durabilityEntity, EntityLocation refilledEntity, EntityLocation bowEntity,
                          double health,
                          List<Pair<Material, Integer>> arrows,
-                         int bowUid,
-                         int bowDurability,
+                         long bowUid,
                          long uid,
                          TurretType turretType
     ) {
@@ -67,7 +65,6 @@ public class TurretBuilder {
         this.health = health;
         this.arrows = arrows;
         this.bowUid = bowUid;
-        this.bowDurability = bowDurability;
         this.uid = uid;
     }
 
@@ -117,8 +114,7 @@ public class TurretBuilder {
                 bowEntity,
                 health,
                 arrows,
-                Material.AIR,
-                bowDurability,
+                new ItemStack(Material.AIR),
                 turretType
         ) : new TurretMob(world, x, y, z,
                 facingX,
@@ -130,8 +126,7 @@ public class TurretBuilder {
                 bowEntity,
                 health,
                 arrows,
-                DBUtils.getMaterialName(bowUid),
-                bowDurability,
+                DBUtils.getItemStack(bowUid),
                 uid,
                 turretType
         );

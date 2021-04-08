@@ -26,9 +26,9 @@ task download(type: Copy) {
 }
 dependencies {
     implementation 'org.jetbrains:annotations:20.1.0'
+    compileOnly 'org.spigotmc:spigot:1.16.5-R0.1-SNAPSHOT' // The full Spigot server with no shadowing. Requires mavenLocal.
     compileOnly 'com.destroystokyo.paper:paper-api:1.16.4-R0.1-SNAPSHOT'
     implementation 'co.aikar:acf-paper:0.5.0-SNAPSHOT'
-    compileOnly 'org.spigotmc:spigot:1.16.5-R0.1-SNAPSHOT' // The full Spigot server with no shadowing. Requires mavenLocal.
     implementation 'net.luckperms:api:5.0'
     implementation "org.xerial:sqlite-jdbc:3.32.3.2"
     implementation 'org.reflections:reflections:0.9.12'

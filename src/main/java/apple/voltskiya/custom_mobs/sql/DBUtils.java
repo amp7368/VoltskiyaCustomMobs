@@ -1,15 +1,24 @@
 package apple.voltskiya.custom_mobs.sql;
 
+import apple.voltskiya.custom_mobs.util.Pair;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.material.MaterialData;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static apple.voltskiya.custom_mobs.sql.DBNames.MaterialNames.*;
+import static apple.voltskiya.custom_mobs.sql.DBNames.*;
 
 
 public class DBUtils {
@@ -66,6 +75,49 @@ public class DBUtils {
             statement.close();
             blockNameToMy.put(blockName, my);
             return my;
+        }
+    }
+
+    public static ItemStack getItemStack(long itemUid) throws SQLException {
+        synchronized (VerifyTurretsSql.syncDB) {
+            Statement statement = VerifyTurretsSql.database.createStatement();
+            ResultSet response = statement.executeQuery(String.format(
+                    "SELECT * FROM %s WHERE %s = %d\n",
+                    ItemNames.ITEM_TABLE, ItemNames.ITEM_UID, itemUid
+            ));
+            int materialUid = response.getInt(MATERIAL_UID);
+            int itemCount = response.getInt(ItemNames.ITEM_COUNT);
+            int durability = response.getInt(ItemNames.DURABILITY);
+            response = statement.executeQuery(String.format("         SELECT * FROM %s \n" +
+                            "         inner join %s on %s.%s = %s.%s\n" +
+                            "WHERE %s = %d",
+                    ItemNames.ENCHANTMENT_TABLE,
+                    ItemNames.ENCHANTMENT_ENUM_TABLE,
+                    ItemNames.ENCHANTMENT_TABLE,
+                    ItemNames.ENCHANTMENT_UID,
+                    ItemNames.ENCHANTMENT_ENUM_TABLE,
+                    ItemNames.ENCHANTMENT_UID,
+                    ItemNames.ITEM_UID,
+                    itemUid
+            ));
+            List<Pair<Enchantment, Integer>> enchantments = new ArrayList<>();
+            Enchantment.ARROW_DAMAGE.getKey();
+            while (response.next()) {
+                enchantments.add(new Pair<>(
+                        Enchantment.getByKey(
+                                NamespacedKey.fromString(
+                                        response.getString(ItemNames.ENCHANTMENT_NAME)
+                                )
+                        ),
+                        response.getInt(ItemNames.ENCHANTMENT_LEVEL)));
+            }
+            statement.close();
+            ItemStack itemStack = new ItemStack(getMaterialName(materialUid), itemCount);
+            if (durability <= 0) {
+                ItemMeta data  = itemStack.getItemMeta();
+                data.
+                itemStack.setDurability();
+            }
         }
     }
 }

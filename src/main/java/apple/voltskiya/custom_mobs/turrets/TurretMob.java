@@ -12,6 +12,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,7 +40,7 @@ public class TurretMob implements Runnable {
     private final EntityLocation refilledEntity;
     private final EntityLocation bowEntity;
     private List<Pair<Material, Integer>> arrows;
-    private final Material bow;
+    private final ItemStack bow;
     private int bowDurability;
     private double health;
     private long uid;
@@ -57,8 +58,7 @@ public class TurretMob implements Runnable {
                      EntityLocation durabilityEntity, EntityLocation refilledEntity, EntityLocation bowEntity,
                      double health,
                      List<Pair<Material, Integer>> arrows,
-                     Material bow,
-                     int bowDurability,
+                     ItemStack bow,
                      TurretType turretType
     ) {
         final World world = Bukkit.getWorld(worldUid);
@@ -73,7 +73,6 @@ public class TurretMob implements Runnable {
         this.health = health;
         this.arrows = arrows;
         this.bow = bow;
-        this.bowDurability = bowDurability;
         this.uid = -1;
         this.turretType = turretType;
     }
@@ -84,8 +83,7 @@ public class TurretMob implements Runnable {
                      EntityLocation durabilityEntity, EntityLocation refilledEntity, EntityLocation bowEntity,
                      double health,
                      List<Pair<Material, Integer>> arrows,
-                     Material bow,
-                     int bowDurability,
+                     ItemStack bow,
                      long uid,
                      TurretType turretType
     ) {
@@ -102,7 +100,6 @@ public class TurretMob implements Runnable {
         this.health = health;
         this.arrows = arrows;
         this.bow = bow;
-        this.bowDurability = bowDurability;
         this.uid = uid;
         this.turretType = turretType;
     }
@@ -431,7 +428,7 @@ public class TurretMob implements Runnable {
         return arrows;
     }
 
-    public Material getBow() {
+    public ItemStack getBow() {
         return bow;
     }
 

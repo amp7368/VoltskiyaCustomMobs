@@ -40,4 +40,16 @@ public class DBNames {
         public static final String MATERIAL_NAME = "material_name";
         public static final String MATERIAL_TABLE = "material";
     }
+
+    public static class ItemNames {
+        public static final String ITEM_UID = "item_uid";
+        public static final String ITEM_COUNT = "item_count";
+        public static final String DURABILITY = "durability";
+        public static final String ENCHANTMENT_UID = "enchantment_uid";
+        public static final String ENCHANTMENT_NAME = "enchantment_name";
+        public static final String ENCHANTMENT_LEVEL = "enchantment_level";
+        public static final String ITEM_TABLE = "item";
+        public static final String ENCHANTMENT_TABLE ="enchantment" ;
+        public static final String ENCHANTMENT_ENUM_TABLE = "enchantment_uid_to_name";
+    }
 }

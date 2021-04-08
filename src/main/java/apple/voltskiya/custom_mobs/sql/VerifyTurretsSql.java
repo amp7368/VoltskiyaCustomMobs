@@ -25,10 +25,9 @@ public class VerifyTurretsSql {
                     "    %s NCHAR(36) NOT NULL,\n" +
                     "    %s        NCHAR(36) NOT NULL,\n" +
                     "    %s   NCHAR(36) NOT NULL,\n" +
-                    "    %s              INTEGER,\n" +
-                    "    %s    INTEGER   NOT NULL,\n" +
-                    "    %s           DOUBLE    NOT NULL,\n"+
-            "    %s           VARCHAR(15)    NOT NULL ",
+                    "    %s              BIGINT,\n" +
+                    "    %s           DOUBLE    NOT NULL,\n" +
+                    "    %s           VARCHAR(15)    NOT NULL ",
             DBNames.TurretNames.TURRET_UID,
             DBNames.TurretNames.WORLD_UID,
             DBNames.TurretNames.X,
@@ -41,7 +40,6 @@ public class VerifyTurretsSql {
             DBNames.TurretNames.BOW_ENTITY,
             DBNames.TurretNames.REFILLED_ENTITY,
             DBNames.TurretNames.BOW,
-            DBNames.TurretNames.BOW_DURABILITY,
             DBNames.TurretNames.HEALTH,
             DBNames.TurretNames.TURRET_TYPE
     );
@@ -80,10 +78,34 @@ public class VerifyTurretsSql {
             DBNames.TurretNames.TURRET_UID, DBNames.TurretNames.ENTITY_UID,
             DBNames.TurretNames.TURRET_UID, DBNames.TurretNames.ENTITY_UID
     );
+    private static final String ITEM_CONTENT = String.format(
+            "    %s     BIGINT  NOT NULL PRIMARY KEY,\n" +
+                    "    %s INTEGER NOT NULL,\n" +
+                    "    %s   INTEGER NOT NULL,\n" +
+                    "    %s   INTEGER\n",
+            DBNames.ItemNames.ITEM_UID,
+            DBNames.MaterialNames.MATERIAL_UID,
+            DBNames.ItemNames.ITEM_COUNT,
+            DBNames.ItemNames.DURABILITY
+    );
+    private static final String ENCHANTMENT_CONTENT = String.format(
+            "   %s        BIGINT,\n" +
+                    "    %s INTEGER",
+            DBNames.ItemNames.ITEM_UID,
+            DBNames.ItemNames.ENCHANTMENT_UID
+    );
+    private static final String ENCHANTMENT_ENUM_CONTENT = String.format(
+            "    %s   INTEGER,\n" +
+                    "    %s  VARCHAR(70),\n" +
+                    "    %s INTEGER",
+            DBNames.ItemNames.ENCHANTMENT_UID,
+            DBNames.ItemNames.ENCHANTMENT_NAME,
+            DBNames.ItemNames.ENCHANTMENT_LEVEL
+    );
     private static final String CREATE_TABLE_FORMAT = "CREATE TABLE IF NOT EXISTS %s ( %s );";
     public static long currentTurretUid;
     public static long currentMaterialUid;
-    public static final Object syncDB=new Object();
+    public static final Object syncDB = new Object();
     public static Connection database;
 
     /**
@@ -113,6 +135,9 @@ public class VerifyTurretsSql {
             statement.execute(String.format(CREATE_TABLE_FORMAT, DBNames.MaterialNames.MATERIAL_TABLE, MATERIALS_CONTENT));
             statement.execute(String.format(CREATE_TABLE_FORMAT, DBNames.TurretNames.ARROW_TABLE, ARROWS_CONTENT));
             statement.execute(String.format(CREATE_TABLE_FORMAT, DBNames.TurretNames.TURRET_TO_ENTITY_TABLE, TURRET_TO_ENTITY_CONTENT));
+            statement.execute(String.format(CREATE_TABLE_FORMAT, DBNames.ItemNames.ITEM_TABLE, ITEM_CONTENT));
+            statement.execute(String.format(CREATE_TABLE_FORMAT, DBNames.ItemNames.ENCHANTMENT_TABLE, ENCHANTMENT_CONTENT));
+            statement.execute(String.format(CREATE_TABLE_FORMAT, DBNames.ItemNames.ENCHANTMENT_ENUM_TABLE, ENCHANTMENT_ENUM_CONTENT));
             currentMaterialUid = statement.executeQuery(String.format("SELECT max(%s)+1 FROM %s", DBNames.MaterialNames.MATERIAL_UID, DBNames.MaterialNames.MATERIAL_TABLE)).getInt(1);
             currentTurretUid = statement.executeQuery(String.format("SELECT max(%s)+1 FROM %s", DBNames.TurretNames.TURRET_UID, DBNames.TurretNames.TURRETS_TABLE)).getInt(1);
             statement.close();
