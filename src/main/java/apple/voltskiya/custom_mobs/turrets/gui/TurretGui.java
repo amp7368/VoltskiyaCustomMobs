@@ -103,15 +103,21 @@ public class TurretGui implements InventoryHolder {
     }
 
     private void bowStartChange(InventoryClickEvent event) {
-        //todo
+        final ItemStack cursor = event.getCursor();
+        if (cursor == null || cursor.getType().isAir() || MaterialUtils.isBowLike(cursor.getType()))
+            Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), this::bowChange, 0);
+        else event.setCancelled(true);
+    }
+
+    private void bowChange() {
+
     }
 
     private void arrowStartChange(InventoryClickEvent event) {
         final ItemStack cursor = event.getCursor();
-        if (cursor == null || cursor.getType().isAir()) {
+        if (cursor == null || cursor.getType().isAir() || MaterialUtils.isArrow(cursor.getType()))
             Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), this::arrowChange, 0);
-        } else if (!MaterialUtils.isArrow(cursor.getType())) event.setCancelled(true);
-        else Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), this::arrowChange, 0);
+        else event.setCancelled(true);
     }
 
     private void arrowChange() {

@@ -1,6 +1,7 @@
 package apple.voltskiya.custom_mobs.sql;
 
 public class DBNames {
+
     public static class MobNames {
         public static final String MOB_TYPE_NAME = "mob_type_name";
         public static final String DATABASE_NAME = "mobs.db";
@@ -42,6 +43,7 @@ public class DBNames {
     }
 
     public static class ItemNames {
+        public static final long AIR_ITEM_STACK_ID = 0;
         public static final String ITEM_UID = "item_uid";
         public static final String ITEM_COUNT = "item_count";
         public static final String DURABILITY = "durability";

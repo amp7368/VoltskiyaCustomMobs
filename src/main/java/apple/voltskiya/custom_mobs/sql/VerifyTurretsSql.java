@@ -3,6 +3,7 @@ package apple.voltskiya.custom_mobs.sql;
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import apple.voltskiya.custom_mobs.mobs.MobTickPlugin;
 import apple.voltskiya.custom_mobs.turrets.TurretPlugin;
+import org.bukkit.Material;
 
 import java.io.File;
 import java.sql.Connection;
@@ -82,31 +83,32 @@ public class VerifyTurretsSql {
             "    %s     BIGINT  NOT NULL PRIMARY KEY,\n" +
                     "    %s INTEGER NOT NULL,\n" +
                     "    %s   INTEGER NOT NULL,\n" +
-                    "    %s   INTEGER\n",
+                    "    %s   INTEGER NOT NULL\n",
             DBNames.ItemNames.ITEM_UID,
             DBNames.MaterialNames.MATERIAL_UID,
             DBNames.ItemNames.ITEM_COUNT,
             DBNames.ItemNames.DURABILITY
     );
     private static final String ENCHANTMENT_CONTENT = String.format(
-            "   %s        BIGINT,\n" +
-                    "    %s INTEGER",
+            "   %s        BIGINT NOT NULL PRIMARY KEY,\n" +
+                    "    %s INTEGER NOT NULL," +
+                    "    %s INTEGER NOT NULL",
             DBNames.ItemNames.ITEM_UID,
-            DBNames.ItemNames.ENCHANTMENT_UID
+            DBNames.ItemNames.ENCHANTMENT_UID,
+            DBNames.ItemNames.ENCHANTMENT_LEVEL
     );
     private static final String ENCHANTMENT_ENUM_CONTENT = String.format(
-            "    %s   INTEGER,\n" +
-                    "    %s  VARCHAR(70),\n" +
-                    "    %s INTEGER",
+            "    %s   INTEGER NOT NULL PRIMARY KEY,\n" +
+                    "    %s  VARCHAR(70) NOT NULL",
             DBNames.ItemNames.ENCHANTMENT_UID,
-            DBNames.ItemNames.ENCHANTMENT_NAME,
-            DBNames.ItemNames.ENCHANTMENT_LEVEL
+            DBNames.ItemNames.ENCHANTMENT_NAME
     );
     private static final String CREATE_TABLE_FORMAT = "CREATE TABLE IF NOT EXISTS %s ( %s );";
     public static long currentTurretUid;
     public static long currentMaterialUid;
     public static final Object syncDB = new Object();
     public static Connection database;
+    private static int currentItemStackUid;
 
     /**
      * do any setup and make sure the static part of this class is completed
@@ -138,7 +140,15 @@ public class VerifyTurretsSql {
             statement.execute(String.format(CREATE_TABLE_FORMAT, DBNames.ItemNames.ITEM_TABLE, ITEM_CONTENT));
             statement.execute(String.format(CREATE_TABLE_FORMAT, DBNames.ItemNames.ENCHANTMENT_TABLE, ENCHANTMENT_CONTENT));
             statement.execute(String.format(CREATE_TABLE_FORMAT, DBNames.ItemNames.ENCHANTMENT_ENUM_TABLE, ENCHANTMENT_ENUM_CONTENT));
+            statement.execute(String.format("REPLACE INTO %s (%s, %s, %s, %s) VALUES (0, %d,0,0)",
+                    DBNames.ItemNames.ITEM_TABLE,
+                    DBNames.ItemNames.ITEM_UID,
+                    DBNames.MaterialNames.MATERIAL_UID,
+                    DBNames.ItemNames.ITEM_COUNT,
+                    DBNames.ItemNames.DURABILITY,
+                    DBUtils.getMyMaterialUid(Material.AIR)));
             currentMaterialUid = statement.executeQuery(String.format("SELECT max(%s)+1 FROM %s", DBNames.MaterialNames.MATERIAL_UID, DBNames.MaterialNames.MATERIAL_TABLE)).getInt(1);
+            currentItemStackUid = statement.executeQuery(String.format("SELECT max(%s)+1 FROM %s", DBNames.ItemNames.ITEM_UID, DBNames.ItemNames.ITEM_TABLE)).getInt(1);
             currentTurretUid = statement.executeQuery(String.format("SELECT max(%s)+1 FROM %s", DBNames.TurretNames.TURRET_UID, DBNames.TurretNames.TURRETS_TABLE)).getInt(1);
             statement.close();
         }

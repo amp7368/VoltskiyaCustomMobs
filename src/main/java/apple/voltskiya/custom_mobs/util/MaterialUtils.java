@@ -15,4 +15,8 @@ public class MaterialUtils {
     public static boolean isArrow(Material m) {
         return arrows.contains(m);
     }
+
+    public static boolean isBowLike(Material m) {
+        return Material.BOW == m || Material.CROSSBOW == m;
+    }
 }

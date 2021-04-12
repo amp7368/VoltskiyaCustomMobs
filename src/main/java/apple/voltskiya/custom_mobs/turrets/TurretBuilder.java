@@ -103,32 +103,39 @@ public class TurretBuilder {
         double facingY = location.getDirection().getY();
         double facingZ = location.getDirection().getZ();
 
-        return uid < 0 ? new TurretMob(world, x, y, z,
-                facingX,
-                facingY,
-                facingZ,
-                turretEntities,
-                durabilityEntityReal,
-                durabilityEntity,
-                refilledEntity,
-                bowEntity,
-                health,
-                arrows,
-                new ItemStack(Material.AIR),
-                turretType
-        ) : new TurretMob(world, x, y, z,
-                facingX,
-                facingY,
-                facingZ,
-                turretEntities,
-                durabilityEntity,
-                refilledEntity,
-                bowEntity,
-                health,
-                arrows,
-                DBUtils.getItemStack(bowUid),
-                uid,
-                turretType
-        );
+        if (uid < 0) {
+            return new TurretMob(world, x, y, z,
+                    facingX,
+                    facingY,
+                    facingZ,
+                    turretEntities,
+                    durabilityEntityReal,
+                    durabilityEntity,
+                    refilledEntity,
+                    bowEntity,
+                    health,
+                    arrows,
+                    new ItemStack(Material.AIR),
+                    DBUtils.getAirItemStack(),
+                    turretType
+            );
+        } else {
+            final ItemStack bow = DBUtils.getItemStack(bowUid);
+            return new TurretMob(world, x, y, z,
+                    facingX,
+                    facingY,
+                    facingZ,
+                    turretEntities,
+                    durabilityEntity,
+                    refilledEntity,
+                    bowEntity,
+                    health,
+                    arrows,
+                    bow,
+                    bowUid,
+                    uid,
+                    turretType
+            );
+        }
     }
 }

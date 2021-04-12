@@ -5,8 +5,8 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.material.MaterialData;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.ResultSet;
@@ -101,23 +101,33 @@ public class DBUtils {
                     itemUid
             ));
             List<Pair<Enchantment, Integer>> enchantments = new ArrayList<>();
-            Enchantment.ARROW_DAMAGE.getKey();
             while (response.next()) {
                 enchantments.add(new Pair<>(
                         Enchantment.getByKey(
-                                NamespacedKey.fromString(
+                                NamespacedKey.minecraft(
                                         response.getString(ItemNames.ENCHANTMENT_NAME)
                                 )
                         ),
                         response.getInt(ItemNames.ENCHANTMENT_LEVEL)));
             }
             statement.close();
-            ItemStack itemStack = new ItemStack(getMaterialName(materialUid), itemCount);
             if (durability <= 0) {
-                ItemMeta data  = itemStack.getItemMeta();
-                data.
-                itemStack.setDurability();
+                return new ItemStack(Material.AIR);
+            } else {
+                ItemStack itemStack = new ItemStack(getMaterialName(materialUid), itemCount);
+                for (Pair<Enchantment, Integer> enchantment : enchantments) {
+                    itemStack.addEnchantment(enchantment.getKey(), enchantment.getValue());
+                }
+                ItemMeta data = itemStack.getItemMeta();
+                if (data instanceof Damageable) {
+                    ((Damageable) data).setDamage(durability);
+                }
+                return itemStack;
             }
         }
+    }
+
+    public static long getAirItemStack() {
+        return ItemNames.AIR_ITEM_STACK_ID;
     }
 }

@@ -8,7 +8,6 @@ import apple.voltskiya.custom_mobs.util.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,8 +26,7 @@ public class TurretsSql {
         Location center = turretMob.getCenter();
         Vector facing = center.getDirection();
         synchronized (VerifyTurretsSql.syncDB) {
-            final ItemStack bow = turretMob.getBow();
-            int bowId = bow == null ? DBUtils.getMyMaterialUid(Material.AIR) : DBUtils.getMyMaterialUid(bow); //todo
+            final long bowId = turretMob.getBowId();
             VerifyTurretsSql.database.setAutoCommit(false);
             Statement statement = VerifyTurretsSql.database.createStatement();
             statement.execute(String.format(
@@ -38,11 +36,11 @@ public class TurretsSql {
                     TURRETS_TABLE, TURRET_UID, WORLD_UID, X, Y, Z,
                     X_FACING, Y_FACING, Z_FACING,
                     DURABILITY_ENTITY, BOW_ENTITY, REFILLED_ENTITY,
-                    BOW, HEALTH,TURRET_TYPE,
+                    BOW, HEALTH, TURRET_TYPE,
                     turretUid, center.getWorld().getUID().toString(), center.getX(), center.getY(), center.getZ(),
                     facing.getX(), facing.getY(), facing.getZ(),
                     turretMob.getDurabilityEntity().uuid.toString(), turretMob.getBowEntity().uuid.toString(), turretMob.getRefilledEntity().uuid.toString(),
-                    bow == null ? null : bowId, turretMob.getHealth(),turretMob.getTurretType().name()
+                    bowId, turretMob.getHealth(), turretMob.getTurretType().name()
             ));
             for (EntityLocation entityUid : turretMob.getTurretEntities()) {
                 insertEntity(turretUid, statement, entityUid);

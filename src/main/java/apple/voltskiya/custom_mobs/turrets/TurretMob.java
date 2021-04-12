@@ -23,7 +23,7 @@ import java.util.UUID;
 
 public class TurretMob implements Runnable {
     public static final String TURRET_TAG = "player.turret";
-    private final static int MAX_SIGHT = 50;
+    private static final int MAX_SIGHT = 50;
     protected static final int MAX_HEALTH = 200;
     public static final double HEALTH_PER_REPAIR = 10;
     protected static final double MAX_ANGLE = Math.toRadians(90);
@@ -41,7 +41,7 @@ public class TurretMob implements Runnable {
     private final EntityLocation bowEntity;
     private List<Pair<Material, Integer>> arrows;
     private final ItemStack bow;
-    private int bowDurability;
+    private final long bowId;
     private double health;
     private long uid;
     private boolean isDead = false;
@@ -59,6 +59,7 @@ public class TurretMob implements Runnable {
                      double health,
                      List<Pair<Material, Integer>> arrows,
                      ItemStack bow,
+                     long bowId,
                      TurretType turretType
     ) {
         final World world = Bukkit.getWorld(worldUid);
@@ -73,6 +74,7 @@ public class TurretMob implements Runnable {
         this.health = health;
         this.arrows = arrows;
         this.bow = bow;
+        this.bowId=bowId;
         this.uid = -1;
         this.turretType = turretType;
     }
@@ -85,6 +87,7 @@ public class TurretMob implements Runnable {
                      List<Pair<Material, Integer>> arrows,
                      ItemStack bow,
                      long uid,
+                     long bowId,
                      TurretType turretType
     ) {
         final World world = Bukkit.getWorld(worldUid);
@@ -100,6 +103,7 @@ public class TurretMob implements Runnable {
         this.health = health;
         this.arrows = arrows;
         this.bow = bow;
+        this.bowId=bowId;
         this.uid = uid;
         this.turretType = turretType;
     }
@@ -236,7 +240,7 @@ public class TurretMob implements Runnable {
         }
         double distanceToTarget = DistanceUtils.distance(goal, center);
 
-        if (distanceToTarget < MAX_SIGHT && distanceToTarget>MIN_SIGHT) {
+        if (distanceToTarget < MAX_SIGHT && distanceToTarget > MIN_SIGHT) {
             Location spawnLocation = center.clone();
             spawnLocation.add(facing);
             spawnLocation.add(facing);
@@ -291,7 +295,6 @@ public class TurretMob implements Runnable {
                 new Thread(this).start();
             }
             TurretGuiManager.get().updateGui(getUniqueId());
-            this.bowDurability--;
         }
     }
 
@@ -432,8 +435,8 @@ public class TurretMob implements Runnable {
         return bow;
     }
 
-    public int getBowDurability() {
-        return bowDurability;
+    public long getBowId() {
+        return bowId;
     }
 
     public double getHealth() {
