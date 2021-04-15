@@ -4,7 +4,7 @@ import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import apple.voltskiya.custom_mobs.YmlSettings;
 import apple.voltskiya.custom_mobs.jumps.LeapMobManager;
 import apple.voltskiya.custom_mobs.jumps.LeapPlugin;
-import apple.voltskiya.custom_mobs.mobs.tick.SpawnEater;
+import apple.voltskiya.custom_mobs.abilities.tick.SpawnEater;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
 import java.io.IOException;

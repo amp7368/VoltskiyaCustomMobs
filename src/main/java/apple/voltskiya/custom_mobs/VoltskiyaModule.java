@@ -36,7 +36,7 @@ public abstract class VoltskiyaModule {
     }
 
     public void log(Level level, String message) {
-        logger.log(level, String.format(" [%s] %s", getName(), message));
+        logger.log(level, String.format("[%s] %s", getName(), message));
     }
 
     public void setLogger(Logger logger) {

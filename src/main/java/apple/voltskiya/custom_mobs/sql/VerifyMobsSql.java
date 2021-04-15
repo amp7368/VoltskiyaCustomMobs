@@ -1,7 +1,7 @@
 package apple.voltskiya.custom_mobs.sql;
 
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
-import apple.voltskiya.custom_mobs.mobs.MobTickPlugin;
+import apple.voltskiya.custom_mobs.abilities.MobTickPlugin;
 
 import java.io.File;
 import java.sql.Connection;
