@@ -1,6 +1,6 @@
 package apple.voltskiya.custom_mobs.sql;
 
-import apple.voltskiya.custom_mobs.turrets.EntityLocation;
+import apple.voltskiya.custom_mobs.util.EntityLocation;
 import apple.voltskiya.custom_mobs.turrets.TurretBuilder;
 import apple.voltskiya.custom_mobs.turrets.TurretMob;
 import apple.voltskiya.custom_mobs.turrets.TurretType;

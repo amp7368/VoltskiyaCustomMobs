@@ -74,7 +74,7 @@ public class CustomModelPlugin extends VoltskiyaModule {
             CraftEntity e = (CraftEntity) entity;
             NBTTagCompound nbt = new NBTTagCompound();
             e.getHandle().save(nbt);
-            c.set("nbt", nbt.toString());
+            c.set("nbt", nbt.asString());
         }
         yml.save(file);
     }
@@ -103,7 +103,6 @@ public class CustomModelPlugin extends VoltskiyaModule {
                 e.printStackTrace();
                 continue;
             }
-            nbt.remove("UUID");
             Map<String, Object> otherData = new HashMap<>();
             for (String otherKey : entity.getKeys(false)) {
                 if (!normalData.contains(otherKey)) {

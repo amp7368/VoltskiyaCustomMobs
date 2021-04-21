@@ -1,6 +1,7 @@
 package apple.voltskiya.custom_mobs.turrets;
 
 import apple.voltskiya.custom_mobs.sql.DBUtils;
+import apple.voltskiya.custom_mobs.util.EntityLocation;
 import apple.voltskiya.custom_mobs.util.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

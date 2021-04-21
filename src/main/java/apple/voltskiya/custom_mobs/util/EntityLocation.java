@@ -1,4 +1,4 @@
-package apple.voltskiya.custom_mobs.turrets;
+package apple.voltskiya.custom_mobs.util;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -22,17 +22,6 @@ public class EntityLocation {
         this.xFacing = xFacing;
         this.yFacing = yFacing;
         this.zFacing = zFacing;
-    }
-
-    public EntityLocation(Entity e) {
-        this.uuid = e.getUniqueId();
-        final Location location = e.getLocation();
-        this.x = location.getX();
-        this.y = location.getY();
-        this.z = location.getZ();
-        this.xFacing = location.getDirection().getX();
-        this.yFacing = location.getDirection().getY();
-        this.zFacing = location.getDirection().getZ();
     }
 
     public EntityLocation(Entity e, double offsetX, double offsetY, double offsetZ) {

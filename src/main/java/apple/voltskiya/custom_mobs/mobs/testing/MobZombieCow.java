@@ -1,5 +1,6 @@
-package apple.voltskiya.custom_mobs.mobs;
+package apple.voltskiya.custom_mobs.mobs.testing;
 
+import apple.voltskiya.custom_mobs.mobs.NmsMobsPlugin;
 import com.mojang.datafixers.DataFixUtils;
 import com.mojang.datafixers.DataFixer;
 import com.mojang.datafixers.schemas.Schema;
@@ -7,18 +8,17 @@ import com.mojang.datafixers.types.Type;
 import com.mojang.datafixers.types.templates.TaggedChoice;
 import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftBlaze;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPhantom;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftZombie;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.Map;
 import java.util.logging.Level;
 
-public class MobWarpedGremlin extends EntityZombie {
-    private static EntityTypes<MobWarpedGremlin> warpedGremlinEntityType;
+public class MobZombieCow extends EntityPhantom {
+    public static final String REGISTERED_NAME = "phantom_cow";
+    private static EntityTypes<MobZombieCow> warpedGremlinEntityType;
     private AttributeMapBase attributeMap = null;
 
 
@@ -28,7 +28,7 @@ public class MobWarpedGremlin extends EntityZombie {
      * @param entitytypes my entity type. me. this is me.
      * @param world       the world to spawn the entity in
      */
-    protected MobWarpedGremlin(EntityTypes<MobWarpedGremlin> entitytypes, World world) {
+    protected MobZombieCow(EntityTypes<MobZombieCow> entitytypes, World world) {
         super(entitytypes, world);
     }
 
@@ -36,7 +36,7 @@ public class MobWarpedGremlin extends EntityZombie {
      * registers the WarpedGremlin as an entity
      */
     public static void initialize() {
-        EntityTypes.Builder<MobWarpedGremlin> entitytypesBuilder = EntityTypes.Builder.a(MobWarpedGremlin::new, EnumCreatureType.MONSTER);
+        EntityTypes.Builder<MobZombieCow> entitytypesBuilder = EntityTypes.Builder.a(MobZombieCow::new, EnumCreatureType.MONSTER);
 
         // this version of minecraft (whatever it happens to be)
         final int keyForVersion = DataFixUtils.makeKey(SharedConstants.getGameVersion().getWorldVersion());
@@ -46,17 +46,17 @@ public class MobWarpedGremlin extends EntityZombie {
         final Schema schemaForSomething = dataFixerToRegister.getSchema(keyForVersion);
         final TaggedChoice.TaggedChoiceType<?> choiceType = schemaForSomething.findChoiceType(DataConverterTypes.ENTITY_TREE);
 
-        // copy the zombie type to the warped gremlin type\
+        // copy the phantom type to the warped gremlin type\
         // todo understand this more
         Map<? super Object, Type<?>> types = (Map<? super Object, Type<?>>) choiceType.types();
-        final Type<?> zombieType = types.get("minecraft:zombie");
-        types.put("minecraft:warped_gremlin", zombieType);
+        final Type<?> phantomType = types.get("minecraft:phantom");
+        types.put("minecraft:" + REGISTERED_NAME, phantomType);
 
         // build it
-        warpedGremlinEntityType = entitytypesBuilder.a("warped_gremlin");
+        warpedGremlinEntityType = entitytypesBuilder.a(REGISTERED_NAME);
 
         // log it
-        NmsMobsPlugin.get().log(Level.INFO, "registered warped_gremlin");
+        NmsMobsPlugin.get().log(Level.INFO, "registered " + REGISTERED_NAME);
     }
 
     /**
@@ -67,7 +67,7 @@ public class MobWarpedGremlin extends EntityZombie {
      * @param location the org.bukkit location where the mob should be spawned
      */
     public static void spawn(String name, org.bukkit.World world, org.bukkit.Location location) {
-        final MobWarpedGremlin gremlin = new MobWarpedGremlin(warpedGremlinEntityType, ((CraftWorld) world).getHandle());
+        final MobZombieCow gremlin = new MobZombieCow(warpedGremlinEntityType, ((CraftWorld) world).getHandle());
         gremlin.setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
         ((CraftWorld) world).getHandle().addEntity(gremlin);
     }
@@ -106,20 +106,21 @@ public class MobWarpedGremlin extends EntityZombie {
 
     @Override
     public CraftEntity getBukkitEntity() {
-        return new CraftZombie(this.getWorld().getServer(), this);
+        return new CraftPhantom(this.getWorld().getServer(), this);
     }
 
     /**
      * @return the default attributeMap
      */
     private static AttributeProvider getAttributeProvider() {
-        return MobWarpedGremlin.cL()
+        return MobZombieCow.cL()
                 .a(GenericAttributes.FOLLOW_RANGE, 35.0D)
                 .a(GenericAttributes.MOVEMENT_SPEED, 0.23000000417232513D)
                 .a(GenericAttributes.ATTACK_DAMAGE, 3.0D)
                 .a(GenericAttributes.ARMOR, 2.0D)
                 .a(GenericAttributes.SPAWN_REINFORCEMENTS)
-                .a(GenericAttributes.ATTACK_KNOCKBACK,1D)
+                .a(GenericAttributes.ATTACK_KNOCKBACK, 1D)
+                .a(GenericAttributes.SPAWN_REINFORCEMENTS)
                 .a();
     }
 
