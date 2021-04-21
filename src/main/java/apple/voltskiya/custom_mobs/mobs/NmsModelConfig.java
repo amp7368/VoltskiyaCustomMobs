@@ -65,7 +65,7 @@ public class NmsModelConfig {
     }
 
     public enum ModelConfigName {
-        WARPED_GREMLIN("warped_gremlin");
+        WARPED_GREMLIN("warped_gremlin"), ALEDAR_CART("aledar_cart");
 
         private final String name;
 

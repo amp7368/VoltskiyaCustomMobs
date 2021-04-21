@@ -1,16 +1,12 @@
 package apple.voltskiya.custom_mobs.mobs.parts;
 
 import apple.voltskiya.custom_mobs.mobs.NmsModelEntityConfig;
-import apple.voltskiya.custom_mobs.util.EntityLocation;
+import apple.voltskiya.custom_mobs.mobs.utils.UtilsPacket;
 import net.minecraft.server.v1_16_R3.ControllerLook;
-import net.minecraft.server.v1_16_R3.Entity;
 import net.minecraft.server.v1_16_R3.EntityInsentient;
 import net.minecraft.server.v1_16_R3.PacketPlayOutEntityStatus;
-import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -65,13 +61,8 @@ public class MobParts {
                 child.moveFromMother();
                 packetsToSend.add(child.moveFromMother());
             }
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                ((CraftPlayer) player).getHandle().playerConnection.networkManager.stopReading();
-                for (PacketPlayOutEntityStatus p : packetsToSend) {
-                    ((CraftPlayer) player).getHandle().playerConnection.networkManager.sendPacket(p);
-                }
-                ((CraftPlayer) player).getHandle().playerConnection.networkManager.channel.config().setAutoRead(true);
-            }
+            UtilsPacket.sendPacketsToAllPlayers(packetsToSend);
         }
+
     }
 }

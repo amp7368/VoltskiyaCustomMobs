@@ -11,11 +11,7 @@ import com.mojang.datafixers.schemas.Schema;
 import com.mojang.datafixers.types.Type;
 import com.mojang.datafixers.types.templates.TaggedChoice;
 import net.minecraft.server.v1_16_R3.*;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
-import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -146,14 +142,11 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild 
         // and it would just cause unnecessary lag
     }
 
+    @Override
     public PacketPlayOutEntityStatus moveFromMother() {
         float yaw1;
-//        if (mainMob.entity instanceof EntityInsentient) {
-//            yaw1 = ((EntityInsentient) mainMob.entity).aC;
-//        } else {
-            final Vec2F facing = mainMob.entity.bi();
-            yaw1 = facing.j;
-//        }
+        final Vec2F facing = mainMob.entity.bi();
+        yaw1 = facing.j;
         Location newLocation = VectorUtils.rotate(entityLocation, yaw1, mainMob.location, false);
         this.setLocation(
                 newLocation.getX() + this.mainMob.entity.locX(),
@@ -162,13 +155,26 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild 
                 newLocation.getYaw(),
                 newLocation.getPitch()
         );
-        PacketPlayOutEntityStatus move = new PacketPlayOutEntityStatus(this, (byte) 9);
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            ((CraftPlayer) player).getHandle().playerConnection.networkManager.sendPacket(move);
-        }
-        return move;
+        return new PacketPlayOutEntityStatus(this, (byte) 9);
     }
 
+    /**
+     * sorry about f1,f2,f3. It's just the headPose
+     *
+     * @param f1 amount to add to headPose[f1,-,-]
+     * @param f2 amount to add to headPose[-,f2,-]
+     * @param f3 amount to add to headPose[-,-,f3]
+     */
+    public void rotateHead(float f1, float f2, float f3) {
+        Vector3f pose = this.headPose;
+        f1 += pose.getX();
+        f2 += pose.getY();
+        f3 += pose.getZ();
+        f1 %= 360;
+        f2 %= 360;
+        f3 %= 360;
+        this.setHeadPose(new Vector3f(f1, f2, f3));
+    }
 
     @Override
     public Iterable<ItemStack> getArmorItems() {
