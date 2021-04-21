@@ -141,12 +141,7 @@ public class MobWarpedGremlin extends EntityZombie {
 
     @Override
     public void movementTick() {
-        super.movementTick();
-        List<PacketPlayOutEntityStatus> packetsToSend = new ArrayList<>();
-        for (MobPartChild child : children) {
-            packetsToSend.add(child.moveFromMother());
-        }
-        UtilsPacket.sendPacketsToAllPlayers(packetsToSend);
+        super.movementTick();;
     }
 
     @Override
@@ -194,6 +189,11 @@ public class MobWarpedGremlin extends EntityZombie {
     @Override
     public void move(EnumMoveType enummovetype, Vec3D vec3d) {
         super.move(enummovetype, vec3d);
+        List<PacketPlayOutEntityStatus> packetsToSend = new ArrayList<>();
+        for (MobPartChild child : children) {
+            packetsToSend.add(child.moveFromMother(false));
+        }
+        UtilsPacket.sendPacketsToAllPlayers(packetsToSend);
     }
 
     /**

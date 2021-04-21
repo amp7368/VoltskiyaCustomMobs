@@ -2,6 +2,7 @@ package apple.voltskiya.custom_mobs.mobs;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.mobs.aledar.MobAledar;
+import apple.voltskiya.custom_mobs.mobs.eye_plant.MobEyePlant;
 import apple.voltskiya.custom_mobs.mobs.gremlin.MobWarpedGremlin;
 import apple.voltskiya.custom_mobs.mobs.testing.EndermanVex;
 import apple.voltskiya.custom_mobs.mobs.testing.MobPiglinVex;
@@ -22,9 +23,16 @@ public class MobsSpawnCommand extends BaseCommand {
     @Subcommand("aledar_cart")
     public void spawnAledarCart(Player player) {
         MobAledar.spawn(player.getWorld(), player.getLocation());
-    }  @Subcommand("enderman_vex")
+    }
+
+    @Subcommand("enderman_vex")
     public void spawnEndermanVex(Player player) {
         EndermanVex.spawn(player.getWorld(), player.getLocation());
+    }
+
+    @Subcommand("eye_plant")
+    public void spawnEyePlant(Player player) {
+        MobEyePlant.spawn(player.getWorld(), player.getLocation());
     }
 
     @Subcommand("warped_gremlin")

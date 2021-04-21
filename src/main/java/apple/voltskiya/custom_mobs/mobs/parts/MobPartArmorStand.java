@@ -52,7 +52,7 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild 
                 entity.facingZ
         ); // for simpler rotations
         this.loadData(entity.nbt);
-        this.moveFromMother();
+        this.moveFromMother(false);
     }
 
     public static void initialize() {
@@ -143,10 +143,13 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild 
     }
 
     @Override
-    public PacketPlayOutEntityStatus moveFromMother() {
+    public PacketPlayOutEntityStatus moveFromMother(boolean isLookingRelevant) {
         float yaw1;
-        final Vec2F facing = mainMob.entity.bi();
-        yaw1 = facing.j;
+        if (isLookingRelevant) {
+            yaw1 = mainMob.entity.yaw + mainMob.entity.getHeadRotation();
+        } else{
+            yaw1 = mainMob.entity.lastYaw;
+        }
         Location newLocation = VectorUtils.rotate(entityLocation, yaw1, mainMob.location, false);
         this.setLocation(
                 newLocation.getX() + this.mainMob.entity.locX(),

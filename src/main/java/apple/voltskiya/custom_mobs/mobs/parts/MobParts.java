@@ -58,8 +58,7 @@ public class MobParts {
             super.a();
             List<PacketPlayOutEntityStatus> packetsToSend = new ArrayList<>();
             for (MobPartChild child : children) {
-                child.moveFromMother();
-                packetsToSend.add(child.moveFromMother());
+                packetsToSend.add(child.moveFromMother(true));
             }
             UtilsPacket.sendPacketsToAllPlayers(packetsToSend);
         }

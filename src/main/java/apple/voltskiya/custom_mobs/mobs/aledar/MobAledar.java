@@ -1,6 +1,5 @@
 package apple.voltskiya.custom_mobs.mobs.aledar;
 
-import apple.voltskiya.custom_mobs.custom_model.CustomModel;
 import apple.voltskiya.custom_mobs.mobs.NmsMobsPlugin;
 import apple.voltskiya.custom_mobs.mobs.NmsModelConfig;
 import apple.voltskiya.custom_mobs.mobs.NmsModelEntityConfig;
@@ -171,7 +170,7 @@ public class MobAledar extends EntityPillager {
         super.movementTick();
         List<PacketPlayOutEntityStatus> packetsToSend = new ArrayList<>();
         for (MobPartChild child : children) {
-            packetsToSend.add(child.moveFromMother());
+            packetsToSend.add(child.moveFromMother(false));
         }
         UtilsPacket.sendPacketsToAllPlayers(packetsToSend);
     }

@@ -36,7 +36,7 @@ public class VectorUtils {
      * @return the new rotated loaction
      */
     public static @NotNull Location rotate(EntityLocation entityLocation, float yaw, Location center, boolean isModifyEntity) {
-        Location l = new Location(null, 0, 0, 0, yaw, 0);
+        Location l = new Location(null, 0, 0, 0, yaw%360, 0);
         return rotate(entityLocation, l.getDirection(), center, isModifyEntity);
     }
 
@@ -62,7 +62,7 @@ public class VectorUtils {
         double z = Math.sin(angle) * radius + center.getZ();
 
         // do the facing rotation
-        double theta = Math.atan2(newFacing.getZ(), newFacing.getX()) ; // todo make this 0
+        double theta = Math.atan2(newFacing.getZ(), newFacing.getX()) ;
         while (theta < 0) theta += Math.PI * 2;
         Vector newEntityFacing = rotateVector(entityLocation.x, entityLocation.z, entityLocation.xFacing, entityLocation.zFacing, entityLocation.yFacing, theta);
         Location newLocation = new Location(null, x, entityLocation.y, z);

@@ -21,7 +21,6 @@ public class MobZombieCow extends EntityPhantom {
     private static EntityTypes<MobZombieCow> warpedGremlinEntityType;
     private AttributeMapBase attributeMap = null;
 
-
     /**
      * constructor to match the EntityTypes requirement
      *
@@ -31,6 +30,7 @@ public class MobZombieCow extends EntityPhantom {
     protected MobZombieCow(EntityTypes<MobZombieCow> entitytypes, World world) {
         super(entitytypes, world);
     }
+
 
     /**
      * registers the WarpedGremlin as an entity
