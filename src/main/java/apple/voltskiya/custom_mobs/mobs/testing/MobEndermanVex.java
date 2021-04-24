@@ -9,17 +9,16 @@ import com.mojang.datafixers.types.templates.TaggedChoice;
 import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
-import org.bukkit.entity.Enderman;
 
 import java.util.Map;
 import java.util.logging.Level;
 
-public class EndermanVex extends EntityEnderman {
+public class MobEndermanVex extends EntityEnderman {
     public static final String REGISTERED_NAME = "enderman_vex";
-    private static EntityTypes<EndermanVex> entityTypes;
+    private static EntityTypes<MobEndermanVex> entityTypes;
     private AttributeMapBase attributeMap = null;
 
-    public EndermanVex(EntityTypes<? extends EndermanVex> entitytypes, World world) {
+    public MobEndermanVex(EntityTypes<? extends MobEndermanVex> entitytypes, World world) {
         super(entitytypes, world);
     }
 
@@ -27,7 +26,7 @@ public class EndermanVex extends EntityEnderman {
      * registers the WarpedGremlin as an entity
      */
     public static void initialize() {
-        EntityTypes.Builder<EndermanVex> entitytypesBuilder = EntityTypes.Builder.a(EndermanVex::new, EnumCreatureType.MONSTER);
+        EntityTypes.Builder<MobEndermanVex> entitytypesBuilder = EntityTypes.Builder.a(MobEndermanVex::new, EnumCreatureType.MONSTER);
         entitytypesBuilder.a(2f, 2f);
         // this version of minecraft (whatever it happens to be)
         final int keyForVersion = DataFixUtils.makeKey(SharedConstants.getGameVersion().getWorldVersion());
@@ -50,7 +49,7 @@ public class EndermanVex extends EntityEnderman {
     }
 
     public static void spawn(org.bukkit.World world, Location location) {
-        final EndermanVex gremlin = new EndermanVex(entityTypes, ((CraftWorld) world).getHandle());
+        final MobEndermanVex gremlin = new MobEndermanVex(entityTypes, ((CraftWorld) world).getHandle());
         gremlin.setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
         ((CraftWorld) world).getHandle().addEntity(gremlin);
     }

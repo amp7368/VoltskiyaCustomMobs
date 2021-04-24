@@ -82,7 +82,7 @@ public class MobZombieCow extends EntityPhantom {
 
     @Override
     public EntityTypes<?> getEntityType() {
-        return EntityTypes.COW;
+        return EntityTypes.PIG;
     }
 
     @Override

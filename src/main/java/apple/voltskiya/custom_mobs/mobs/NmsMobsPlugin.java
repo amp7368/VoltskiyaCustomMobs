@@ -5,9 +5,11 @@ import apple.voltskiya.custom_mobs.mobs.aledar.MobAledar;
 import apple.voltskiya.custom_mobs.mobs.eye_plant.MobEyePlant;
 import apple.voltskiya.custom_mobs.mobs.gremlin.MobWarpedGremlin;
 import apple.voltskiya.custom_mobs.mobs.parts.MobPartArmorStand;
-import apple.voltskiya.custom_mobs.mobs.testing.EndermanVex;
+import apple.voltskiya.custom_mobs.mobs.testing.MobEndermanVex;
 import apple.voltskiya.custom_mobs.mobs.testing.MobPiglinVex;
 import apple.voltskiya.custom_mobs.mobs.testing.MobZombieCow;
+
+import java.io.File;
 
 public class NmsMobsPlugin extends VoltskiyaModule {
     private static NmsMobsPlugin instance;
@@ -25,7 +27,7 @@ public class NmsMobsPlugin extends VoltskiyaModule {
         MobPartArmorStand.initialize();
         MobPiglinVex.initialize();
         MobAledar.initialize();
-        EndermanVex.initialize();
+        MobEndermanVex.initialize();
         MobEyePlant.initialize();
         new MobsSpawnCommand();
     }
@@ -33,5 +35,11 @@ public class NmsMobsPlugin extends VoltskiyaModule {
     @Override
     public String getName() {
         return "Mobs";
+    }
+
+    public File getModelDataFolder() {
+        final File folder = new File(getDataFolder(), "models");
+        if (!folder.exists()) folder.mkdirs();
+        return folder;
     }
 }

@@ -15,8 +15,13 @@ import java.util.logging.Level;
 
 public class NmsModelConfig {
     private static final Map<ModelConfigName, NmsModelConfig> ALL_PARTS = new HashMap<>();
+    public static final File MODEL_FOLDER = NmsMobsPlugin.get().getModelDataFolder();
     private final NmsModelEntityConfig mainConfig;
     private final List<NmsModelEntityConfig> partsConfig;
+
+    static {
+        if (!MODEL_FOLDER.exists()) MODEL_FOLDER.mkdirs();
+    }
 
     public NmsModelConfig(NmsModelEntityConfig main, ArrayList<NmsModelEntityConfig> partList) {
         this.mainConfig = main;
@@ -25,35 +30,45 @@ public class NmsModelConfig {
 
     // initialize the parts
     public static void initialize() {
-        File folder = new File(NmsMobsPlugin.get().getDataFolder(), "models");
-        if (!folder.exists()) folder.mkdirs();
         for (ModelConfigName name : ModelConfigName.values()) {
-            @Nullable CustomModel model = CustomModelPlugin.get().loadSchematic(new File(folder, name.getFile() + ".yml"));
-            if (model == null) {
-                NmsMobsPlugin.get().log(Level.WARNING, name.getFile() + " has no schematic");
-                continue;
-            }
-            final ArrayList<NmsModelEntityConfig> partList = new ArrayList<>();
-            NmsModelEntityConfig main = null;
-            for (CustomModel.CustomEntity part : model.entities) {
-                final NmsModelEntityConfig piece = new NmsModelEntityConfig(part);
-                if (piece.isMain()){
-                    main = piece;
-                }
-                else partList.add(piece);
-            }
-            if (main == null) {
-                NmsMobsPlugin.get().log(Level.WARNING, name.getFile() + " has an invalid schematic");
-            } else {
-                partList.trimToSize();
-                ALL_PARTS.put(name, new NmsModelConfig(main, partList));
+            NmsModelConfig model = registerModel(MODEL_FOLDER, name.getFile());
+            if (model != null) {
+                ALL_PARTS.put(name, model);
             }
         }
     }
 
-    // list the parts
+    @Nullable
+    private static NmsModelConfig registerModel(File folder, String name) {
+        @Nullable CustomModel model = CustomModelPlugin.get().loadSchematic(new File(folder, name + ".yml"));
+        if (model == null) {
+            NmsMobsPlugin.get().log(Level.WARNING, name + " has no schematic");
+            return null;
+        }
+        final ArrayList<NmsModelEntityConfig> partList = new ArrayList<>();
+        NmsModelEntityConfig main = null;
+        for (CustomModel.CustomEntity part : model.entities) {
+            final NmsModelEntityConfig piece = new NmsModelEntityConfig(part);
+            if (piece.isMain()) {
+                main = piece;
+            } else partList.add(piece);
+        }
+        if (main == null) {
+            NmsMobsPlugin.get().log(Level.WARNING, name + " has an invalid schematic");
+            return null;
+        } else {
+            partList.trimToSize();
+            return new NmsModelConfig(main, partList);
+        }
+    }
+
     public static NmsModelConfig parts(ModelConfigName name) {
         return ALL_PARTS.get(name);
+    }
+
+    @Nullable
+    public static NmsModelConfig parts(String name) {
+        return registerModel(MODEL_FOLDER, name);
     }
 
     public NmsModelEntityConfig mainPart() {
@@ -64,10 +79,12 @@ public class NmsModelConfig {
         return this.partsConfig;
     }
 
+    // list the parts
     public enum ModelConfigName {
         WARPED_GREMLIN("warped_gremlin"),
         ALEDAR_CART("aledar_cart"),
-        EYE_PLANT("eye_plant");
+        EYE_PLANT("eye_plant"),
+        MISC_MODEL("misc_model");
 
         private final String name;
 
