@@ -17,7 +17,7 @@ public class Leap implements Runnable {
     private final double zVelocity;
     private final double yVelocityInitial;
     private int currentTime = 0;
-    private double acceleration;
+    private final double acceleration;
 
     public Leap(Entity entity, Location goalLocation, int peakHeight, int timeFullArc) {
         this.entity = entity;
@@ -53,7 +53,6 @@ public class Leap implements Runnable {
     public void run() {
         if (entity.isDead() || ++currentTime == timeFullArc) return;
         // set the yVelocity to what it should
-//        System.out.println("" + xVelocity + " " + yVelocity + " " + zVelocity);
         yVelocity = yVelocityInitial + acceleration * currentTime;
         entity.setVelocity(new Vector(xVelocity, yVelocity, zVelocity));
 

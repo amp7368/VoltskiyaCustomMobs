@@ -2,7 +2,7 @@ package apple.voltskiya.custom_mobs.ticking;
 
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import apple.voltskiya.custom_mobs.mobs.tick.Tickable;
+import apple.voltskiya.custom_mobs.abilities.tick.Tickable;
 import org.bukkit.Bukkit;
 
 public class Ticking extends VoltskiyaModule {
@@ -19,6 +19,7 @@ public class Ticking extends VoltskiyaModule {
     public void enable() {
         tickables = new Tickable[]{
                 new HighFrequencyTick(),
+                new NormalHighFrequencyTick(),
                 new NormalFrequencyTick(),
                 new LowFrequencyTick(),
                 new VeryLowFrequencyTick(),
@@ -28,6 +29,6 @@ public class Ticking extends VoltskiyaModule {
 
     @Override
     public String getName() {
-        return null;
+        return "Ticking";
     }
 }

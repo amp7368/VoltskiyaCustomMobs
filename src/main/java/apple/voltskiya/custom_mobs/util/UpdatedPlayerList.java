@@ -1,7 +1,7 @@
 package apple.voltskiya.custom_mobs.util;
 
 import apple.voltskiya.custom_mobs.ticking.HighFrequencyTick;
-import apple.voltskiya.custom_mobs.mobs.tick.Tickable;
+import apple.voltskiya.custom_mobs.abilities.tick.Tickable;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -99,7 +99,7 @@ public class UpdatedPlayerList implements Tickable {
         call(callerUid);
         synchronized (PLAYER_SYNC) {
             Player closest = null;
-            double distance = Integer.MAX_VALUE;
+            double distance = Double.MAX_VALUE;
             for (Player p : players) {
                 if (p.getGameMode() == GameMode.SURVIVAL) {
                     Location pLocation = p.getLocation();

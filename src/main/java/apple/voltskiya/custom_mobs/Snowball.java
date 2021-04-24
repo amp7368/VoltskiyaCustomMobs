@@ -1,13 +1,14 @@
 package apple.voltskiya.custom_mobs;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import org.bukkit.*;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -32,16 +33,24 @@ public class Snowball implements Listener {
                 // we might have a snowball? O.o
                 final ItemMeta itemMeta = item.getItemMeta();
                 if (itemMeta != null) {
-                    @Nullable Component name = itemMeta.displayName();
-                    if (name instanceof TextComponent) {
-                        if (((TextComponent) name).content().toLowerCase().contains(SNOWBALL)) {
-                            // we have a snowball!
-                            snowball(event);
-                        }
+                    String name = itemMeta.getDisplayName();
+                    if (name.equals(SNOWBALL)) {
+                        // we have a snowball!
+                        snowball(event);
                     }
                 }
             }
         }
+    }
+
+    @EventHandler
+    public void onNoStickArrows(ProjectileHitEvent event) {
+        final Entity entity = event.getEntity();
+        Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
+            if (entity.getScoreboardTags().contains("no_stick") && entity.getType() == EntityType.ARROW && (entity.isOnGround())) {
+                entity.remove();
+            }
+        });
     }
 
     private void snowball(PlayerInteractEvent event) {
@@ -59,7 +68,7 @@ public class Snowball implements Listener {
         private final static Vector acceleration = new Vector(0, -0.02, 0);
         private final static Random random = new Random();
         private final static double radius = 5d;
-        private int count = 0;
+        private final int count = 0;
 
         public SnowballThrow(Location currentLocation, Vector direction) {
             this.currentLocation = currentLocation;

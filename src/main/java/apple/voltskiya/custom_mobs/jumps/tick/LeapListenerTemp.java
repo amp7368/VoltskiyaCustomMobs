@@ -1,8 +1,6 @@
 package apple.voltskiya.custom_mobs.jumps.tick;
 
-import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.jumps.config.Leap;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -12,7 +10,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 public class LeapListenerTemp implements Listener {
     private Location finalLocation = null;
     public LeapListenerTemp(){
-        Bukkit.getPluginManager().registerEvents(this, VoltskiyaPlugin.get());
+//        Bukkit.getPluginManager().registerEvents(this, VoltskiyaPlugin.get());
     }
     @EventHandler
     public void click(PlayerInteractEvent event) {
@@ -24,8 +22,8 @@ public class LeapListenerTemp implements Listener {
     @EventHandler
     public void click(PlayerInteractAtEntityEvent event) {
         if (finalLocation != null) {
-            int time = 300;
-            int height = 200;
+            int time = 100;
+            int height = 40;
             new Leap(event.getRightClicked(), finalLocation, height, time);
         }
     }

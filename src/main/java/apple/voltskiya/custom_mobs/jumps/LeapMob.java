@@ -9,10 +9,10 @@ import java.util.List;
 import java.util.Map;
 
 public class LeapMob {
-    private Entity mob;
-    private long lastLeaping = 0;
-    private boolean isCurrentlyLeaping = false;
-    private Map<String, Object> tags = new HashMap<>();
+    private final Entity mob;
+    private final long lastLeaping = 0;
+    private final boolean isCurrentlyLeaping = false;
+    private final Map<String, Object> tags = new HashMap<>();
     private final List<LeapMobListenerManager> listeners = new ArrayList<>();
     private final List<LeapMobListenerManager> disabledListeners = new ArrayList<>();
     private final BinaryTree<Long> nextCall = new BinaryTree<Long>();
