@@ -1,6 +1,7 @@
 package apple.voltskiya.custom_mobs.mobs.testing;
 
 import apple.voltskiya.custom_mobs.mobs.NmsMobsPlugin;
+import apple.voltskiya.custom_mobs.mobs.utils.UtilsAttribute;
 import com.mojang.datafixers.DataFixUtils;
 import com.mojang.datafixers.DataFixer;
 import com.mojang.datafixers.schemas.Schema;
@@ -19,7 +20,6 @@ import java.util.logging.Level;
 public class MobZombieCow extends EntityPhantom {
     public static final String REGISTERED_NAME = "phantom_cow";
     private static EntityTypes<MobZombieCow> warpedGremlinEntityType;
-    private AttributeMapBase attributeMap = null;
 
     /**
      * constructor to match the EntityTypes requirement
@@ -28,7 +28,8 @@ public class MobZombieCow extends EntityPhantom {
      * @param world       the world to spawn the entity in
      */
     protected MobZombieCow(EntityTypes<MobZombieCow> entitytypes, World world) {
-        super(entitytypes, world);
+        super(EntityTypes.PHANTOM, world);
+        UtilsAttribute.fillAttributes(this.getAttributeMap(), getAttributeProvider());
     }
 
 
@@ -72,36 +73,9 @@ public class MobZombieCow extends EntityPhantom {
         ((CraftWorld) world).getHandle().addEntity(gremlin);
     }
 
-    /**
-     * @return EnumMonsterType.ARTHROPOD || EnumMonsterType.ILLAGER || ...
-     */
-    @Override
-    public EnumMonsterType getMonsterType() {
-        return super.getMonsterType();
-    }
-
     @Override
     public EntityTypes<?> getEntityType() {
         return EntityTypes.PIG;
-    }
-
-    @Override
-    public void movementTick() {
-        super.movementTick();
-    }
-
-    /**
-     * @return the bounding box of this entity
-     */
-    @Override
-    public AxisAlignedBB getBoundingBox() {
-        return super.getBoundingBox();
-    }
-
-    @Override
-    public AttributeMapBase getAttributeMap() {
-        if (this.attributeMap == null) this.attributeMap = new AttributeMapBase(getAttributeProvider());
-        return this.attributeMap;
     }
 
     @Override
@@ -127,14 +101,6 @@ public class MobZombieCow extends EntityPhantom {
     @Override
     public void move(EnumMoveType enummovetype, Vec3D vec3d) {
         super.move(enummovetype, vec3d);
-    }
-
-    /**
-     * @return whether the mob is in horizontal or vertical position
-     */
-    @Override
-    public boolean bC() {
-        return super.bC();
     }
 
     /**

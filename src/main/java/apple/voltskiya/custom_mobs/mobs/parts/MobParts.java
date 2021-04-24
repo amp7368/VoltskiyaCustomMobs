@@ -4,7 +4,7 @@ import apple.voltskiya.custom_mobs.mobs.NmsModelEntityConfig;
 import apple.voltskiya.custom_mobs.mobs.utils.UtilsPacket;
 import net.minecraft.server.v1_16_R3.ControllerLook;
 import net.minecraft.server.v1_16_R3.EntityInsentient;
-import net.minecraft.server.v1_16_R3.PacketPlayOutEntityStatus;
+import net.minecraft.server.v1_16_R3.Packet;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.EntityType;
 
@@ -56,7 +56,7 @@ public class MobParts {
         @Override
         public void a() {
             super.a();
-            List<PacketPlayOutEntityStatus> packetsToSend = new ArrayList<>();
+            List<Packet<?>> packetsToSend = new ArrayList<>();
             for (MobPartChild child : children) {
                 packetsToSend.add(child.moveFromMother(true));
             }

@@ -5,7 +5,6 @@ import net.minecraft.server.v1_16_R3.NBTTagFloat;
 import net.minecraft.server.v1_16_R3.NBTTagList;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
-import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;

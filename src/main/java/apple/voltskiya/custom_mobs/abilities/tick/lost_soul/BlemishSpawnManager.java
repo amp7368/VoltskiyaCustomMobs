@@ -94,7 +94,7 @@ public class BlemishSpawnManager extends SpawnEater implements Listener {
                     directionRight.setZ(directionRight.getX() * Math.sin(Math.toRadians(-30)) + Math.cos(Math.toRadians(-30)) * directionRight.getZ());
 
 
-                    String cmd = "execute at " + nearby.getUniqueId().toString() + " run summon vex " + location.getX() + " " + location.getY() + " " + location.getZ() + " " + SUMMON_VEX;
+                    String cmd = "execute at " + nearby.getUniqueId() + " run summon vex " + location.getX() + " " + location.getY() + " " + location.getZ() + " " + SUMMON_VEX;
                     Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), cmd);
                     Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), cmd);
                     Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {

@@ -1,6 +1,7 @@
 package apple.voltskiya.custom_mobs.mobs.testing;
 
 import apple.voltskiya.custom_mobs.mobs.NmsMobsPlugin;
+import apple.voltskiya.custom_mobs.mobs.utils.UtilsAttribute;
 import com.mojang.datafixers.DataFixUtils;
 import com.mojang.datafixers.DataFixer;
 import com.mojang.datafixers.schemas.Schema;
@@ -23,10 +24,10 @@ import java.util.logging.Level;
 public class MobPiglinVex extends EntityVex implements IRangedEntity, IEntityAngerable {
     public static final String REGISTERED_NAME = "piglin_vex";
     private static EntityTypes<MobPiglinVex> entityTypes;
-    private AttributeMapBase attributeMap = null;
+    private final AttributeMapBase attributeMap = null;
     private int angriness;
     private UUID angerTarget;
-    private Map<EnumItemSlot, ItemStack> equipment = new HashMap<>();
+    private final Map<EnumItemSlot, ItemStack> equipment = new HashMap<>();
 
     /**
      * constructor to match the EntityTypes requirement
@@ -35,7 +36,8 @@ public class MobPiglinVex extends EntityVex implements IRangedEntity, IEntityAng
      * @param world       the world to spawn the entity in
      */
     protected MobPiglinVex(EntityTypes<MobPiglinVex> entitytypes, World world) {
-        super(entitytypes, world);
+        super(EntityTypes.VEX, world);
+        UtilsAttribute.fillAttributes(this.getAttributeMap(), getAttributeProvider());
     }
 
     /**
@@ -137,11 +139,6 @@ public class MobPiglinVex extends EntityVex implements IRangedEntity, IEntityAng
         return super.getBukkitEntity();
     }
 
-    @Override
-    public AttributeMapBase getAttributeMap() {
-        if (this.attributeMap == null) this.attributeMap = new AttributeMapBase(getAttributeProvider());
-        return this.attributeMap;
-    }
 
     /**
      * @return the default attributeMap

@@ -7,6 +7,7 @@ import apple.voltskiya.custom_mobs.mobs.parts.MobPartArmorStand;
 import apple.voltskiya.custom_mobs.mobs.parts.MobPartChild;
 import apple.voltskiya.custom_mobs.mobs.parts.MobPartMother;
 import apple.voltskiya.custom_mobs.mobs.parts.MobParts;
+import apple.voltskiya.custom_mobs.mobs.utils.UtilsAttribute;
 import apple.voltskiya.custom_mobs.mobs.utils.UtilsPacket;
 import apple.voltskiya.custom_mobs.util.EntityLocation;
 import com.mojang.datafixers.DataFixUtils;
@@ -34,7 +35,7 @@ public class MobAledar extends EntityPillager {
     private final List<MobPartChild> children = new ArrayList<>();
     private final List<MobPartArmorStand> leftWheels = new ArrayList<>();
     private final List<MobPartArmorStand> rightWheels = new ArrayList<>();
-    private AttributeMapBase attributeMap = null;
+    private final AttributeMapBase attributeMap = null;
 
     /**
      * constructor to match the EntityTypes requirement
@@ -42,7 +43,8 @@ public class MobAledar extends EntityPillager {
      * @param world the world to spawn the entity in
      */
     public MobAledar(EntityTypes<? extends EntityPillager> entitytypes, World world) {
-        super(entitytypes, world);
+        super(EntityTypes.PILLAGER, world);
+        UtilsAttribute.fillAttributes(this.getAttributeMap(), getAttributeProvider());
     }
 
     /**
@@ -122,13 +124,13 @@ public class MobAledar extends EntityPillager {
         // mostly a villager
 
         this.goalSelector.a(0, new PathfinderGoalFloat(this));
-        this.goalSelector.a(1, new PathfinderGoalAvoidTarget(this, EntityZombie.class, 8.0F, 0.5D, 0.5D));
-        this.goalSelector.a(1, new PathfinderGoalAvoidTarget(this, EntityEvoker.class, 12.0F, 0.5D, 0.5D));
-        this.goalSelector.a(1, new PathfinderGoalAvoidTarget(this, EntityVindicator.class, 8.0F, 0.5D, 0.5D));
-        this.goalSelector.a(1, new PathfinderGoalAvoidTarget(this, EntityVex.class, 8.0F, 0.5D, 0.5D));
-        this.goalSelector.a(1, new PathfinderGoalAvoidTarget(this, EntityPillager.class, 15.0F, 0.5D, 0.5D));
-        this.goalSelector.a(1, new PathfinderGoalAvoidTarget(this, EntityIllagerIllusioner.class, 12.0F, 0.5D, 0.5D));
-        this.goalSelector.a(1, new PathfinderGoalAvoidTarget(this, EntityZoglin.class, 10.0F, 0.5D, 0.5D));
+        this.goalSelector.a(1, new PathfinderGoalAvoidTarget<>(this, EntityZombie.class, 8.0F, 0.5D, 0.5D));
+        this.goalSelector.a(1, new PathfinderGoalAvoidTarget<>(this, EntityEvoker.class, 12.0F, 0.5D, 0.5D));
+        this.goalSelector.a(1, new PathfinderGoalAvoidTarget<>(this, EntityVindicator.class, 8.0F, 0.5D, 0.5D));
+        this.goalSelector.a(1, new PathfinderGoalAvoidTarget<>(this, EntityVex.class, 8.0F, 0.5D, 0.5D));
+        this.goalSelector.a(1, new PathfinderGoalAvoidTarget<>(this, EntityPillager.class, 15.0F, 0.5D, 0.5D));
+        this.goalSelector.a(1, new PathfinderGoalAvoidTarget<>(this, EntityIllagerIllusioner.class, 12.0F, 0.5D, 0.5D));
+        this.goalSelector.a(1, new PathfinderGoalAvoidTarget<>(this, EntityZoglin.class, 10.0F, 0.5D, 0.5D));
         this.goalSelector.a(1, new PathfinderGoalPanic(this, 0.5D));
         this.goalSelector.a(4, new PathfinderGoalMoveTowardsRestriction(this, 0.35D));
         this.goalSelector.a(8, new PathfinderGoalRandomStrollLand(this, 0.35D));
@@ -168,7 +170,7 @@ public class MobAledar extends EntityPillager {
     @Override
     public void movementTick() {
         super.movementTick();
-        List<PacketPlayOutEntityStatus> packetsToSend = new ArrayList<>();
+        List<Packet<?>> packetsToSend = new ArrayList<>();
         for (MobPartChild child : children) {
             packetsToSend.add(child.moveFromMother(false));
         }
@@ -199,12 +201,6 @@ public class MobAledar extends EntityPillager {
         for (MobPartChild child : children) {
             child.die();
         }
-    }
-
-    @Override
-    public AttributeMapBase getAttributeMap() {
-        if (this.attributeMap == null) this.attributeMap = new AttributeMapBase(getAttributeProvider());
-        return this.attributeMap;
     }
 
     /**

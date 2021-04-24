@@ -11,7 +11,7 @@ public class TurretIndividualTicker {
     private long tickering;
     private boolean isTargeting = false;
     private final long callerUid = UpdatedPlayerList.callerUid();
-    private ArrayList<TurretMob> turrets = new ArrayList<>();
+    private final ArrayList<TurretMob> turrets = new ArrayList<>();
     private boolean isTicking = false;
 
     public TurretIndividualTicker(TurretManagerTicker.Closeness closeness) {

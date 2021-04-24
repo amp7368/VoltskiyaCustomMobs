@@ -68,7 +68,7 @@ public class Snowball implements Listener {
         private final static Vector acceleration = new Vector(0, -0.02, 0);
         private final static Random random = new Random();
         private final static double radius = 5d;
-        private int count = 0;
+        private final int count = 0;
 
         public SnowballThrow(Location currentLocation, Vector direction) {
             this.currentLocation = currentLocation;

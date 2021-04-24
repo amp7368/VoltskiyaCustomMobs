@@ -1,6 +1,7 @@
 package apple.voltskiya.custom_mobs.mobs.testing;
 
 import apple.voltskiya.custom_mobs.mobs.NmsMobsPlugin;
+import apple.voltskiya.custom_mobs.mobs.utils.UtilsAttribute;
 import com.mojang.datafixers.DataFixUtils;
 import com.mojang.datafixers.DataFixer;
 import com.mojang.datafixers.schemas.Schema;
@@ -16,10 +17,11 @@ import java.util.logging.Level;
 public class MobEndermanVex extends EntityEnderman {
     public static final String REGISTERED_NAME = "enderman_vex";
     private static EntityTypes<MobEndermanVex> entityTypes;
-    private AttributeMapBase attributeMap = null;
+    private final AttributeMapBase attributeMap = null;
 
     public MobEndermanVex(EntityTypes<? extends MobEndermanVex> entitytypes, World world) {
-        super(entitytypes, world);
+        super(EntityTypes.ENDERMAN, world);
+        UtilsAttribute.fillAttributes(this.getAttributeMap(), getAttributeProvider());
     }
 
     /**
@@ -69,11 +71,6 @@ public class MobEndermanVex extends EntityEnderman {
         return EntityTypes.VEX;
     }
 
-    @Override
-    public AttributeMapBase getAttributeMap() {
-        if (this.attributeMap == null) this.attributeMap = new AttributeMapBase(getAttributeProvider());
-        return this.attributeMap;
-    }
 
     /**
      * @return the default attributeMap

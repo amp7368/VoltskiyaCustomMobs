@@ -31,7 +31,7 @@ public class ChargerCharge {
         new ChargeUp(charger, finalLocation, finalLocation.clone().add(x / 2, y / 2, z / 2)).charge();
     }
 
-    private class ChargeUp implements Runnable {
+    private static class ChargeUp implements Runnable {
         private final Mob charger;
         private final Location finalLocation;
         private final Location finalLocationFar;

@@ -46,7 +46,7 @@ public class HellGuardManagerTicker extends SpawnEater {
     @Override
     public void eatEvent(CreatureSpawnEvent event) {
         // this is a hellBlazer
-        final LivingEntity hellBlazer = (LivingEntity) event.getEntity();
+        final LivingEntity hellBlazer = event.getEntity();
         Closeness closeness = determineConcern(hellBlazer);
         closenessToHellBlazeres.get(closeness).giveHellBlazer(hellBlazer);
         addMobs(hellBlazer.getUniqueId());

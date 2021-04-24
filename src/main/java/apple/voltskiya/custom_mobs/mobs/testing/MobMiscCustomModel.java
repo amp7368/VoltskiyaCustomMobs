@@ -6,6 +6,7 @@ import apple.voltskiya.custom_mobs.mobs.NmsModelEntityConfig;
 import apple.voltskiya.custom_mobs.mobs.parts.MobPartChild;
 import apple.voltskiya.custom_mobs.mobs.parts.MobPartMother;
 import apple.voltskiya.custom_mobs.mobs.parts.MobParts;
+import apple.voltskiya.custom_mobs.mobs.utils.UtilsAttribute;
 import apple.voltskiya.custom_mobs.mobs.utils.UtilsPacket;
 import apple.voltskiya.custom_mobs.util.EntityLocation;
 import com.mojang.datafixers.DataFixUtils;
@@ -14,19 +15,18 @@ import com.mojang.datafixers.schemas.Schema;
 import com.mojang.datafixers.types.Type;
 import com.mojang.datafixers.types.templates.TaggedChoice;
 import net.minecraft.server.v1_16_R3.*;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftZombie;
-import org.bukkit.entity.ArmorStand;
 
 import java.util.*;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 public class MobMiscCustomModel extends EntityZombie {
     private NmsModelEntityConfig selfModel;
     private EntityTypes<?> selfModelType;
-    private AttributeMapBase attributeMap = null;
+    private final AttributeMapBase attributeMap = null;
     private final List<MobPartChild> children = new ArrayList<>();
 
     /**
@@ -36,7 +36,8 @@ public class MobMiscCustomModel extends EntityZombie {
      */
 
     public MobMiscCustomModel(EntityTypes<MobMiscCustomModel> entityTypes, World world) {
-        super(entityTypes, world);
+        super(EntityTypes.ZOMBIE, world);
+        UtilsAttribute.fillAttributes(this.getAttributeMap(), getAttributeProvider());
     }
 
     /**
@@ -148,13 +149,6 @@ public class MobMiscCustomModel extends EntityZombie {
         }
     }
 
-
-    @Override
-    public AttributeMapBase getAttributeMap() {
-        if (this.attributeMap == null) this.attributeMap = new AttributeMapBase(getAttributeProvider());
-        return this.attributeMap;
-    }
-
     /**
      * @return the default attributeMap
      */
@@ -172,11 +166,11 @@ public class MobMiscCustomModel extends EntityZombie {
     @Override
     public void move(EnumMoveType enummovetype, Vec3D vec3d) {
         super.move(enummovetype, vec3d);
-        List<PacketPlayOutEntityStatus> packetsToSend = new ArrayList<>();
+        List<Packet<?>> packetsToSend = new ArrayList<>();
         for (MobPartChild child : children) {
             packetsToSend.add(child.moveFromMother(false));
         }
-        UtilsPacket.sendPacketsToAllPlayers(packetsToSend);
+        UtilsPacket.sendPacketsToAllPlayers(packetsToSend.stream().map(p -> (Packet<?>) p).collect(Collectors.toList()));
     }
 
 

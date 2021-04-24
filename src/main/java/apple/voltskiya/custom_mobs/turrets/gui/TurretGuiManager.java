@@ -16,7 +16,7 @@ import java.util.Map;
 
 public class TurretGuiManager implements Listener {
     private static TurretGuiManager instance;
-    private Map<Long, TurretGui> turretGuis = new HashMap<>();
+    private final Map<Long, TurretGui> turretGuis = new HashMap<>();
 
     public TurretGuiManager() {
         instance = this;

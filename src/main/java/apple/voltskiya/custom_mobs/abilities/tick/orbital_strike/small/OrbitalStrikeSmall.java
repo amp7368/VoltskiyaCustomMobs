@@ -17,8 +17,8 @@ public class OrbitalStrikeSmall {
     public static final double STRIKE_MIN_HEIGHT = SmallOrbitalStrikeManagerTicker.get().STRIKE_MIN_HEIGHT;
     private final long callerUid;
     private final World targetWorld;
-    private List<Integer> xyzsToTime = new ArrayList<>();
-    private int currentTick = 0;
+    private final List<Integer> xyzsToTime = new ArrayList<>();
+    private final int currentTick = 0;
     private final VoltskiyaPlugin plugin = VoltskiyaPlugin.get();
     private static final Random random = new Random();
     private final List<Location> previousLocations = new ArrayList<>();

@@ -6,7 +6,7 @@ import apple.voltskiya.custom_mobs.mobs.NmsModelEntityConfig;
 import apple.voltskiya.custom_mobs.mobs.parts.MobPartChild;
 import apple.voltskiya.custom_mobs.mobs.parts.MobPartMother;
 import apple.voltskiya.custom_mobs.mobs.parts.MobParts;
-import apple.voltskiya.custom_mobs.mobs.utils.UtilsPacket;
+import apple.voltskiya.custom_mobs.mobs.utils.UtilsAttribute;
 import apple.voltskiya.custom_mobs.util.EntityLocation;
 import com.mojang.datafixers.DataFixUtils;
 import com.mojang.datafixers.DataFixer;
@@ -26,10 +26,10 @@ import java.util.logging.Level;
 public class MobEyePlant extends EntityZombie {
     public static final NmsModelConfig.ModelConfigName REGISTERED_MODEL = NmsModelConfig.ModelConfigName.EYE_PLANT;
     public static final String REGISTERED_NAME = REGISTERED_MODEL.getFile();
+    public static final AttributeProvider ATTRIBUTE_PROVIDER = EntityZombie.eS().a();
     private static EntityTypes<MobEyePlant> warpedGremlinEntityType;
     private NmsModelEntityConfig selfModel;
     private EntityTypes<?> selfModelType;
-    private AttributeMapBase attributeMap = null;
     private final List<MobPartChild> children = new ArrayList<>();
 
     /**
@@ -39,7 +39,8 @@ public class MobEyePlant extends EntityZombie {
      */
 
     public MobEyePlant(EntityTypes<MobEyePlant> entityTypes, World world) {
-        super(entityTypes, world);
+        super(EntityTypes.ZOMBIE, world);
+        UtilsAttribute.fillAttributes(this.getAttributeMap(), getAttributeProvider());
     }
 
     /**
@@ -121,6 +122,10 @@ public class MobEyePlant extends EntityZombie {
         final boolean invisible = nbttagcompound.getBoolean("Invisible");
         ((CraftZombie) getBukkitEntity()).setInvisible(invisible);
         this.setInvisible(invisible);
+    }
+
+    public AttributeProvider getAttributeProvider() {
+        return ATTRIBUTE_PROVIDER;
     }
 
     @Override
@@ -208,26 +213,6 @@ public class MobEyePlant extends EntityZombie {
     @Override
     public CraftEntity getBukkitEntity() {
         return super.getBukkitEntity();
-    }
-
-    @Override
-    public AttributeMapBase getAttributeMap() {
-        if (this.attributeMap == null) this.attributeMap = new AttributeMapBase(getAttributeProvider());
-        return this.attributeMap;
-    }
-
-    /**
-     * @return the default attributeMap
-     */
-    private static AttributeProvider getAttributeProvider() {
-        return EntityLiving.cL()
-                .a(GenericAttributes.FOLLOW_RANGE, 35.0D)
-                .a(GenericAttributes.MOVEMENT_SPEED, 0.23000000417232513D)
-                .a(GenericAttributes.ATTACK_DAMAGE, 3.0D)
-                .a(GenericAttributes.ARMOR, 2.0D)
-                .a(GenericAttributes.SPAWN_REINFORCEMENTS)
-                .a(GenericAttributes.ATTACK_KNOCKBACK, 1D)
-                .a();
     }
 
 

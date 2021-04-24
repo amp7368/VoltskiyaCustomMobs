@@ -34,12 +34,12 @@ class CustomModelGui implements InventoryHolder {
     }};
     private static final long SHOW_DELAY = 100L;
 
-    private Location selectionCenter;
-    private Location eyeLocation;
+    private final Location selectionCenter;
+    private final Location eyeLocation;
     private double selectionRadius;
-    private Location hitBoxCenter;
-    private BoundingBox hitbox;
-    private Consumer<CustomModelGui> runOnSave;
+    private final Location hitBoxCenter;
+    private final BoundingBox hitbox;
+    private final Consumer<CustomModelGui> runOnSave;
     private int page = 0;
     private final ArrayList<Inventory> inventory = new ArrayList<>();
     private Runnable action = null;

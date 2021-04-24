@@ -12,6 +12,8 @@ import com.mojang.datafixers.types.Type;
 import com.mojang.datafixers.types.templates.TaggedChoice;
 import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.Location;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
+import org.bukkit.util.BoundingBox;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +22,7 @@ import java.util.logging.Level;
 
 public class MobPartArmorStand extends EntityArmorStand implements MobPartChild {
     private static final String REGISTERED_NAME = "mobpart_armorstand";
+    private static final double DEATH_PARTICLES_DENSITY = 0.001d;
     private static EntityTypes<MobPartArmorStand> entityTypes;
 
     private AttributeMapBase attributeMap = new AttributeMapBase(AttributeDefaults.a(EntityTypes.ARMOR_STAND));
@@ -143,22 +146,71 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild 
     }
 
     @Override
-    public PacketPlayOutEntityStatus moveFromMother(boolean isLookingRelevant) {
+    public void move(EnumMoveType enummovetype, Vec3D vec3d) {
+        // do nothing because I'll manually call move this when mainMob moves
+        // and it would just cause unnecessary lag
+    }
+
+    /**
+     * This packet (PacketPlayOutRelEntityMove) that I'm using has documentation here: https://wiki.vg/Protocol
+     *
+     * @param isLookingRelevant whether i should turn based on looking direction as well
+     * @return the packet to update this model to the client
+     */
+    @Override
+    public Packet<?> moveFromMother(boolean isLookingRelevant) {
         float yaw1;
         if (isLookingRelevant) {
             yaw1 = mainMob.entity.yaw + mainMob.entity.getHeadRotation();
-        } else{
+        } else {
             yaw1 = mainMob.entity.lastYaw;
         }
         Location newLocation = VectorUtils.rotate(entityLocation, yaw1, mainMob.location, false);
-        this.setLocation(
-                newLocation.getX() + this.mainMob.entity.locX(),
-                newLocation.getY() + this.mainMob.entity.locY(),
-                newLocation.getZ() + this.mainMob.entity.locZ(),
-                newLocation.getYaw(),
-                newLocation.getPitch()
-        );
+        newLocation.add(this.mainMob.entity.locX(), this.mainMob.entity.locY(), this.mainMob.entity.locZ());
+
+        double nowX = newLocation.getX();
+        double nowY = newLocation.getY();
+        double nowZ = newLocation.getZ();
+
+        this.setLocation(nowX, nowY, nowZ, newLocation.getYaw(), newLocation.getPitch());
         return new PacketPlayOutEntityStatus(this, (byte) 9);
+    }
+
+    @Override
+    public boolean damageEntity(DamageSource damagesource, float f) {
+        return this.mainMob.entity.damageEntity(damagesource, f); // send this to the main mob
+    }
+
+    @Override
+    public void die(DamageSource damagesource) {
+        super.die(damagesource);
+
+        // make particles for death
+        final CraftEntity bukkitEntity = this.getBukkitEntity();
+        BoundingBox hitbox = bukkitEntity.getBoundingBox();
+        double x = hitbox.getWidthX();
+        double y = hitbox.getHeight();
+        double z = hitbox.getWidthZ();
+        double volume = x * y * z;
+        double minX = hitbox.getMinX();
+        double minY = hitbox.getMinY();
+        double minZ = hitbox.getMinZ();
+        int particlesToSpawn = (int) (volume / DEATH_PARTICLES_DENSITY + 1);
+
+        org.bukkit.World world = bukkitEntity.getWorld();
+        for (int i = 0; i < particlesToSpawn; i++) {
+            world.spawnParticle(org.bukkit.Particle.SMOKE_NORMAL,
+                    minX + random.nextDouble() * x,
+                    minY + random.nextDouble() * y,
+                    minZ + random.nextDouble() * z,
+                    1
+            );
+        }
+    }
+
+    @Override
+    protected void dropDeathLoot(DamageSource damagesource, int i, boolean flag) {
+        // do nuffin because this part will never drop anything or give any animation
     }
 
     /**
