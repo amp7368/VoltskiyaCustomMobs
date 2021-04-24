@@ -1,6 +1,6 @@
 package apple.voltskiya.custom_mobs.sql;
 
-import apple.voltskiya.custom_mobs.turrets.EntityLocation;
+import apple.voltskiya.custom_mobs.util.EntityLocation;
 import apple.voltskiya.custom_mobs.turrets.TurretBuilder;
 import apple.voltskiya.custom_mobs.turrets.TurretMob;
 import apple.voltskiya.custom_mobs.turrets.TurretType;
@@ -37,7 +37,7 @@ public class TurretsSql {
                     X_FACING, Y_FACING, Z_FACING,
                     DURABILITY_ENTITY, BOW_ENTITY, REFILLED_ENTITY,
                     BOW, HEALTH, TURRET_TYPE,
-                    turretUid, center.getWorld().getUID().toString(), center.getX(), center.getY(), center.getZ(),
+                    turretUid, center.getWorld().getUID(), center.getX(), center.getY(), center.getZ(),
                     facing.getX(), facing.getY(), facing.getZ(),
                     turretMob.getDurabilityEntity().uuid.toString(), turretMob.getBowEntity().uuid.toString(), turretMob.getRefilledEntity().uuid.toString(),
                     bowId, turretMob.getHealth(), turretMob.getTurretType().name()

@@ -5,6 +5,7 @@ import apple.voltskiya.custom_mobs.sql.TurretsSql;
 import apple.voltskiya.custom_mobs.ticking.*;
 import apple.voltskiya.custom_mobs.turrets.gui.TurretGuiManager;
 import apple.voltskiya.custom_mobs.util.DistanceUtils;
+import apple.voltskiya.custom_mobs.util.EntityLocation;
 import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

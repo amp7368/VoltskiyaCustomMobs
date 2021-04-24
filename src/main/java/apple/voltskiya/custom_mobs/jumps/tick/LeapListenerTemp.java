@@ -1,8 +1,6 @@
 package apple.voltskiya.custom_mobs.jumps.tick;
 
-import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.jumps.config.Leap;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

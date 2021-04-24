@@ -5,7 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 class CustomModelGuiList {
-    private static Map<UUID, CustomModelGui> modelGuis = new HashMap<>();
+    private static final Map<UUID, CustomModelGui> modelGuis = new HashMap<>();
 
     @Nullable
     public static synchronized CustomModelGui get(UUID uuid) {

@@ -17,7 +17,7 @@ public class Leap implements Runnable {
     private final double zVelocity;
     private final double yVelocityInitial;
     private int currentTime = 0;
-    private double acceleration;
+    private final double acceleration;
 
     public Leap(Entity entity, Location goalLocation, int peakHeight, int timeFullArc) {
         this.entity = entity;

@@ -3,10 +3,7 @@ package apple.voltskiya.custom_mobs.turrets;
 import apple.voltskiya.custom_mobs.sql.TurretsSql;
 import apple.voltskiya.custom_mobs.sql.VerifyMobsSql;
 import apple.voltskiya.custom_mobs.turrets.gui.TurretGuiManager;
-import apple.voltskiya.custom_mobs.util.DistanceUtils;
-import apple.voltskiya.custom_mobs.util.Pair;
-import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
-import apple.voltskiya.custom_mobs.util.VectorUtils;
+import apple.voltskiya.custom_mobs.util.*;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -74,7 +71,7 @@ public class TurretMob implements Runnable {
         this.health = health;
         this.arrows = arrows;
         this.bow = bow;
-        this.bowId=bowId;
+        this.bowId = bowId;
         this.uid = -1;
         this.turretType = turretType;
     }
@@ -103,7 +100,7 @@ public class TurretMob implements Runnable {
         this.health = health;
         this.arrows = arrows;
         this.bow = bow;
-        this.bowId=bowId;
+        this.bowId = bowId;
         this.uid = uid;
         this.turretType = turretType;
     }
@@ -194,38 +191,19 @@ public class TurretMob implements Runnable {
         if (angle < MAX_ANGLE || Math.abs(Math.PI * 2 - angle) < MAX_ANGLE) {
             // rotate by "angleN" degrees
             for (EntityLocation entity : turretEntities) {
-                rotate(entity, newFacing, center);
+                Location myFacing = new Location(null, 0, 0, 0);
+                myFacing.setDirection(new Vector(entity.xFacing, entity.yFacing, entity.zFacing));
+                float yaw1 = myFacing.getYaw();
+                myFacing.setDirection(newFacing);
+                float yaw2 = myFacing.getYaw();
+                myFacing.setYaw(yaw1 + yaw2);
+
+                VectorUtils.rotate(entity, newFacing, center, true);
             }
             this.facing = newFacing;
             return true;
         }
         return false;
-    }
-
-
-    private static void rotate(EntityLocation entityLocation, Vector newFacing, Location center) {
-        @Nullable Entity entity = Bukkit.getEntity(entityLocation.uuid);
-        if (entity != null) {
-            double radius = DistanceUtils.magnitude(
-                    entityLocation.x,
-                    0,
-                    entityLocation.z);
-
-            // do the position rotation
-            double angle = Math.atan2(entityLocation.z, entityLocation.x);
-            angle += Math.atan2(newFacing.getZ(), newFacing.getX());
-            double x = Math.cos(angle) * radius + center.getX();
-            double z = Math.sin(angle) * radius + center.getZ();
-
-            // do the facing rotation
-            double theta = Math.atan2(newFacing.getZ(), newFacing.getX()) - Math.toRadians(90); // todo make this 0
-            while (theta < 0) theta += Math.PI * 2;
-            Vector newEntityFacing = VectorUtils.rotateVector(entityLocation.x, entityLocation.z, entityLocation.xFacing, entityLocation.zFacing, entityLocation.yFacing, theta);
-            Location newLocation = entity.getLocation().setDirection(newEntityFacing);
-            newLocation.setX(x);
-            newLocation.setZ(z);
-            entity.teleport(newLocation);
-        }
     }
 
 
@@ -382,7 +360,6 @@ public class TurretMob implements Runnable {
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        System.out.println("updated");
     }
 
 

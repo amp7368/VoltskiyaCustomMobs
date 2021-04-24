@@ -1,12 +1,10 @@
 package apple.voltskiya.custom_mobs.custom_model;
 
-import net.minecraft.server.v1_16_R3.NBTBase;
 import net.minecraft.server.v1_16_R3.NBTTagCompound;
 import net.minecraft.server.v1_16_R3.NBTTagFloat;
 import net.minecraft.server.v1_16_R3.NBTTagList;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
-import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,14 +50,20 @@ public class CustomModel {
                 if (rotation.size() == 2) {
                     float yaw = Float.parseFloat(rotation.get(0).asString());
                     float pitch = Float.parseFloat(rotation.get(1).asString());
-                    Vector facing = new Location(null, 0, 0, 0, yaw, pitch).getDirection();
-                    double facingXZ = Math.atan2(facing.getZ(), facing.getX());
-//                            Math.atan2(facingX, facingY);
-                    // todo do the y rotation
 
-                    this.facingX = (this.rotationX = Math.cos(facingXZ)) + facingX;
-                    this.facingY = (this.rotationY = facing.getY()) + facingY;
-                    this.facingZ = (this.rotationZ = Math.sin(facingXZ)) + facingZ;
+                    Location l = new Location(null, 0, 0, 0);
+//                    l.setDirection(new Vector(facingX, facingY, facingZ));
+                    l.setYaw( yaw);
+                    l.setPitch(pitch);
+//                    Vector facing = new Location(null, 0, 0, 0, yaw, pitch).getDirection();
+//                    double facingXZ = Math.atan2(facing.getZ(), facing.getX());
+//
+//                    this.facingX = (this.rotationX = Math.cos(facingXZ)) + facingX;
+//                    this.facingY = (this.rotationY = facing.getY()) + facingY;
+//                    this.facingZ = (this.rotationZ = Math.sin(facingXZ)) + facingZ;
+                    this.facingX = l.getDirection().getX();
+                    this.facingY = l.getDirection().getY();
+                    this.facingZ = l.getDirection().getZ();
                     nbt.remove("Rotation");
                 } else {
                     this.facingX = facingX;
