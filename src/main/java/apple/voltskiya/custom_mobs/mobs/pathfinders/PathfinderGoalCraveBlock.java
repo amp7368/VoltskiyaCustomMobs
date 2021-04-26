@@ -48,7 +48,7 @@ public class PathfinderGoalCraveBlock extends PathfinderGoal {
     public boolean a() {
         if (this.random.nextInt(this.checkInterval) == 0) {
             // try to find a good location
-            findCravedBlock();
+            this.findCravedBlock();
             // if our search gave nothing, say we failed
             // otherwise say we did a good
             return this.foundCravedBlock != null;

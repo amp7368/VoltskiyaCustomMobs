@@ -10,7 +10,6 @@ import apple.voltskiya.custom_mobs.mobs.parts.MobPartMother;
 import apple.voltskiya.custom_mobs.mobs.parts.MobParts;
 import apple.voltskiya.custom_mobs.mobs.pathfinders.PathfinderGoalCraveBlock;
 import apple.voltskiya.custom_mobs.mobs.utils.UtilsAttribute;
-import apple.voltskiya.custom_mobs.mobs.utils.UtilsCoords;
 import apple.voltskiya.custom_mobs.mobs.utils.UtilsPacket;
 import apple.voltskiya.custom_mobs.util.EntityLocation;
 import com.mojang.datafixers.DataFixUtils;
@@ -19,12 +18,11 @@ import com.mojang.datafixers.schemas.Schema;
 import com.mojang.datafixers.types.Type;
 import com.mojang.datafixers.types.templates.TaggedChoice;
 import net.minecraft.server.v1_16_R3.*;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import apple.voltskiya.custom_mobs.mobs.NmsModelConfig.ModelConfigName;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftZombie;
-import org.bukkit.craftbukkit.v1_16_R3.event.CraftPortalEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -110,20 +108,35 @@ public class MobParasite extends EntityZombie {
     protected void initPathfinder() {
         // if this is the overworld, do the overworld AI, otherwise, get to the overworld
         if (DimensionManager.OVERWORLD.a().equals((this.world.getDimensionKey().a()))) {
-            initPathfinderOverworld();
+            this.initPathfinderOverworld();
         } else {
-            initPathfinderOtherWorld();
+            this.initPathfinderOtherWorld();
         }
     }
 
     private void initPathfinderOtherWorld() {
         // new PathfinderGoalRandomStrollLand(entityToMove, speed, chanceToActivate)
+        this.goalSelector.a(0, new PathfinderGoalFloat(this));
         this.goalSelector.a(1, new PathfinderGoalCraveBlock(this, Collections.singletonList(org.bukkit.Material.NETHER_PORTAL), 316, 20, 20, 1.0));
         this.goalSelector.a(2, new PathfinderGoalRandomStrollLand(this, 1.0D, 0.003F));
     }
 
     private void initPathfinderOverworld() {
-        super.initPathfinder();
+        final int chanceToCheck = 20;
+        this.targetSelector.a(1, new PathfinderGoalNearestAttackableTarget<>(this, EntityAnimal.class, chanceToCheck, true, false, (entityLiving) -> !entityLiving.getScoreboardTags().contains(MobInfected.PARASITE_INFECTED_TAG)));
+        double speed = 1.2;
+        this.goalSelector.a(1, new PathfinderGoalMeleeAttack(this, speed, true));
+        this.goalSelector.a(2, new PathfinderGoalRandomStrollLand(this, 1.0D, 0.003F));
+    }
+
+    @Override
+    public boolean attackEntity(Entity e) {
+        if (e instanceof EntityCreature) {
+            EntityCreature entity = (EntityCreature) e;
+            new MobInfected(entity);
+        }
+        Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> this.setGoalTarget(null), 40);
+        return false;
     }
 
     @Override
@@ -223,12 +236,6 @@ public class MobParasite extends EntityZombie {
         }
         this.bN();
         return null;
-    }
-
-    @Override
-    protected CraftPortalEvent callPortalEvent(Entity entity, WorldServer exitWorldServer, BlockPosition exitPosition, PlayerTeleportEvent.TeleportCause cause, int searchRadius, int creationRadius) {
-        final CraftPortalEvent craftPortalEvent = super.callPortalEvent(entity, exitWorldServer, exitPosition, cause, searchRadius, creationRadius);
-        return craftPortalEvent;
     }
 
     //todo
