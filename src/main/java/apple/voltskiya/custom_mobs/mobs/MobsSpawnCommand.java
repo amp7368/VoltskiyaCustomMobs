@@ -4,6 +4,7 @@ import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.mobs.aledar.MobAledar;
 import apple.voltskiya.custom_mobs.mobs.eye_plant.MobEyePlant;
 import apple.voltskiya.custom_mobs.mobs.gremlin.MobWarpedGremlin;
+import apple.voltskiya.custom_mobs.mobs.nether.parasite.MobParasite;
 import apple.voltskiya.custom_mobs.mobs.testing.MobEndermanVex;
 import apple.voltskiya.custom_mobs.mobs.testing.MobMiscCustomModel;
 import apple.voltskiya.custom_mobs.mobs.testing.MobPiglinVex;
@@ -43,6 +44,11 @@ public class MobsSpawnCommand extends BaseCommand {
         @Subcommand("aledar_cart")
         public void spawnAledarCart(Player player) {
             MobAledar.spawn(player.getWorld(), player.getLocation());
+        }
+
+        @Subcommand("nether_parasite")
+        public void spawnParasite(Player player) {
+            MobParasite.spawn(player.getWorld(), player.getLocation());
         }
 
         @Subcommand("enderman_vex")

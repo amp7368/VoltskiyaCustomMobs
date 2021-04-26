@@ -87,7 +87,7 @@ public class MobMiscCustomModel extends EntityZombie {
     private void prepare(Location location, String name) {
         final NmsModelConfig model = NmsModelConfig.parts(name);
         if (model == null) {
-            die();
+            this.die();
             return;
         }
         this.selfModel = model.mainPart();
@@ -105,7 +105,7 @@ public class MobMiscCustomModel extends EntityZombie {
                     selfModel.getEntity().facingY,
                     selfModel.getEntity().facingZ
             ); // for simpler rotations
-            MobPartMother motherMe = new MobPartMother(motherLocation, this);
+            MobPartMother motherMe = new MobPartMother(motherLocation,this);
             for (NmsModelEntityConfig part : model.others()) {
                 children.add(MobParts.spawnMobPart(motherMe, part));
             }
@@ -196,5 +196,4 @@ public class MobMiscCustomModel extends EntityZombie {
     public EnumMainHand getMainHand() {
         return EnumMainHand.RIGHT;
     }
-
 }

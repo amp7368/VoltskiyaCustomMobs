@@ -1,9 +1,11 @@
 package apple.voltskiya.custom_mobs.mobs;
 
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
+import apple.voltskiya.custom_mobs.mobs.aledar.AledarNavigation;
 import apple.voltskiya.custom_mobs.mobs.aledar.MobAledar;
 import apple.voltskiya.custom_mobs.mobs.eye_plant.MobEyePlant;
 import apple.voltskiya.custom_mobs.mobs.gremlin.MobWarpedGremlin;
+import apple.voltskiya.custom_mobs.mobs.nether.parasite.MobParasite;
 import apple.voltskiya.custom_mobs.mobs.parts.MobPartArmorStand;
 import apple.voltskiya.custom_mobs.mobs.testing.MobEndermanVex;
 import apple.voltskiya.custom_mobs.mobs.testing.MobPiglinVex;
@@ -29,6 +31,8 @@ public class NmsMobsPlugin extends VoltskiyaModule {
         MobAledar.initialize();
         MobEndermanVex.initialize();
         MobEyePlant.initialize();
+        MobParasite.initialize();
+        new AledarNavigation();
         new MobsSpawnCommand();
     }
 

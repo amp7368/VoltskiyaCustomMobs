@@ -6,8 +6,8 @@ import org.bukkit.Location;
 
 public class MobPartMother {
     public final Location location;
-    public EntityLocation entityLocation;
-    public Entity entity;
+    public final EntityLocation entityLocation;
+    public final Entity entity;
 
     public MobPartMother(EntityLocation entityLocation, Entity entity) {
         this.entityLocation = entityLocation;

@@ -3,6 +3,8 @@ package apple.voltskiya.custom_mobs.mobs.parts;
 import apple.voltskiya.custom_mobs.custom_model.CustomModel;
 import apple.voltskiya.custom_mobs.mobs.NmsMobsPlugin;
 import apple.voltskiya.custom_mobs.mobs.NmsModelEntityConfig;
+import apple.voltskiya.custom_mobs.mobs.utils.NbtConstants;
+import apple.voltskiya.custom_mobs.mobs.utils.UtilsAttribute;
 import apple.voltskiya.custom_mobs.util.EntityLocation;
 import apple.voltskiya.custom_mobs.util.VectorUtils;
 import com.mojang.datafixers.DataFixUtils;
@@ -15,6 +17,7 @@ import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
 import org.bukkit.util.BoundingBox;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -25,26 +28,28 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild 
     private static final double DEATH_PARTICLES_DENSITY = 0.001d;
     private static EntityTypes<MobPartArmorStand> entityTypes;
 
-    private AttributeMapBase attributeMap = new AttributeMapBase(AttributeDefaults.a(EntityTypes.ARMOR_STAND));
     private MobPartMother mainMob;
-    private CustomModel.CustomEntity entity;
+    private NmsModelEntityConfig entityConfig;
     private EntityLocation entityLocation;
     private final List<ItemStack> armorItems = new ArrayList<>() {{
-        for (EnumItemSlot slot : EnumItemSlot.values())
+        for (EnumItemSlot slot : EnumItemSlot.values()) {
             if (slot.a() == EnumItemSlot.Function.ARMOR) add(ItemStack.b);
+        }
     }};
     private final List<ItemStack> handItems = new ArrayList<>() {{
         for (EnumItemSlot slot : EnumItemSlot.values())
-            if (slot.a() == EnumItemSlot.Function.ARMOR) add(ItemStack.b);
+            if (slot.a() == EnumItemSlot.Function.HAND) add(ItemStack.b);
     }};
 
     public MobPartArmorStand(EntityTypes<MobPartArmorStand> mainMob, World world) {
-        super(entityTypes, world);
+        super(EntityTypes.ARMOR_STAND, world);
+        UtilsAttribute.fillAttributes(this.getAttributeMap(), getAttributeProvider());
     }
 
     public void prepare(MobPartMother mother, NmsModelEntityConfig config) {
         this.mainMob = mother;
-        this.entity = config.getEntity();
+        this.entityConfig = config;
+        final CustomModel.CustomEntity entity = entityConfig.getEntity();
         this.entityLocation = new EntityLocation(
                 this.getUniqueID(),
                 entity.x,
@@ -55,6 +60,7 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild 
                 entity.facingZ
         ); // for simpler rotations
         this.loadData(entity.nbt);
+        this.setInvisible(true);
         this.moveFromMother(false);
     }
 
@@ -68,6 +74,7 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild 
 
         final Schema schemaForSomething = dataFixerToRegister.getSchema(keyForVersion);
         final TaggedChoice.TaggedChoiceType<?> choiceType = schemaForSomething.findChoiceType(DataConverterTypes.ENTITY_TREE);
+
 
         // copy the zombie type to the warped gremlin type
         Map<? super Object, Type<?>> types = (Map<? super Object, Type<?>>) choiceType.types();
@@ -83,7 +90,8 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild 
 
     public static MobPartArmorStand spawnMobPart(MobPartMother mother, NmsModelEntityConfig config) {
         final World world = mother.entity.getWorld();
-        final MobPartArmorStand bodyPart = new MobPartArmorStand(entityTypes, world);
+        final MobPartArmorStand bodyPart = entityTypes.a(world);
+        if (bodyPart == null) return null;
         bodyPart.prepare(mother, config);
         world.addEntity(bodyPart);
         return bodyPart;
@@ -92,21 +100,36 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild 
     @Override
     public void loadData(NBTTagCompound nbttagcompound) {
         super.loadData(nbttagcompound);
-        if (nbttagcompound.hasKeyOfType("ArmorItems", 9)) {
-            NBTTagList nbttaglist = nbttagcompound.getList("ArmorItems", 10);
+        if (nbttagcompound.hasKeyOfType(NbtConstants.ARMOR_ITEMS, 9)) {
+            NBTTagList nbttaglist = nbttagcompound.getList(NbtConstants.ARMOR_ITEMS, 10);
             for (int i = 0; i < nbttaglist.size(); i++) {
                 this.setSlot(EnumItemSlot.a(EnumItemSlot.Function.ARMOR, i), ItemStack.a(nbttaglist.getCompound(i)));
             }
         }
-
-        if (nbttagcompound.hasKeyOfType("HandItems", 9)) {
-            NBTTagList nbttaglist = nbttagcompound.getList("HandItems", 10);
+        if (nbttagcompound.hasKeyOfType(NbtConstants.HAND_ITEMS, 9)) {
+            NBTTagList nbttaglist = nbttagcompound.getList(NbtConstants.HAND_ITEMS, 10);
             for (int i = 0; i < nbttaglist.size(); ++i) {
                 this.setSlot(EnumItemSlot.a(EnumItemSlot.Function.HAND, i), ItemStack.a(nbttaglist.getCompound(i)));
             }
         }
+        if (this.entityConfig == null)
+            this.entityConfig = new NmsModelEntityConfig(nbttagcompound.getCompound(NbtConstants.ENTITY_LOCATION_RELATIVE_CONFIG));
     }
 
+    @Override
+    public void saveData(NBTTagCompound nbttagcompound) {
+        super.saveData(nbttagcompound);
+
+        final NBTTagList armor = new NBTTagList();
+        for (ItemStack armorItem : this.armorItems) armor.add(armorItem.save(new NBTTagCompound()));
+        nbttagcompound.set(NbtConstants.ARMOR_ITEMS, armor);
+
+        final NBTTagList hands = new NBTTagList();
+        for (ItemStack handItem : this.handItems) hands.add(handItem.save(new NBTTagCompound()));
+        nbttagcompound.set(NbtConstants.HAND_ITEMS, hands);
+
+        nbttagcompound.set(NbtConstants.ENTITY_LOCATION_RELATIVE_CONFIG, entityConfig.toNbt());
+    }
 
     /**
      * @return EnumMonsterType.ARTHROPOD || EnumMonsterType.ILLAGER || ...
@@ -121,11 +144,6 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild 
         return EntityTypes.ARMOR_STAND;
     }
 
-    @Override
-    public AttributeMapBase getAttributeMap() {
-        if (this.attributeMap == null) this.attributeMap = new AttributeMapBase(getAttributeProvider());
-        return this.attributeMap;
-    }
 
     /**
      * @return the default attributeMap
@@ -161,11 +179,11 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild 
     public Packet<?> moveFromMother(boolean isLookingRelevant) {
         float yaw1;
         if (isLookingRelevant) {
-            yaw1 = mainMob.entity.yaw + mainMob.entity.getHeadRotation();
+            yaw1 = this.mainMob.entity.yaw + this.mainMob.entity.getHeadRotation();
         } else {
-            yaw1 = mainMob.entity.lastYaw;
+            yaw1 = this.mainMob.entity.lastYaw;
         }
-        Location newLocation = VectorUtils.rotate(entityLocation, yaw1, mainMob.location, false);
+        Location newLocation = VectorUtils.rotate(this.entityLocation, yaw1, this.mainMob.location, false);
         newLocation.add(this.mainMob.entity.locX(), this.mainMob.entity.locY(), this.mainMob.entity.locZ());
 
         double nowX = newLocation.getX();
@@ -176,9 +194,10 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild 
         return new PacketPlayOutEntityStatus(this, (byte) 9);
     }
 
+
     @Override
     public boolean damageEntity(DamageSource damagesource, float f) {
-        return this.mainMob.entity.damageEntity(damagesource, f); // send this to the main mob
+        return damagesource != DamageSource.STUCK && this.mainMob.entity.damageEntity(damagesource, f); // send this to the main mob
     }
 
     @Override
@@ -213,6 +232,17 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild 
         // do nuffin because this part will never drop anything or give any animation
     }
 
+    @Override
+    protected void doPortalTick() {
+        // do nothing with going through a portal, because the mainMob should take care of it
+    }
+
+    @Override
+    public boolean canPortal() {
+        // this can never portal
+        return false;
+    }
+
     /**
      * sorry about f1,f2,f3. It's just the headPose
      *
@@ -230,6 +260,30 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild 
         f3 %= 360;
         this.setHeadPose(new Vector3f(f1, f2, f3));
     }
+
+    @Override
+    public Entity getThisEntity() {
+        return this;
+    }
+
+    @Override
+    public MobPartChild remake(WorldServer worldserver, MobPartMother parent) {
+
+        final NBTTagCompound oldNbt = this.save(new NBTTagCompound());
+        @Nullable MobPartArmorStand newMobPart = entityTypes.a(worldserver);
+        if (newMobPart != null) {
+            newMobPart.prepare(parent, this.entityConfig);
+            newMobPart.load(oldNbt);
+            newMobPart.setLocation(parent.entity.locX(), parent.entity.locY(), parent.entity.locZ(), parent.entity.yaw, parent.entity.pitch);
+            newMobPart.resetPortalCooldown();
+            (worldserver).addEntity(newMobPart);
+            this.bN();
+            return newMobPart;
+        }
+        this.bN();
+        return null;
+    }
+
 
     @Override
     public Iterable<ItemStack> getArmorItems() {

@@ -30,7 +30,6 @@ public class MobWarpedGremlin extends EntityZombie {
     private static EntityTypes<MobWarpedGremlin> warpedGremlinEntityType;
     private NmsModelEntityConfig selfModel;
     private EntityTypes<?> selfModelType;
-    private final AttributeMapBase attributeMap = null;
     private final List<MobPartChild> children = new ArrayList<>();
 
     /**
@@ -217,5 +216,4 @@ public class MobWarpedGremlin extends EntityZombie {
     public EnumMainHand getMainHand() {
         return EnumMainHand.RIGHT;
     }
-
 }

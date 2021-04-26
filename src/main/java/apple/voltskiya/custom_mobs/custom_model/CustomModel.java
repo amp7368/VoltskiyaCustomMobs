@@ -1,5 +1,7 @@
 package apple.voltskiya.custom_mobs.custom_model;
 
+import apple.voltskiya.custom_mobs.mobs.utils.NbtConstants;
+import net.minecraft.server.v1_16_R3.NBTBase;
 import net.minecraft.server.v1_16_R3.NBTTagCompound;
 import net.minecraft.server.v1_16_R3.NBTTagFloat;
 import net.minecraft.server.v1_16_R3.NBTTagList;
@@ -7,6 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,9 +39,6 @@ public class CustomModel {
         public final EntityType type;
         public final NBTTagCompound nbt;
         public final Map<String, Object> otherData;
-        public double rotationX;
-        public double rotationY;
-        public double rotationZ;
 
         public CustomEntity(String nameInYml, double x, double y, double z, double facingX, double facingY, double facingZ, EntityType type, NBTTagCompound nbt, Map<String, Object> otherData) {
             this.nameInYml = nameInYml;
@@ -52,15 +52,8 @@ public class CustomModel {
                     float pitch = Float.parseFloat(rotation.get(1).asString());
 
                     Location l = new Location(null, 0, 0, 0);
-//                    l.setDirection(new Vector(facingX, facingY, facingZ));
-                    l.setYaw( yaw);
+                    l.setYaw(yaw);
                     l.setPitch(pitch);
-//                    Vector facing = new Location(null, 0, 0, 0, yaw, pitch).getDirection();
-//                    double facingXZ = Math.atan2(facing.getZ(), facing.getX());
-//
-//                    this.facingX = (this.rotationX = Math.cos(facingXZ)) + facingX;
-//                    this.facingY = (this.rotationY = facing.getY()) + facingY;
-//                    this.facingZ = (this.rotationZ = Math.sin(facingXZ)) + facingZ;
                     this.facingX = l.getDirection().getX();
                     this.facingY = l.getDirection().getY();
                     this.facingZ = l.getDirection().getZ();
@@ -79,6 +72,40 @@ public class CustomModel {
             this.nbt = nbt;
             this.nbt.remove("UUID");
             this.otherData = otherData;
+        }
+
+        public CustomEntity(NBTTagCompound nbt) {
+            this.nameInYml = nbt.getString(NbtConstants.EntityLocationRelative.NAME_IN_YML);
+            this.x = nbt.getDouble(NbtConstants.EntityLocationRelative.X_OFFSET);
+            this.y = nbt.getDouble(NbtConstants.EntityLocationRelative.Y_OFFSET);
+            this.z = nbt.getDouble(NbtConstants.EntityLocationRelative.Z_OFFSET);
+            this.facingX = nbt.getDouble(NbtConstants.EntityLocationRelative.X_FACING);
+            this.facingY = nbt.getDouble(NbtConstants.EntityLocationRelative.Y_FACING);
+            this.facingZ = nbt.getDouble(NbtConstants.EntityLocationRelative.Z_FACING);
+            this.otherData = new HashMap<>();
+            final NBTTagCompound otherData = nbt.getCompound(NbtConstants.EntityLocationRelative.OTHER_DATA);
+            for (String key : otherData.getKeys()) {
+                this.otherData.put(key, NbtConstants.toObject(otherData.getString(key)));
+            }
+            this.type = null;
+            this.nbt = new NBTTagCompound();
+        }
+
+        public NBTBase toNbt() {
+            NBTTagCompound nbt = new NBTTagCompound();
+            nbt.setString(NbtConstants.EntityLocationRelative.NAME_IN_YML, nameInYml);
+            nbt.setDouble(NbtConstants.EntityLocationRelative.X_OFFSET, x);
+            nbt.setDouble(NbtConstants.EntityLocationRelative.Y_OFFSET, y);
+            nbt.setDouble(NbtConstants.EntityLocationRelative.Z_OFFSET, z);
+            nbt.setDouble(NbtConstants.EntityLocationRelative.X_FACING, facingX);
+            nbt.setDouble(NbtConstants.EntityLocationRelative.Y_FACING, facingY);
+            nbt.setDouble(NbtConstants.EntityLocationRelative.Z_FACING, facingZ);
+            NBTTagCompound otherDataNbt = new NBTTagCompound();
+            for (Map.Entry<String, Object> other : otherData.entrySet()) {
+                otherDataNbt.setString(other.getKey(), other.getValue().toString());
+            }
+            nbt.set(NbtConstants.EntityLocationRelative.OTHER_DATA, otherDataNbt);
+            return nbt;
         }
     }
 }

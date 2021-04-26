@@ -29,13 +29,10 @@ public class MobAledar extends EntityPillager {
     public static final String IS_WHEEL_RIGHT_IDENTIFIER = "isRightWheel";
     public static final String IS_WHEEL_LEFT_IDENTIFIER = "isLeftWheel";
     public static final double SMALL_STAND_HEAD_RADIUS = .625 / 2 / 2;
-    private static EntityTypes<MobAledar> mobAledarEntityType;
-    private NmsModelEntityConfig selfModel;
-    private EntityTypes<?> selfModelType;
+    public static EntityTypes<MobAledar> mobAledarEntityType;
     private final List<MobPartChild> children = new ArrayList<>();
     private final List<MobPartArmorStand> leftWheels = new ArrayList<>();
     private final List<MobPartArmorStand> rightWheels = new ArrayList<>();
-    private final AttributeMapBase attributeMap = null;
 
     /**
      * constructor to match the EntityTypes requirement
@@ -87,12 +84,11 @@ public class MobAledar extends EntityPillager {
 
     private void prepare(Location location) {
         final NmsModelConfig model = NmsModelConfig.parts(REGISTERED_MODEL);
-        this.selfModel = model.mainPart();
+        NmsModelEntityConfig selfModel = model.mainPart();
         this.loadData(selfModel.getEntity().nbt);
         this.setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
-        final Optional<EntityTypes<?>> entityTypes = EntityTypes.a(this.selfModel.getEntity().type.getKey().getKey());
+        final Optional<EntityTypes<?>> entityTypes = EntityTypes.a(selfModel.getEntity().type.getKey().getKey());
         if (entityTypes.isPresent()) {
-            this.selfModelType = entityTypes.get();
             EntityLocation motherLocation = new EntityLocation(
                     this.getUniqueID(),
                     selfModel.getEntity().x,
@@ -113,8 +109,8 @@ public class MobAledar extends EntityPillager {
                     leftWheels.add((MobPartArmorStand) partChild);
                 }
             }
+            this.setInvisible(false);
         } else {
-            this.selfModelType = EntityTypes.AREA_EFFECT_CLOUD;
             this.die();
         }
     }
@@ -164,7 +160,7 @@ public class MobAledar extends EntityPillager {
 
     @Override
     public EntityTypes<?> getEntityType() {
-        return this.selfModelType;
+        return mobAledarEntityType;
     }
 
     @Override
@@ -183,7 +179,7 @@ public class MobAledar extends EntityPillager {
 //      move/(pi*2*r)*360; r = .625/2/2
         moveAmount *= 360;
         moveAmount /= Math.PI * 2 * SMALL_STAND_HEAD_RADIUS;
-        if (moveAmount > 5) {
+        if (moveAmount > 3) {
             // turn the wheels!
             for (MobPartArmorStand wheel : leftWheels) {
                 wheel.rotateHead(0f, 0f, (float) -moveAmount);

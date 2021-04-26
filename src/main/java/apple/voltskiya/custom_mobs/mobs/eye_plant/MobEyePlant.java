@@ -19,7 +19,6 @@ import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftZombie;
 
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.logging.Level;
 
@@ -156,28 +155,6 @@ public class MobEyePlant extends EntityZombie {
         }
     }
 
-    @Override
-    protected SoundEffect getSoundHurt(DamageSource damagesource) {
-        return super.getSoundHurt(damagesource);
-    }
-
-    @Override
-    protected SoundEffect getSoundDeath() {
-        return super.getSoundDeath();
-    }
-
-    @Override
-    protected SoundEffect getSoundStep() {
-        return super.getSoundStep();
-    }
-
-    /**
-     * @return EnumMonsterType.ARTHROPOD || EnumMonsterType.ILLAGER || ...
-     */
-    @Override
-    public EnumMonsterType getMonsterType() {
-        return super.getMonsterType();
-    }
 
     @Override
     public EntityTypes<?> getEntityType() {
@@ -202,36 +179,6 @@ public class MobEyePlant extends EntityZombie {
         }
     }
 
-    /**
-     * @return the bounding box of this entity
-     */
-    @Override
-    public AxisAlignedBB getBoundingBox() {
-        return super.getBoundingBox();
-    }
-
-    @Override
-    public CraftEntity getBukkitEntity() {
-        return super.getBukkitEntity();
-    }
-
-
-    /**
-     * @return whether the mob is in horizontal or vertical position
-     */
-    @Override
-    public boolean bC() {
-        return super.bC();
-    }
-
-    /**
-     * change worlds
-     */
-    @Override
-    public @Nullable
-    Entity b(WorldServer worldserver) {
-        return super.b(worldserver);
-    }
 
     //todo
     @Override
@@ -255,5 +202,4 @@ public class MobEyePlant extends EntityZombie {
     public EnumMainHand getMainHand() {
         return EnumMainHand.RIGHT;
     }
-
 }
