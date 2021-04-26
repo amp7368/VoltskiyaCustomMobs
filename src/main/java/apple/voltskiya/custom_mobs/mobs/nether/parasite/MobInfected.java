@@ -13,7 +13,7 @@ import java.util.Random;
 
 public class MobInfected {
     public static final String PARASITE_INFECTED_TAG = "PARASITE_INFECTED";
-    private static final long EXPLODE_TO_PARASITES_DELAY = 20 ;//* 60 * 2;
+    private static final long EXPLODE_TO_PARASITES_DELAY = 20 * 60 * 2;
     private final EntityCreature entity;
 
     public MobInfected(EntityCreature entity) {
@@ -37,7 +37,7 @@ public class MobInfected {
             double zi = (random.nextDouble() - .5) * 2;
             bukkitEntity.getLocation().getWorld().spawnParticle(Particle.CRIMSON_SPORE, x + xi, y + yi, z + zi, 1);
         }
-        MobParasite.spawn(bukkitEntity.getWorld(), bukkitEntity.getLocation());
+        MobParasite.spawn(bukkitEntity.getLocation(), null);
     }
 
     private void rabidAI() {

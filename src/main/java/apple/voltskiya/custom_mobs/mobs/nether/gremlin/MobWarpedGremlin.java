@@ -1,8 +1,9 @@
-package apple.voltskiya.custom_mobs.mobs.gremlin;
+package apple.voltskiya.custom_mobs.mobs.nether.gremlin;
 
 import apple.voltskiya.custom_mobs.mobs.NmsMobsPlugin;
 import apple.voltskiya.custom_mobs.mobs.NmsModelConfig;
 import apple.voltskiya.custom_mobs.mobs.NmsModelEntityConfig;
+import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
 import apple.voltskiya.custom_mobs.mobs.parts.MobPartChild;
 import apple.voltskiya.custom_mobs.mobs.parts.MobPartMother;
 import apple.voltskiya.custom_mobs.mobs.parts.MobParts;
@@ -18,7 +19,9 @@ import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import apple.voltskiya.custom_mobs.mobs.NmsModelConfig.ModelConfigName;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftZombie;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -73,20 +76,29 @@ public class MobWarpedGremlin extends EntityZombie {
     /**
      * spawns a WarpedGremlin
      *
-     * @param name     the name of the mob?
-     * @param world    the org.bukkit world where the mob should be spawned
      * @param location the org.bukkit location where the mob should be spawned
+     * @param oldNbt   the nbt of the previously spawned mob or null if no entity existed
      */
-    public static void spawn(String name, org.bukkit.World world, org.bukkit.Location location) {
-        final MobWarpedGremlin gremlin = new MobWarpedGremlin(warpedGremlinEntityType, ((CraftWorld) world).getHandle());
-        gremlin.prepare(location);
-        ((CraftWorld) world).getHandle().addEntity(gremlin);
+    public static void spawn(Location location, NBTTagCompound oldNbt) {
+        CraftWorld world = (CraftWorld) location.getWorld();
+        final MobWarpedGremlin gremlin = new MobWarpedGremlin(warpedGremlinEntityType, world.getHandle());
+        gremlin.prepare(location,oldNbt);
+        gremlin.addScoreboardTag(SpawnCustomMobListener.CUSTOM_SPAWN_COMPLETE_TAG);
+        world.getHandle().addEntity(gremlin);
     }
 
-    private void prepare(Location location) {
+    public static void spawnEat(CreatureSpawnEvent event) {
+        Location location = event.getEntity().getLocation();
+        spawn(location, ((CraftEntity) event.getEntity()).getHandle().save(new NBTTagCompound()));
+        event.setCancelled(true);
+    }
+
+    private void prepare(Location location, NBTTagCompound oldNbt) {
         final NmsModelConfig model = NmsModelConfig.parts(REGISTERED_MODEL);
         this.selfModel = model.mainPart();
-        this.loadData(selfModel.getEntity().nbt);
+        final NBTTagCompound newNbt = this.selfModel.getEntity().nbt;
+        final NBTTagCompound mergedNbt = oldNbt == null ? newNbt : oldNbt.a(newNbt);
+        this.loadData(mergedNbt);
         this.setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
         final Optional<EntityTypes<?>> entityTypes = EntityTypes.a(this.selfModel.getEntity().type.getKey().getKey());
         if (entityTypes.isPresent()) {

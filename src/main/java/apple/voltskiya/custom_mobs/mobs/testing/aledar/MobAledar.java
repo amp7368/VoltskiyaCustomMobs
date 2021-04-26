@@ -1,4 +1,4 @@
-package apple.voltskiya.custom_mobs.mobs.aledar;
+package apple.voltskiya.custom_mobs.mobs.testing.aledar;
 
 import apple.voltskiya.custom_mobs.mobs.NmsMobsPlugin;
 import apple.voltskiya.custom_mobs.mobs.NmsModelConfig;

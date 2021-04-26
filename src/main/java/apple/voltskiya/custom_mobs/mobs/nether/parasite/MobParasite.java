@@ -5,6 +5,7 @@ import apple.voltskiya.custom_mobs.custom_model.CustomModel;
 import apple.voltskiya.custom_mobs.mobs.NmsMobsPlugin;
 import apple.voltskiya.custom_mobs.mobs.NmsModelConfig;
 import apple.voltskiya.custom_mobs.mobs.NmsModelEntityConfig;
+import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
 import apple.voltskiya.custom_mobs.mobs.parts.MobPartChild;
 import apple.voltskiya.custom_mobs.mobs.parts.MobPartMother;
 import apple.voltskiya.custom_mobs.mobs.parts.MobParts;
@@ -22,7 +23,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import apple.voltskiya.custom_mobs.mobs.NmsModelConfig.ModelConfigName;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftZombie;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -76,18 +79,26 @@ public class MobParasite extends EntityZombie {
     /**
      * spawns a WarpedGremlin
      *
-     * @param world    the org.bukkit world where the mob should be spawned
      * @param location the org.bukkit location where the mob should be spawned
+     * @param oldNbt   the nbt of the previously spawned mob or null if no entity existed
      */
-    public static void spawn(org.bukkit.World world, org.bukkit.Location location) {
-        final MobParasite gremlin = new MobParasite(entityTypes, ((CraftWorld) world).getHandle());
-        gremlin.prepareChildren(location);
-        ((CraftWorld) world).getHandle().addEntity(gremlin);
+    public static void spawn(Location location, NBTTagCompound oldNbt) {
+        CraftWorld world = (CraftWorld) location.getWorld();
+        final MobParasite parasite = new MobParasite(entityTypes, world.getHandle());
+        parasite.prepareChildren(location,oldNbt);
+        parasite.addScoreboardTag(SpawnCustomMobListener.CUSTOM_SPAWN_COMPLETE_TAG);
+        world.getHandle().addEntity(parasite);
     }
-
-    private void prepareChildren(Location location) {
+    public static void spawnEat(CreatureSpawnEvent event) {
+        Location location = event.getEntity().getLocation();
+        spawn(location,((CraftEntity) event.getEntity()).getHandle().save(new NBTTagCompound()));
+        event.setCancelled(true);
+    }
+    private void prepareChildren(Location location, NBTTagCompound oldNbt) {
         final NmsModelConfig model = NmsModelConfig.parts(REGISTERED_MODEL);
-        this.loadData(selfModel.getEntity().nbt);
+        final NBTTagCompound newNbt = this.selfModel.getEntity().nbt;
+        final NBTTagCompound mergedNbt = oldNbt == null ? newNbt : oldNbt.a(newNbt);
+        this.loadData(mergedNbt);
         this.setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
         EntityLocation motherLocation = new EntityLocation(
                 this.getUniqueID(),

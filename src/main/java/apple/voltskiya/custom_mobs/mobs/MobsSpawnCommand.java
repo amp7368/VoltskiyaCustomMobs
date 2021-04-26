@@ -1,9 +1,9 @@
 package apple.voltskiya.custom_mobs.mobs;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import apple.voltskiya.custom_mobs.mobs.aledar.MobAledar;
-import apple.voltskiya.custom_mobs.mobs.eye_plant.MobEyePlant;
-import apple.voltskiya.custom_mobs.mobs.gremlin.MobWarpedGremlin;
+import apple.voltskiya.custom_mobs.mobs.testing.aledar.MobAledar;
+import apple.voltskiya.custom_mobs.mobs.nether.eye_plant.MobEyePlant;
+import apple.voltskiya.custom_mobs.mobs.nether.gremlin.MobWarpedGremlin;
 import apple.voltskiya.custom_mobs.mobs.nether.parasite.MobParasite;
 import apple.voltskiya.custom_mobs.mobs.testing.MobEndermanVex;
 import apple.voltskiya.custom_mobs.mobs.testing.MobMiscCustomModel;
@@ -48,7 +48,7 @@ public class MobsSpawnCommand extends BaseCommand {
 
         @Subcommand("nether_parasite")
         public void spawnParasite(Player player) {
-            MobParasite.spawn(player.getWorld(), player.getLocation());
+            MobParasite.spawn(player.getLocation(), null);
         }
 
         @Subcommand("enderman_vex")
@@ -58,12 +58,12 @@ public class MobsSpawnCommand extends BaseCommand {
 
         @Subcommand("eye_plant")
         public void spawnEyePlant(Player player) {
-            MobEyePlant.spawn(player.getWorld(), player.getLocation());
+            MobEyePlant.spawn(player.getLocation(), null);
         }
 
         @Subcommand("warped_gremlin")
         public void spawnGremlin(Player player) {
-            MobWarpedGremlin.spawn("hmmm", player.getWorld(), player.getLocation());
+            MobWarpedGremlin.spawn(player.getLocation(), null);
         }
 
         @Subcommand("zombie_cow")
