@@ -1,6 +1,5 @@
 package apple.voltskiya.custom_mobs.mobs.parts;
 
-import apple.voltskiya.custom_mobs.mobs.NmsModelEntityConfig;
 import apple.voltskiya.custom_mobs.mobs.utils.UtilsPacket;
 import net.minecraft.server.v1_16_R3.ControllerLook;
 import net.minecraft.server.v1_16_R3.EntityInsentient;

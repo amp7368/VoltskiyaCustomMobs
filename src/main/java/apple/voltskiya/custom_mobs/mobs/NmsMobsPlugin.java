@@ -1,13 +1,17 @@
 package apple.voltskiya.custom_mobs.mobs;
 
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
-import apple.voltskiya.custom_mobs.mobs.aledar.MobAledar;
-import apple.voltskiya.custom_mobs.mobs.eye_plant.MobEyePlant;
-import apple.voltskiya.custom_mobs.mobs.gremlin.MobWarpedGremlin;
+import apple.voltskiya.custom_mobs.mobs.nether.eye_plant.MobEyePlant;
+import apple.voltskiya.custom_mobs.mobs.nether.gremlin.MobWarpedGremlin;
+import apple.voltskiya.custom_mobs.mobs.nether.parasite.MobParasite;
 import apple.voltskiya.custom_mobs.mobs.parts.MobPartArmorStand;
+import apple.voltskiya.custom_mobs.mobs.parts.NmsModelConfig;
 import apple.voltskiya.custom_mobs.mobs.testing.MobEndermanVex;
 import apple.voltskiya.custom_mobs.mobs.testing.MobPiglinVex;
 import apple.voltskiya.custom_mobs.mobs.testing.MobZombieCow;
+import apple.voltskiya.custom_mobs.mobs.testing.aledar.AledarNavigation;
+import apple.voltskiya.custom_mobs.mobs.testing.aledar.MobAledar;
+import apple.voltskiya.custom_mobs.mobs.testing.aledar.MobCart;
 
 import java.io.File;
 
@@ -29,7 +33,11 @@ public class NmsMobsPlugin extends VoltskiyaModule {
         MobAledar.initialize();
         MobEndermanVex.initialize();
         MobEyePlant.initialize();
+        MobParasite.initialize();
+        MobCart.initialize();
+        new AledarNavigation();
         new MobsSpawnCommand();
+        new SpawnCustomMobListener();
     }
 
     @Override

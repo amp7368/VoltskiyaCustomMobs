@@ -103,14 +103,7 @@ public class MobZombieCow extends EntityPhantom {
         super.move(enummovetype, vec3d);
     }
 
-    /**
-     * change worlds
-     */
-    @Override
-    public @Nullable
-    Entity b(WorldServer worldserver) {
-        return super.b(worldserver);
-    }
+
 
     //todo
     @Override
