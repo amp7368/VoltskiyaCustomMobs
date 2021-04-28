@@ -1,4 +1,4 @@
-package apple.voltskiya.custom_mobs.mobs;
+package apple.voltskiya.custom_mobs.mobs.parts;
 
 import apple.voltskiya.custom_mobs.custom_model.CustomModel;
 import apple.voltskiya.custom_mobs.mobs.utils.NbtConstants;

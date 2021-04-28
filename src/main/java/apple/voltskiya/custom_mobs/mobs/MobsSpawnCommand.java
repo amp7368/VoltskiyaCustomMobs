@@ -1,22 +1,29 @@
 package apple.voltskiya.custom_mobs.mobs;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import apple.voltskiya.custom_mobs.mobs.testing.aledar.MobAledar;
 import apple.voltskiya.custom_mobs.mobs.nether.eye_plant.MobEyePlant;
 import apple.voltskiya.custom_mobs.mobs.nether.gremlin.MobWarpedGremlin;
 import apple.voltskiya.custom_mobs.mobs.nether.parasite.MobParasite;
+import apple.voltskiya.custom_mobs.mobs.parts.NmsModelConfig;
 import apple.voltskiya.custom_mobs.mobs.testing.MobEndermanVex;
 import apple.voltskiya.custom_mobs.mobs.testing.MobMiscCustomModel;
 import apple.voltskiya.custom_mobs.mobs.testing.MobPiglinVex;
 import apple.voltskiya.custom_mobs.mobs.testing.MobZombieCow;
+import apple.voltskiya.custom_mobs.mobs.testing.aledar.MobAledar;
+import apple.voltskiya.custom_mobs.mobs.testing.aledar.MobCart;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.BukkitCommandCompletionContext;
 import co.aikar.commands.PaperCommandManager;
-import co.aikar.commands.annotation.*;
+import co.aikar.commands.annotation.CommandAlias;
+import co.aikar.commands.annotation.CommandCompletion;
+import co.aikar.commands.annotation.CommandPermission;
+import co.aikar.commands.annotation.Subcommand;
 import org.bukkit.entity.Player;
 
 import java.io.File;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @CommandAlias("custom_spawn")
@@ -44,6 +51,11 @@ public class MobsSpawnCommand extends BaseCommand {
         @Subcommand("aledar_cart")
         public void spawnAledarCart(Player player) {
             MobAledar.spawn(player.getWorld(), player.getLocation());
+        }
+
+        @Subcommand("rideable_cart")
+        public void spawnCart(Player player) {
+            MobCart.spawn(player.getLocation(), null);
         }
 
         @Subcommand("nether_parasite")

@@ -1,7 +1,8 @@
-package apple.voltskiya.custom_mobs.mobs;
+package apple.voltskiya.custom_mobs.mobs.parts;
 
 import apple.voltskiya.custom_mobs.custom_model.CustomModel;
 import apple.voltskiya.custom_mobs.custom_model.CustomModelPlugin;
+import apple.voltskiya.custom_mobs.mobs.NmsMobsPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -83,6 +84,7 @@ public class NmsModelConfig {
     public enum ModelConfigName {
         WARPED_GREMLIN("warped_gremlin"),
         ALEDAR_CART("aledar_cart"),
+        CART("rideable_cart"),
         EYE_PLANT("eye_plant"),
         MISC_MODEL("misc_model"),
         PARASITE("nether_parasite");

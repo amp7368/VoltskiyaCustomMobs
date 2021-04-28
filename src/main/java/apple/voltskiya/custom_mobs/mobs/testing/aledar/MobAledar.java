@@ -1,12 +1,7 @@
 package apple.voltskiya.custom_mobs.mobs.testing.aledar;
 
 import apple.voltskiya.custom_mobs.mobs.NmsMobsPlugin;
-import apple.voltskiya.custom_mobs.mobs.NmsModelConfig;
-import apple.voltskiya.custom_mobs.mobs.NmsModelEntityConfig;
-import apple.voltskiya.custom_mobs.mobs.parts.MobPartArmorStand;
-import apple.voltskiya.custom_mobs.mobs.parts.MobPartChild;
-import apple.voltskiya.custom_mobs.mobs.parts.MobPartMother;
-import apple.voltskiya.custom_mobs.mobs.parts.MobParts;
+import apple.voltskiya.custom_mobs.mobs.parts.*;
 import apple.voltskiya.custom_mobs.mobs.utils.UtilsAttribute;
 import apple.voltskiya.custom_mobs.mobs.utils.UtilsPacket;
 import apple.voltskiya.custom_mobs.util.EntityLocation;
@@ -98,7 +93,7 @@ public class MobAledar extends EntityPillager {
                     selfModel.getEntity().facingY,
                     selfModel.getEntity().facingZ
             ); // for simpler rotations
-            MobPartMother motherMe = new MobPartMother(motherLocation, this);
+            MobPartMother motherMe = new MobPartMother(motherLocation, this, REGISTERED_NAME);
             for (NmsModelEntityConfig part : model.others()) {
                 final MobPartChild partChild = MobParts.spawnMobPart(motherMe, part);
                 children.add(partChild);

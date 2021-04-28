@@ -1,12 +1,8 @@
 package apple.voltskiya.custom_mobs.mobs.nether.eye_plant;
 
 import apple.voltskiya.custom_mobs.mobs.NmsMobsPlugin;
-import apple.voltskiya.custom_mobs.mobs.NmsModelConfig;
-import apple.voltskiya.custom_mobs.mobs.NmsModelEntityConfig;
 import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
-import apple.voltskiya.custom_mobs.mobs.parts.MobPartChild;
-import apple.voltskiya.custom_mobs.mobs.parts.MobPartMother;
-import apple.voltskiya.custom_mobs.mobs.parts.MobParts;
+import apple.voltskiya.custom_mobs.mobs.parts.*;
 import apple.voltskiya.custom_mobs.mobs.utils.UtilsAttribute;
 import apple.voltskiya.custom_mobs.util.EntityLocation;
 import com.mojang.datafixers.DataFixUtils;
@@ -83,6 +79,7 @@ public class MobEyePlant extends EntityZombie {
         final MobEyePlant eyePlant = new MobEyePlant(warpedGremlinEntityType, world.getHandle());
         eyePlant.prepare(location, oldNbt);
         eyePlant.addScoreboardTag(SpawnCustomMobListener.CUSTOM_SPAWN_COMPLETE_TAG);
+        eyePlant.addScoreboardTag(REGISTERED_NAME);
         world.getHandle().addEntity(eyePlant);
     }
 
@@ -111,7 +108,7 @@ public class MobEyePlant extends EntityZombie {
                     this.selfModel.getEntity().facingY,
                     this.selfModel.getEntity().facingZ
             ); // for simpler rotations
-            MobPartMother motherMe = new MobPartMother(motherLocation, this);
+            MobPartMother motherMe = new MobPartMother(motherLocation, this, REGISTERED_NAME);
             for (NmsModelEntityConfig part : model.others()) {
                 this.children.add(MobParts.spawnMobPart(motherMe, part));
             }
@@ -138,6 +135,11 @@ public class MobEyePlant extends EntityZombie {
 
     public AttributeProvider getAttributeProvider() {
         return ATTRIBUTE_PROVIDER;
+    }
+
+    @Override
+    public void setOnFire(int i) {
+
     }
 
     @Override

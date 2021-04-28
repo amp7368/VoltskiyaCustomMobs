@@ -3,12 +3,9 @@ package apple.voltskiya.custom_mobs.mobs.nether.parasite;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.custom_model.CustomModel;
 import apple.voltskiya.custom_mobs.mobs.NmsMobsPlugin;
-import apple.voltskiya.custom_mobs.mobs.NmsModelConfig;
-import apple.voltskiya.custom_mobs.mobs.NmsModelEntityConfig;
 import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
-import apple.voltskiya.custom_mobs.mobs.parts.MobPartChild;
-import apple.voltskiya.custom_mobs.mobs.parts.MobPartMother;
-import apple.voltskiya.custom_mobs.mobs.parts.MobParts;
+import apple.voltskiya.custom_mobs.mobs.parts.*;
+import apple.voltskiya.custom_mobs.mobs.parts.NmsModelConfig.ModelConfigName;
 import apple.voltskiya.custom_mobs.mobs.pathfinders.PathfinderGoalCraveBlock;
 import apple.voltskiya.custom_mobs.mobs.utils.UtilsAttribute;
 import apple.voltskiya.custom_mobs.mobs.utils.UtilsPacket;
@@ -22,7 +19,6 @@ import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
-import apple.voltskiya.custom_mobs.mobs.NmsModelConfig.ModelConfigName;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftZombie;
 import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -37,6 +33,7 @@ public class MobParasite extends EntityZombie {
     private static EntityTypes<MobParasite> entityTypes;
     private final List<MobPartChild> children = new ArrayList<>();
     private final NmsModelEntityConfig selfModel;
+    private boolean isWingHigh = true;
 
     /**
      * constructor to match the EntityTypes requirement
@@ -76,6 +73,11 @@ public class MobParasite extends EntityZombie {
         NmsMobsPlugin.get().log(Level.INFO, "registered " + REGISTERED_NAME);
     }
 
+    @Override
+    protected void b(BlockPosition blockposition, IBlockData iblockdata) {
+        super.b(blockposition, iblockdata);
+    }
+
     /**
      * spawns a WarpedGremlin
      *
@@ -85,15 +87,26 @@ public class MobParasite extends EntityZombie {
     public static void spawn(Location location, NBTTagCompound oldNbt) {
         CraftWorld world = (CraftWorld) location.getWorld();
         final MobParasite parasite = new MobParasite(entityTypes, world.getHandle());
-        parasite.prepareChildren(location,oldNbt);
+        parasite.prepareChildren(location, oldNbt);
         parasite.addScoreboardTag(SpawnCustomMobListener.CUSTOM_SPAWN_COMPLETE_TAG);
         world.getHandle().addEntity(parasite);
     }
+
     public static void spawnEat(CreatureSpawnEvent event) {
         Location location = event.getEntity().getLocation();
-        spawn(location,((CraftEntity) event.getEntity()).getHandle().save(new NBTTagCompound()));
+        spawn(location, ((CraftEntity) event.getEntity()).getHandle().save(new NBTTagCompound()));
         event.setCancelled(true);
     }
+
+    public static void spawn(Location location, NBTTagCompound oldNbt, Vec3D velocity) {
+        CraftWorld world = (CraftWorld) location.getWorld();
+        final MobParasite parasite = new MobParasite(entityTypes, world.getHandle());
+        parasite.prepareChildren(location, oldNbt);
+        parasite.addScoreboardTag(SpawnCustomMobListener.CUSTOM_SPAWN_COMPLETE_TAG);
+        parasite.setMot(velocity);
+        world.getHandle().addEntity(parasite);
+    }
+
     private void prepareChildren(Location location, NBTTagCompound oldNbt) {
         final NmsModelConfig model = NmsModelConfig.parts(REGISTERED_MODEL);
         final NBTTagCompound newNbt = this.selfModel.getEntity().nbt;
@@ -109,32 +122,52 @@ public class MobParasite extends EntityZombie {
                 this.selfModel.getEntity().facingY,
                 this.selfModel.getEntity().facingZ
         ); // for simpler rotations
-        MobPartMother motherMe = new MobPartMother(motherLocation, this);
+        MobPartMother motherMe = new MobPartMother(motherLocation, this, REGISTERED_NAME);
         for (NmsModelEntityConfig part : model.others()) {
             children.add(MobParts.spawnMobPart(motherMe, part));
         }
     }
 
     @Override
-    protected void initPathfinder() {
-        // if this is the overworld, do the overworld AI, otherwise, get to the overworld
-        if (DimensionManager.OVERWORLD.a().equals((this.world.getDimensionKey().a()))) {
-            this.initPathfinderOverworld();
-        } else {
-            this.initPathfinderOtherWorld();
-        }
+    public void tick() {
+        super.tick();
+        wingFlap();
     }
+
+    private void wingFlap() {
+
+    }
+
+    @Override
+    protected void initPathfinder() {
+        Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
+            // if this is the overworld, do the overworld AI, otherwise, get to the overworld
+            if (DimensionManager.OVERWORLD.a().equals((this.world.getDimensionKey().a()))) {
+                this.initPathfinderOverworld();
+            } else {
+                this.initPathfinderOtherWorld();
+            }
+        }, 5 * 20);
+    }
+
+//    @Override
+//    protected NavigationAbstract b(World world) {
+//        return new Nav(this, world);
+//    }
+
 
     private void initPathfinderOtherWorld() {
         // new PathfinderGoalRandomStrollLand(entityToMove, speed, chanceToActivate)
         this.goalSelector.a(0, new PathfinderGoalFloat(this));
-        this.goalSelector.a(1, new PathfinderGoalCraveBlock(this, Collections.singletonList(org.bukkit.Material.NETHER_PORTAL), 316, 20, 20, 1.0));
+        this.goalSelector.a(1, new PathfinderGoalCraveBlock(this, Collections.singletonList(org.bukkit.Material.NETHER_PORTAL), 316, 20, 2, 1.0));
         this.goalSelector.a(2, new PathfinderGoalRandomStrollLand(this, 1.0D, 0.003F));
     }
 
     private void initPathfinderOverworld() {
         final int chanceToCheck = 20;
+        int chanceToCheckPlayer = 60;
         this.targetSelector.a(1, new PathfinderGoalNearestAttackableTarget<>(this, EntityAnimal.class, chanceToCheck, true, false, (entityLiving) -> !entityLiving.getScoreboardTags().contains(MobInfected.PARASITE_INFECTED_TAG)));
+        this.targetSelector.a(2, new PathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, chanceToCheckPlayer, true, false, null));
         double speed = 1.2;
         this.goalSelector.a(1, new PathfinderGoalMeleeAttack(this, speed, true));
         this.goalSelector.a(2, new PathfinderGoalRandomStrollLand(this, 1.0D, 0.003F));
@@ -142,9 +175,13 @@ public class MobParasite extends EntityZombie {
 
     @Override
     public boolean attackEntity(Entity e) {
+        if (e instanceof EntityPlayer) return super.attackEntity(e);
         if (e instanceof EntityCreature) {
-            EntityCreature entity = (EntityCreature) e;
-            new MobInfected(entity);
+            if (!e.getScoreboardTags().contains(MobInfected.PARASITE_INFECTED_TAG)) {
+                EntityCreature entity = (EntityCreature) e;
+                new MobInfected(entity);
+                die();
+            }
         }
         Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> this.setGoalTarget(null), 40);
         return false;
@@ -179,6 +216,10 @@ public class MobParasite extends EntityZombie {
         }
     }
 
+    @Override
+    public void setOnFire(int i) {
+
+    }
 
     /**
      * @return the default attributeMap
@@ -215,10 +256,8 @@ public class MobParasite extends EntityZombie {
     }
 
     private Entity remake(WorldServer worldserver) {
-        System.out.println(worldserver);
         @Nullable ShapeDetectorShape newCoords = a(worldserver);
 //        Location newCoords = UtilsCoords.fromTo(this.world.getDimensionManager(), worldserver.getDimensionManager(), this.locX(), this.locY(), this.locZ());
-        System.out.println(newCoords);
         if (newCoords != null) {
             // the final flags are just center correction for a block
             final NBTTagCompound oldNbt = this.save(new NBTTagCompound());
@@ -239,7 +278,7 @@ public class MobParasite extends EntityZombie {
                             selfModelLoc.facingY,
                             selfModelLoc.facingZ
                     ); // for simpler rotations
-                    newParasite.children.add(child.remake(worldserver, new MobPartMother(motherLocation, newParasite)));
+                    newParasite.children.add(child.remake(worldserver, new MobPartMother(motherLocation, newParasite, REGISTERED_NAME)));
                 }
                 this.bN();
                 return newParasite;
@@ -270,5 +309,57 @@ public class MobParasite extends EntityZombie {
     @Override
     public EnumMainHand getMainHand() {
         return EnumMainHand.RIGHT;
+    }
+
+    private class Nav extends Navigation {
+        public Nav(EntityInsentient var0, World var1) {
+            super(var0, var1);
+        }
+
+        /**
+         * @return should go
+         */
+        @Override
+        protected boolean a() {
+            final boolean a = super.a();
+//            System.out.println("a() = " + a);
+            return a;
+        }
+
+        /**
+         * @return where to go to
+         */
+        @Override
+        protected Vec3D b() {
+            final Vec3D b = super.b();
+//            System.out.println("b() = " + b);
+            return b;
+        }
+
+        @Override
+        @Nullable
+        protected PathEntity a(Set<BlockPosition> var0, int var1, boolean var2, int var3) {
+            PathEntity e = super.a(var0, var1, var2, var3);
+            return e;
+        }
+
+        @Override
+        public PathEntity a(BlockPosition var0, int var1) {
+            final PathEntity a = super.a(var0, var1);
+//            System.out.println("a(block,int) = " + a);
+            return a;
+        }
+
+        protected boolean a(Vec3D var0, Vec3D var1, int var2, int var3, int var4) {
+            final boolean a = super.a(var0, var1, var2, var3, var4);
+//            System.out.println("a(vec,vec,int,int,int) = " + a);
+            return a;
+        }
+
+        @Override
+        public void c() {
+            super.c();
+
+        }
     }
 }

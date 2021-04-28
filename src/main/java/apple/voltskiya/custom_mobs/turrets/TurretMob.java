@@ -107,7 +107,6 @@ public class TurretMob implements Runnable {
 
     public synchronized void damage(double damage) {
         this.health -= damage;
-        System.out.println(this.health);
         if (health <= 0) {
             isDead = true;
             remove();

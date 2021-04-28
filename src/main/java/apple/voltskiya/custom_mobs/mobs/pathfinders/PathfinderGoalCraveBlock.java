@@ -1,6 +1,7 @@
 package apple.voltskiya.custom_mobs.mobs.pathfinders;
 
-import net.minecraft.server.v1_16_R3.*;
+import net.minecraft.server.v1_16_R3.EntityInsentient;
+import net.minecraft.server.v1_16_R3.PathfinderGoal;
 import org.bukkit.Material;
 import org.bukkit.util.Vector;
 
@@ -71,7 +72,6 @@ public class PathfinderGoalCraveBlock extends PathfinderGoal {
         int maxY = midY + rangeOfSight - cravingAmount;
         int maxZ = midZ + rangeOfSight - cravingAmount;
 
-        System.out.println(minZ + " " + maxZ);
         // I do Math.abs because it's possible that cravingAmount is greater than the rangeOfSight
         final int rangeX = maxX - minX;
         final int rangeY = maxY - minY;
@@ -94,7 +94,6 @@ public class PathfinderGoalCraveBlock extends PathfinderGoal {
                     org.bukkit.block.Block block = me.getWorld().getWorld().getBlockAt(choiceX, choiceY, choiceZ);
                     if (this.cravingBlock.contains(block.getType())) {
                         // cool! we happened to find the right block!
-                        System.out.println("FOUND");
                         this.foundCravedBlock = new Vector(choiceX, choiceY, choiceZ);
                     }
                 }
@@ -107,7 +106,6 @@ public class PathfinderGoalCraveBlock extends PathfinderGoal {
      */
     @Override
     public boolean b() {
-        System.out.println("b");
         // navigationAbstract.m() returns true if the entity is *not* navigating anywhere
         return !this.me.getNavigation().m();
     }
@@ -119,7 +117,6 @@ public class PathfinderGoalCraveBlock extends PathfinderGoal {
      */
     @Override
     public boolean C_() {
-        System.out.println("C_");
         return true;
     }
 
@@ -128,7 +125,6 @@ public class PathfinderGoalCraveBlock extends PathfinderGoal {
      */
     @Override
     public void c() {
-        System.out.println("c");
         // go to the location
         this.me.getNavigation().a(this.foundCravedBlock.getX(), this.foundCravedBlock.getY(), this.foundCravedBlock.getZ(), speed);
     }
@@ -138,7 +134,6 @@ public class PathfinderGoalCraveBlock extends PathfinderGoal {
      */
     @Override
     public void d() {
-        System.out.println("d");
         // quit going to the location
         this.me.getNavigation().o();
     }
@@ -148,7 +143,6 @@ public class PathfinderGoalCraveBlock extends PathfinderGoal {
      */
     @Override
     public void e() {
-        System.out.println("e");
     }
 
     public void setMoveType(EnumSet<Type> moveType) {

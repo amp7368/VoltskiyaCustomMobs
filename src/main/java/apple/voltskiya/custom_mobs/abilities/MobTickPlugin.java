@@ -8,8 +8,6 @@ import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
 
 
 public class MobTickPlugin extends VoltskiyaModule {
-
-
     private static MobTickPlugin instance;
 
     @Override

@@ -1,10 +1,8 @@
-package apple.voltskiya.custom_mobs.mobs.nether.gremlin;
+package apple.voltskiya.custom_mobs.mobs.testing.aledar;
 
 import apple.voltskiya.custom_mobs.mobs.NmsMobsPlugin;
 import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
 import apple.voltskiya.custom_mobs.mobs.parts.*;
-import apple.voltskiya.custom_mobs.mobs.parts.NmsModelConfig.ModelConfigName;
-import apple.voltskiya.custom_mobs.mobs.utils.UtilsAttribute;
 import apple.voltskiya.custom_mobs.mobs.utils.UtilsPacket;
 import apple.voltskiya.custom_mobs.util.EntityLocation;
 import com.mojang.datafixers.DataFixUtils;
@@ -16,37 +14,31 @@ import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftZombie;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
-import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 
-public class MobWarpedGremlin extends EntityZombie {
-    public static final ModelConfigName REGISTERED_MODEL = ModelConfigName.WARPED_GREMLIN;
+public class MobCart extends EntityHorse {
+    public static final NmsModelConfig.ModelConfigName REGISTERED_MODEL = NmsModelConfig.ModelConfigName.CART;
     public static final String REGISTERED_NAME = REGISTERED_MODEL.getFile();
-    private static EntityTypes<MobWarpedGremlin> warpedGremlinEntityType;
+    private static EntityTypes<MobCart> entityTypes;
     private NmsModelEntityConfig selfModel;
     private EntityTypes<?> selfModelType;
     private final List<MobPartChild> children = new ArrayList<>();
 
-    /**
-     * constructor to match the EntityTypes requirement
-     *
-     * @param world the world to spawn the entity in
-     */
-
-    public MobWarpedGremlin(EntityTypes<MobWarpedGremlin> entityTypes, World world) {
-        super(EntityTypes.ZOMBIE, world);
-        UtilsAttribute.fillAttributes(this.getAttributeMap(), getAttributeProvider());
+    public MobCart(EntityTypes<MobCart> var0, World world) {
+        super(EntityTypes.HORSE, world);
     }
 
     /**
      * registers the WarpedGremlin as an entity
      */
     public static void initialize() {
-        EntityTypes.Builder<MobWarpedGremlin> entitytypesBuilder = EntityTypes.Builder.a(MobWarpedGremlin::new, EnumCreatureType.MONSTER);
+        EntityTypes.Builder<MobCart> entitytypesBuilder = EntityTypes.Builder.a(MobCart::new, EnumCreatureType.MONSTER);
 
         // this version of minecraft (whatever it happens to be)
         final int keyForVersion = DataFixUtils.makeKey(SharedConstants.getGameVersion().getWorldVersion());
@@ -63,7 +55,7 @@ public class MobWarpedGremlin extends EntityZombie {
         types.put("minecraft:" + REGISTERED_NAME, zombieType);
 
         // build it
-        warpedGremlinEntityType = entitytypesBuilder.a(REGISTERED_NAME);
+        entityTypes = entitytypesBuilder.a(REGISTERED_NAME);
 
         // log it
         NmsMobsPlugin.get().log(Level.INFO, "registered " + REGISTERED_NAME);
@@ -77,8 +69,8 @@ public class MobWarpedGremlin extends EntityZombie {
      */
     public static void spawn(Location location, NBTTagCompound oldNbt) {
         CraftWorld world = (CraftWorld) location.getWorld();
-        final MobWarpedGremlin gremlin = new MobWarpedGremlin(warpedGremlinEntityType, world.getHandle());
-        gremlin.prepare(location,oldNbt);
+        final MobCart gremlin = new MobCart(entityTypes, world.getHandle());
+        gremlin.prepare(location, oldNbt);
         gremlin.addScoreboardTag(SpawnCustomMobListener.CUSTOM_SPAWN_COMPLETE_TAG);
         world.getHandle().addEntity(gremlin);
     }
@@ -89,12 +81,19 @@ public class MobWarpedGremlin extends EntityZombie {
         event.setCancelled(true);
     }
 
+
     private void prepare(Location location, NBTTagCompound oldNbt) {
         final NmsModelConfig model = NmsModelConfig.parts(REGISTERED_MODEL);
         this.selfModel = model.mainPart();
         final NBTTagCompound newNbt = this.selfModel.getEntity().nbt;
         final NBTTagCompound mergedNbt = oldNbt == null ? newNbt : oldNbt.a(newNbt);
         this.loadData(mergedNbt);
+        this.setInvisible(true);
+        this.persistentInvisibility = true;
+        this.setTamed(true);
+        this.setBaby(true);
+        this.ageLocked = true;
+        this.saddle(SoundCategory.NEUTRAL);
         this.setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
         final Optional<EntityTypes<?>> entityTypes = EntityTypes.a(this.selfModel.getEntity().type.getKey().getKey());
         if (entityTypes.isPresent()) {
@@ -116,35 +115,27 @@ public class MobWarpedGremlin extends EntityZombie {
             this.selfModelType = EntityTypes.AREA_EFFECT_CLOUD;
             this.die();
         }
-//        this.lookController = new MobParts.ControllerLookChildrenFollow(this, children);
+    }
+
+    @Override
+    public boolean isBaby() {
+        return false;
     }
 
     @Override
     protected void initPathfinder() {
-        // only look aat the player
-//        this.goalSelector.a(8, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 8.0F));
-        super.initPathfinder();
+        // do no pathfinding
     }
 
     @Override
-    public void loadData(NBTTagCompound nbttagcompound) {
-        super.loadData(nbttagcompound);
-        final boolean invisible = nbttagcompound.getBoolean("Invisible");
-        ((CraftZombie) getBukkitEntity()).setInvisible(invisible);
-        this.setInvisible(invisible);
-    }
-
-    /**
-     * @return EnumMonsterType.ARTHROPOD || EnumMonsterType.ILLAGER || ...
-     */
-    @Override
-    public EnumMonsterType getMonsterType() {
-        return super.getMonsterType();
-    }
-
-    @Override
-    public EntityTypes<?> getEntityType() {
-        return this.selfModelType;
+    public void move(EnumMoveType enummovetype, Vec3D vec3d) {
+        super.move(enummovetype, vec3d);
+        System.out.println(vec3d);
+        List<Packet<?>> packetsToSend = new ArrayList<>();
+        for (MobPartChild child : children) {
+            packetsToSend.add(child.moveFromMother(false));
+        }
+        UtilsPacket.sendPacketsToAllPlayers(packetsToSend);
     }
 
     @Override
@@ -156,62 +147,18 @@ public class MobWarpedGremlin extends EntityZombie {
     }
 
 
-    /**
-     * @return the default attributeMap
-     */
-    private static AttributeProvider getAttributeProvider() {
-        return EntityLiving.cL()
-                .a(GenericAttributes.FOLLOW_RANGE, 35.0D)
-                .a(GenericAttributes.MOVEMENT_SPEED, 0.23000000417232513D)
-                .a(GenericAttributes.ATTACK_DAMAGE, 3.0D)
-                .a(GenericAttributes.ARMOR, 2.0D)
-                .a(GenericAttributes.SPAWN_REINFORCEMENTS)
-                .a(GenericAttributes.ATTACK_KNOCKBACK, 1D)
-                .a();
-    }
-
-
     @Override
-    public void move(EnumMoveType enummovetype, Vec3D vec3d) {
-        super.move(enummovetype, vec3d);
-        List<Packet<?>> packetsToSend = new ArrayList<>();
-        for (MobPartChild child : children) {
-            packetsToSend.add(child.moveFromMother(false));
-        }
-        UtilsPacket.sendPacketsToAllPlayers(packetsToSend);
-    }
-
-
-
-    /**
-     * change worlds
-     */
-    @Override
-    public @Nullable
-    Entity b(WorldServer worldserver) {
-        return super.b(worldserver);
-    }
-
-    //todo
-    @Override
-    public Iterable<ItemStack> getArmorItems() {
-        return Collections.emptyList();
-    }
-
-    //todo
-    @Override
-    public ItemStack getEquipment(EnumItemSlot enumItemSlot) {
-        return ItemStack.b;
-    }
-
-    //todo
-    @Override
-    public void setSlot(EnumItemSlot enumItemSlot, ItemStack itemStack) {
-
+    protected SoundEffect getSoundAmbient() {
+        return super.getSoundAmbient();
     }
 
     @Override
-    public EnumMainHand getMainHand() {
-        return EnumMainHand.RIGHT;
+    protected SoundEffect getSoundHurt(DamageSource var0) {
+        return super.getSoundHurt(var0);
+    }
+
+    @Override
+    protected SoundEffect getSoundDeath() {
+        return super.getSoundDeath();
     }
 }

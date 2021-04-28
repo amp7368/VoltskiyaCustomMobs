@@ -1,11 +1,7 @@
 package apple.voltskiya.custom_mobs.mobs.testing;
 
 import apple.voltskiya.custom_mobs.mobs.NmsMobsPlugin;
-import apple.voltskiya.custom_mobs.mobs.NmsModelConfig;
-import apple.voltskiya.custom_mobs.mobs.NmsModelEntityConfig;
-import apple.voltskiya.custom_mobs.mobs.parts.MobPartChild;
-import apple.voltskiya.custom_mobs.mobs.parts.MobPartMother;
-import apple.voltskiya.custom_mobs.mobs.parts.MobParts;
+import apple.voltskiya.custom_mobs.mobs.parts.*;
 import apple.voltskiya.custom_mobs.mobs.utils.UtilsAttribute;
 import apple.voltskiya.custom_mobs.mobs.utils.UtilsPacket;
 import apple.voltskiya.custom_mobs.util.EntityLocation;
@@ -105,7 +101,7 @@ public class MobMiscCustomModel extends EntityZombie {
                     selfModel.getEntity().facingY,
                     selfModel.getEntity().facingZ
             ); // for simpler rotations
-            MobPartMother motherMe = new MobPartMother(motherLocation,this);
+            MobPartMother motherMe = new MobPartMother(motherLocation, this, name);
             for (NmsModelEntityConfig part : model.others()) {
                 children.add(MobParts.spawnMobPart(motherMe, part));
             }

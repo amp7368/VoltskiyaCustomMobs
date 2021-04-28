@@ -8,10 +8,12 @@ public class MobPartMother {
     public final Location location;
     public final EntityLocation entityLocation;
     public final Entity entity;
+    public final String scoreboardTag;
 
-    public MobPartMother(EntityLocation entityLocation, Entity entity) {
+    public MobPartMother(EntityLocation entityLocation, Entity entity, String scoreboardTag) {
         this.entityLocation = entityLocation;
         this.entity = entity;
         this.location = new Location(null, entityLocation.x, entityLocation.y, entityLocation.z);
+        this.scoreboardTag = scoreboardTag;
     }
 }

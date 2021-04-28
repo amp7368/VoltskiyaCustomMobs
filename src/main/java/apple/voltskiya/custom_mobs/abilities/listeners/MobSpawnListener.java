@@ -1,6 +1,7 @@
 package apple.voltskiya.custom_mobs.abilities.listeners;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
+import apple.voltskiya.custom_mobs.abilities.ai_changes.AggressionChanges;
 import apple.voltskiya.custom_mobs.abilities.tick.SpawnEater;
 import apple.voltskiya.custom_mobs.abilities.tick.charger.ChargerManagerTicker;
 import apple.voltskiya.custom_mobs.abilities.tick.hell_blazer.HellGuardManagerTicker;
@@ -21,6 +22,7 @@ import java.util.Map;
 
 public class MobSpawnListener implements Listener {
     private static final Map<String, SpawnEater> spawnEater = new HashMap<>();
+    private static final Map<String, SpawnModifier> spawnModifier = new HashMap<>();
 
     public MobSpawnListener() {
         Bukkit.getPluginManager().registerEvents(this, VoltskiyaPlugin.get());
@@ -40,6 +42,7 @@ public class MobSpawnListener implements Listener {
                     "You may have changed a setting that resulted in changing the type of data that was in one of the fields.");
             e.printStackTrace();
         }
+        spawnModifier.put("aggrotarget",new AggressionChanges());
         for (SpawnEater spawnEater : spawnEater.values()) {
             spawnEater.registerInDB();
         }
@@ -50,6 +53,12 @@ public class MobSpawnListener implements Listener {
         for (String tag : event.getEntity().getScoreboardTags()) {
             SpawnEater eater = spawnEater.get(tag);
             if (eater != null) eater.eatEvent(event);
+            SpawnModifier modifier = spawnModifier.get(tag);
+            if (modifier != null) modifier.modifySpawn(event);
         }
+    }
+
+    public interface SpawnModifier {
+        void modifySpawn(CreatureSpawnEvent event);
     }
 }

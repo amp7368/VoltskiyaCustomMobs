@@ -2,7 +2,7 @@ package apple.voltskiya.custom_mobs.mobs.parts;
 
 import apple.voltskiya.custom_mobs.custom_model.CustomModel;
 import apple.voltskiya.custom_mobs.mobs.NmsMobsPlugin;
-import apple.voltskiya.custom_mobs.mobs.NmsModelEntityConfig;
+import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
 import apple.voltskiya.custom_mobs.mobs.utils.NbtConstants;
 import apple.voltskiya.custom_mobs.mobs.utils.UtilsAttribute;
 import apple.voltskiya.custom_mobs.util.EntityLocation;
@@ -92,6 +92,8 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild 
         final World world = mother.entity.getWorld();
         final MobPartArmorStand bodyPart = entityTypes.a(world);
         if (bodyPart == null) return null;
+        bodyPart.addScoreboardTag(mother.scoreboardTag);
+        bodyPart.addScoreboardTag(SpawnCustomMobListener.CUSTOM_SPAWN_COMPLETE_TAG);
         bodyPart.prepare(mother, config);
         world.addEntity(bodyPart);
         return bodyPart;
@@ -264,6 +266,12 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild 
     @Override
     public Entity getThisEntity() {
         return this;
+    }
+
+    @Override
+    public EnumInteractionResult a(EntityHuman entityhuman, Vec3D vec3d, EnumHand enumhand) {
+        System.out.println("whoa");
+        return this.mainMob.entity.a(entityhuman, enumhand);
     }
 
     @Override

@@ -185,7 +185,6 @@ public class MobPiglinVex extends EntityVex implements IRangedEntity, IEntityAng
      */
     @Override
     public void a(EntityLiving target, float damage) {
-        System.out.println("shot!");
         final EnumHand handToShootWith = EnumHand.MAIN_HAND;
         ItemStack equipmentInHandChecked = /*this.f(*/this.b(handToShootWith);//);
         EntityArrow entityarrow = ProjectileHelper.a(this, equipmentInHandChecked, damage); // v is damage

@@ -4,6 +4,7 @@ import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.mobs.nether.eye_plant.MobEyePlant;
 import apple.voltskiya.custom_mobs.mobs.nether.gremlin.MobWarpedGremlin;
 import apple.voltskiya.custom_mobs.mobs.nether.parasite.MobParasite;
+import apple.voltskiya.custom_mobs.mobs.testing.aledar.MobCart;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -21,6 +22,7 @@ public class SpawnCustomMobListener implements Listener {
         spawnEaters.put(MobEyePlant.REGISTERED_NAME, MobEyePlant::spawnEat);
         spawnEaters.put(MobWarpedGremlin.REGISTERED_NAME, MobWarpedGremlin::spawnEat);
         spawnEaters.put(MobParasite.REGISTERED_NAME, MobParasite::spawnEat);
+        spawnEaters.put(MobCart.REGISTERED_NAME, MobCart::spawnEat);
     }
 
     @EventHandler(ignoreCancelled = true)
