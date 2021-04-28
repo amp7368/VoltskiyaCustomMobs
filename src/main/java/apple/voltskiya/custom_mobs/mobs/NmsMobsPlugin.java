@@ -1,6 +1,9 @@
 package apple.voltskiya.custom_mobs.mobs;
 
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
+import apple.voltskiya.custom_mobs.mobs.modified.illager.illusioner.MobIllagerIllusionerExaminer;
+import apple.voltskiya.custom_mobs.mobs.modified.illager.pillager.MobIllagerPillagerExaminer;
+import apple.voltskiya.custom_mobs.mobs.modified.iron_golem.MobIronGolemExaminer;
 import apple.voltskiya.custom_mobs.mobs.nether.eye_plant.MobEyePlant;
 import apple.voltskiya.custom_mobs.mobs.nether.gremlin.MobWarpedGremlin;
 import apple.voltskiya.custom_mobs.mobs.nether.parasite.MobParasite;
@@ -35,6 +38,9 @@ public class NmsMobsPlugin extends VoltskiyaModule {
         MobEyePlant.initialize();
         MobParasite.initialize();
         MobCart.initialize();
+        MobIronGolemExaminer.initialize();
+        MobIllagerIllusionerExaminer.initialize();
+        MobIllagerPillagerExaminer.initialize();
         new AledarNavigation();
         new MobsSpawnCommand();
         new SpawnCustomMobListener();

@@ -42,7 +42,7 @@ public class MobEyePlant extends EntityZombie {
     }
 
     /**
-     * registers the WarpedGremlin as an entity
+     * registers the EyePlant as an entity
      */
     public static void initialize() {
         EntityTypes.Builder<MobEyePlant> entitytypesBuilder = EntityTypes.Builder.a(MobEyePlant::new, EnumCreatureType.MONSTER);

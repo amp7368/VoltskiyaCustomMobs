@@ -73,11 +73,6 @@ public class MobParasite extends EntityZombie {
         NmsMobsPlugin.get().log(Level.INFO, "registered " + REGISTERED_NAME);
     }
 
-    @Override
-    protected void b(BlockPosition blockposition, IBlockData iblockdata) {
-        super.b(blockposition, iblockdata);
-    }
-
     /**
      * spawns a WarpedGremlin
      *
@@ -89,6 +84,7 @@ public class MobParasite extends EntityZombie {
         final MobParasite parasite = new MobParasite(entityTypes, world.getHandle());
         parasite.prepareChildren(location, oldNbt);
         parasite.addScoreboardTag(SpawnCustomMobListener.CUSTOM_SPAWN_COMPLETE_TAG);
+        parasite.addScoreboardTag(REGISTERED_NAME);
         world.getHandle().addEntity(parasite);
     }
 
@@ -103,6 +99,7 @@ public class MobParasite extends EntityZombie {
         final MobParasite parasite = new MobParasite(entityTypes, world.getHandle());
         parasite.prepareChildren(location, oldNbt);
         parasite.addScoreboardTag(SpawnCustomMobListener.CUSTOM_SPAWN_COMPLETE_TAG);
+        parasite.addScoreboardTag(REGISTERED_NAME);
         parasite.setMot(velocity);
         world.getHandle().addEntity(parasite);
     }

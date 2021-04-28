@@ -1,6 +1,10 @@
 package apple.voltskiya.custom_mobs.mobs;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
+import apple.voltskiya.custom_mobs.mobs.modified.illager.evoker.MobIllagerEvokerExaminer;
+import apple.voltskiya.custom_mobs.mobs.modified.illager.illusioner.MobIllagerIllusionerExaminer;
+import apple.voltskiya.custom_mobs.mobs.modified.illager.pillager.MobIllagerPillagerExaminer;
+import apple.voltskiya.custom_mobs.mobs.modified.iron_golem.MobIronGolemExaminer;
 import apple.voltskiya.custom_mobs.mobs.nether.eye_plant.MobEyePlant;
 import apple.voltskiya.custom_mobs.mobs.nether.gremlin.MobWarpedGremlin;
 import apple.voltskiya.custom_mobs.mobs.nether.parasite.MobParasite;
@@ -23,6 +27,10 @@ public class SpawnCustomMobListener implements Listener {
         spawnEaters.put(MobWarpedGremlin.REGISTERED_NAME, MobWarpedGremlin::spawnEat);
         spawnEaters.put(MobParasite.REGISTERED_NAME, MobParasite::spawnEat);
         spawnEaters.put(MobCart.REGISTERED_NAME, MobCart::spawnEat);
+        spawnEaters.put(MobIronGolemExaminer.REGISTERED_NAME, MobIronGolemExaminer::spawnEat);
+        spawnEaters.put(MobIllagerIllusionerExaminer.REGISTERED_NAME, MobIllagerIllusionerExaminer::spawnEat);
+        spawnEaters.put(MobIllagerPillagerExaminer.REGISTERED_NAME, MobIllagerPillagerExaminer::spawnEat);
+        spawnEaters.put(MobIllagerEvokerExaminer.REGISTERED_NAME, MobIllagerEvokerExaminer::spawnEat);
     }
 
     @EventHandler(ignoreCancelled = true)

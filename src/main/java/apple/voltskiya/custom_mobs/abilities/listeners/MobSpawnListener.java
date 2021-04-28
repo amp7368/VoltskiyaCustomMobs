@@ -2,6 +2,8 @@ package apple.voltskiya.custom_mobs.abilities.listeners;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.abilities.ai_changes.AggressionChanges;
+import apple.voltskiya.custom_mobs.abilities.ai_changes.DefaultAggressive;
+import apple.voltskiya.custom_mobs.abilities.ai_changes.DefaultPassive;
 import apple.voltskiya.custom_mobs.abilities.tick.SpawnEater;
 import apple.voltskiya.custom_mobs.abilities.tick.charger.ChargerManagerTicker;
 import apple.voltskiya.custom_mobs.abilities.tick.hell_blazer.HellGuardManagerTicker;
@@ -42,10 +44,13 @@ public class MobSpawnListener implements Listener {
                     "You may have changed a setting that resulted in changing the type of data that was in one of the fields.");
             e.printStackTrace();
         }
-        spawnModifier.put("aggrotarget",new AggressionChanges());
         for (SpawnEater spawnEater : spawnEater.values()) {
             spawnEater.registerInDB();
         }
+        spawnModifier.put("aggrotarget", new AggressionChanges());
+        spawnModifier.put("default_aggressive", new DefaultAggressive());
+        spawnModifier.put("default_passive", new DefaultPassive());
+
     }
 
     @EventHandler(ignoreCancelled = true)
