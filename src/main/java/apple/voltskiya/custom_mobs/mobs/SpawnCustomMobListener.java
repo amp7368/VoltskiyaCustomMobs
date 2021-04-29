@@ -8,6 +8,7 @@ import apple.voltskiya.custom_mobs.mobs.modified.illager.vindicator.MobIllagerVi
 import apple.voltskiya.custom_mobs.mobs.modified.iron_golem.MobIronGolemExaminer;
 import apple.voltskiya.custom_mobs.mobs.nether.eye_plant.MobEyePlant;
 import apple.voltskiya.custom_mobs.mobs.nether.gremlin.MobWarpedGremlin;
+import apple.voltskiya.custom_mobs.mobs.nether.parasite.MobInfected;
 import apple.voltskiya.custom_mobs.mobs.nether.parasite.MobParasite;
 import apple.voltskiya.custom_mobs.mobs.testing.aledar.MobCart;
 import org.bukkit.Bukkit;
@@ -33,6 +34,7 @@ public class SpawnCustomMobListener implements Listener {
         spawnEaters.put(MobIllagerPillagerExaminer.REGISTERED_NAME, MobIllagerPillagerExaminer::spawnEat);
         spawnEaters.put(MobIllagerEvokerExaminer.REGISTERED_NAME, MobIllagerEvokerExaminer::spawnEat);
         spawnEaters.put(MobIllagerVindicatorExaminer.REGISTERED_NAME, MobIllagerVindicatorExaminer::spawnEat);
+        spawnEaters.put(MobInfected.PARASITE_INFECTED_TAG,MobInfected::spawnEat);
     }
 
     @EventHandler(ignoreCancelled = true)

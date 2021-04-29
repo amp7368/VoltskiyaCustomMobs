@@ -1,6 +1,5 @@
 package apple.voltskiya.custom_mobs.jumps;
 
-import apple.voltskiya.custom_mobs.util.BinaryTree;
 import org.bukkit.entity.Entity;
 
 import java.util.ArrayList;
@@ -15,7 +14,6 @@ public class LeapMob {
     private final Map<String, Object> tags = new HashMap<>();
     private final List<LeapMobListenerManager> listeners = new ArrayList<>();
     private final List<LeapMobListenerManager> disabledListeners = new ArrayList<>();
-    private final BinaryTree<Long> nextCall = new BinaryTree<Long>();
 
     public LeapMob(Entity mob) {
         this.mob = mob;

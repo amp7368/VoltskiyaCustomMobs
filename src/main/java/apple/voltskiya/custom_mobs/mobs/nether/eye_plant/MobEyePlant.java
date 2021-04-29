@@ -126,6 +126,11 @@ public class MobEyePlant extends EntityZombie {
     }
 
     @Override
+    public boolean isFireProof() {
+        return true;
+    }
+
+    @Override
     public void loadData(NBTTagCompound nbttagcompound) {
         super.loadData(nbttagcompound);
         final boolean invisible = nbttagcompound.getBoolean("Invisible");

@@ -12,7 +12,6 @@ import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPhantom;
 
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.Map;
 import java.util.logging.Level;
@@ -75,7 +74,7 @@ public class MobZombieCow extends EntityPhantom {
 
     @Override
     public EntityTypes<?> getEntityType() {
-        return EntityTypes.PIG;
+        return EntityTypes.COW;
     }
 
     @Override

@@ -144,7 +144,7 @@ public class MobParasite extends EntityZombie {
             } else {
                 this.initPathfinderOtherWorld();
             }
-        }, 5 * 20);
+        }, 5 * 10);
     }
 
 //    @Override

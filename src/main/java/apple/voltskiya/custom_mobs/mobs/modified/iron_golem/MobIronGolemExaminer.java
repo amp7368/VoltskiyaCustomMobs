@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.logging.Level;
 
 public class MobIronGolemExaminer extends EntityIronGolem {
-    public static final String REGISTERED_NAME = "irongolem_examiner";
+    public static final String REGISTERED_NAME = "mob.examiner.iron_golem";
     private static EntityTypes<MobIronGolemExaminer> entityTypes;
 
     public MobIronGolemExaminer(EntityTypes<? extends EntityIronGolem> entitytypes, World world) {
