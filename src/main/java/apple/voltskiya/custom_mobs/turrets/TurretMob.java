@@ -153,7 +153,7 @@ public class TurretMob implements Runnable {
             }
         } else {
             double distance = DistanceUtils.distance(target.getLocation(), center);
-            if (distance <= MAX_SIGHT && target.hasLineOfSight(durabilityEntityReal) && target.getGameMode() == GameMode.SURVIVAL) {
+            if (distance <= MAX_SIGHT && target.hasLineOfSight(durabilityEntityReal) && target.getGameMode() == GameMode.SURVIVAL && !target.isDead()) {
                 final Vector newFacing = target.getLocation().subtract(center).toVector().setY(0).normalize();
                 if (rotate(newFacing)) {
                     shoot(target);

@@ -1,4 +1,4 @@
-package apple.voltskiya.custom_mobs.jumps;
+package apple.voltskiya.custom_mobs.leaps;
 
 import org.bukkit.entity.Entity;
 

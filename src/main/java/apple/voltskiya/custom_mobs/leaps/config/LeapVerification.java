@@ -1,4 +1,4 @@
-package apple.voltskiya.custom_mobs.jumps.config;
+package apple.voltskiya.custom_mobs.leaps.config;
 
 import org.bukkit.Location;
 import org.bukkit.World;

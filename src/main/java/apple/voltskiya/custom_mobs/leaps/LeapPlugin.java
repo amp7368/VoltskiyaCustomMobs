@@ -1,7 +1,7 @@
-package apple.voltskiya.custom_mobs.jumps;
+package apple.voltskiya.custom_mobs.leaps;
 
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
-import apple.voltskiya.custom_mobs.jumps.config.LeapConfigManager;
+import apple.voltskiya.custom_mobs.leaps.config.LeapConfigManager;
 
 import java.io.IOException;
 
@@ -17,6 +17,7 @@ public class LeapPlugin extends VoltskiyaModule {
         instance = this;
         try {
             new LeapConfigManager();
+            new LeapSpawnListener();
         } catch (IOException e) {
             e.printStackTrace();
         }
