@@ -2,14 +2,15 @@ package apple.voltskiya.custom_mobs.leaps.config;
 
 import org.bukkit.Location;
 
-public class LeapConfig {
+public class LeapPreConfig {
     private final double timeFullArc;
     private final double peak;
     private final double distanceMin;
     private final double distanceMax;
     private final int checkInterval;
+    private double currentPeak;
 
-    public LeapConfig(double timeFullArc, double peak, double distanceMin, double distanceMax, int checkInterval) {
+    public LeapPreConfig(double timeFullArc, double peak, double distanceMin, double distanceMax, int checkInterval) {
         this.timeFullArc = timeFullArc;
         this.peak = peak;
         this.distanceMin = distanceMin;
@@ -18,23 +19,23 @@ public class LeapConfig {
     }
 
     public double getTimeFullArc() {
-        return timeFullArc;
+        return this.timeFullArc;
     }
 
     public double getPeak() {
-        return peak;
+        return this.peak;
     }
 
     public double getDistanceMin() {
-        return distanceMin;
+        return this.distanceMin;
     }
 
     public double getDistanceMax() {
-        return distanceMax;
+        return this.distanceMax;
     }
 
     public int getCheckInterval() {
-        return checkInterval;
+        return this.checkInterval;
     }
 
     public boolean isCorrectRange(Location me, Location them) {
@@ -42,8 +43,11 @@ public class LeapConfig {
         double zDistance = them.getZ() - me.getZ();
         double xzDistance = Math.sqrt(xDistance * xDistance + zDistance * zDistance);
         double yDistance = them.getY() - me.getY();
-        return yDistance <= peak && xzDistance > distanceMin && xzDistance < distanceMax;
+        return yDistance <= this.getPeak() && xzDistance > distanceMin && xzDistance < distanceMax;
     }
 
 
+    public void randomizePeak() {
+        this.currentPeak = this.peak * Math.random() * .4 + .8;
+    }
 }

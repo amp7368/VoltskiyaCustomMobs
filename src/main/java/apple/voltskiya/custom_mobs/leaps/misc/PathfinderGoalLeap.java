@@ -1,7 +1,8 @@
 package apple.voltskiya.custom_mobs.leaps.misc;
 
 import apple.voltskiya.custom_mobs.leaps.config.Leap;
-import apple.voltskiya.custom_mobs.leaps.config.LeapConfig;
+import apple.voltskiya.custom_mobs.leaps.config.LeapPostConfig;
+import apple.voltskiya.custom_mobs.leaps.config.LeapPreConfig;
 import net.minecraft.server.v1_16_R3.EntityHuman;
 import net.minecraft.server.v1_16_R3.EntityInsentient;
 import net.minecraft.server.v1_16_R3.EntityLiving;
@@ -9,30 +10,25 @@ import net.minecraft.server.v1_16_R3.PathfinderGoal;
 
 import java.util.EnumSet;
 import java.util.Random;
-import java.util.function.BooleanSupplier;
 
 public class PathfinderGoalLeap extends PathfinderGoal {
     protected final EntityInsentient me;
     protected final Random random = new Random();
-    protected final LeapConfig config;
-    protected final BooleanSupplier shouldStopCurrentLeap;
-    protected final BooleanSupplier isOnGround;
+    protected final LeapPreConfig config;
+    protected LeapPostConfig postConfig;
     protected Leap currentLeap = null;
 
     /**
      * find a block to navigate to
      *
-     * @param me                    the entity to navigate
-     * @param config                the config for the leap
-     * @param shouldStopCurrentLeap a function that will say if the mob should stop the leap at a random point
-     *                              in the jump (ie. if the mob is hit)
-     * @param isOnGround            a function to say whether the mob is on the ground or not
+     * @param me         the entity to navigate
+     * @param config     the config for the leap
+     * @param postConfig provides any runtime info for the leap
      */
-    public PathfinderGoalLeap(EntityInsentient me, LeapConfig config, BooleanSupplier shouldStopCurrentLeap, BooleanSupplier isOnGround) {
+    public PathfinderGoalLeap(EntityInsentient me, LeapPreConfig config, LeapPostConfig postConfig) {
         this.config = config;
         this.me = me;
-        this.shouldStopCurrentLeap = shouldStopCurrentLeap;
-        this.isOnGround = isOnGround;
+        this.postConfig = postConfig;
         this.setMoveType(EnumSet.of(Type.JUMP));
     }
 
@@ -45,7 +41,7 @@ public class PathfinderGoalLeap extends PathfinderGoal {
                 this.me.getGoalTarget() instanceof EntityHuman) {
             final EntityLiving goalTarget = this.me.getGoalTarget();
             if (goalTarget == null) return false;
-            return this.config.isCorrectRange(this.me.getBukkitEntity().getLocation(), goalTarget.getBukkitEntity().getLocation()) && !this.shouldStopCurrentLeap.getAsBoolean();
+            return this.config.isCorrectRange(this.me.getBukkitEntity().getLocation(), goalTarget.getBukkitEntity().getLocation()) && !this.postConfig.shouldStopCurrentLeap() && this.postConfig.isOnGround();
         } else {
             return false;
         }
@@ -83,11 +79,12 @@ public class PathfinderGoalLeap extends PathfinderGoal {
         }
         final EntityLiving goalTarget = this.me.getGoalTarget();
         if (goalTarget == null) return;
+        this.config.randomizePeak();
         if (this.config.isCorrectRange(this.me.getBukkitEntity().getLocation(), goalTarget.getBukkitEntity().getLocation())) {
             try {
-                this.currentLeap = new Leap(this.me.getBukkitEntity(), goalTarget.getBukkitEntity().getLocation(), this.config, this.shouldStopCurrentLeap, this.isOnGround);
+                this.currentLeap = new Leap(this.me, goalTarget.getBukkitEntity().getLocation(), this.config, this.postConfig);
                 // do the jump
-                this.currentLeap.leap();
+                this.currentLeap.preLeap();
             } catch (IllegalArgumentException ignored) {
             }
         }

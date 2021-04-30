@@ -1,12 +1,11 @@
 package apple.voltskiya.custom_mobs.leaps;
 
-import apple.voltskiya.custom_mobs.leaps.config.LeapConfig;
 import apple.voltskiya.custom_mobs.leaps.config.LeapConfigManager;
+import apple.voltskiya.custom_mobs.leaps.config.LeapPreConfig;
 import apple.voltskiya.custom_mobs.leaps.upwards.LeapUpwards;
 
 public enum LeapType {
    UPWARDS_LEAP("upwards_leap", LeapUpwards::eatSpawnEvent) ;
-//    TERRA2("terra_leap", LeapSpecificMisc::eatSpawnEvent),
 
     private final String leapName;
     private final LeapSpawnListener.CustomSpawnEater leapEater;
@@ -24,7 +23,7 @@ public enum LeapType {
         return leapEater;
     }
 
-    public LeapConfig getLeapConfig() {
+    public LeapPreConfig getLeapConfig() {
         return LeapConfigManager.get().getLeap(getTypeName());
     }
 }

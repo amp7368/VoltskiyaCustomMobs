@@ -1,16 +1,36 @@
 package apple.voltskiya.custom_mobs.leaps.misc;
 
-import apple.voltskiya.custom_mobs.leaps.config.LeapConfig;
+import apple.voltskiya.custom_mobs.leaps.config.LeapPostConfig;
+import apple.voltskiya.custom_mobs.leaps.config.LeapPreConfig;
 import net.minecraft.server.v1_16_R3.EntityInsentient;
 import net.minecraft.server.v1_16_R3.EntityLiving;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftLivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.util.Vector;
 
 public class LeapSpecificMisc {
-    public static void eatSpawnEvent(CreatureSpawnEvent event,  LeapConfig config) {
+    public static void eatSpawnEvent(CreatureSpawnEvent event, LeapPreConfig config) {
         EntityLiving creature = ((CraftLivingEntity) event.getEntity()).getHandle();
         if (creature instanceof EntityInsentient) {
-            ((EntityInsentient) creature).goalSelector.a(1, new PathfinderGoalLeap((EntityInsentient) creature, config, () -> creature.hurtTimestamp >= creature.ticksLived - 10, creature::isOnGround));
+            LeapPostConfig postConfig = new LeapPostConfig(
+                    () -> creature.hurtTimestamp >= creature.ticksLived - 10,
+                    creature::isOnGround,
+                    LeapSpecificMisc::preLeap,
+                    LeapSpecificMisc::interruptedLeap,
+                    LeapSpecificMisc::endLeap
+            );
+            ((EntityInsentient) creature).goalSelector.a(1, new PathfinderGoalLeap((EntityInsentient) creature, config, postConfig));
         }
+    }
+
+    private static void preLeap(EntityInsentient entity, Runnable callBack) {
+    }
+
+    private static void endLeap(EntityInsentient entity) {
+        entity.getBukkitEntity().setVelocity(new Vector(0, 0, 0));
+    }
+
+    private static void interruptedLeap(EntityInsentient entity) {
+        entity.getBukkitEntity().setVelocity(new Vector(0, 0, 0));
     }
 }

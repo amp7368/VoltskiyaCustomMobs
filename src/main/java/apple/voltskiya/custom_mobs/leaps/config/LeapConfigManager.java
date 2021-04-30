@@ -16,7 +16,7 @@ import java.util.Set;
 
 
 public class LeapConfigManager extends ConfigManager {
-    private final Map<String, LeapConfig> leapTypeNames = new HashMap<>();
+    private final Map<String, LeapPreConfig> leapTypeNames = new HashMap<>();
     private static LeapConfigManager instance;
 
     public LeapConfigManager() throws IOException {
@@ -42,7 +42,7 @@ public class LeapConfigManager extends ConfigManager {
     }
 
     @Nullable
-    public final LeapConfig getLeap(String name) {
+    public final LeapPreConfig getLeap(String name) {
         return leapTypeNames.get(name);
     }
 
@@ -76,8 +76,8 @@ public class LeapConfigManager extends ConfigManager {
             this.value = value;
         }
 
-        public static LeapConfig getLeapConfig(ConfigurationSection config) {
-            return new LeapConfig(
+        public static LeapPreConfig getLeapConfig(ConfigurationSection config) {
+            return new LeapPreConfig(
                     config.getDouble(TIME_FULL.path),
                     config.getDouble(LEAP_PEAK.path),
                     config.getDouble(DISTANCE_MIN.path),

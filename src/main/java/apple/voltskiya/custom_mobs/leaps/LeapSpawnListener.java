@@ -1,8 +1,8 @@
 package apple.voltskiya.custom_mobs.leaps;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import apple.voltskiya.custom_mobs.leaps.config.LeapConfig;
 import apple.voltskiya.custom_mobs.leaps.config.LeapConfigManager;
+import apple.voltskiya.custom_mobs.leaps.config.LeapPreConfig;
 import apple.voltskiya.custom_mobs.leaps.misc.LeapSpecificMisc;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -31,7 +31,7 @@ public class LeapSpawnListener implements Listener {
                 leapType.getLeapEater().eatSpawnEvent(event, leapType);
                 break;
             } else {
-                LeapConfig config = LeapConfigManager.get().getLeap(tag);
+                LeapPreConfig config = LeapConfigManager.get().getLeap(tag);
                 if (config != null) LeapSpecificMisc.eatSpawnEvent(event, config);
             }
         }
