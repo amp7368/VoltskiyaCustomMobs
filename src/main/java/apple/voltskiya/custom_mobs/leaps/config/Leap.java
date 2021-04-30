@@ -10,6 +10,7 @@ import org.bukkit.util.Vector;
 import java.util.function.BooleanSupplier;
 
 public class Leap implements Runnable {
+    public static final String NO_FALL_DAMAGE_TAG = "no_fall_damage";
     private final Entity entity;
     private final BooleanSupplier shouldStopCurrentLeap;
     private final BooleanSupplier isOnGround;
@@ -32,7 +33,7 @@ public class Leap implements Runnable {
         double zDistance = goalLocation.getZ() - nowLocation.getZ();
         double xzDistance = Math.sqrt(xDistance * xDistance + zDistance * zDistance);
         double xVelocity = config.getDistanceMin() / config.getTimeFullArc();
-        double fullTimeArcVariable =  xzDistance/xVelocity ;
+        double fullTimeArcVariable = xzDistance / xVelocity;
 
         // get the other info
         this.yVelocity = this.yVelocityInitial = 4 * config.getPeak() / fullTimeArcVariable;
@@ -45,6 +46,7 @@ public class Leap implements Runnable {
     public void leap() {
         entity.setVelocity(new Vector(xVelocity, yVelocity, zVelocity));
         this.isLeaping = true;
+        this.entity.addScoreboardTag(NO_FALL_DAMAGE_TAG);
         run();
     }
 
@@ -53,7 +55,7 @@ public class Leap implements Runnable {
         if (entity.isDead() ||
                 shouldStopCurrentLeap.getAsBoolean() ||
                 (this.yVelocity <= 0 && this.isOnGround.getAsBoolean())) {
-            System.out.println("done");
+            this.entity.removeScoreboardTag(NO_FALL_DAMAGE_TAG);
             this.isLeaping = false;
             return;
         }

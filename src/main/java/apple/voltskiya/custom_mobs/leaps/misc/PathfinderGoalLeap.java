@@ -1,4 +1,4 @@
-package apple.voltskiya.custom_mobs.leaps.terra;
+package apple.voltskiya.custom_mobs.leaps.misc;
 
 import apple.voltskiya.custom_mobs.leaps.config.Leap;
 import apple.voltskiya.custom_mobs.leaps.config.LeapConfig;
@@ -6,29 +6,29 @@ import net.minecraft.server.v1_16_R3.EntityHuman;
 import net.minecraft.server.v1_16_R3.EntityInsentient;
 import net.minecraft.server.v1_16_R3.EntityLiving;
 import net.minecraft.server.v1_16_R3.PathfinderGoal;
-import org.bukkit.util.Vector;
 
 import java.util.EnumSet;
 import java.util.Random;
 import java.util.function.BooleanSupplier;
 
-public class PathfinderGoalLeapMisc extends PathfinderGoal {
-    private final EntityInsentient me;
-    private final Random random = new Random();
-    private final LeapConfig config;
-    private final BooleanSupplier shouldStopCurrentLeap;
-    private final BooleanSupplier isOnGround;
-    private Vector foundCravedBlock;
-    private boolean isLeaping = false;
-    private Leap currentLeap = null;
+public class PathfinderGoalLeap extends PathfinderGoal {
+    protected final EntityInsentient me;
+    protected final Random random = new Random();
+    protected final LeapConfig config;
+    protected final BooleanSupplier shouldStopCurrentLeap;
+    protected final BooleanSupplier isOnGround;
+    protected Leap currentLeap = null;
 
     /**
      * find a block to navigate to
      *
-     * @param me       the entity to navigate
-     * @param config the config for the leap
+     * @param me                    the entity to navigate
+     * @param config                the config for the leap
+     * @param shouldStopCurrentLeap a function that will say if the mob should stop the leap at a random point
+     *                              in the jump (ie. if the mob is hit)
+     * @param isOnGround            a function to say whether the mob is on the ground or not
      */
-    public PathfinderGoalLeapMisc(EntityInsentient me,LeapConfig config, BooleanSupplier shouldStopCurrentLeap, BooleanSupplier isOnGround) {
+    public PathfinderGoalLeap(EntityInsentient me, LeapConfig config, BooleanSupplier shouldStopCurrentLeap, BooleanSupplier isOnGround) {
         this.config = config;
         this.me = me;
         this.shouldStopCurrentLeap = shouldStopCurrentLeap;
@@ -58,13 +58,9 @@ public class PathfinderGoalLeapMisc extends PathfinderGoal {
     @Override
     public boolean b() {
         // navigationAbstract.m() returns true if the entity is *not* navigating anywhere
-//        return !this.me.getNavigation().m();
         final EntityLiving goalTarget = this.me.getGoalTarget();
         if (goalTarget == null) return false;
-        if (this.config.isCorrectRange(this.me.getBukkitEntity().getLocation(), goalTarget.getBukkitEntity().getLocation())) {
-            return true;
-        }
-        return false;
+        return this.config.isCorrectRange(this.me.getBukkitEntity().getLocation(), goalTarget.getBukkitEntity().getLocation());
     }
 
     /**
@@ -92,7 +88,6 @@ public class PathfinderGoalLeapMisc extends PathfinderGoal {
                 this.currentLeap = new Leap(this.me.getBukkitEntity(), goalTarget.getBukkitEntity().getLocation(), this.config, this.shouldStopCurrentLeap, this.isOnGround);
                 // do the jump
                 this.currentLeap.leap();
-                this.isLeaping = true;
             } catch (IllegalArgumentException ignored) {
             }
         }
