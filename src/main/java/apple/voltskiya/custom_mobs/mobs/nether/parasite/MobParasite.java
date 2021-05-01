@@ -156,7 +156,7 @@ public class MobParasite extends EntityZombie {
     private void initPathfinderOtherWorld() {
         // new PathfinderGoalRandomStrollLand(entityToMove, speed, chanceToActivate)
         this.goalSelector.a(0, new PathfinderGoalFloat(this));
-        this.goalSelector.a(1, new PathfinderGoalCraveBlock(this, Collections.singletonList(org.bukkit.Material.NETHER_PORTAL), 316, 20, 2, 1.0));
+        this.goalSelector.a(1, new PathfinderGoalCraveBlock(this, Collections.singletonList(org.bukkit.Material.NETHER_PORTAL), 512, 20, 2, 1.0));
         this.goalSelector.a(2, new PathfinderGoalRandomStrollLand(this, 1.0D, 0.003F));
     }
 

@@ -24,6 +24,7 @@ public class LeapSpecificMisc {
     }
 
     private static void preLeap(EntityInsentient entity, Runnable callBack) {
+        callBack.run();
     }
 
     private static void endLeap(EntityInsentient entity) {

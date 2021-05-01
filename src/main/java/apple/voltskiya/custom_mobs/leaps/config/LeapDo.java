@@ -7,7 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
 
-public class Leap implements Runnable {
+public class LeapDo implements Runnable {
     public static final String NO_FALL_DAMAGE_TAG = "no_fall_damage";
     private final Entity bukkitEntity;
     private final double gravity;
@@ -21,7 +21,7 @@ public class Leap implements Runnable {
     private boolean isLeaping = false;
     private final boolean alreadyHadNoFallDamage;
 
-    public Leap(EntityInsentient entity, Location goalLocation, LeapPreConfig config, LeapPostConfig postConfig) throws IllegalArgumentException {
+    public LeapDo(EntityInsentient entity, Location goalLocation, LeapPreConfig config, LeapPostConfig postConfig) throws IllegalArgumentException {
         this.entity = entity;
         this.bukkitEntity = entity.getBukkitEntity();
         this.postConfig = postConfig;
@@ -56,9 +56,9 @@ public class Leap implements Runnable {
 
     public void leap() {
         bukkitEntity.setVelocity(new Vector(xVelocity, yVelocity, zVelocity));
-        this.isLeaping = true;
         if (!this.alreadyHadNoFallDamage)
             this.bukkitEntity.addScoreboardTag(NO_FALL_DAMAGE_TAG);
+        this.isLeaping = true;
         run();
     }
 

@@ -1,13 +1,14 @@
 package apple.voltskiya.custom_mobs.leaps.misc;
 
-import apple.voltskiya.custom_mobs.leaps.config.Leap;
+import apple.voltskiya.custom_mobs.leaps.config.LeapDo;
 import apple.voltskiya.custom_mobs.leaps.config.LeapPostConfig;
 import apple.voltskiya.custom_mobs.leaps.config.LeapPreConfig;
-import net.minecraft.server.v1_16_R3.EntityHuman;
 import net.minecraft.server.v1_16_R3.EntityInsentient;
 import net.minecraft.server.v1_16_R3.EntityLiving;
 import net.minecraft.server.v1_16_R3.PathfinderGoal;
+import org.bukkit.Location;
 
+import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.Random;
 
@@ -16,7 +17,7 @@ public class PathfinderGoalLeap extends PathfinderGoal {
     protected final Random random = new Random();
     protected final LeapPreConfig config;
     protected LeapPostConfig postConfig;
-    protected Leap currentLeap = null;
+    protected LeapDo currentLeap = null;
 
     /**
      * find a block to navigate to
@@ -37,11 +38,17 @@ public class PathfinderGoalLeap extends PathfinderGoal {
      */
     @Override
     public boolean a() {
-        if (this.random.nextInt(config.getCheckInterval()) == 0 &&
-                this.me.getGoalTarget() instanceof EntityHuman) {
+        if (this.random.nextInt(config.getCheckInterval()) == 0) {
             final EntityLiving goalTarget = this.me.getGoalTarget();
             if (goalTarget == null) return false;
-            return this.config.isCorrectRange(this.me.getBukkitEntity().getLocation(), goalTarget.getBukkitEntity().getLocation()) && !this.postConfig.shouldStopCurrentLeap() && this.postConfig.isOnGround();
+            final Location meLocation = this.me.getBukkitEntity().getLocation();
+            final Location themLocation = goalTarget.getBukkitEntity().getLocation();
+            return (this.currentLeap == null || !this.currentLeap.isLeaping()) &&
+                    this.config.isCorrectRange(meLocation, themLocation) &&
+                    this.config.isValidPeak(meLocation, themLocation) &&
+                    !this.postConfig.shouldStopCurrentLeap() &&
+                    this.postConfig.isOnGround();
+
         } else {
             return false;
         }
@@ -54,9 +61,7 @@ public class PathfinderGoalLeap extends PathfinderGoal {
     @Override
     public boolean b() {
         // navigationAbstract.m() returns true if the entity is *not* navigating anywhere
-        final EntityLiving goalTarget = this.me.getGoalTarget();
-        if (goalTarget == null) return false;
-        return this.config.isCorrectRange(this.me.getBukkitEntity().getLocation(), goalTarget.getBukkitEntity().getLocation());
+        return this.a();
     }
 
     /**
@@ -77,12 +82,14 @@ public class PathfinderGoalLeap extends PathfinderGoal {
         if (currentLeap != null && currentLeap.isLeaping()) {
             return;
         }
-        final EntityLiving goalTarget = this.me.getGoalTarget();
-        if (goalTarget == null) return;
+        final Location meLocation = this.me.getBukkitEntity().getLocation();
+        final Location goalLocation = this.getGoalLocation();
+        if (goalLocation == null) return;
         this.config.randomizePeak();
-        if (this.config.isCorrectRange(this.me.getBukkitEntity().getLocation(), goalTarget.getBukkitEntity().getLocation())) {
+        this.config.correctPeak(meLocation, goalLocation, this.getHitBoxHeight());
+        if (this.config.isCorrectRange(meLocation, goalLocation) && this.config.isValidPeak(meLocation, goalLocation)) {
             try {
-                this.currentLeap = new Leap(this.me, goalTarget.getBukkitEntity().getLocation(), this.config, this.postConfig);
+                this.currentLeap = new LeapDo(this.me, goalLocation, this.config, this.postConfig);
                 // do the jump
                 this.currentLeap.preLeap();
             } catch (IllegalArgumentException ignored) {
@@ -96,7 +103,6 @@ public class PathfinderGoalLeap extends PathfinderGoal {
     @Override
     public void d() {
         // quit going to the location
-        this.me.getNavigation().o();
         this.currentLeap = null;
     }
 
@@ -110,4 +116,22 @@ public class PathfinderGoalLeap extends PathfinderGoal {
     public void setMoveType(EnumSet<Type> moveType) {
         super.a(moveType);
     }
+
+    /**
+     * @return the height of me
+     */
+    protected double getHitBoxHeight() {
+        return 2;
+    }
+
+    /**
+     * @return a goal to jump to
+     */
+    @Nullable
+    protected Location getGoalLocation() {
+        final EntityLiving goalTarget = this.me.getGoalTarget();
+        if (goalTarget == null) return null;
+        return goalTarget.getBukkitEntity().getLocation();
+    }
+
 }

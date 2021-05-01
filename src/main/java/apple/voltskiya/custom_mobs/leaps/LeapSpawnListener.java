@@ -25,7 +25,6 @@ public class LeapSpawnListener implements Listener {
     @EventHandler
     public void onLeapSpawn(CreatureSpawnEvent event) {
         for (String tag : event.getEntity().getScoreboardTags()) {
-            System.out.println(tag);
             LeapType leapType = spawnEaters.get(tag);
             if (leapType != null) {
                 leapType.getLeapEater().eatSpawnEvent(event, leapType);
