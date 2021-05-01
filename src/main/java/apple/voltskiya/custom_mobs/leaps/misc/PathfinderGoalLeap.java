@@ -18,6 +18,7 @@ public class PathfinderGoalLeap extends PathfinderGoal {
     protected final LeapPreConfig config;
     protected LeapPostConfig postConfig;
     protected LeapDo currentLeap = null;
+    protected Integer timeOfLastJump = null;
 
     /**
      * find a block to navigate to
@@ -39,11 +40,11 @@ public class PathfinderGoalLeap extends PathfinderGoal {
     @Override
     public boolean a() {
         if (this.random.nextInt(config.getCheckInterval()) == 0) {
-            final EntityLiving goalTarget = this.me.getGoalTarget();
-            if (goalTarget == null) return false;
+            final Location themLocation = this.getGoalLocation();
+            if (themLocation == null) return false;
             final Location meLocation = this.me.getBukkitEntity().getLocation();
-            final Location themLocation = goalTarget.getBukkitEntity().getLocation();
-            return (this.currentLeap == null || !this.currentLeap.isLeaping()) &&
+            return (this.timeOfLastJump == null || this.me.ticksLived >= timeOfLastJump + this.config.getCooldown()) &&
+                    (this.currentLeap == null || !this.currentLeap.isLeaping()) &&
                     this.config.isCorrectRange(meLocation, themLocation) &&
                     this.config.isValidPeak(meLocation, themLocation) &&
                     !this.postConfig.shouldStopCurrentLeap() &&
@@ -121,7 +122,7 @@ public class PathfinderGoalLeap extends PathfinderGoal {
      * @return the height of me
      */
     protected double getHitBoxHeight() {
-        return 2;
+        return me.getHeight();
     }
 
     /**
@@ -133,5 +134,4 @@ public class PathfinderGoalLeap extends PathfinderGoal {
         if (goalTarget == null) return null;
         return goalTarget.getBukkitEntity().getLocation();
     }
-
 }

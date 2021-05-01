@@ -1,6 +1,7 @@
 package apple.voltskiya.custom_mobs.leaps.config;
 
 import org.bukkit.Location;
+import org.jetbrains.annotations.NotNull;
 
 public class LeapPreConfig {
     private final double timeFullArc;
@@ -9,13 +10,15 @@ public class LeapPreConfig {
     private final double distanceMax;
     private final int checkInterval;
     private double currentPeak;
+    private final int cooldown;
 
-    public LeapPreConfig(double timeFullArc, double peak, double distanceMin, double distanceMax, int checkInterval) {
+    public LeapPreConfig(double timeFullArc, double peak, double distanceMin, double distanceMax, int checkInterval, int cooldown) {
         this.timeFullArc = timeFullArc;
         this.currentPeak = this.peak = peak;
         this.distanceMin = distanceMin;
         this.distanceMax = distanceMax;
         this.checkInterval = checkInterval;
+        this.cooldown = cooldown;
     }
 
     public double getTimeFullArc() {
@@ -38,7 +41,11 @@ public class LeapPreConfig {
         return this.checkInterval;
     }
 
-    public boolean isCorrectRange(Location me, Location them) {
+    public int getCooldown() {
+        return this.cooldown;
+    }
+
+    public boolean isCorrectRange(@NotNull Location me, @NotNull Location them) {
         double xDistance = them.getX() - me.getX();
         double zDistance = them.getZ() - me.getZ();
         double xzDistance = Math.sqrt(xDistance * xDistance + zDistance * zDistance);
@@ -54,7 +61,7 @@ public class LeapPreConfig {
         this.currentPeak = this.peak * (Math.random() * .4 + .8);
     }
 
-    public void correctPeak(Location me, Location them, double hitBoxHeight) {
+    public void correctPeak(@NotNull Location me, @NotNull Location them, double hitBoxHeight) {
         // find the middle
         double xMid = (me.getX() + them.getX()) / 2;
         double yMax = Math.max(me.getY(), them.getY());

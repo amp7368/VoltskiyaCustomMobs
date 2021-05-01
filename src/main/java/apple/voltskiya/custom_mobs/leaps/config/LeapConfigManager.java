@@ -29,7 +29,7 @@ public class LeapConfigManager extends ConfigManager {
                 @NotNull Set<String> typeNames = configMain.getKeys(false);
                 for (String leapTypeName : typeNames) {
                     ConfigurationSection config = configMain.getConfigurationSection(leapTypeName);
-                    if (config != null){
+                    if (config != null) {
                         this.leapTypeNames.put(leapTypeName, LeapYmlSettings.getLeapConfig(config));
                     }
                 }
@@ -63,10 +63,11 @@ public class LeapConfigManager extends ConfigManager {
 
     private enum LeapYmlSettings implements apple.voltskiya.custom_mobs.YmlSettings {
         TIME_FULL("time_full", 17),
-        LEAP_PEAK("leap_peak", 6),
+        PEAK("peak", 6),
         DISTANCE_MIN("distance_min", 5.0),
         DISTANCE_MAX("distance_max", 12.0),
-        LEAP_CHECK_INTERVAL("leap_check_interval", 20);
+        CHECK_INTERVAL("check_interval", 20),
+        COOLDOWN("cooldown", 20);
 
         private final String path;
         private final Object value;
@@ -79,10 +80,11 @@ public class LeapConfigManager extends ConfigManager {
         public static LeapPreConfig getLeapConfig(ConfigurationSection config) {
             return new LeapPreConfig(
                     config.getDouble(TIME_FULL.path),
-                    config.getDouble(LEAP_PEAK.path),
+                    config.getDouble(PEAK.path),
                     config.getDouble(DISTANCE_MIN.path),
                     config.getDouble(DISTANCE_MAX.path),
-                    config.getInt(LEAP_CHECK_INTERVAL.path)
+                    config.getInt(CHECK_INTERVAL.path),
+                    config.getInt(COOLDOWN.path)
             );
         }
 
