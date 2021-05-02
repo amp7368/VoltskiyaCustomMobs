@@ -1,6 +1,7 @@
 package apple.voltskiya.custom_mobs.leaps.hellish_catalyst;
 
 import apple.voltskiya.custom_mobs.leaps.LeapType;
+import apple.voltskiya.custom_mobs.leaps.config.LeapDo;
 import apple.voltskiya.custom_mobs.leaps.config.LeapPostConfig;
 import net.minecraft.server.v1_16_R3.EntityInsentient;
 import net.minecraft.server.v1_16_R3.EntityLiving;
@@ -17,7 +18,7 @@ public class LeapHellishCatalyst {
             @Nullable EntityLiving lastTarget = ((EntityInsentient) creature).getGoalTarget();
 
             LeapPostConfig postConfig = new LeapPostConfig(
-                    () -> shouldStopLeap(creature),
+                    (leapDo) -> shouldStopLeap(creature),
                     creature::isOnGround,
                     LeapHellishCatalyst::preLeap,
                     (entity) -> LeapHellishCatalyst.interruptedLeap(entity, lastTarget),
@@ -31,8 +32,8 @@ public class LeapHellishCatalyst {
         return creature.hurtTimestamp >= creature.ticksLived - 10;
     }
 
-    private static void preLeap(EntityInsentient entity, Runnable callBack) {
-        callBack.run();
+    private static void preLeap(EntityInsentient entity, LeapDo leapDo) {
+        leapDo.leap();
     }
 
     private static void endLeap(EntityInsentient entity, EntityLiving lastTarget) {

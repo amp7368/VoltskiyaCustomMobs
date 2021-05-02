@@ -65,7 +65,7 @@ public class LeapPreConfig {
         // find the middle
         double xMid = (me.getX() + them.getX()) / 2;
         double yMax = Math.max(me.getY(), them.getY());
-        double yCheckMe = yMax + getPeak();
+        double yCheckMe = yMax + getPeak()+hitBoxHeight;
         double zMid = (me.getZ() + them.getZ()) / 2;
         final double peak = this.getPeak();
         // while it's not air, go down as far as reasonable

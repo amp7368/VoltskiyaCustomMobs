@@ -3,11 +3,14 @@ package apple.voltskiya.custom_mobs.leaps;
 import apple.voltskiya.custom_mobs.leaps.config.LeapConfigManager;
 import apple.voltskiya.custom_mobs.leaps.config.LeapPreConfig;
 import apple.voltskiya.custom_mobs.leaps.hellish_catalyst.LeapHellishCatalyst;
+import apple.voltskiya.custom_mobs.leaps.pounce.LeapPounce;
 import apple.voltskiya.custom_mobs.leaps.revenant.LeapRevenant;
 import apple.voltskiya.custom_mobs.leaps.upwards.LeapUpwards;
 
 public enum LeapType {
     UPWARDS_LEAP("upwards_leap", LeapUpwards::eatSpawnEvent) ,
+    POUNCE_LEAP("pounce_leap", LeapPounce::eatSpawnEvent) ,
+    POUNCE_LEAP_UP("pounce_leap_up", LeapPounce::eatSpawnEvent) ,
     REVENANT_LEAP("revenant_leap", LeapRevenant::eatSpawnEvent) ,
     HELLISH_CATALYST_LEAP("hellish_catalyst_leap", LeapHellishCatalyst::eatSpawnEvent) ;
 

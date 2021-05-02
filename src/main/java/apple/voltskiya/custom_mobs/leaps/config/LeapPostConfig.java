@@ -2,21 +2,23 @@ package apple.voltskiya.custom_mobs.leaps.config;
 
 import net.minecraft.server.v1_16_R3.EntityInsentient;
 
+import javax.annotation.Nullable;
 import java.util.function.BiConsumer;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class LeapPostConfig {
-    private final BooleanSupplier shouldStopCurrentLeap;
+    private final Function<LeapDo, Boolean> shouldStopCurrentLeap;
     private final BooleanSupplier isOnGround;
-    private final BiConsumer<EntityInsentient, Runnable> preLeap;
+    private final BiConsumer<EntityInsentient, LeapDo> preLeap;
     private final Consumer<EntityInsentient> interruptedLeap;
     private final Consumer<EntityInsentient> endLeap;
 
     public LeapPostConfig(
-            BooleanSupplier shouldStopCurrentLeap,
+            Function<LeapDo, Boolean> shouldStopCurrentLeap,
             BooleanSupplier isOnGround,
-            BiConsumer<EntityInsentient, Runnable> preLeap,
+            BiConsumer<EntityInsentient, LeapDo> preLeap,
             Consumer<EntityInsentient> interruptedLeap,
             Consumer<EntityInsentient> endingRunnable
     ) {
@@ -27,8 +29,8 @@ public class LeapPostConfig {
         this.endLeap = endingRunnable;
     }
 
-    public boolean shouldStopCurrentLeap() {
-        return shouldStopCurrentLeap.getAsBoolean();
+    public boolean shouldStopCurrentLeap(@Nullable LeapDo leapDo) {
+        return shouldStopCurrentLeap.apply(leapDo);
     }
 
     public boolean isOnGround() {
@@ -43,7 +45,7 @@ public class LeapPostConfig {
         this.interruptedLeap.accept(entity);
     }
 
-    public void runPreLeap(EntityInsentient entity, Runnable leap) {
-        this.preLeap.accept(entity, leap);
+    public void runPreLeap(EntityInsentient entity, LeapDo leapDo) {
+        this.preLeap.accept(entity, leapDo);
     }
 }

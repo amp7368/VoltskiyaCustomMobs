@@ -1,4 +1,4 @@
-package apple.voltskiya.custom_mobs.leaps.misc;
+package apple.voltskiya.custom_mobs.leaps;
 
 import apple.voltskiya.custom_mobs.leaps.config.LeapDo;
 import apple.voltskiya.custom_mobs.leaps.config.LeapPostConfig;
@@ -16,6 +16,7 @@ public class PathfinderGoalLeap extends PathfinderGoal {
     protected final EntityInsentient me;
     protected final Random random = new Random();
     protected final LeapPreConfig config;
+    private final String name;
     protected LeapPostConfig postConfig;
     protected LeapDo currentLeap = null;
     protected Integer timeOfLastJump = null;
@@ -27,10 +28,11 @@ public class PathfinderGoalLeap extends PathfinderGoal {
      * @param config     the config for the leap
      * @param postConfig provides any runtime info for the leap
      */
-    public PathfinderGoalLeap(EntityInsentient me, LeapPreConfig config, LeapPostConfig postConfig) {
+    public PathfinderGoalLeap(String name,EntityInsentient me, LeapPreConfig config, LeapPostConfig postConfig) {
         this.config = config;
         this.me = me;
         this.postConfig = postConfig;
+        this.name = name;
         this.setMoveType(EnumSet.of(Type.JUMP));
     }
 
@@ -39,6 +41,7 @@ public class PathfinderGoalLeap extends PathfinderGoal {
      */
     @Override
     public boolean a() {
+        System.out.println(name);
         if (this.random.nextInt(config.getCheckInterval()) == 0) {
             final Location themLocation = this.getGoalLocation();
             if (themLocation == null) return false;
@@ -47,9 +50,8 @@ public class PathfinderGoalLeap extends PathfinderGoal {
                     (this.currentLeap == null || !this.currentLeap.isLeaping()) &&
                     this.config.isCorrectRange(meLocation, themLocation) &&
                     this.config.isValidPeak(meLocation, themLocation) &&
-                    !this.postConfig.shouldStopCurrentLeap() &&
+                    !this.postConfig.shouldStopCurrentLeap(null) &&
                     this.postConfig.isOnGround();
-
         } else {
             return false;
         }
@@ -90,9 +92,10 @@ public class PathfinderGoalLeap extends PathfinderGoal {
         this.config.correctPeak(meLocation, goalLocation, this.getHitBoxHeight());
         if (this.config.isCorrectRange(meLocation, goalLocation) && this.config.isValidPeak(meLocation, goalLocation)) {
             try {
-                this.currentLeap = new LeapDo(this.me, goalLocation, this.config, this.postConfig);
+                this.currentLeap = new LeapDo(this.me, this::getGoalLocation, goalLocation, this.config, this.postConfig);
                 // do the jump
                 this.currentLeap.preLeap();
+                this.timeOfLastJump = this.me.ticksLived;
             } catch (IllegalArgumentException ignored) {
             }
         }

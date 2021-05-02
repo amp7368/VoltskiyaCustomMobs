@@ -1,8 +1,8 @@
 package apple.voltskiya.custom_mobs.leaps.revenant;
 
+import apple.voltskiya.custom_mobs.leaps.PathfinderGoalLeap;
 import apple.voltskiya.custom_mobs.leaps.config.LeapPostConfig;
 import apple.voltskiya.custom_mobs.leaps.config.LeapPreConfig;
-import apple.voltskiya.custom_mobs.leaps.misc.PathfinderGoalLeap;
 import apple.voltskiya.custom_mobs.util.Triple;
 import net.minecraft.server.v1_16_R3.EntityHuman;
 import net.minecraft.server.v1_16_R3.EntityInsentient;
@@ -28,7 +28,7 @@ public class PathfinderGoalLeapRevenant extends PathfinderGoalLeap {
      * @param postConfig provides any runtime info for the leap
      */
     public PathfinderGoalLeapRevenant(EntityInsentient me, LeapPreConfig config, LeapPostConfig postConfig) {
-        super(me, config, postConfig);
+        super("revenant",me, config, postConfig);
         this.setMoveType(EnumSet.of(Type.JUMP, Type.MOVE));
     }
 
@@ -41,7 +41,7 @@ public class PathfinderGoalLeapRevenant extends PathfinderGoalLeap {
                 this.me.getGoalTarget() instanceof EntityHuman &&
                 (this.currentLeap == null || !this.currentLeap.isLeaping()) &&
                 this.me.hasLineOfSight(this.me.getGoalTarget()) &&
-                !this.postConfig.shouldStopCurrentLeap() &&
+                !this.postConfig.shouldStopCurrentLeap(null) &&
                 this.postConfig.isOnGround();
     }
 

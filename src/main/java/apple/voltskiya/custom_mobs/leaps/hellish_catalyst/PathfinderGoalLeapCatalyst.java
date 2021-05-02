@@ -1,8 +1,8 @@
 package apple.voltskiya.custom_mobs.leaps.hellish_catalyst;
 
+import apple.voltskiya.custom_mobs.leaps.PathfinderGoalLeap;
 import apple.voltskiya.custom_mobs.leaps.config.LeapPostConfig;
 import apple.voltskiya.custom_mobs.leaps.config.LeapPreConfig;
-import apple.voltskiya.custom_mobs.leaps.misc.PathfinderGoalLeap;
 import net.minecraft.server.v1_16_R3.EntityInsentient;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -18,7 +18,7 @@ public class PathfinderGoalLeapCatalyst extends PathfinderGoalLeap {
      * @param postConfig provides any runtime info for the leap
      */
     public PathfinderGoalLeapCatalyst(EntityInsentient me, LeapPreConfig config, LeapPostConfig postConfig) {
-        super(me, config, postConfig);
+        super("catalyst",me, config, postConfig);
     }
 
     /**
