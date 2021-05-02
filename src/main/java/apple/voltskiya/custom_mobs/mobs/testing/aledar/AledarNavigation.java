@@ -74,13 +74,6 @@ public class AledarNavigation extends BaseCommand implements Listener {
                                         EntityPillager aledar = (EntityPillager) entity;
                                         aledar.getNavigation().o();
                                         aledar.getNavigation().a(blockClicked.getX(), blockClicked.getY(), blockClicked.getZ(), SPEED);
-//                                    final PathfinderGoalMoveTowardsRestriction pathfinder = new PathfinderGoalMoveTowardsRestriction(aledar, .35d);
-//                                    aledar.goalSelector.a(0, pathfinder);
-                                        System.out.println("start");
-//                                    Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
-//                                        aledar.goalSelector.a(pathfinder);
-//                                        System.out.println("removed");
-//                                    }, 100);
                                     }
                                 }
                                 event.setCancelled(true);

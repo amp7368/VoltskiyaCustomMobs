@@ -73,11 +73,6 @@ public class MobParasite extends EntityZombie {
         NmsMobsPlugin.get().log(Level.INFO, "registered " + REGISTERED_NAME);
     }
 
-    @Override
-    protected void b(BlockPosition blockposition, IBlockData iblockdata) {
-        super.b(blockposition, iblockdata);
-    }
-
     /**
      * spawns a WarpedGremlin
      *
@@ -89,6 +84,7 @@ public class MobParasite extends EntityZombie {
         final MobParasite parasite = new MobParasite(entityTypes, world.getHandle());
         parasite.prepareChildren(location, oldNbt);
         parasite.addScoreboardTag(SpawnCustomMobListener.CUSTOM_SPAWN_COMPLETE_TAG);
+        parasite.addScoreboardTag(REGISTERED_NAME);
         world.getHandle().addEntity(parasite);
     }
 
@@ -103,6 +99,7 @@ public class MobParasite extends EntityZombie {
         final MobParasite parasite = new MobParasite(entityTypes, world.getHandle());
         parasite.prepareChildren(location, oldNbt);
         parasite.addScoreboardTag(SpawnCustomMobListener.CUSTOM_SPAWN_COMPLETE_TAG);
+        parasite.addScoreboardTag(REGISTERED_NAME);
         parasite.setMot(velocity);
         world.getHandle().addEntity(parasite);
     }
@@ -147,7 +144,7 @@ public class MobParasite extends EntityZombie {
             } else {
                 this.initPathfinderOtherWorld();
             }
-        }, 5 * 20);
+        }, 5 * 10);
     }
 
 //    @Override
@@ -159,7 +156,7 @@ public class MobParasite extends EntityZombie {
     private void initPathfinderOtherWorld() {
         // new PathfinderGoalRandomStrollLand(entityToMove, speed, chanceToActivate)
         this.goalSelector.a(0, new PathfinderGoalFloat(this));
-        this.goalSelector.a(1, new PathfinderGoalCraveBlock(this, Collections.singletonList(org.bukkit.Material.NETHER_PORTAL), 316, 20, 2, 1.0));
+        this.goalSelector.a(1, new PathfinderGoalCraveBlock(this, Collections.singletonList(org.bukkit.Material.NETHER_PORTAL), 512, 20, 2, 1.0));
         this.goalSelector.a(2, new PathfinderGoalRandomStrollLand(this, 1.0D, 0.003F));
     }
 
@@ -321,9 +318,7 @@ public class MobParasite extends EntityZombie {
          */
         @Override
         protected boolean a() {
-            final boolean a = super.a();
-//            System.out.println("a() = " + a);
-            return a;
+            return super.a();
         }
 
         /**
@@ -331,29 +326,22 @@ public class MobParasite extends EntityZombie {
          */
         @Override
         protected Vec3D b() {
-            final Vec3D b = super.b();
-//            System.out.println("b() = " + b);
-            return b;
+            return super.b();
         }
 
         @Override
         @Nullable
         protected PathEntity a(Set<BlockPosition> var0, int var1, boolean var2, int var3) {
-            PathEntity e = super.a(var0, var1, var2, var3);
-            return e;
+            return super.a(var0, var1, var2, var3);
         }
 
         @Override
         public PathEntity a(BlockPosition var0, int var1) {
-            final PathEntity a = super.a(var0, var1);
-//            System.out.println("a(block,int) = " + a);
-            return a;
+            return super.a(var0, var1);
         }
 
         protected boolean a(Vec3D var0, Vec3D var1, int var2, int var3, int var4) {
-            final boolean a = super.a(var0, var1, var2, var3, var4);
-//            System.out.println("a(vec,vec,int,int,int) = " + a);
-            return a;
+            return super.a(var0, var1, var2, var3, var4);
         }
 
         @Override

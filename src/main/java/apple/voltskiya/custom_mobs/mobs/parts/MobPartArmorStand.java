@@ -270,7 +270,6 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild 
 
     @Override
     public EnumInteractionResult a(EntityHuman entityhuman, Vec3D vec3d, EnumHand enumhand) {
-        System.out.println("whoa");
         return this.mainMob.entity.a(entityhuman, enumhand);
     }
 

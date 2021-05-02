@@ -6,7 +6,9 @@ import net.minecraft.server.v1_16_R3.PathfinderGoalRandomStrollLand;
 import net.minecraft.server.v1_16_R3.PathfinderGoalSelector;
 import net.minecraft.server.v1_16_R3.Vec3D;
 import org.bukkit.*;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftCreature;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 
 import java.util.Random;
 
@@ -36,14 +38,14 @@ public class MobInfected {
         double y = bukkitEntity.getLocation().getY();
         double z = bukkitEntity.getLocation().getZ();
         Random random = new Random();
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 1; i++) {
             double xi = (random.nextDouble() - .5) * 1;
             double yi = (random.nextDouble() - .5) * 1;
             double zi = (random.nextDouble() - .5) * 1;
             bukkitEntity.getLocation().getWorld().spawnParticle(Particle.CRIMSON_SPORE, x + xi, y + yi, z + zi, 2, 0, 0, 0, 0.04);
         }
         if (random.nextInt(80) == 0) sound(bukkitEntity);
-        Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), this::particles, 2);
+        Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), this::particles, 3);
     }
 
     private void sound(CraftEntity bukkitEntity) {
@@ -58,10 +60,10 @@ public class MobInfected {
         double y = bukkitEntity.getLocation().getY();
         double z = bukkitEntity.getLocation().getZ();
         Random random = new Random();
-        for (int i = 0; i < 15; i++) {
-            double xi = (random.nextDouble() - .5) * 1.75;
-            double yi = (random.nextDouble() - .5) * 1.75;
-            double zi = (random.nextDouble() - .5) * 1.75;
+        for (int i = 0; i < 30; i++) {
+            double xi = (random.nextDouble() - .5) * 2.25;
+            double yi = (random.nextDouble() - .5) * 2.25;
+            double zi = (random.nextDouble() - .5) * 2.25;
             bukkitEntity.getLocation().getWorld().spawnParticle(Particle.CRIMSON_SPORE, x + xi, y + yi, z + zi, 2, 0, 0, 0, 0.04);
             Particle.DustOptions dust = new Particle.DustOptions(Color.fromRGB(random.nextBoolean() ? 99 : 172, 0, 0), 1.5f);
             bukkitEntity.getLocation().getWorld().spawnParticle(Particle.REDSTONE, x + xi, y + yi, z + zi, 2, 0, 0, 0, 0.04, dust);
@@ -84,5 +86,9 @@ public class MobInfected {
         this.entity.goalSelector = new PathfinderGoalSelector(entity.world.getMethodProfilerSupplier());
         this.entity.targetSelector = new PathfinderGoalSelector(entity.world.getMethodProfilerSupplier());
         this.entity.goalSelector.a(5, new PathfinderGoalRandomStrollLand(entity, 1.5D));
+    }
+
+    public static void spawnEat(CreatureSpawnEvent event) {
+        new MobInfected(((CraftCreature)event.getEntity()).getHandle());
     }
 }

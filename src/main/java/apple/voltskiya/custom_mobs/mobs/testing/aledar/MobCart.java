@@ -130,7 +130,6 @@ public class MobCart extends EntityHorse {
     @Override
     public void move(EnumMoveType enummovetype, Vec3D vec3d) {
         super.move(enummovetype, vec3d);
-        System.out.println(vec3d);
         List<Packet<?>> packetsToSend = new ArrayList<>();
         for (MobPartChild child : children) {
             packetsToSend.add(child.moveFromMother(false));

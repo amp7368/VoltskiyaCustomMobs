@@ -182,6 +182,10 @@ public class MobWarpedGremlin extends EntityZombie {
     }
 
 
+    @Override
+    public boolean isFireProof() {
+        return true;
+    }
 
     /**
      * change worlds

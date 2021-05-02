@@ -42,7 +42,7 @@ public class MobEyePlant extends EntityZombie {
     }
 
     /**
-     * registers the WarpedGremlin as an entity
+     * registers the EyePlant as an entity
      */
     public static void initialize() {
         EntityTypes.Builder<MobEyePlant> entitytypesBuilder = EntityTypes.Builder.a(MobEyePlant::new, EnumCreatureType.MONSTER);
@@ -123,6 +123,11 @@ public class MobEyePlant extends EntityZombie {
     protected void initPathfinder() {
         // only look aat the player
         this.goalSelector.a(0, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 8.0F));
+    }
+
+    @Override
+    public boolean isFireProof() {
+        return true;
     }
 
     @Override

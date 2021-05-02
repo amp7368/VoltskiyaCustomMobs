@@ -136,11 +136,12 @@ public class TurretMob implements Runnable {
     }
 
     public void tick() {
+        if (this.durabilityEntityReal.isDead()) remove();
         if (target == null) {
             List<Player> players = UpdatedPlayerList.getPlayers(callerUid);
             for (Player player : players) {
                 double distance = DistanceUtils.distance(player.getLocation(), center);
-                if (distance <= MAX_SIGHT && player.hasLineOfSight(durabilityEntityReal)) {
+                if (distance <= MAX_SIGHT && player.hasLineOfSight(durabilityEntityReal) && player.getGameMode() == GameMode.SURVIVAL) {
                     final Vector newFacing = player.getLocation().subtract(center).toVector().setY(0).normalize();
                     if (rotate(newFacing)) {
                         target = player;
@@ -152,7 +153,7 @@ public class TurretMob implements Runnable {
             }
         } else {
             double distance = DistanceUtils.distance(target.getLocation(), center);
-            if (distance <= MAX_SIGHT && target.hasLineOfSight(durabilityEntityReal) && target.getGameMode() == GameMode.SURVIVAL) {
+            if (distance <= MAX_SIGHT && target.hasLineOfSight(durabilityEntityReal) && target.getGameMode() == GameMode.SURVIVAL && !target.isDead()) {
                 final Vector newFacing = target.getLocation().subtract(center).toVector().setY(0).normalize();
                 if (rotate(newFacing)) {
                     shoot(target);
