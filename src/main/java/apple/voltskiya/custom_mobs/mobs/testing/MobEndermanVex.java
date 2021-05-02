@@ -57,6 +57,11 @@ public class MobEndermanVex extends EntityEnderman {
     }
 
     @Override
+    protected void initPathfinder() {
+        super.initPathfinder();
+    }
+
+    @Override
     protected SoundEffect getSoundAmbient() {
         return SoundEffects.BLOCK_HONEY_BLOCK_SLIDE;
     }

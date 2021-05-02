@@ -8,11 +8,11 @@ import apple.voltskiya.custom_mobs.leaps.revenant.LeapRevenant;
 import apple.voltskiya.custom_mobs.leaps.upwards.LeapUpwards;
 
 public enum LeapType {
-    UPWARDS_LEAP("upwards_leap", LeapUpwards::eatSpawnEvent) ,
-    POUNCE_LEAP("pounce_leap", LeapPounce::eatSpawnEvent) ,
-    POUNCE_LEAP_UP("pounce_leap_up", LeapPounce::eatSpawnEvent) ,
-    REVENANT_LEAP("revenant_leap", LeapRevenant::eatSpawnEvent) ,
-    HELLISH_CATALYST_LEAP("hellish_catalyst_leap", LeapHellishCatalyst::eatSpawnEvent) ;
+    UPWARDS_LEAP("upwards_leap", LeapUpwards::eatSpawnEvent),
+    POUNCE_LEAP("pounce_leap", LeapPounce::eatSpawnEvent),
+    POUNCE_LEAP_UP("pounce_leap_up", LeapPounce::eatSpawnEvent),
+    REVENANT_LEAP("revenant_leap", LeapRevenant::eatSpawnEvent),
+    HELLISH_CATALYST_LEAP("hellish_catalyst_leap", LeapHellishCatalyst::eatSpawnEvent);
 
     private final String leapName;
     private final LeapSpawnListener.CustomSpawnEater leapEater;

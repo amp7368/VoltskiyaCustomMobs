@@ -41,7 +41,6 @@ public class PathfinderGoalLeap extends PathfinderGoal {
      */
     @Override
     public boolean a() {
-        System.out.println(name);
         if (this.random.nextInt(config.getCheckInterval()) == 0) {
             final Location themLocation = this.getGoalLocation();
             if (themLocation == null) return false;

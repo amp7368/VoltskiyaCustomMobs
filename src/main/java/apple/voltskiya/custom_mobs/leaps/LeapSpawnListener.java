@@ -28,7 +28,6 @@ public class LeapSpawnListener implements Listener {
             LeapType leapType = spawnEaters.get(tag);
             if (leapType != null) {
                 leapType.getLeapEater().eatSpawnEvent(event, leapType);
-                break;
             } else {
                 LeapPreConfig config = LeapConfigManager.get().getLeap(tag);
                 if (config != null) LeapSpecificMisc.eatSpawnEvent(event, config);

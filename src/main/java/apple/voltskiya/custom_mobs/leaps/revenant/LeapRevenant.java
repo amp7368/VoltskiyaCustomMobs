@@ -24,7 +24,6 @@ public class LeapRevenant {
                     LeapRevenant::interruptedLeap,
                     (entity) -> LeapRevenant.endLeap(entity, lastTarget)
             );
-            System.out.println("revenant");
             ((EntityInsentient) creature).goalSelector.a(0, new PathfinderGoalLeapRevenant((EntityInsentient) creature, leapType.getLeapConfig(), postConfig));
         }
     }

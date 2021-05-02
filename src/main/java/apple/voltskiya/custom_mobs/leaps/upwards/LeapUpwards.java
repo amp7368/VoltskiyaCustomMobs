@@ -25,7 +25,7 @@ public class LeapUpwards {
                 LeapUpwards::endLeap
         );
         if (creature instanceof EntityInsentient) {
-            ((EntityInsentient) creature).goalSelector.a(5, new PathfinderGoalLeapUpwards((EntityInsentient) creature, leapType, postConfig));
+            ((EntityInsentient) creature).goalSelector.a(0, new PathfinderGoalLeapUpwards((EntityInsentient) creature, leapType, postConfig));
         }
     }
 
