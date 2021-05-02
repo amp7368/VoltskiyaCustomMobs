@@ -9,20 +9,17 @@ import org.bukkit.craftbukkit.v1_16_R3.entity.CraftLivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.util.Vector;
 
-import javax.annotation.Nullable;
-
 public class LeapRevenant {
     public static void eatSpawnEvent(CreatureSpawnEvent event, LeapType leapType) {
         EntityLiving creature = ((CraftLivingEntity) event.getEntity()).getHandle();
         if (creature instanceof EntityInsentient) {
-            @Nullable EntityLiving lastTarget = ((EntityInsentient) creature).getGoalTarget();
 
             LeapPostConfig postConfig = new LeapPostConfig(
                     (leapDo) -> shouldStopLeap(creature),
                     creature::isOnGround,
                     LeapRevenant::preLeap,
                     LeapRevenant::interruptedLeap,
-                    (entity) -> LeapRevenant.endLeap(entity, lastTarget)
+                    (entity) -> LeapRevenant.endLeap(entity, entity.getGoalTarget())
             );
             ((EntityInsentient) creature).goalSelector.a(0, new PathfinderGoalLeapRevenant((EntityInsentient) creature, leapType.getLeapConfig(), postConfig));
         }

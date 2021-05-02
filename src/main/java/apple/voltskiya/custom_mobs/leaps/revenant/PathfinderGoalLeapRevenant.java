@@ -4,9 +4,7 @@ import apple.voltskiya.custom_mobs.leaps.PathfinderGoalLeap;
 import apple.voltskiya.custom_mobs.leaps.config.LeapPostConfig;
 import apple.voltskiya.custom_mobs.leaps.config.LeapPreConfig;
 import apple.voltskiya.custom_mobs.util.Triple;
-import net.minecraft.server.v1_16_R3.EntityHuman;
-import net.minecraft.server.v1_16_R3.EntityInsentient;
-import net.minecraft.server.v1_16_R3.EntityLiving;
+import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.jetbrains.annotations.Nullable;
@@ -28,7 +26,7 @@ public class PathfinderGoalLeapRevenant extends PathfinderGoalLeap {
      * @param postConfig provides any runtime info for the leap
      */
     public PathfinderGoalLeapRevenant(EntityInsentient me, LeapPreConfig config, LeapPostConfig postConfig) {
-        super("revenant",me, config, postConfig);
+        super("revenant", me, config, postConfig);
         this.setMoveType(EnumSet.of(Type.JUMP, Type.MOVE));
     }
 
@@ -38,9 +36,7 @@ public class PathfinderGoalLeapRevenant extends PathfinderGoalLeap {
     @Override
     public boolean a() {
         return this.random.nextInt(config.getCheckInterval()) == 0 &&
-                this.me.getGoalTarget() instanceof EntityHuman &&
                 (this.currentLeap == null || !this.currentLeap.isLeaping()) &&
-                this.me.hasLineOfSight(this.me.getGoalTarget()) &&
                 !this.postConfig.shouldStopCurrentLeap(null) &&
                 this.postConfig.isOnGround();
     }
@@ -52,8 +48,28 @@ public class PathfinderGoalLeapRevenant extends PathfinderGoalLeap {
     @Override
     protected Location getGoalLocation() {
         final EntityLiving goalTarget = this.me.getGoalTarget();
-        if (goalTarget == null) return null;
-        Location targetLocation = goalTarget.getBukkitEntity().getLocation();
+        Location targetLocation;
+        if (goalTarget == null) {
+            if (this.me instanceof EntityCreature) {
+                Vec3D loc;
+                try {
+                    loc = RandomPositionGenerator.a((EntityCreature) this.me, (int) this.config.getDistanceMin(), (int) this.config.getDistanceMax());
+                } catch (IllegalArgumentException e) {
+                    System.out.println(this.config.getDistanceMin() + " " + this.config.getDistanceMax());
+                    e.printStackTrace();
+                    return null;
+                }
+                if (loc == null) {
+                    return null;
+                } else {
+                    targetLocation = new Location(this.me.getWorld().getWorld(), loc.getX(), loc.getY(), loc.getZ());
+                }
+            } else {
+                return null;
+            }
+        } else {
+            targetLocation = goalTarget.getBukkitEntity().getLocation();
+        }
         World world = targetLocation.getWorld();
         final int maxHeight = world.getMaxHeight();
         int x = targetLocation.getBlockX();
