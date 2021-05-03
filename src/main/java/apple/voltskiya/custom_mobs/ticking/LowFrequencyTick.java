@@ -24,7 +24,11 @@ public class LowFrequencyTick implements Tickable, TickGiverable {
             currentTick = 1;
             synchronized (tickering) {
                 for (Runnable runMe : new ArrayList<>(tickering.values())) {
-                    runMe.run();
+                    try {
+                        runMe.run();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }

@@ -1,9 +1,8 @@
 package apple.voltskiya.custom_mobs.abilities.listeners;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import apple.voltskiya.custom_mobs.abilities.ai_changes.AggressionChanges;
-import apple.voltskiya.custom_mobs.abilities.ai_changes.DefaultAggressive;
-import apple.voltskiya.custom_mobs.abilities.ai_changes.DefaultPassive;
+import apple.voltskiya.custom_mobs.abilities.ai_changes.micro_misles.MicroMissileConfig;
+import apple.voltskiya.custom_mobs.abilities.ai_changes.micro_misles.MicroMissleShooter;
 import apple.voltskiya.custom_mobs.abilities.tick.SpawnEater;
 import apple.voltskiya.custom_mobs.abilities.tick.charger.ChargerManagerTicker;
 import apple.voltskiya.custom_mobs.abilities.tick.hell_blazer.HellGuardManagerTicker;
@@ -40,17 +39,23 @@ public class MobSpawnListener implements Listener {
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassCastException e) {
-            System.err.println("There was an issue with one of the config settings.\n" +
+            System.err.println("There was an issue with one of the config settings of spawnEaters.\n" +
                     "You may have changed a setting that resulted in changing the type of data that was in one of the fields.");
             e.printStackTrace();
         }
         for (SpawnEater spawnEater : spawnEater.values()) {
             spawnEater.registerInDB();
         }
-        spawnModifier.put("aggrotarget", new AggressionChanges());
-        spawnModifier.put("default_aggressive", new DefaultAggressive());
-        spawnModifier.put("default_passive", new DefaultPassive());
-
+        try {
+            new MicroMissileConfig();
+            spawnModifier.put("micro_missile_shooter", new MicroMissleShooter());
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassCastException e) {
+            System.err.println("There was an issue with one of the config settings of spawnModifiers.\n" +
+                    "You may have changed a setting that resulted in changing the type of data that was in one of the fields.");
+            e.printStackTrace();
+        }
     }
 
     @EventHandler(ignoreCancelled = true)

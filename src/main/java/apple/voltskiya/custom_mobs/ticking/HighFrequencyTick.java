@@ -21,7 +21,11 @@ public class HighFrequencyTick implements Tickable, TickGiverable {
     public void tick() {
         synchronized (tickering) {
             for (Runnable runMe : new ArrayList<>(tickering.values())) {
-                runMe.run();
+                try {
+                    runMe.run();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

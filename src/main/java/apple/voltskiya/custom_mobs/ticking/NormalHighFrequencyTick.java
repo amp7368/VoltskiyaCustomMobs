@@ -24,7 +24,11 @@ public class NormalHighFrequencyTick implements Tickable, TickGiverable {
             if (count++ % TICKS_PER_TICK == 0) {
                 count = 1;
                 for (Runnable runMe : new ArrayList<>(tickering.values())) {
-                    runMe.run();
+                    try {
+                        runMe.run();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }

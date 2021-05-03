@@ -7,6 +7,7 @@ import apple.voltskiya.custom_mobs.mobs.modified.iron_golem.MobIronGolemExaminer
 import apple.voltskiya.custom_mobs.mobs.nether.eye_plant.MobEyePlant;
 import apple.voltskiya.custom_mobs.mobs.nether.gremlin.MobWarpedGremlin;
 import apple.voltskiya.custom_mobs.mobs.nether.parasite.MobParasite;
+import apple.voltskiya.custom_mobs.mobs.nether.revenant.MobRevenant;
 import apple.voltskiya.custom_mobs.mobs.parts.MobPartArmorStand;
 import apple.voltskiya.custom_mobs.mobs.parts.NmsModelConfig;
 import apple.voltskiya.custom_mobs.mobs.testing.MobEndermanVex;
@@ -41,6 +42,7 @@ public class NmsMobsPlugin extends VoltskiyaModule {
         MobIronGolemExaminer.initialize();
         MobIllagerIllusionerExaminer.initialize();
         MobIllagerPillagerExaminer.initialize();
+        MobRevenant.initialize();
         new AledarNavigation();
         new MobsSpawnCommand();
         new SpawnCustomMobListener();
