@@ -50,7 +50,7 @@ public class TurretGuiManager implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
         final InventoryHolder holder = event.getInventory().getHolder();
         if (holder instanceof TurretGui) {

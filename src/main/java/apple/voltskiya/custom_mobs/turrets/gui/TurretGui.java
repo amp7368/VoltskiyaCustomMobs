@@ -92,6 +92,8 @@ public class TurretGui implements InventoryHolder {
                 inventory.setItem(arrowIndex.next(), makeItem(arrow.getKey(), arrow.getValue(), null, null));
             } else arrowIndex.next();
         }
+        for (int i : FillInventory.getBow())
+            inventory.setItem(i, turret.getBow());
     }
 
 
@@ -105,18 +107,28 @@ public class TurretGui implements InventoryHolder {
     private void bowStartChange(InventoryClickEvent event) {
         final ItemStack cursor = event.getCursor();
         if (cursor == null || cursor.getType().isAir() || MaterialUtils.isBowLike(cursor.getType()))
-            Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), this::bowChange, 0);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), this::bowChange);
         else event.setCancelled(true);
     }
 
     private void bowChange() {
-
+        ItemStack bow = null;
+        for (int index : FillInventory.getBow()) {
+            final ItemStack item = inventory.getItem(index);
+            if (item == null || !MaterialUtils.isBowLike(item.getType()) || item.getAmount() == 0) {
+                bow = null;
+            } else {
+                bow = item;
+            }
+            break;
+        }
+        turret.setBow(bow);
     }
 
     private void arrowStartChange(InventoryClickEvent event) {
         final ItemStack cursor = event.getCursor();
         if (cursor == null || cursor.getType().isAir() || MaterialUtils.isArrow(cursor.getType()))
-            Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), this::arrowChange, 0);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), this::arrowChange);
         else event.setCancelled(true);
     }
 

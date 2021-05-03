@@ -48,6 +48,7 @@ public class DBNames {
         public static final String ITEM_COUNT = "item_count";
         public static final String DURABILITY = "durability";
         public static final String ENCHANTMENT_UID = "enchantment_uid";
+        public static final String ENCHANTMENT_NAMESPACE = "enchantment_namespace";
         public static final String ENCHANTMENT_NAME = "enchantment_name";
         public static final String ENCHANTMENT_LEVEL = "enchantment_level";
         public static final String ITEM_TABLE = "item";

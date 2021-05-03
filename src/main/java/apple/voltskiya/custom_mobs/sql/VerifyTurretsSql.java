@@ -98,8 +98,10 @@ public class VerifyTurretsSql {
     );
     private static final String ENCHANTMENT_ENUM_CONTENT = String.format(
             "    %s   INTEGER NOT NULL PRIMARY KEY,\n" +
-                    "    %s  VARCHAR(70) NOT NULL",
+                    "    %s  VARCHAR(70) NOT NULL,\n" +
+            "    %s  VARCHAR(70) NOT NULL",
             DBNames.ItemNames.ENCHANTMENT_UID,
+            DBNames.ItemNames.ENCHANTMENT_NAMESPACE,
             DBNames.ItemNames.ENCHANTMENT_NAME
     );
     private static final String CREATE_TABLE_FORMAT = "CREATE TABLE IF NOT EXISTS %s ( %s );";
@@ -107,7 +109,8 @@ public class VerifyTurretsSql {
     public static long currentMaterialUid;
     public static final Object syncDB = new Object();
     public static Connection database;
-    private static int currentItemStackUid;
+    public static long currentItemStackUid;
+    public static long currentEnchantmentUid;
 
     /**
      * do any setup and make sure the static part of this class is completed
@@ -148,6 +151,7 @@ public class VerifyTurretsSql {
                     DBUtils.getMyMaterialUid(Material.AIR)));
             currentMaterialUid = statement.executeQuery(String.format("SELECT max(%s)+1 FROM %s", DBNames.MaterialNames.MATERIAL_UID, DBNames.MaterialNames.MATERIAL_TABLE)).getInt(1);
             currentItemStackUid = statement.executeQuery(String.format("SELECT max(%s)+1 FROM %s", DBNames.ItemNames.ITEM_UID, DBNames.ItemNames.ITEM_TABLE)).getInt(1);
+            currentEnchantmentUid = statement.executeQuery(String.format("SELECT max(%s)+1 FROM %s", DBNames.ItemNames.ENCHANTMENT_UID, DBNames.ItemNames.ENCHANTMENT_TABLE)).getInt(1);
             currentTurretUid = statement.executeQuery(String.format("SELECT max(%s)+1 FROM %s", DBNames.TurretNames.TURRET_UID, DBNames.TurretNames.TURRETS_TABLE)).getInt(1);
             statement.close();
         }

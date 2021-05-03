@@ -1,15 +1,18 @@
 package apple.voltskiya.custom_mobs.turrets;
 
+import apple.voltskiya.custom_mobs.sql.DBUtils;
 import apple.voltskiya.custom_mobs.sql.TurretsSql;
-import apple.voltskiya.custom_mobs.sql.VerifyMobsSql;
 import apple.voltskiya.custom_mobs.turrets.gui.TurretGuiManager;
 import apple.voltskiya.custom_mobs.util.*;
 import org.bukkit.*;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,14 +40,14 @@ public class TurretMob implements Runnable {
     private final EntityLocation refilledEntity;
     private final EntityLocation bowEntity;
     private List<Pair<Material, Integer>> arrows;
-    private final ItemStack bow;
-    private final long bowId;
+    private ItemStack bow;
+    private long bowId;
     private double health;
     private long uid;
     private boolean isDead = false;
     private final long callerUid = UpdatedPlayerList.callerUid();
     private Player target = null;
-    private final List<Vector> targetLastLocation = new ArrayList<Vector>();
+    private final List<Vector> targetLastLocation = new ArrayList<>();
     private boolean isUpdatingDB = false;
     private final TurretType turretType;
 
@@ -116,7 +119,7 @@ public class TurretMob implements Runnable {
                 throwables.printStackTrace();
             }
         }
-        if (!this.isOkayToStart()) {
+        if (this.isOkayToStart()) {
             new Thread(this).start();
         }
         TurretGuiManager.get().updateGui(getUniqueId());
@@ -208,7 +211,7 @@ public class TurretMob implements Runnable {
 
 
     private void shoot(Player target) {
-        if (arrowsEmpty()) return;
+        if (arrowsEmpty() || noBow()) return;
         Location goal = target.getLocation();
         this.targetLastLocation.add(goal.toVector());
         int lastLocationSize = this.targetLastLocation.size();
@@ -245,7 +248,7 @@ public class TurretMob implements Runnable {
             double x = Math.sqrt(a * a + b * b);
             double y = goal.getY() - spawnLocation.getY();
             double c = GRAVITY * x / (2 * v * v);
-            // this could be a minus as well
+            // this could be a plus as well
             double theta = Math.atan((-1 + Math.sqrt(1 + 4 * c * (c - y / x))) / (2 * c));
             double vxz = v * Math.cos(theta);
             double vy = v * -Math.sin(theta);
@@ -254,9 +257,11 @@ public class TurretMob implements Runnable {
             double vx = vxz * Math.cos(xzTheta);
             double vz = vxz * Math.sin(xzTheta);
             @Nullable Material removedArrow = removeArrow();
+            this.tickBowDurability();
             if (removedArrow == null || removedArrow.isAir()) {
                 return;
             }
+
             EntityType arrowEntity;
             try {
                 arrowEntity = EntityType.valueOf(removedArrow.name());
@@ -269,11 +274,41 @@ public class TurretMob implements Runnable {
                 arrow.setVelocity(new Vector(vx * .25, vy * .25, vz * .25));
                 arrow.addScoreboardTag("no_stick");
             });
-            if (!this.isOkayToStart()) {
+            if (this.isOkayToStart()) {
                 new Thread(this).start();
             }
             TurretGuiManager.get().updateGui(getUniqueId());
         }
+    }
+
+    private void tickBowDurability() {
+        if (turretType != TurretType.INFINITE) {
+            if (this.bow != null) {
+                ItemMeta itemMeta = this.bow.getItemMeta();
+                if (itemMeta instanceof Damageable) {
+                    int unbreaking = this.bow.getEnchantmentLevel(Enchantment.DURABILITY);
+                    boolean doBreak = randomBreak(unbreaking);
+                    if (doBreak) {
+                        ((Damageable) itemMeta).setDamage(((Damageable) itemMeta).getDamage() + 1);
+                        this.bow.setItemMeta(itemMeta);
+                        if (((Damageable) itemMeta).getDamage() >= this.bow.getType().getMaxDurability()) {
+                            // delete bow
+                            this.bow = new ItemStack(Material.AIR);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private static boolean randomBreak(int unbreakingLevel) {
+        return Math.random() <= 1f / (unbreakingLevel + 1);
+    }
+
+    private boolean noBow() {
+        if (this.bow == null || this.bow.getType().isAir()) return true;
+        ItemMeta meta = this.bow.getItemMeta();
+        return meta instanceof Damageable && ((Damageable) meta).getDamage() >= this.bow.getType().getMaxDurability();
     }
 
     @Nullable
@@ -282,15 +317,14 @@ public class TurretMob implements Runnable {
             final int count = arrow.getValue();
             if (arrow.getKey() != Material.AIR && count != 0) {
                 if (turretType != TurretType.INFINITE) {
-                    arrow.setValue(count - 1);
                     if (count == 1) {
                         arrow.setKey(Material.AIR);
                     }
+                    if (isOkayToStart()) {
+                        new Thread(this).start();
+                    }
+                    TurretGuiManager.get().updateGui(getUniqueId());
                 }
-                if (!isOkayToStart()) {
-                    new Thread(this).start();
-                }
-                TurretGuiManager.get().updateGui(getUniqueId());
                 return arrow.getKey();
             }
         }
@@ -299,7 +333,7 @@ public class TurretMob implements Runnable {
 
     public void setArrows(List<Pair<Material, Integer>> arrows) {
         this.arrows = arrows;
-        if (!isOkayToStart()) {
+        if (isOkayToStart()) {
             new Thread(this).start();
         }
         TurretGuiManager.get().updateGui(getUniqueId());
@@ -308,7 +342,7 @@ public class TurretMob implements Runnable {
 
     public void repair(int repairAmount) {
         this.health = Math.min(MAX_HEALTH, repairAmount * HEALTH_PER_REPAIR + health);
-        if (!isOkayToStart()) {
+        if (isOkayToStart()) {
             new Thread(this).start();
         }
         TurretGuiManager.get().updateGui(getUniqueId());
@@ -318,7 +352,7 @@ public class TurretMob implements Runnable {
         final Vector direction = center.getDirection();
         center.setDirection(VectorUtils.rotateVector(direction.getX(), direction.getZ(), direction.getY(), degrees));
         resetRotate();
-        if (!isOkayToStart()) {
+        if (isOkayToStart()) {
             new Thread(this).start();
         }
         TurretGuiManager.get().updateGui(getUniqueId());
@@ -346,17 +380,15 @@ public class TurretMob implements Runnable {
     public void run() {
         try {
             Thread.sleep(BUFFER_TIME_TO_UPDATE);
-        } catch (InterruptedException e) {
+        } catch (InterruptedException ignored) {
         }
-
-        synchronized (VerifyMobsSql.syncDB) {
-            synchronized (this) {
-                this.isUpdatingDB = false;
-            }
+        // do this before to make sure we don't say finish before we say we're done
+        synchronized (this) {
+            this.isUpdatingDB = false;
         }
         try {
+            System.out.println("update");
             TurretsSql.registerOrUpdate(this);
-
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -380,7 +412,7 @@ public class TurretMob implements Runnable {
         synchronized (this) {
             boolean old = this.isUpdatingDB;
             this.isUpdatingDB = true;
-            return old;
+            return !old;
         }
     }
 
@@ -438,5 +470,22 @@ public class TurretMob implements Runnable {
 
     public TurretType getTurretType() {
         return turretType;
+    }
+
+    public void setBow(ItemStack bow) {
+        try {
+            DBUtils.removeItemUid(this.bowId);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        try {
+            this.bow = bow;
+            this.bowId = DBUtils.getItemUid(this.bow);
+            if (isOkayToStart()) {
+                new Thread(this).start();
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
     }
 }

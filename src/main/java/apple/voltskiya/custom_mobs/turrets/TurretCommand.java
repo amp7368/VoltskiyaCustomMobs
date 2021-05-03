@@ -8,6 +8,7 @@ import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Subcommand;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
@@ -39,12 +40,12 @@ public class TurretCommand extends BaseCommand {
     @Subcommand("finite")
     public void turretFinite(Player player) {
         createTurretEntities(player.getLocation(), new TurretBuilder(player,TurretType.FINITE));
-        player.sendMessage("Turret Created");
+        player.sendMessage(ChatColor.GREEN+"Turret Created");
     }
     @Subcommand("infinite")
     public void turretInfinite(Player player) {
         createTurretEntities(player.getLocation(), new TurretBuilder(player,TurretType.INFINITE));
-        player.sendMessage("Turret Created");
+        player.sendMessage(ChatColor.GREEN+"Turret Created");
     }
 
     private final AtomicInteger turretCount = new AtomicInteger(0);
@@ -56,9 +57,6 @@ public class TurretCommand extends BaseCommand {
         for (CustomModel.CustomEntity entity : model.entities) {
             turretCount.incrementAndGet();
 
-            Vector direction = location.getDirection();
-//            double angle = Math.atan2(direction.getZ(), direction.getX()); TODO
-            // TODO
             double angle = Math.atan2(entity.facingZ, entity.facingX);
             double facingX = Math.cos(angle);
             double facingZ = Math.sin(angle);
@@ -151,18 +149,18 @@ public class TurretCommand extends BaseCommand {
 
         new Thread(() -> {
             while (turretCount.get() != 0) {
+                // this very rarely runs even once
                 try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    // todo make this not busywait
+                    Thread.sleep(100);
+                } catch (InterruptedException ignored) {
                 }
             }
             final TurretMob built;
             try {
                 built = turretMob.build();
+                TurretManagerTicker.get().addTurret(built);
                 Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), built::resetRotate);
                 built.run();
-                TurretManagerTicker.get().addTurret(built);
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
