@@ -1,12 +1,14 @@
 package apple.voltskiya.custom_mobs.turrets.gui;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
+import apple.voltskiya.custom_mobs.sql.DBItemStack;
 import apple.voltskiya.custom_mobs.turrets.TurretMob;
-import apple.voltskiya.custom_mobs.util.MaterialUtils;
-import apple.voltskiya.custom_mobs.util.Pair;
+import apple.voltskiya.custom_mobs.util.minecraft.MaterialUtils;
+import net.minecraft.server.v1_16_R3.NBTTagCompound;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
@@ -84,12 +86,12 @@ public class TurretGui implements InventoryHolder {
             inventory.setItem(i, makeItem(Material.ANVIL, 1, "Repair " + TurretMob.HEALTH_PER_REPAIR + " hp",
                     Collections.singletonList("Cost: " + turret.getRepairCost() + " iron")
             ));
-        Iterator<Pair<Material, Integer>> arrows = turret.getArrows().iterator();
+        Iterator<DBItemStack> arrows = turret.getArrows().iterator();
         Iterator<Integer> arrowIndex = FillInventory.getArrow().iterator();
         while (arrows.hasNext() && arrowIndex.hasNext()) {
-            Pair<Material, Integer> arrow = arrows.next();
-            if (arrow != null && !arrow.getKey().isAir()) {
-                inventory.setItem(arrowIndex.next(), makeItem(arrow.getKey(), arrow.getValue(), null, null));
+            DBItemStack arrow = arrows.next();
+            if (arrow != null && !arrow.type.isAir()) {
+                inventory.setItem(arrowIndex.next(), arrow.toItem());
             } else arrowIndex.next();
         }
         for (int i : FillInventory.getBow())
@@ -133,13 +135,14 @@ public class TurretGui implements InventoryHolder {
     }
 
     private void arrowChange() {
-        List<Pair<Material, Integer>> arrows = new ArrayList<>();
+        List<DBItemStack> arrows = new ArrayList<>();
         for (int index : FillInventory.getArrow()) {
             final ItemStack item = inventory.getItem(index);
             if (item == null || !MaterialUtils.isArrow(item.getType()) || item.getAmount() == 0) {
-                arrows.add(new Pair<>(Material.AIR, 0));
+                arrows.add(new DBItemStack(Material.AIR, 0, ""));
             } else {
-                arrows.add(new Pair<>(item.getType(), item.getAmount()));
+                String nbt = CraftItemStack.asNMSCopy(item).save(new NBTTagCompound()).asString();
+                arrows.add(new DBItemStack(item.getType(), item.getAmount(), nbt));
             }
         }
         turret.setArrows(arrows);

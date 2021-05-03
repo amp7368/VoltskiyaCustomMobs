@@ -48,11 +48,13 @@ public class VerifyTurretsSql {
                     "    %s INTEGER NOT NULL,\n" +
                     "    %s INTEGER NOT NULL,\n" +
                     "    %s INTEGER NOT NULL,\n" +
+                    "    %s TEXT NOT NULL,\n" +
                     "    PRIMARY KEY (%s, %s)",
             DBNames.TurretNames.TURRET_UID,
             DBNames.TurretNames.ARROW_SLOT_INDEX,
             DBNames.MaterialNames.MATERIAL_UID,
             DBNames.TurretNames.ARROW_COUNT,
+            DBNames.TurretNames.ARROW_NBT,
             DBNames.TurretNames.TURRET_UID,
             DBNames.TurretNames.ARROW_SLOT_INDEX
 
@@ -151,7 +153,7 @@ public class VerifyTurretsSql {
                     DBUtils.getMyMaterialUid(Material.AIR)));
             currentMaterialUid = statement.executeQuery(String.format("SELECT max(%s)+1 FROM %s", DBNames.MaterialNames.MATERIAL_UID, DBNames.MaterialNames.MATERIAL_TABLE)).getInt(1);
             currentItemStackUid = statement.executeQuery(String.format("SELECT max(%s)+1 FROM %s", DBNames.ItemNames.ITEM_UID, DBNames.ItemNames.ITEM_TABLE)).getInt(1);
-            currentEnchantmentUid = statement.executeQuery(String.format("SELECT max(%s)+1 FROM %s", DBNames.ItemNames.ENCHANTMENT_UID, DBNames.ItemNames.ENCHANTMENT_TABLE)).getInt(1);
+            currentEnchantmentUid = statement.executeQuery(String.format("SELECT max(%s)+1 FROM %s", DBNames.ItemNames.ENCHANTMENT_UID, DBNames.ItemNames.ENCHANTMENT_ENUM_TABLE)).getInt(1);
             currentTurretUid = statement.executeQuery(String.format("SELECT max(%s)+1 FROM %s", DBNames.TurretNames.TURRET_UID, DBNames.TurretNames.TURRETS_TABLE)).getInt(1);
             statement.close();
         }

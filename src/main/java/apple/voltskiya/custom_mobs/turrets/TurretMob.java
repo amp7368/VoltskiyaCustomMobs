@@ -1,10 +1,17 @@
 package apple.voltskiya.custom_mobs.turrets;
 
+import apple.voltskiya.custom_mobs.sql.DBItemStack;
 import apple.voltskiya.custom_mobs.sql.DBUtils;
 import apple.voltskiya.custom_mobs.sql.TurretsSql;
 import apple.voltskiya.custom_mobs.turrets.gui.TurretGuiManager;
-import apple.voltskiya.custom_mobs.util.*;
+import apple.voltskiya.custom_mobs.util.DistanceUtils;
+import apple.voltskiya.custom_mobs.util.EntityLocation;
+import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
+import apple.voltskiya.custom_mobs.util.VectorUtils;
+import apple.voltskiya.custom_mobs.util.minecraft.EnchantmentUtils;
+import net.minecraft.server.v1_16_R3.NBTTagCompound;
 import org.bukkit.*;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftArrow;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -32,6 +39,7 @@ public class TurretMob implements Runnable {
     private static final long BUFFER_TIME_TO_UPDATE = 10000;
     private static final int MAX_TARGET_RECORDING = 5;
     private static final double MIN_SIGHT = 3.5;
+    private static final double BASE_TURRET_DAMAGE = 2;
     private final Location center;
     private Vector facing;
     private final Entity durabilityEntityReal;
@@ -39,7 +47,7 @@ public class TurretMob implements Runnable {
     private final EntityLocation durabilityEntity;
     private final EntityLocation refilledEntity;
     private final EntityLocation bowEntity;
-    private List<Pair<Material, Integer>> arrows;
+    private List<DBItemStack> arrows;
     private ItemStack bow;
     private long bowId;
     private double health;
@@ -57,7 +65,7 @@ public class TurretMob implements Runnable {
                      Entity durabilityEntityReal,
                      EntityLocation durabilityEntity, EntityLocation refilledEntity, EntityLocation bowEntity,
                      double health,
-                     List<Pair<Material, Integer>> arrows,
+                     List<DBItemStack> arrows,
                      ItemStack bow,
                      long bowId,
                      TurretType turretType
@@ -84,7 +92,7 @@ public class TurretMob implements Runnable {
                      List<EntityLocation> turretEntities,
                      EntityLocation durabilityEntity, EntityLocation refilledEntity, EntityLocation bowEntity,
                      double health,
-                     List<Pair<Material, Integer>> arrows,
+                     List<DBItemStack> arrows,
                      ItemStack bow,
                      long uid,
                      long bowId,
@@ -256,24 +264,32 @@ public class TurretMob implements Runnable {
             double xzTheta = Math.atan2(b, a);
             double vx = vxz * Math.cos(xzTheta);
             double vz = vxz * Math.sin(xzTheta);
-            @Nullable Material removedArrow = removeArrow();
+            @Nullable DBItemStack removedArrow = removeArrow();
             this.tickBowDurability();
-            if (removedArrow == null || removedArrow.isAir()) {
+            if (removedArrow == null || !removedArrow.exists()) {
                 return;
             }
 
-            EntityType arrowEntity;
-            try {
-                arrowEntity = EntityType.valueOf(removedArrow.name());
-            } catch (IllegalArgumentException e) {
-                // this arrow doesn't exist
-                e.printStackTrace();
-                return;
+            @Nullable EntityType arrowEntity = removedArrow.toEntityType();
+            if (arrowEntity != null) {
+                spawnLocation.getWorld().spawnEntity(spawnLocation, arrowEntity, CreatureSpawnEvent.SpawnReason.CUSTOM, (entity) -> {
+                    CraftArrow arrow = (CraftArrow) entity;
+                    arrow.setVelocity(new Vector(vx * .25, vy * .25, vz * .25));
+                    if (removedArrow.hasNbt()) {
+                        final NBTTagCompound nbt = removedArrow.getEntityNbt();
+                        if (nbt != null)
+                            arrow.getHandle().loadData(nbt);
+                    }
+                    if (this.bow.getType() == Material.CROSSBOW) {
+                        arrow.setShotFromCrossbow(true);
+                    }
+                    arrow.setDamage(EnchantmentUtils.damage(BASE_TURRET_DAMAGE, this.bow.getEnchantmentLevel(Enchantment.ARROW_DAMAGE)));
+                    arrow.setKnockbackStrength(EnchantmentUtils.knockback(this.bow.getEnchantmentLevel(Enchantment.ARROW_KNOCKBACK)));
+                    arrow.setFireTicks(EnchantmentUtils.flame(this.bow.getEnchantmentLevel(Enchantment.ARROW_FIRE)));
+                    arrow.setPierceLevel(this.bow.getEnchantmentLevel(Enchantment.PIERCING));
+                    arrow.addScoreboardTag("no_stick");
+                });
             }
-            spawnLocation.getWorld().spawnEntity(spawnLocation, arrowEntity, CreatureSpawnEvent.SpawnReason.CUSTOM, (arrow) -> {
-                arrow.setVelocity(new Vector(vx * .25, vy * .25, vz * .25));
-                arrow.addScoreboardTag("no_stick");
-            });
             if (this.isOkayToStart()) {
                 new Thread(this).start();
             }
@@ -287,7 +303,7 @@ public class TurretMob implements Runnable {
                 ItemMeta itemMeta = this.bow.getItemMeta();
                 if (itemMeta instanceof Damageable) {
                     int unbreaking = this.bow.getEnchantmentLevel(Enchantment.DURABILITY);
-                    boolean doBreak = randomBreak(unbreaking);
+                    boolean doBreak = EnchantmentUtils.randomBreakUnbreaking(unbreaking);
                     if (doBreak) {
                         ((Damageable) itemMeta).setDamage(((Damageable) itemMeta).getDamage() + 1);
                         this.bow.setItemMeta(itemMeta);
@@ -301,37 +317,32 @@ public class TurretMob implements Runnable {
         }
     }
 
-    private static boolean randomBreak(int unbreakingLevel) {
-        return Math.random() <= 1f / (unbreakingLevel + 1);
-    }
-
     private boolean noBow() {
         if (this.bow == null || this.bow.getType().isAir()) return true;
         ItemMeta meta = this.bow.getItemMeta();
         return meta instanceof Damageable && ((Damageable) meta).getDamage() >= this.bow.getType().getMaxDurability();
     }
 
-    @Nullable
-    private Material removeArrow() {
-        for (Pair<Material, Integer> arrow : arrows) {
-            final int count = arrow.getValue();
-            if (arrow.getKey() != Material.AIR && count != 0) {
+    private DBItemStack removeArrow() {
+        for (DBItemStack arrow : arrows) {
+            final int count = arrow.count;
+            if (arrow.type != Material.AIR && count != 0) {
                 if (turretType != TurretType.INFINITE) {
                     if (count == 1) {
-                        arrow.setKey(Material.AIR);
+                        arrow.type = Material.AIR;
                     }
                     if (isOkayToStart()) {
                         new Thread(this).start();
                     }
                     TurretGuiManager.get().updateGui(getUniqueId());
                 }
-                return arrow.getKey();
+                return arrow;
             }
         }
         return null;
     }
 
-    public void setArrows(List<Pair<Material, Integer>> arrows) {
+    public void setArrows(List<DBItemStack> arrows) {
         this.arrows = arrows;
         if (isOkayToStart()) {
             new Thread(this).start();
@@ -359,8 +370,8 @@ public class TurretMob implements Runnable {
     }
 
     private boolean arrowsEmpty() {
-        for (Pair<Material, Integer> arrow : arrows) {
-            if (arrow.getKey() != Material.AIR && arrow.getValue() != 0) return false;
+        for (DBItemStack arrow : arrows) {
+            if (arrow.exists()) return false;
         }
         return true;
     }
@@ -436,7 +447,7 @@ public class TurretMob implements Runnable {
         return bowEntity;
     }
 
-    public List<Pair<Material, Integer>> getArrows() {
+    public List<DBItemStack> getArrows() {
         return arrows;
     }
 

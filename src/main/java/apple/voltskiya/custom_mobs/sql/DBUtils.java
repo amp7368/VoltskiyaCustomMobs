@@ -85,6 +85,7 @@ public class DBUtils {
                     "SELECT * FROM %s WHERE %s = %d\n",
                     ItemNames.ITEM_TABLE, ItemNames.ITEM_UID, itemUid
             ));
+            if(response.isClosed()) return new ItemStack(Material.AIR);
             int materialUid = response.getInt(MATERIAL_UID);
             int itemCount = response.getInt(ItemNames.ITEM_COUNT);
             int durability = response.getInt(ItemNames.DURABILITY);

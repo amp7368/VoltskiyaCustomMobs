@@ -1,10 +1,9 @@
 package apple.voltskiya.custom_mobs.sql;
 
-import apple.voltskiya.custom_mobs.util.EntityLocation;
 import apple.voltskiya.custom_mobs.turrets.TurretBuilder;
 import apple.voltskiya.custom_mobs.turrets.TurretMob;
 import apple.voltskiya.custom_mobs.turrets.TurretType;
-import apple.voltskiya.custom_mobs.util.Pair;
+import apple.voltskiya.custom_mobs.util.EntityLocation;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -53,19 +52,21 @@ public class TurretsSql {
         }
     }
 
-    private static void insertArrows(Statement statement, long turretUid, List<Pair<Material, Integer>> arrows) throws SQLException {
+    private static void insertArrows(Statement statement, long turretUid, List<DBItemStack> arrows) throws SQLException {
         statement.execute(String.format("DELETE FROM %s WHERE %s >= %d", ARROW_TABLE, ARROW_SLOT_INDEX, arrows.size()));
         for (int i = 0; i < arrows.size(); i++) {
-            statement.execute(String.format("REPLACE INTO %s (%s, %s, %s, %s) VALUES (%d,%d,%d,%d)",
+            statement.execute(String.format("REPLACE INTO %s (%s, %s, %s, %s, %s) VALUES (%d,%d,%d,%d,'%s')",
                     ARROW_TABLE,
                     TURRET_UID,
                     ARROW_SLOT_INDEX,
                     DBNames.MaterialNames.MATERIAL_UID,
                     ARROW_COUNT,
+                    ARROW_NBT,
                     turretUid,
                     i,
-                    DBUtils.getMyMaterialUid(arrows.get(i).getKey()),
-                    arrows.get(i).getValue()
+                    DBUtils.getMyMaterialUid(arrows.get(i).type),
+                    arrows.get(i).count,
+                    arrows.get(i).nbt
             ));
         }
     }
@@ -91,7 +92,7 @@ public class TurretsSql {
     public static List<TurretMob> getTurrets() throws SQLException {
         synchronized (VerifyTurretsSql.syncDB) {
             @NotNull Map<Long, List<EntityLocation>> entities = getEntities();
-            @NotNull Map<Long, List<Pair<Material, Integer>>> arrows = getArrows();
+            @NotNull Map<Long, List<DBItemStack>> arrows = getArrows();
             Statement statement = VerifyTurretsSql.database.createStatement();
             ResultSet response = statement.executeQuery(
                     String.format("SELECT * FROM %s",
@@ -109,7 +110,7 @@ public class TurretsSql {
                 EntityLocation durabilityEntity = getEntity(entities.get(turretUid), durabilityEntityUUID);
                 EntityLocation bowEnitity = getEntity(entities.get(turretUid), bowEnitiyUUID);
                 EntityLocation refilledEntity = getEntity(entities.get(turretUid), refilledEntityUUID);
-                List<Pair<Material, Integer>> arrow = arrows.getOrDefault(turretUid, new ArrayList<>());
+                List<DBItemStack> arrow = arrows.getOrDefault(turretUid, new ArrayList<>());
                 if (durabilityEntity == null || bowEnitity == null || refilledEntity == null) {
                     turretsToRemove.add(turretUid);
                     continue;
@@ -143,21 +144,22 @@ public class TurretsSql {
         }
     }
 
-    private static Map<Long, List<Pair<Material, Integer>>> getArrows() throws SQLException {
+    private static Map<Long, List<DBItemStack>> getArrows() throws SQLException {
         synchronized (VerifyTurretsSql.syncDB) {
-            Map<Long, List<Pair<Material, Integer>>> arrows = new HashMap<>();
+            Map<Long, List<DBItemStack>> arrows = new HashMap<>();
             Statement statement = VerifyTurretsSql.database.createStatement();
             ResultSet response = statement.executeQuery(String.format("SELECT * FROM %s\n" +
                     "ORDER BY %s,%s", ARROW_TABLE, TURRET_UID, ARROW_SLOT_INDEX));
             while (response.next()) {
                 final long turretUid = response.getLong(TURRET_UID);
                 arrows.putIfAbsent(turretUid, new ArrayList<>());
-                List<Pair<Material, Integer>> arrow = arrows.get(turretUid);
+                List<DBItemStack> arrow = arrows.get(turretUid);
                 int index = response.getInt(ARROW_SLOT_INDEX);
                 Material material = DBUtils.getMaterialName(response.getInt(DBNames.MaterialNames.MATERIAL_UID));
                 int arrowCount = response.getInt(ARROW_COUNT);
-                while (arrow.size() <= index) arrow.add(new Pair<>(Material.AIR, 0));
-                arrow.set(index, new Pair<>(material, arrowCount));
+                String nbt = response.getString(ARROW_NBT);
+                while (arrow.size() <= index) arrow.add(new DBItemStack(Material.AIR, 0, ""));
+                arrow.set(index, new DBItemStack(material, arrowCount, nbt));
             }
             return arrows;
         }

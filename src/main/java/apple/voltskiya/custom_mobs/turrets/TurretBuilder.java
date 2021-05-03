@@ -1,8 +1,8 @@
 package apple.voltskiya.custom_mobs.turrets;
 
+import apple.voltskiya.custom_mobs.sql.DBItemStack;
 import apple.voltskiya.custom_mobs.sql.DBUtils;
 import apple.voltskiya.custom_mobs.util.EntityLocation;
-import apple.voltskiya.custom_mobs.util.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -20,7 +20,7 @@ import java.util.UUID;
 public class TurretBuilder {
     private final Location location;
     private final double health;
-    private final List<Pair<Material, Integer>> arrows;
+    private final List<DBItemStack> arrows;
     private final long uid;
     private final long bowUid;
     private List<EntityLocation> turretEntities = new ArrayList<>();
@@ -49,7 +49,7 @@ public class TurretBuilder {
                          List<EntityLocation> turretEntities,
                          EntityLocation durabilityEntity, EntityLocation refilledEntity, EntityLocation bowEntity,
                          double health,
-                         List<Pair<Material, Integer>> arrows,
+                         List<DBItemStack> arrows,
                          long bowUid,
                          long uid,
                          TurretType turretType

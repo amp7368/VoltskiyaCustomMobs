@@ -34,6 +34,7 @@ public class DBNames {
         public static final String WORLD_UID = "world_uid";
         public static final String ARROW_SLOT_INDEX = "slot_index";
         public static final String TURRET_TYPE = "turret_type";
+        public static final String ARROW_NBT = "arrow_nbt";
     }
 
     public static class MaterialNames {
