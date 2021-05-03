@@ -15,11 +15,17 @@ public class PathfinderGoalShootMicroMissle extends PathfinderGoal {
     private final Random random = new Random();
     private final EntityInsentient me;
     private final int cooldown;
+    private final int count;
     private int lastShot = 0;
+    private double speed;
+    private int minTicksToLive;
 
-    public PathfinderGoalShootMicroMissle(EntityInsentient me, int cooldown) {
+    public PathfinderGoalShootMicroMissle(EntityInsentient me, int cooldown, int count,double speed,int minTicksToLive) {
         this.me = me;
         this.cooldown = cooldown;
+        this.count = count;
+        this.speed = speed;
+        this.minTicksToLive = minTicksToLive;
         this.a(EnumSet.of(Type.TARGET));
     }
 
@@ -36,9 +42,7 @@ public class PathfinderGoalShootMicroMissle extends PathfinderGoal {
         final Location targetLocation = getTargetLocation();
         if (targetLocation != null) {
             this.lastShot = this.me.ticksLived;
-            final EntityLiving goalTarget = this.me.getGoalTarget();
-            MicroMissileManager.shoot(this.me.getBukkitEntity().getLocation().add(0, 1, 0), targetLocation);
-//            MicroMissleCluster.spawnCluster(this.me.getBukkitEntity().getLocation().add(0, 1, 0), targetLocation, goalTarget == null ? null : (LivingEntity) goalTarget.getBukkitEntity());
+            MicroMissileManager.shoot(this.me.getBukkitEntity().getLocation().add(0, this.me.getHeadHeight(), 0), targetLocation,count,speed,this.minTicksToLive);
         }
     }
 

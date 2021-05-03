@@ -3,7 +3,6 @@ package apple.voltskiya.custom_mobs.abilities.ai_changes.micro_misles;
 import apple.voltskiya.custom_mobs.abilities.tick.Tickable;
 import apple.voltskiya.custom_mobs.ticking.HighFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.TickGiverable;
-import apple.voltskiya.custom_mobs.util.VectorUtils;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -34,17 +33,18 @@ public class MicroMissileManager implements Tickable {
         this.giver = HighFrequencyTick.get();
     }
 
-    public static void shoot(Location spawnLocation, Location targetLocation) {
+    public static void shoot(Location spawnLocation, Location targetLocation, int count, double speed, int minTicksToLive) {
         @Nullable RayTraceResult rayTrace = spawnLocation.getWorld().rayTraceBlocks(spawnLocation, targetLocation.toVector().subtract(spawnLocation.toVector()), 100, FluidCollisionMode.NEVER, true);
         if (rayTrace != null && rayTrace.getHitBlock() != null) {
             Block hitBlock = rayTrace.getHitBlock();
             targetLocation = hitBlock.getLocation();
         }
-        get().giveMissile(new MicroMissile(spawnLocation, targetLocation));
-        for (int i = 0; i < 5; i++) {
+        final MicroMissileManager microMissileManager = get();
+        microMissileManager.giveMissile(new MicroMissile(spawnLocation, targetLocation, speed, minTicksToLive));
+        for (int i = 0; i < count - 1; i++) {
             Location newTarget = new Location(targetLocation.getWorld(), targetLocation.getX(), targetLocation.getY(), targetLocation.getZ());
             newTarget.add((random.nextDouble() - 0.5) * MicroMissleSpawnManager.VARIABLITY, (random.nextDouble() - 0.5) * MicroMissleSpawnManager.VARIABLITY, (random.nextDouble() - 0.5) * MicroMissleSpawnManager.VARIABLITY);
-            get().giveMissile(new MicroMissile(spawnLocation, newTarget));
+            microMissileManager.giveMissile(new MicroMissile(spawnLocation, newTarget, speed, minTicksToLive));
         }
     }
 
@@ -87,6 +87,7 @@ public class MicroMissileManager implements Tickable {
     private static class MicroMissile {
         private final Location targetLocation;
         private final int ticksToLive;
+        private final double speed;
         private boolean isDead = false;
         private Vector acceleration = new Vector();
         private final Vector velocity;
@@ -94,11 +95,12 @@ public class MicroMissileManager implements Tickable {
         private int ticksLived = 0;
         private final Random random = new Random();
 
-        public MicroMissile(Location spawnLocation, Location targetLocation) {
-            this.velocity = targetLocation.toVector().subtract(spawnLocation.toVector()).normalize().multiply(MicroMissleSpawnManager.SPEED);
+        public MicroMissile(Location spawnLocation, Location targetLocation, double speed, int minTicksToLive) {
+            this.speed = speed;
+            this.velocity = targetLocation.toVector().subtract(spawnLocation.toVector()).normalize().multiply(speed);
             this.location = new Location(spawnLocation.getWorld(), spawnLocation.getX(), spawnLocation.getY(), spawnLocation.getZ());
             this.targetLocation = targetLocation;
-            this.ticksToLive = random.nextInt(MicroMissleSpawnManager.ADDITIONAL_TICKS_TO_LIVE) + MicroMissleSpawnManager.MIN_TICKS_TO_LIVE;
+            this.ticksToLive = random.nextInt(MicroMissleSpawnManager.ADDITIONAL_TICKS_TO_LIVE) + minTicksToLive;
             this.randomizeAcceleration();
         }
 
@@ -136,12 +138,10 @@ public class MicroMissileManager implements Tickable {
         }
 
         private void movementTick() {
-            System.out.println(VectorUtils.magnitude(this.velocity));
-
             this.location.add(this.velocity);
 
             this.velocity.add(this.acceleration);
-            this.velocity.normalize().multiply(MicroMissleSpawnManager.SPEED);
+            this.velocity.normalize().multiply(this.speed);
 
             if (this.ticksLived % 10 == 0) {
                 this.randomizeAcceleration();
@@ -159,7 +159,7 @@ public class MicroMissileManager implements Tickable {
         private void die() {
             if (!this.isDead) {
                 location.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, location, 0);
-                location.getWorld().playSound(location, Sound.ENTITY_GENERIC_EXPLODE, 1, 1);
+                location.getWorld().playSound(location, Sound.ENTITY_GENERIC_EXPLODE, 0.4f, 1);
                 this.isDead = true;
             }
         }

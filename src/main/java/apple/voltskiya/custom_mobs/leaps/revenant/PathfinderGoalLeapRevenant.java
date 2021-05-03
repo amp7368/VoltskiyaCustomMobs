@@ -55,7 +55,6 @@ public class PathfinderGoalLeapRevenant extends PathfinderGoalLeap {
                 try {
                     loc = RandomPositionGenerator.a((EntityCreature) this.me, (int) this.config.getDistanceMin(), (int) this.config.getDistanceMax());
                 } catch (IllegalArgumentException e) {
-                    System.out.println(this.config.getDistanceMin() + " " + this.config.getDistanceMax());
                     e.printStackTrace();
                     return null;
                 }

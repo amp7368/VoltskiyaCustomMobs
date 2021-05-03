@@ -1,7 +1,6 @@
 package apple.voltskiya.custom_mobs.abilities.listeners;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import apple.voltskiya.custom_mobs.abilities.ai_changes.micro_misles.MicroMissileIndividualTicker;
 import apple.voltskiya.custom_mobs.abilities.ai_changes.micro_misles.MicroMissleShooter;
 import apple.voltskiya.custom_mobs.abilities.ai_changes.micro_misles.MicroMissleSpawnManager;
 import apple.voltskiya.custom_mobs.abilities.tick.SpawnEater;
@@ -37,7 +36,6 @@ public class MobSpawnListener implements Listener {
             spawnEater.put("reviver", new ReviverManagerTicker());
             spawnEater.put("hell_blazer", new HellGuardManagerTicker());
             spawnEater.put("charger", new ChargerManagerTicker());
-            spawnEater.put(MicroMissileIndividualTicker.MICRO_MISSLE_TAG, new MicroMissleSpawnManager());
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassCastException e) {
@@ -49,7 +47,10 @@ public class MobSpawnListener implements Listener {
             spawnEater.registerInDB();
         }
         try {
-            spawnModifier.put("micro_missle_shooter", new MicroMissleShooter());
+            new MicroMissleSpawnManager();
+            spawnModifier.put("micro_missile_shooter", new MicroMissleShooter());
+        } catch (IOException e) {
+            e.printStackTrace();
         } catch (ClassCastException e) {
             System.err.println("There was an issue with one of the config settings of spawnModifiers.\n" +
                     "You may have changed a setting that resulted in changing the type of data that was in one of the fields.");
