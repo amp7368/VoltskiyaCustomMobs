@@ -1,6 +1,7 @@
 package apple.voltskiya.custom_mobs.abilities;
 
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
+import apple.voltskiya.custom_mobs.abilities.ai_changes.micro_misles.MicroMissileManager;
 import apple.voltskiya.custom_mobs.abilities.listeners.MobDeathListener;
 import apple.voltskiya.custom_mobs.abilities.listeners.MobSpawnListener;
 import apple.voltskiya.custom_mobs.sql.VerifyMobsSql;
@@ -17,6 +18,7 @@ public class MobTickPlugin extends VoltskiyaModule {
         new UpdatedPlayerList();
         new MobDeathListener();
         new MobSpawnListener();
+        new MicroMissileManager();
     }
 
     public static MobTickPlugin get() {

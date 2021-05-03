@@ -15,7 +15,6 @@ public abstract class ConfigManager {
     private static final String defaultConfig = "config";
     private File folder = null;
     private final Map<String, YamlConfiguration> ymls = new HashMap<>();
-
     /**
      * @return the name of the sub_module (a step below a module)
      */
