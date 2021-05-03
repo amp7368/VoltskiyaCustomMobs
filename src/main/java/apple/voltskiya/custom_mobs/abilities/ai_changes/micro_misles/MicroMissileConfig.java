@@ -6,31 +6,30 @@ import apple.voltskiya.custom_mobs.abilities.MobTickPlugin;
 
 import java.io.IOException;
 
-public class MicroMissleSpawnManager extends ConfigManager {
-    public static int MIN_TICKS_TO_LIVE = 10;
+public class MicroMissileConfig extends ConfigManager {
+    public static int MIN_TICKS_TO_LIVE = 17;
     public static int ADDITIONAL_TICKS_TO_LIVE = 40;
     public static float SPEED = 0.6f;
     public static float ACCELERATION_SPEED = 0.3f;
     public static double VARIABLITY = 7;
     public static int RANDOM_ACCELERATION_ANGLE = 30;
-    public double DAMAGE_AMOUNT;
-    private static MicroMissleSpawnManager instance;
+    public static double DAMAGE_AMOUNT;
+    private static MicroMissileConfig instance;
 
-    public MicroMissleSpawnManager() throws IOException {
+    public MicroMissileConfig() throws IOException {
         instance = this;
         DAMAGE_AMOUNT = (double) getValueOrInit(YmlSettings.DAMAGE_AMOUNT.getPath());
         MIN_TICKS_TO_LIVE = (int) getValueOrInit(YmlSettings.MIN_TICKS_TO_LIVE.getPath());
         ADDITIONAL_TICKS_TO_LIVE = (int) getValueOrInit(YmlSettings.ADDITIONAL_TICKS_TO_LIVE.getPath());
-        SPEED = (float) getValueOrInit(YmlSettings.SPEED.getPath());
-        ACCELERATION_SPEED = (float) getValueOrInit(YmlSettings.ACCELERATION_SPEED.getPath());
+        SPEED = (float) (double) getValueOrInit(YmlSettings.SPEED.getPath());
+        ACCELERATION_SPEED = (float) (double) getValueOrInit(YmlSettings.ACCELERATION_SPEED.getPath());
         VARIABLITY = (double) getValueOrInit(YmlSettings.VARIABILITY.getPath());
         RANDOM_ACCELERATION_ANGLE = (int) getValueOrInit(YmlSettings.RANDOM_ACCELERATION_ANGLE.getPath());
 
     }
 
 
-
-    public static MicroMissleSpawnManager get() {
+    public static MicroMissileConfig get() {
         return instance;
     }
 
@@ -47,7 +46,7 @@ public class MicroMissleSpawnManager extends ConfigManager {
      */
     @Override
     public YmlSettings[] getSettings() {
-        return MicroMissleSpawnManager.YmlSettings.values();
+        return MicroMissileConfig.YmlSettings.values();
     }
 
     /**
@@ -60,7 +59,7 @@ public class MicroMissleSpawnManager extends ConfigManager {
 
 
     private enum YmlSettings implements apple.voltskiya.custom_mobs.YmlSettings {
-        DAMAGE_AMOUNT("damage_amount", 5d),
+        DAMAGE_AMOUNT("damage_amount", 2.5d),
         MIN_TICKS_TO_LIVE("min_ticks_to_live", 10),
         ADDITIONAL_TICKS_TO_LIVE("additional_ticks_to_live", 40),
         SPEED("missile_speed", 0.6f),

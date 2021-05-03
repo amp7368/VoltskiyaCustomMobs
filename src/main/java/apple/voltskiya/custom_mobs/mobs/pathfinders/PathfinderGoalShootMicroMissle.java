@@ -1,10 +1,15 @@
 package apple.voltskiya.custom_mobs.mobs.pathfinders;
 
+import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.abilities.ai_changes.micro_misles.MicroMissileManager;
+import apple.voltskiya.custom_mobs.abilities.ai_changes.micro_misles.MicroMissleShooter;
 import net.minecraft.server.v1_16_R3.EntityInsentient;
 import net.minecraft.server.v1_16_R3.EntityLiving;
 import net.minecraft.server.v1_16_R3.PathfinderGoal;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
@@ -17,15 +22,13 @@ public class PathfinderGoalShootMicroMissle extends PathfinderGoal {
     private final int cooldown;
     private final int count;
     private int lastShot = 0;
-    private double speed;
-    private int minTicksToLive;
+    private final MicroMissleShooter.MissileType missileType;
 
-    public PathfinderGoalShootMicroMissle(EntityInsentient me, int cooldown, int count,double speed,int minTicksToLive) {
+    public PathfinderGoalShootMicroMissle(EntityInsentient me, int cooldown, int count, MicroMissleShooter.MissileType missileType) {
         this.me = me;
         this.cooldown = cooldown;
         this.count = count;
-        this.speed = speed;
-        this.minTicksToLive = minTicksToLive;
+        this.missileType = missileType;
         this.a(EnumSet.of(Type.TARGET));
     }
 
@@ -42,8 +45,38 @@ public class PathfinderGoalShootMicroMissle extends PathfinderGoal {
         final Location targetLocation = getTargetLocation();
         if (targetLocation != null) {
             this.lastShot = this.me.ticksLived;
-            MicroMissileManager.shoot(this.me.getBukkitEntity().getLocation().add(0, this.me.getHeadHeight(), 0), targetLocation,count,speed,this.minTicksToLive);
+            if (missileType == MicroMissleShooter.MissileType.FLURRY) {
+                sounds();
+                Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
+                    MicroMissileManager.shoot(this.me.getBukkitEntity().getLocation().add(0, this.me.getHeadHeight(), 0), targetLocation, count, missileType);
+                }, 24);
+            } else {
+                singleSound();
+                MicroMissileManager.shoot(this.me.getBukkitEntity().getLocation().add(0, this.me.getHeadHeight(), 0), targetLocation, count, missileType);
+            }
         }
+    }
+
+    private void singleSound() {
+        final Location location = me.getBukkitEntity().getLocation();
+        location.getWorld().playSound(location, Sound.ENTITY_GHAST_SHOOT, SoundCategory.HOSTILE, 0.3f, 2f);
+    }
+
+    private void sounds() {
+        final Location location = me.getBukkitEntity().getLocation();
+        location.getWorld().playSound(location, Sound.ITEM_FIRECHARGE_USE, SoundCategory.HOSTILE, 2f, 1.5f);
+        Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
+            location.getWorld().playSound(location, Sound.ITEM_FIRECHARGE_USE, SoundCategory.HOSTILE, 2.25f, 1.6f);
+        }, 6);
+        Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
+            location.getWorld().playSound(location, Sound.ITEM_FIRECHARGE_USE, SoundCategory.HOSTILE, 2.5f, 1.7f);
+        }, 12);
+        Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
+            location.getWorld().playSound(location, Sound.ITEM_FIRECHARGE_USE, SoundCategory.HOSTILE, 2.75f, 1.8f);
+        }, 18);
+        Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
+            location.getWorld().playSound(location, Sound.ITEM_FIRECHARGE_USE, SoundCategory.HOSTILE, 3f, 1.9f);
+        }, 24);
     }
 
     @Nullable

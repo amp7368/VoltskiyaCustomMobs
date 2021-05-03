@@ -1,8 +1,8 @@
 package apple.voltskiya.custom_mobs.abilities.listeners;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
+import apple.voltskiya.custom_mobs.abilities.ai_changes.micro_misles.MicroMissileConfig;
 import apple.voltskiya.custom_mobs.abilities.ai_changes.micro_misles.MicroMissleShooter;
-import apple.voltskiya.custom_mobs.abilities.ai_changes.micro_misles.MicroMissleSpawnManager;
 import apple.voltskiya.custom_mobs.abilities.tick.SpawnEater;
 import apple.voltskiya.custom_mobs.abilities.tick.charger.ChargerManagerTicker;
 import apple.voltskiya.custom_mobs.abilities.tick.hell_blazer.HellGuardManagerTicker;
@@ -47,7 +47,7 @@ public class MobSpawnListener implements Listener {
             spawnEater.registerInDB();
         }
         try {
-            new MicroMissleSpawnManager();
+            new MicroMissileConfig();
             spawnModifier.put("micro_missile_shooter", new MicroMissleShooter());
         } catch (IOException e) {
             e.printStackTrace();

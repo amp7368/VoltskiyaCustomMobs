@@ -33,18 +33,19 @@ public class MicroMissileManager implements Tickable {
         this.giver = HighFrequencyTick.get();
     }
 
-    public static void shoot(Location spawnLocation, Location targetLocation, int count, double speed, int minTicksToLive) {
+    public static void shoot(Location spawnLocation, Location targetLocation, int count, MicroMissleShooter.MissileType missileType) {
         @Nullable RayTraceResult rayTrace = spawnLocation.getWorld().rayTraceBlocks(spawnLocation, targetLocation.toVector().subtract(spawnLocation.toVector()), 100, FluidCollisionMode.NEVER, true);
         if (rayTrace != null && rayTrace.getHitBlock() != null) {
             Block hitBlock = rayTrace.getHitBlock();
             targetLocation = hitBlock.getLocation();
         }
         final MicroMissileManager microMissileManager = get();
-        microMissileManager.giveMissile(new MicroMissile(spawnLocation, targetLocation, speed, minTicksToLive));
+
+        microMissileManager.giveMissile(new MicroMissile(spawnLocation, targetLocation, missileType.speed, missileType.minTicksToLive, missileType.damageAmount));
         for (int i = 0; i < count - 1; i++) {
             Location newTarget = new Location(targetLocation.getWorld(), targetLocation.getX(), targetLocation.getY(), targetLocation.getZ());
-            newTarget.add((random.nextDouble() - 0.5) * MicroMissleSpawnManager.VARIABLITY, (random.nextDouble() - 0.5) * MicroMissleSpawnManager.VARIABLITY, (random.nextDouble() - 0.5) * MicroMissleSpawnManager.VARIABLITY);
-            microMissileManager.giveMissile(new MicroMissile(spawnLocation, newTarget, speed, minTicksToLive));
+            newTarget.add((random.nextDouble() - 0.5) * MicroMissileConfig.VARIABLITY, (random.nextDouble() - 0.5) * MicroMissileConfig.VARIABLITY, (random.nextDouble() - 0.5) * MicroMissileConfig.VARIABLITY);
+            microMissileManager.giveMissile(new MicroMissile(spawnLocation, newTarget, missileType.speed, missileType.minTicksToLive, missileType.damageAmount));
         }
     }
 
@@ -88,6 +89,7 @@ public class MicroMissileManager implements Tickable {
         private final Location targetLocation;
         private final int ticksToLive;
         private final double speed;
+        private final double damage;
         private boolean isDead = false;
         private Vector acceleration = new Vector();
         private final Vector velocity;
@@ -95,12 +97,13 @@ public class MicroMissileManager implements Tickable {
         private int ticksLived = 0;
         private final Random random = new Random();
 
-        public MicroMissile(Location spawnLocation, Location targetLocation, double speed, int minTicksToLive) {
+        public MicroMissile(Location spawnLocation, Location targetLocation, double speed, int minTicksToLive, double damage) {
             this.speed = speed;
+            this.damage = damage;
             this.velocity = targetLocation.toVector().subtract(spawnLocation.toVector()).normalize().multiply(speed);
             this.location = new Location(spawnLocation.getWorld(), spawnLocation.getX(), spawnLocation.getY(), spawnLocation.getZ());
             this.targetLocation = targetLocation;
-            this.ticksToLive = random.nextInt(MicroMissleSpawnManager.ADDITIONAL_TICKS_TO_LIVE) + minTicksToLive;
+            this.ticksToLive = random.nextInt(MicroMissileConfig.ADDITIONAL_TICKS_TO_LIVE) + minTicksToLive;
             this.randomizeAcceleration();
         }
 
@@ -116,9 +119,7 @@ public class MicroMissileManager implements Tickable {
                 Collection<Entity> nearbyEntities = location.getNearbyEntities(1, 1, 1);
                 for (Entity nearby : nearbyEntities) {
                     if (nearby instanceof LivingEntity) {
-                        location.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, location, 0);
-                        location.getWorld().playSound(location, Sound.ENTITY_GENERIC_EXPLODE, 1, 1);
-                        ((LivingEntity) nearby).damage(MicroMissleSpawnManager.get().DAMAGE_AMOUNT);
+                        ((LivingEntity) nearby).damage(damage);
                     }
                 }
                 this.die();
@@ -126,9 +127,7 @@ public class MicroMissileManager implements Tickable {
                 Collection<Entity> nearbyEntities = location.getNearbyEntities(1, 1, 1);
                 for (Entity nearby : nearbyEntities) {
                     if (nearby instanceof Player) {
-                        location.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, location, 0);
-                        location.getWorld().playSound(location, Sound.ENTITY_GENERIC_EXPLODE, 1, 1);
-                        ((LivingEntity) nearby).damage(MicroMissleSpawnManager.get().DAMAGE_AMOUNT);
+                        ((LivingEntity) nearby).damage(damage);
                         this.die();
                         break;
                     }
@@ -150,16 +149,16 @@ public class MicroMissileManager implements Tickable {
 
         private void randomizeAcceleration() {
             Vector goDirection = targetLocation.toVector().subtract(location.toVector());
-            goDirection.rotateAroundX(Math.toRadians(random.nextInt(MicroMissleSpawnManager.RANDOM_ACCELERATION_ANGLE * 2) - MicroMissleSpawnManager.RANDOM_ACCELERATION_ANGLE));
-            goDirection.rotateAroundZ(Math.toRadians(random.nextInt(MicroMissleSpawnManager.RANDOM_ACCELERATION_ANGLE * 2) - MicroMissleSpawnManager.RANDOM_ACCELERATION_ANGLE));
-            goDirection.rotateAroundY(Math.toRadians(random.nextInt(MicroMissleSpawnManager.RANDOM_ACCELERATION_ANGLE * 2) - MicroMissleSpawnManager.RANDOM_ACCELERATION_ANGLE));
-            this.acceleration = goDirection.normalize().multiply(MicroMissleSpawnManager.ACCELERATION_SPEED);
+            goDirection.rotateAroundX(Math.toRadians(random.nextInt(MicroMissileConfig.RANDOM_ACCELERATION_ANGLE * 2) - MicroMissileConfig.RANDOM_ACCELERATION_ANGLE));
+            goDirection.rotateAroundZ(Math.toRadians(random.nextInt(MicroMissileConfig.RANDOM_ACCELERATION_ANGLE * 2) - MicroMissileConfig.RANDOM_ACCELERATION_ANGLE));
+            goDirection.rotateAroundY(Math.toRadians(random.nextInt(MicroMissileConfig.RANDOM_ACCELERATION_ANGLE * 2) - MicroMissileConfig.RANDOM_ACCELERATION_ANGLE));
+            this.acceleration = goDirection.normalize().multiply(MicroMissileConfig.ACCELERATION_SPEED);
         }
 
         private void die() {
             if (!this.isDead) {
                 location.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, location, 0);
-                location.getWorld().playSound(location, Sound.ENTITY_GENERIC_EXPLODE, 0.4f, 1);
+                location.getWorld().playSound(location, Sound.ENTITY_GENERIC_EXPLODE, 0.3f, 1.8f);
                 this.isDead = true;
             }
         }
