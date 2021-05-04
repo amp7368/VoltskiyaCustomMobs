@@ -326,7 +326,7 @@ public class TurretMob implements Runnable {
             spawnLocation.add(facing);
             spawnLocation.add(facing);
             spawnLocation.add(facing);
-            spawnLocation.add(0, 1.5, 0);
+            spawnLocation.add(0, 2.5, 0);
             double v = velocity(distanceToTarget);
             double timeToTarget = distanceToTarget / v * .9;
             Vector movement = lastLocationSize <= 1 ?
