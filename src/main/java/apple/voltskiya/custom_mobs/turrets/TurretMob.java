@@ -13,10 +13,12 @@ import net.minecraft.server.v1_16_R3.NBTTagCompound;
 import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftArrow;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -43,6 +45,8 @@ public class TurretMob implements Runnable {
     private final Location center;
     private Vector facing;
     private final Entity durabilityEntityReal;
+    private final Entity refilledEntityReal;
+    private final Entity bowEntityReal;
     private final List<EntityLocation> turretEntities;
     private final EntityLocation durabilityEntity;
     private final EntityLocation refilledEntity;
@@ -78,7 +82,9 @@ public class TurretMob implements Runnable {
         this.durabilityEntityReal = durabilityEntityReal;
         this.durabilityEntity = durabilityEntity;
         this.refilledEntity = refilledEntity;
+        this.refilledEntityReal = Bukkit.getEntity(refilledEntity.uuid);
         this.bowEntity = bowEntity;
+        this.bowEntityReal = Bukkit.getEntity(bowEntity.uuid);
         this.health = health;
         this.arrows = arrows;
         this.bow = bow;
@@ -107,7 +113,9 @@ public class TurretMob implements Runnable {
         if (this.durabilityEntityReal == null) isDead = true;
         this.durabilityEntity = durabilityEntity;
         this.refilledEntity = refilledEntity;
+        this.refilledEntityReal = Bukkit.getEntity(refilledEntity.uuid);
         this.bowEntity = bowEntity;
+        this.bowEntityReal = Bukkit.getEntity(bowEntity.uuid);
         this.health = health;
         this.arrows = arrows;
         this.bow = bow;
@@ -131,6 +139,52 @@ public class TurretMob implements Runnable {
             new Thread(this).start();
         }
         TurretGuiManager.get().updateGui(getUniqueId());
+        correctDurabilityEntity();
+    }
+
+    private void correctDurabilityEntity() {
+        if (durabilityEntityReal instanceof ArmorStand) {
+            final EntityEquipment equipment = ((ArmorStand) durabilityEntityReal).getEquipment();
+            if (equipment != null) {
+                if (health > MAX_HEALTH * .75) {
+                    equipment.setHelmet(new ItemStack(Material.CHISELED_STONE_BRICKS));
+                } else if (health > MAX_HEALTH * .5) {
+                    equipment.setHelmet(new ItemStack(Material.STONE_BRICKS));
+                } else if (health > MAX_HEALTH * .25) {
+                    equipment.setHelmet(new ItemStack(Material.CRACKED_STONE_BRICKS));
+                } else {
+                    equipment.setHelmet(new ItemStack(Material.COBBLESTONE));
+                }
+            }
+        }
+    }
+
+    private void correctRefilledEntity() {
+        if (this.refilledEntityReal instanceof ArmorStand) {
+            final EntityEquipment equipment = ((ArmorStand) refilledEntityReal).getEquipment();
+            if (equipment != null) {
+                if (noBow() || arrowsEmpty()) {
+                    final ItemStack torch = new ItemStack(Material.SOUL_TORCH);
+                    equipment.setHelmet(torch);
+                } else {
+                    equipment.setHelmet(new ItemStack(Material.REDSTONE_TORCH));
+                }
+            }
+        }
+    }
+
+    private void correctBowEntity() {
+        if (this.bowEntityReal instanceof ArmorStand) {
+            final EntityEquipment equipment = ((ArmorStand) bowEntityReal).getEquipment();
+            if (equipment != null) {
+                if (noBow()) {
+                    final ItemStack torch = new ItemStack(Material.AIR);
+                    equipment.setHelmet(torch);
+                } else {
+                    equipment.setHelmet(new ItemStack(bow.getType()));
+                }
+            }
+        }
     }
 
     private void remove() {
@@ -265,10 +319,10 @@ public class TurretMob implements Runnable {
             double vx = vxz * Math.cos(xzTheta);
             double vz = vxz * Math.sin(xzTheta);
             @Nullable DBItemStack removedArrow = removeArrow();
-            this.tickBowDurability();
             if (removedArrow == null || !removedArrow.exists()) {
                 return;
             }
+            this.tickBowDurability();
 
             @Nullable EntityType arrowEntity = removedArrow.toEntityType();
             if (arrowEntity != null) {
@@ -310,9 +364,11 @@ public class TurretMob implements Runnable {
                         if (((Damageable) itemMeta).getDamage() >= this.bow.getType().getMaxDurability()) {
                             // delete bow
                             this.bow = new ItemStack(Material.AIR);
+                            this.correctBowEntity();
                         }
                     }
                 }
+                correctRefilledEntity();
             }
         }
     }
@@ -344,6 +400,7 @@ public class TurretMob implements Runnable {
 
     public void setArrows(List<DBItemStack> arrows) {
         this.arrows = arrows;
+        this.correctRefilledEntity();
         if (isOkayToStart()) {
             new Thread(this).start();
         }
@@ -398,7 +455,6 @@ public class TurretMob implements Runnable {
             this.isUpdatingDB = false;
         }
         try {
-            System.out.println("update");
             TurretsSql.registerOrUpdate(this);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -492,6 +548,8 @@ public class TurretMob implements Runnable {
         try {
             this.bow = bow;
             this.bowId = DBUtils.getItemUid(this.bow);
+            this.correctBowEntity();
+            this.correctRefilledEntity();
             if (isOkayToStart()) {
                 new Thread(this).start();
             }

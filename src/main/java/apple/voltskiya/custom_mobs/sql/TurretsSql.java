@@ -21,7 +21,7 @@ import static apple.voltskiya.custom_mobs.sql.DBNames.TurretNames.*;
 public class TurretsSql {
     public static void registerOrUpdate(TurretMob turretMob) throws SQLException {
         long turretUid = turretMob.getUniqueId();
-        turretUid = turretUid == -1 ? VerifyTurretsSql.currentTurretUid++ : turretUid;
+        if (turretUid == -1) turretUid = VerifyTurretsSql.currentTurretUid++;
         Location center = turretMob.getCenter();
         Vector facing = center.getDirection();
         synchronized (VerifyTurretsSql.syncDB) {
@@ -68,6 +68,7 @@ public class TurretsSql {
                     arrows.get(i).count,
                     arrows.get(i).nbt
             ));
+            System.out.println(i);
         }
     }
 
@@ -126,8 +127,8 @@ public class TurretsSql {
                                 response.getDouble(Z_FACING),
                                 entities.get(turretUid),
                                 durabilityEntity,
-                                bowEnitity,
                                 refilledEntity,
+                                bowEnitity,
                                 response.getDouble(HEALTH),
                                 arrow,
                                 response.getLong(BOW),

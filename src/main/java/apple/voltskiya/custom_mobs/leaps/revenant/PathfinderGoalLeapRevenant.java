@@ -94,7 +94,7 @@ public class PathfinderGoalLeapRevenant extends PathfinderGoalLeap {
         // the probability for any peak to be chosen is assigned by the function -index + size()
         // therefore the integral is size*size/2
         int totalProbability = size * size / 2;
-        int choice = random.nextInt(totalProbability);
+        int choice = random.nextInt(Math.max(1, totalProbability));
         int index = 0;
         while (index < size) {
             choice -= -index + size;

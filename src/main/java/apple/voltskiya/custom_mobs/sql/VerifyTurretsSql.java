@@ -91,12 +91,16 @@ public class VerifyTurretsSql {
             DBNames.ItemNames.DURABILITY
     );
     private static final String ENCHANTMENT_CONTENT = String.format(
-            "   %s        BIGINT NOT NULL PRIMARY KEY,\n" +
+            "   %s        BIGINT NOT NULL,\n" +
                     "    %s INTEGER NOT NULL," +
-                    "    %s INTEGER NOT NULL",
+                    "    %s INTEGER NOT NULL, " +
+                    " PRIMARY KEY (%s, %s)",
             DBNames.ItemNames.ITEM_UID,
             DBNames.ItemNames.ENCHANTMENT_UID,
-            DBNames.ItemNames.ENCHANTMENT_LEVEL
+            DBNames.ItemNames.ENCHANTMENT_LEVEL,
+            DBNames.ItemNames.ITEM_UID,
+            DBNames.ItemNames.ENCHANTMENT_UID
+
     );
     private static final String ENCHANTMENT_ENUM_CONTENT = String.format(
             "    %s   INTEGER NOT NULL PRIMARY KEY,\n" +
