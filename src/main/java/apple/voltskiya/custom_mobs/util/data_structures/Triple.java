@@ -1,4 +1,4 @@
-package apple.voltskiya.custom_mobs.util;
+package apple.voltskiya.custom_mobs.util.data_structures;
 
 public class Triple<X, Y, Z> {
     private X x;

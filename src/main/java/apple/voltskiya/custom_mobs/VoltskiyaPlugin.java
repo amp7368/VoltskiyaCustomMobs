@@ -6,6 +6,7 @@ import apple.voltskiya.custom_mobs.leaps.LeapPlugin;
 import apple.voltskiya.custom_mobs.mobs.NmsMobsPlugin;
 import apple.voltskiya.custom_mobs.ticking.Ticking;
 import apple.voltskiya.custom_mobs.turrets.TurretPlugin;
+import apple.voltskiya.custom_mobs.util.PluginUtils;
 import co.aikar.commands.PaperCommandManager;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
@@ -46,6 +47,7 @@ public class VoltskiyaPlugin extends JavaPlugin {
 
     private void manuallyLoadModules() {
         final VoltskiyaModule[] modules = new VoltskiyaModule[]{
+                new PluginUtils(),
                 new Ticking(), // this has to go first
                 new MobTickPlugin(),
                 new LeapPlugin(),
@@ -160,5 +162,6 @@ public class VoltskiyaPlugin extends JavaPlugin {
     public PaperCommandManager getCommandManager() {
         return commandManager;
     }
+
 
 }

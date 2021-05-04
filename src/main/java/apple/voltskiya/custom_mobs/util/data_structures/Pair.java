@@ -1,4 +1,4 @@
-package apple.voltskiya.custom_mobs.util;
+package apple.voltskiya.custom_mobs.util.data_structures;
 
 public class Pair<K, V> {
     private K key;

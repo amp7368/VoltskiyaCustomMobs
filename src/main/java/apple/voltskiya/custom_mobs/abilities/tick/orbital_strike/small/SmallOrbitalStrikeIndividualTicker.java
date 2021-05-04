@@ -1,10 +1,10 @@
 package apple.voltskiya.custom_mobs.abilities.tick.orbital_strike.small;
 
-import apple.voltskiya.custom_mobs.util.DistanceUtils;
-import apple.voltskiya.custom_mobs.util.Pair;
-import apple.voltskiya.custom_mobs.sql.MobListSql;
 import apple.voltskiya.custom_mobs.abilities.tick.Tickable;
+import apple.voltskiya.custom_mobs.sql.MobListSql;
+import apple.voltskiya.custom_mobs.util.DistanceUtils;
 import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
+import apple.voltskiya.custom_mobs.util.data_structures.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;

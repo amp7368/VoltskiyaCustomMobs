@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class DBItemStack {
     public Material type;
-    public final int count;
+    public int count;
     public final String nbt;
 
     public DBItemStack(Material type, int count, String nbt) {
@@ -21,7 +21,10 @@ public class DBItemStack {
 
     public ItemStack toItem() {
         try {
-            return CraftItemStack.asBukkitCopy(net.minecraft.server.v1_16_R3.ItemStack.a(MojangsonParser.parse(this.nbt)));
+            final ItemStack itemStack = CraftItemStack.asBukkitCopy(net.minecraft.server.v1_16_R3.ItemStack.a(MojangsonParser.parse(this.nbt)));
+            itemStack.setAmount(count);
+            itemStack.setType(type);
+            return itemStack;
         } catch (CommandSyntaxException e) {
             return new ItemStack(Material.AIR);
         }
@@ -46,6 +49,10 @@ public class DBItemStack {
             case ARROW:
             case TIPPED_ARROW:
                 return EntityType.ARROW;
+            case EGG:
+                return EntityType.EGG;
+            case SNOWBALL:
+                return EntityType.SNOWBALL;
             default:
                 return null;
         }

@@ -110,25 +110,26 @@ public class TurretGui implements InventoryHolder {
         event.setCancelled(true);
         ItemStack toMoveItem = event.getCurrentItem();
         if (toMoveItem != null) {
-            if (MaterialUtils.isBowLike(toMoveItem.getType())) {
+            final Material material = toMoveItem.getType();
+            if (MaterialUtils.isBowLike(material)) {
                 if (turret.getBow() == null || turret.getBow().getType().isAir()) {
                     // move the bow over
                     for (int bowSlot : FillInventory.getBow()) {
                         ItemStack toMoveItemCopy = new ItemStack(toMoveItem);
                         this.inventory.setItem(bowSlot, toMoveItemCopy);
                         this.bowChange();
-                        event.getWhoClicked().getInventory().setItem(event.getSlot(),new ItemStack(Material.AIR));
+                        event.getWhoClicked().getInventory().setItem(event.getSlot(), new ItemStack(Material.AIR));
                         break;
                     }
                 }
-            } else if (MaterialUtils.isArrow(toMoveItem.getType())) {
+            } else if (MaterialUtils.isArrow(material) || material == Material.SNOWBALL || material == Material.EGG) {
                 for (int arrowSlot : FillInventory.getArrow()) {
                     final ItemStack arrowItem = inventory.getItem(arrowSlot);
                     if (arrowItem == null || arrowItem.getType().isAir()) {
                         ItemStack toMoveItemCopy = new ItemStack(toMoveItem);
                         this.inventory.setItem(arrowSlot, toMoveItemCopy);
                         this.arrowChange();
-                        event.getWhoClicked().getInventory().setItem(event.getSlot(),new ItemStack(Material.AIR));
+                        event.getWhoClicked().getInventory().setItem(event.getSlot(), new ItemStack(Material.AIR));
                         break;
                     }
                 }
@@ -188,7 +189,13 @@ public class TurretGui implements InventoryHolder {
         List<DBItemStack> arrows = new ArrayList<>();
         for (int index : FillInventory.getArrow()) {
             final ItemStack item = inventory.getItem(index);
-            if (item == null || !MaterialUtils.isArrow(item.getType()) || item.getAmount() == 0) {
+            if (item == null ||
+                    !(
+                            MaterialUtils.isArrow(item.getType()) ||
+                                    item.getType()==Material.EGG ||
+                                    item.getType()==Material.SNOWBALL
+                    ) ||
+                    item.getAmount() == 0) {
                 arrows.add(new DBItemStack(Material.AIR, 0, ""));
             } else {
                 String nbt = CraftItemStack.asNMSCopy(item).save(new NBTTagCompound()).asString();

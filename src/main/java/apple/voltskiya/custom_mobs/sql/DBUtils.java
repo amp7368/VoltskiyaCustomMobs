@@ -1,6 +1,6 @@
 package apple.voltskiya.custom_mobs.sql;
 
-import apple.voltskiya.custom_mobs.util.Pair;
+import apple.voltskiya.custom_mobs.util.data_structures.Pair;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
@@ -119,7 +119,11 @@ public class DBUtils {
             } else {
                 ItemStack itemStack = new ItemStack(material, itemCount);
                 for (Pair<Enchantment, Integer> enchantment : enchantments) {
-                    itemStack.addEnchantment(enchantment.getKey(), enchantment.getValue());
+                   try{
+                       itemStack.addEnchantment(enchantment.getKey(), enchantment.getValue());
+                   }catch (IllegalArgumentException e){
+                       // ignore this enchantment
+                   }
                 }
                 ItemMeta data = itemStack.getItemMeta();
                 if (data instanceof Damageable) {
@@ -196,6 +200,7 @@ public class DBUtils {
         synchronized (VerifyTurretsSql.syncDB) {
             Statement statement = VerifyTurretsSql.database.createStatement();
             statement.execute(String.format("DELETE FROM %s WHERE %s = %d", DBNames.ItemNames.ITEM_TABLE, DBNames.ItemNames.ITEM_UID, itemId));
+            statement.execute(String.format("DELETE FROM %s WHERE %s = %d", ItemNames.ENCHANTMENT_TABLE, DBNames.ItemNames.ITEM_UID, itemId));
             statement.close();
         }
     }

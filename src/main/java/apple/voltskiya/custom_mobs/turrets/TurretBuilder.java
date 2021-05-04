@@ -108,7 +108,6 @@ public class TurretBuilder {
         double facingX = location.getDirection().getX();
         double facingY = location.getDirection().getY();
         double facingZ = location.getDirection().getZ();
-
         if (uid < 0) {
             return new TurretMob(world, x, y, z,
                     facingX,
@@ -139,8 +138,8 @@ public class TurretBuilder {
                     health,
                     arrows,
                     bow,
-                    bowUid,
                     uid,
+                    bowUid,
                     turretType,
                     targetType
             );

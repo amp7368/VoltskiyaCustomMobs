@@ -3,6 +3,7 @@ package apple.voltskiya.custom_mobs.turrets;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.custom_model.CustomModel;
 import apple.voltskiya.custom_mobs.custom_model.CustomModelPlugin;
+import apple.voltskiya.custom_mobs.sql.TurretsSql;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandPermission;
@@ -158,9 +159,9 @@ public class TurretCommand extends BaseCommand {
             final TurretMob built;
             try {
                 built = turretMob.build();
-                TurretManagerTicker.get().addTurret(built);
+                TurretsSql.registerOrUpdate(built);
                 Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), built::resetRotate);
-                built.run();
+                TurretManagerTicker.get().addTurret(built);
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }

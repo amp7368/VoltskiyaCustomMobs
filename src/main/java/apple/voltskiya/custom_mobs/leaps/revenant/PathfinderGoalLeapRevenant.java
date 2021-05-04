@@ -3,7 +3,7 @@ package apple.voltskiya.custom_mobs.leaps.revenant;
 import apple.voltskiya.custom_mobs.leaps.PathfinderGoalLeap;
 import apple.voltskiya.custom_mobs.leaps.config.LeapPostConfig;
 import apple.voltskiya.custom_mobs.leaps.config.LeapPreConfig;
-import apple.voltskiya.custom_mobs.util.Triple;
+import apple.voltskiya.custom_mobs.util.data_structures.Triple;
 import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.Location;
 import org.bukkit.World;

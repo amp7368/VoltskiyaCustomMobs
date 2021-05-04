@@ -8,7 +8,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
@@ -31,8 +30,8 @@ public class TurretGuiManager implements Listener {
             synchronized (this) {
                 this.turretGuis.put(turret.getUniqueId(), gui);
             }
-            player.openInventory(gui.getInventory());
         }
+        player.openInventory(gui.getInventory());
     }
 
     public static TurretGuiManager get() {
@@ -50,14 +49,6 @@ public class TurretGuiManager implements Listener {
             if (topInventory instanceof TurretGui) {
                 ((TurretGui) topInventory).toTurretInventory(event);
             }
-        }
-    }
-
-    @EventHandler(ignoreCancelled = true)
-    public void onInventoryShiftClick(InventoryMoveItemEvent event) {
-        if (event.getDestination().getHolder() instanceof TurretGui ||
-                event.getSource().getHolder() instanceof TurretGui) {
-            event.setCancelled(true);
         }
     }
 

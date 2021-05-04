@@ -49,11 +49,11 @@ public class TurretTarget {
             return material;
         }
 
-        public boolean targetsPlayers() {
+        public boolean isTargetsPlayers() {
             return targetsPlayers;
         }
 
-        public boolean targetsMobs() {
+        public boolean isTargetsMobs() {
             return targetsMobs;
         }
     }

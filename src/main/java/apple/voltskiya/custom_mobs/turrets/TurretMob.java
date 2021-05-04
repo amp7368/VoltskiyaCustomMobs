@@ -11,6 +11,7 @@ import apple.voltskiya.custom_mobs.util.EntityLocation;
 import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
 import apple.voltskiya.custom_mobs.util.VectorUtils;
 import apple.voltskiya.custom_mobs.util.minecraft.EnchantmentUtils;
+import apple.voltskiya.custom_mobs.util.minecraft.EntityUtils;
 import net.minecraft.server.v1_16_R3.NBTTagCompound;
 import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftArrow;
@@ -262,9 +263,9 @@ public class TurretMob implements Runnable {
             if (!alive.isDead() && alive.hasLineOfSight(durabilityEntityReal) && distance < MAX_SIGHT) {
                 final Vector newFacing = entity.getLocation().subtract(center).toVector().setY(0).normalize();
                 if (entity instanceof Player) {
-                    return this.targetType.targetsPlayers() && ((Player) entity).getGameMode() == GameMode.SURVIVAL && rotate(newFacing);
+                    return this.targetType.isTargetsPlayers() && ((Player) entity).getGameMode() == GameMode.SURVIVAL && rotate(newFacing);
                 } else {
-                    return entity instanceof Monster && this.targetType.targetsMobs() && rotate(newFacing);
+                    return EntityUtils.isHostile(alive)&& this.targetType.isTargetsMobs() && rotate(newFacing);
                 }
             }
         }
@@ -365,8 +366,11 @@ public class TurretMob implements Runnable {
             @Nullable EntityType arrowEntity = removedArrow.toEntityType();
             if (arrowEntity != null) {
                 spawnLocation.getWorld().spawnEntity(spawnLocation, arrowEntity, CreatureSpawnEvent.SpawnReason.CUSTOM, (entity) -> {
+                    entity.setVelocity(new Vector(vx * .25, vy * .25, vz * .25));
+                    if (entity instanceof Egg || entity instanceof Snowball) {
+                        return;
+                    }
                     CraftArrow arrow = (CraftArrow) entity;
-                    arrow.setVelocity(new Vector(vx * .25, vy * .25, vz * .25));
                     if (removedArrow.hasNbt()) {
                         final NBTTagCompound nbt = removedArrow.getEntityNbt();
                         if (nbt != null)
@@ -421,10 +425,12 @@ public class TurretMob implements Runnable {
     private DBItemStack removeArrow() {
         for (DBItemStack arrow : arrows) {
             final int count = arrow.count;
-            if (arrow.type != Material.AIR && count != 0) {
+            if (arrow.type != Material.AIR && count > 0) {
                 if (turretType != TurretType.INFINITE) {
-                    if (count == 1) {
+                    if (count <= 1) {
                         arrow.type = Material.AIR;
+                    } else {
+                        arrow.count--;
                     }
                     if (isOkayToStart()) {
                         new Thread(this).start();
