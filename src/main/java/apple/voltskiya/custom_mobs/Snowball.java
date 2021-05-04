@@ -1,14 +1,10 @@
 package apple.voltskiya.custom_mobs;
 
 import org.bukkit.*;
-import org.bukkit.block.data.BlockData;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -43,15 +39,6 @@ public class Snowball implements Listener {
         }
     }
 
-    @EventHandler
-    public void onNoStickArrows(ProjectileHitEvent event) {
-        final Entity entity = event.getEntity();
-        Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
-            if (entity.getScoreboardTags().contains("no_stick") && entity.getType() == EntityType.ARROW && (entity.isOnGround())) {
-                entity.remove();
-            }
-        });
-    }
 
     private void snowball(PlayerInteractEvent event) {
         Location playerLocation = event.getPlayer().getEyeLocation();
@@ -87,7 +74,6 @@ public class Snowball implements Listener {
             if (!currentLocation.getBlock().getType().isAir()) return;
             if (player != null) {
                 world.playSound(currentLocation, Sound.BLOCK_SNOW_BREAK, 40, .85f);
-                player.damage(0);
                 return;
             }
             Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), this, 1);
@@ -120,7 +106,6 @@ public class Snowball implements Listener {
         }
 
         private void snowballParticles() {
-            BlockData blockData = Material.SNOW_BLOCK.createBlockData();
             for (int i = 0; i < 30; i++) {
                 double theta = random.nextDouble() * 360;
                 double thetay = random.nextDouble() * 360;

@@ -182,9 +182,12 @@ public class DBUtils {
                         ItemNames.ENCHANTMENT_ENUM_TABLE, ItemNames.ENCHANTMENT_UID, ItemNames.ENCHANTMENT_NAMESPACE, ItemNames.ENCHANTMENT_NAME,
                         currentEnchantmentUid, enchantmentName.getKey().getNamespace(), enchantmentName.getKey().getKey()
                 ));
+                statement.close();
                 return currentEnchantmentUid;
             } else {
-                return response.getInt(1);
+                final int enchantmentUid = response.getInt(1);
+                statement.close();
+                return enchantmentUid;
             }
         }
     }

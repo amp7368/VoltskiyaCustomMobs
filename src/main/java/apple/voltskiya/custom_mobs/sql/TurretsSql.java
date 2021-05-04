@@ -21,8 +21,10 @@ import static apple.voltskiya.custom_mobs.sql.DBNames.TurretNames.*;
 
 public class TurretsSql {
     public static void registerOrUpdate(TurretMob turretMob) throws SQLException {
+        System.out.println("update");
         long turretUid = turretMob.getUniqueId();
         if (turretUid == -1) turretUid = VerifyTurretsSql.currentTurretUid++;
+        turretMob.setUniqueId(turretUid);
         Location center = turretMob.getCenter();
         Vector facing = center.getDirection();
         synchronized (VerifyTurretsSql.syncDB) {
@@ -49,12 +51,11 @@ public class TurretsSql {
             statement.close();
             VerifyTurretsSql.database.commit();
             VerifyTurretsSql.database.setAutoCommit(true);
-            turretMob.setUniqueId(turretUid);
         }
     }
 
     private static void insertArrows(Statement statement, long turretUid, List<DBItemStack> arrows) throws SQLException {
-        statement.execute(String.format("DELETE FROM %s WHERE %s >= %d", ARROW_TABLE, ARROW_SLOT_INDEX, arrows.size()));
+        statement.execute(String.format("DELETE FROM %s WHERE %s = %d", ARROW_TABLE, TURRET_UID, turretUid));
         for (int i = 0; i < arrows.size(); i++) {
             statement.execute(String.format("REPLACE INTO %s (%s, %s, %s, %s, %s) VALUES (%d,%d,%d,%d,'%s')",
                     ARROW_TABLE,

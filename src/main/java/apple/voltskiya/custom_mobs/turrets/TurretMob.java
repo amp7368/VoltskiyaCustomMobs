@@ -1,5 +1,6 @@
 package apple.voltskiya.custom_mobs.turrets;
 
+import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.sql.DBItemStack;
 import apple.voltskiya.custom_mobs.sql.DBUtils;
 import apple.voltskiya.custom_mobs.sql.TurretsSql;
@@ -61,6 +62,7 @@ public class TurretMob implements Runnable {
     private boolean isUpdatingDB = false;
     private final TurretType turretType;
     private TurretTarget.TurretTargetType targetType;
+    private int tickIndex = 0;
 
     public TurretMob(UUID worldUid, double x, double y, double z,
                      double facingX, double facingY, double facingZ,
@@ -112,7 +114,7 @@ public class TurretMob implements Runnable {
         this.facing = center.getDirection().clone();
         this.turretEntities = turretEntities;
         this.durabilityEntityReal = Bukkit.getEntity(durabilityEntity.uuid);
-        if (this.durabilityEntityReal == null) isDead = true;
+        if (this.durabilityEntityReal == null) remove();
         this.durabilityEntity = durabilityEntity;
         this.refilledEntity = refilledEntity;
         this.refilledEntityReal = Bukkit.getEntity(refilledEntity.uuid);
@@ -130,13 +132,7 @@ public class TurretMob implements Runnable {
     public synchronized void damage(double damage) {
         this.health -= damage;
         if (health <= 0) {
-            isDead = true;
             remove();
-            try {
-                TurretsSql.removeTurret(uid);
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            }
         }
         if (this.isOkayToStart()) {
             new Thread(this).start();
@@ -197,6 +193,7 @@ public class TurretMob implements Runnable {
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
+        this.isDead = true;
     }
 
     public void resetRotate() {
@@ -204,21 +201,55 @@ public class TurretMob implements Runnable {
     }
 
     public void tick() {
-        if (this.durabilityEntityReal.isDead()) remove();
+        if (isDead() || this.durabilityEntityReal.isDead() || Bukkit.getEntity(durabilityEntity.uuid) == null) remove();
         if (target == null) {
             // if we shouldn't target, don't target
             if (targetType == TurretTarget.TurretTargetType.NONE) return;
             for (Entity entity : this.durabilityEntityReal.getNearbyEntities(MAX_SIGHT, MAX_SIGHT, MAX_SIGHT)) {
                 if (shouldTarget(entity)) {
                     target = (LivingEntity) entity;
-                    shoot(target);
-                    return;
+                    Location goal = target.getLocation();
+                    this.targetLastLocation.add(goal.toVector());
+                    if (this.tickIndex % ticksPerShoot() == 0) {
+                        this.tickIndex = 0;
+                        shoot(target);
+                        System.out.println("shoot");
+                    }
+                    break;
                 }
             }
         } else {
-            if (shouldTarget(target))
-                shoot(target);
-            else target = null;
+            if (shouldTarget(target)) {
+                Location goal = target.getLocation();
+                this.targetLastLocation.add(goal.toVector());
+                if (this.tickIndex % ticksPerShoot() == 0) {
+                    this.tickIndex = 0;
+                    shoot(target);
+                }
+            } else {
+                this.targetLastLocation.clear();
+                resetRotate();
+                target = null;
+            }
+        }
+        this.tickIndex++;
+    }
+
+    /**
+     * @return how many skipped ticks before shooting
+     */
+    private int ticksPerShoot() {
+        if (this.bow == null) return 1;
+        final int quickCharge = this.bow.getEnchantmentLevel(Enchantment.QUICK_CHARGE);
+        switch (quickCharge) {
+            case 0:
+                return 4;
+            case 1:
+                return 3;
+            case 2:
+                return 2;
+            default:
+                return 1;
         }
     }
 
@@ -229,14 +260,9 @@ public class TurretMob implements Runnable {
             if (!alive.isDead() && alive.hasLineOfSight(durabilityEntityReal) && distance < MAX_SIGHT) {
                 final Vector newFacing = entity.getLocation().subtract(center).toVector().setY(0).normalize();
                 if (entity instanceof Player) {
-                    if (this.targetType.targetsPlayers()) {
-                        Player player = (Player) entity;
-                        if (player.getGameMode() == GameMode.SURVIVAL) {
-                            return rotate(newFacing);
-                        }
-                    } else {
-                        return entity instanceof Monster && this.targetType.targetsMobs();
-                    }
+                    return this.targetType.targetsPlayers() && ((Player) entity).getGameMode() == GameMode.SURVIVAL && rotate(newFacing);
+                } else {
+                    return entity instanceof Monster && this.targetType.targetsMobs() && rotate(newFacing);
                 }
             }
         }
@@ -286,9 +312,8 @@ public class TurretMob implements Runnable {
     private void shoot(LivingEntity target) {
         if (arrowsEmpty() || noBow()) return;
         Location goal = target.getLocation();
-        this.targetLastLocation.add(goal.toVector());
         int lastLocationSize = this.targetLastLocation.size();
-        if (lastLocationSize > MAX_TARGET_RECORDING) {
+        while (lastLocationSize > MAX_TARGET_RECORDING) {
             this.targetLastLocation.remove(0);
             lastLocationSize--;
         }
@@ -353,6 +378,7 @@ public class TurretMob implements Runnable {
                     arrow.setFireTicks(EnchantmentUtils.flame(this.bow.getEnchantmentLevel(Enchantment.ARROW_FIRE)));
                     arrow.setPierceLevel(this.bow.getEnchantmentLevel(Enchantment.PIERCING));
                     arrow.addScoreboardTag("no_stick");
+                    arrow.addScoreboardTag("no_invincibility_mobs");
                 });
             }
             if (this.isOkayToStart()) {
@@ -466,7 +492,8 @@ public class TurretMob implements Runnable {
             this.isUpdatingDB = false;
         }
         try {
-            TurretsSql.registerOrUpdate(this);
+            if (VoltskiyaPlugin.get().isEnabled())
+                TurretsSql.registerOrUpdate(this);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
