@@ -1,4 +1,4 @@
-package apple.voltskiya.custom_mobs.util;
+package apple.voltskiya.custom_mobs.util.minecraft;
 
 import org.bukkit.Material;
 

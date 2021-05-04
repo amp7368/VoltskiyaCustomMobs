@@ -2,7 +2,10 @@ package apple.voltskiya.custom_mobs.turrets;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.sql.TurretsSql;
-import apple.voltskiya.custom_mobs.ticking.*;
+import apple.voltskiya.custom_mobs.ticking.LowFrequencyTick;
+import apple.voltskiya.custom_mobs.ticking.NormalFrequencyTick;
+import apple.voltskiya.custom_mobs.ticking.NormalHighFrequencyTick;
+import apple.voltskiya.custom_mobs.ticking.TickGiverable;
 import apple.voltskiya.custom_mobs.turrets.gui.TurretGuiManager;
 import apple.voltskiya.custom_mobs.util.DistanceUtils;
 import apple.voltskiya.custom_mobs.util.EntityLocation;
@@ -23,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static apple.voltskiya.custom_mobs.turrets.TurretMob.*;
+import static apple.voltskiya.custom_mobs.turrets.TurretMob.TURRET_TAG;
 
 public class TurretManagerTicker implements Listener {
     private static TurretManagerTicker instance;
@@ -32,7 +35,6 @@ public class TurretManagerTicker implements Listener {
     private final Map<Closeness, TurretIndividualTicker> closenessToTurrets = new HashMap<>() {{
         for (Closeness closeness : Closeness.values())
             put(closeness, new TurretIndividualTicker(closeness));
-        get(Closeness.HIGH_CLOSE).setIsTargeting();
     }};
     private final long callerUid = UpdatedPlayerList.callerUid();
 

@@ -8,6 +8,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
@@ -40,24 +41,36 @@ public class TurretGuiManager implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onInventoryTurretGuiClick(InventoryClickEvent event) {
-        final Inventory inventory = event.getClickedInventory();
-        if (inventory == null) return;
-        final InventoryHolder holder = inventory.getHolder();
-        if (holder instanceof TurretGui) {
-            synchronized (this) {
-                ((TurretGui) holder).dealWithClick(event);
+        final Inventory clickedInventory = event.getClickedInventory();
+        if ((clickedInventory != null && clickedInventory.getHolder() instanceof TurretGui)) {
+            // clicking from the turret
+            ((TurretGui) clickedInventory.getHolder()).toPlayerInventory(event);
+        } else {
+            final InventoryHolder topInventory = event.getView().getTopInventory().getHolder();
+            if (topInventory instanceof TurretGui) {
+                ((TurretGui) topInventory).toTurretInventory(event);
             }
         }
     }
 
     @EventHandler(ignoreCancelled = true)
-    public void onInventoryClose(InventoryCloseEvent event) {
-        final InventoryHolder holder = event.getInventory().getHolder();
-        if (holder instanceof TurretGui) {
-            synchronized (this) {
-                this.turretGuis.remove(((TurretGui) holder).getUniqueId());
-            }
+    public void onInventoryShiftClick(InventoryMoveItemEvent event) {
+        if (event.getDestination().getHolder() instanceof TurretGui ||
+                event.getSource().getHolder() instanceof TurretGui) {
+            event.setCancelled(true);
         }
+    }
+
+    @EventHandler
+    public void onInventoryClose(InventoryCloseEvent event) {
+        Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
+            final InventoryHolder holder = event.getInventory().getHolder();
+            if (holder instanceof TurretGui) {
+                synchronized (this) {
+                    this.turretGuis.remove(((TurretGui) holder).getUniqueId());
+                }
+            }
+        }, 1);
     }
 
     public void updateGui(long turretUid) {

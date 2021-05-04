@@ -1,7 +1,6 @@
 package apple.voltskiya.custom_mobs.turrets;
 
 import apple.voltskiya.custom_mobs.ticking.TickGiverable;
-import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -9,8 +8,6 @@ import java.util.Iterator;
 public class TurretIndividualTicker {
     private final TurretManagerTicker.Closeness closeness;
     private long tickering;
-    private boolean isTargeting = false;
-    private final long callerUid = UpdatedPlayerList.callerUid();
     private final ArrayList<TurretMob> turrets = new ArrayList<>();
     private boolean isTicking = false;
 
@@ -49,9 +46,5 @@ public class TurretIndividualTicker {
             }
             turrets.trimToSize();
         }
-    }
-
-    public synchronized void setIsTargeting() {
-        this.isTargeting = true;
     }
 }

@@ -27,7 +27,8 @@ public class VerifyTurretsSql {
                     "    %s   NCHAR(36) NOT NULL,\n" +
                     "    %s              BIGINT,\n" +
                     "    %s           DOUBLE    NOT NULL,\n" +
-                    "    %s           VARCHAR(15)    NOT NULL ",
+                    "    %s           VARCHAR(15)    NOT NULL, "+
+            "    %s           VARCHAR(15)    NOT NULL ",
             DBNames.TurretNames.TURRET_UID,
             DBNames.TurretNames.WORLD_UID,
             DBNames.TurretNames.X,
@@ -41,18 +42,21 @@ public class VerifyTurretsSql {
             DBNames.TurretNames.REFILLED_ENTITY,
             DBNames.TurretNames.BOW,
             DBNames.TurretNames.HEALTH,
-            DBNames.TurretNames.TURRET_TYPE
+            DBNames.TurretNames.TURRET_TYPE,
+            DBNames.TurretNames.TURRET_TARGET_TYPE
     );
     private static final String ARROWS_CONTENT = String.format(
             "    %s         BIGINT  NOT NULL,\n" +
                     "    %s INTEGER NOT NULL,\n" +
                     "    %s INTEGER NOT NULL,\n" +
                     "    %s INTEGER NOT NULL,\n" +
+                    "    %s TEXT NOT NULL,\n" +
                     "    PRIMARY KEY (%s, %s)",
             DBNames.TurretNames.TURRET_UID,
             DBNames.TurretNames.ARROW_SLOT_INDEX,
             DBNames.MaterialNames.MATERIAL_UID,
             DBNames.TurretNames.ARROW_COUNT,
+            DBNames.TurretNames.ARROW_NBT,
             DBNames.TurretNames.TURRET_UID,
             DBNames.TurretNames.ARROW_SLOT_INDEX
 
@@ -89,17 +93,23 @@ public class VerifyTurretsSql {
             DBNames.ItemNames.DURABILITY
     );
     private static final String ENCHANTMENT_CONTENT = String.format(
-            "   %s        BIGINT NOT NULL PRIMARY KEY,\n" +
+            "   %s        BIGINT NOT NULL,\n" +
                     "    %s INTEGER NOT NULL," +
-                    "    %s INTEGER NOT NULL",
+                    "    %s INTEGER NOT NULL, " +
+                    " PRIMARY KEY (%s, %s)",
             DBNames.ItemNames.ITEM_UID,
             DBNames.ItemNames.ENCHANTMENT_UID,
-            DBNames.ItemNames.ENCHANTMENT_LEVEL
+            DBNames.ItemNames.ENCHANTMENT_LEVEL,
+            DBNames.ItemNames.ITEM_UID,
+            DBNames.ItemNames.ENCHANTMENT_UID
+
     );
     private static final String ENCHANTMENT_ENUM_CONTENT = String.format(
             "    %s   INTEGER NOT NULL PRIMARY KEY,\n" +
-                    "    %s  VARCHAR(70) NOT NULL",
+                    "    %s  VARCHAR(70) NOT NULL,\n" +
+            "    %s  VARCHAR(70) NOT NULL",
             DBNames.ItemNames.ENCHANTMENT_UID,
+            DBNames.ItemNames.ENCHANTMENT_NAMESPACE,
             DBNames.ItemNames.ENCHANTMENT_NAME
     );
     private static final String CREATE_TABLE_FORMAT = "CREATE TABLE IF NOT EXISTS %s ( %s );";
@@ -107,7 +117,8 @@ public class VerifyTurretsSql {
     public static long currentMaterialUid;
     public static final Object syncDB = new Object();
     public static Connection database;
-    private static int currentItemStackUid;
+    public static long currentItemStackUid;
+    public static long currentEnchantmentUid;
 
     /**
      * do any setup and make sure the static part of this class is completed
@@ -148,6 +159,7 @@ public class VerifyTurretsSql {
                     DBUtils.getMyMaterialUid(Material.AIR)));
             currentMaterialUid = statement.executeQuery(String.format("SELECT max(%s)+1 FROM %s", DBNames.MaterialNames.MATERIAL_UID, DBNames.MaterialNames.MATERIAL_TABLE)).getInt(1);
             currentItemStackUid = statement.executeQuery(String.format("SELECT max(%s)+1 FROM %s", DBNames.ItemNames.ITEM_UID, DBNames.ItemNames.ITEM_TABLE)).getInt(1);
+            currentEnchantmentUid = statement.executeQuery(String.format("SELECT max(%s)+1 FROM %s", DBNames.ItemNames.ENCHANTMENT_UID, DBNames.ItemNames.ENCHANTMENT_ENUM_TABLE)).getInt(1);
             currentTurretUid = statement.executeQuery(String.format("SELECT max(%s)+1 FROM %s", DBNames.TurretNames.TURRET_UID, DBNames.TurretNames.TURRETS_TABLE)).getInt(1);
             statement.close();
         }

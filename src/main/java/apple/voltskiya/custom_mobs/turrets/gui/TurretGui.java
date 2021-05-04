@@ -1,12 +1,13 @@
 package apple.voltskiya.custom_mobs.turrets.gui;
 
-import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
+import apple.voltskiya.custom_mobs.sql.DBItemStack;
 import apple.voltskiya.custom_mobs.turrets.TurretMob;
-import apple.voltskiya.custom_mobs.util.MaterialUtils;
-import apple.voltskiya.custom_mobs.util.Pair;
+import apple.voltskiya.custom_mobs.util.minecraft.MaterialUtils;
+import net.minecraft.server.v1_16_R3.NBTTagCompound;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
@@ -40,13 +41,16 @@ public class TurretGui implements InventoryHolder {
 
         for (int i : FillInventory.getArrow()) put(i, InventoryAction.ARROW_SLOT);
         for (int i : FillInventory.getBow()) put(i, InventoryAction.BOW_SLOT);
+        for (int i : FillInventory.getToggleTargetType()) put(i, InventoryAction.TOGGLE_TARGET);
     }};
 
     public TurretGui(TurretMob turret) {
         this.turret = turret;
         this.inventory = Bukkit.createInventory(this, 54);
+
         fillInventory(this.inventory);
     }
+
 
     public void updateView() {
         this.inventory.clear();
@@ -84,50 +88,111 @@ public class TurretGui implements InventoryHolder {
             inventory.setItem(i, makeItem(Material.ANVIL, 1, "Repair " + TurretMob.HEALTH_PER_REPAIR + " hp",
                     Collections.singletonList("Cost: " + turret.getRepairCost() + " iron")
             ));
-        Iterator<Pair<Material, Integer>> arrows = turret.getArrows().iterator();
+        for (int i : FillInventory.getToggleTargetType()) {
+            final TurretTarget.TurretTargetType targetType = turret.getTargetType();
+            inventory.setItem(i, makeItem(targetType.material(), 1, targetType.display(),
+                    targetType.lore()
+            ));
+        }
+        Iterator<DBItemStack> arrows = turret.getArrows().iterator();
         Iterator<Integer> arrowIndex = FillInventory.getArrow().iterator();
         while (arrows.hasNext() && arrowIndex.hasNext()) {
-            Pair<Material, Integer> arrow = arrows.next();
-            if (arrow != null && !arrow.getKey().isAir()) {
-                inventory.setItem(arrowIndex.next(), makeItem(arrow.getKey(), arrow.getValue(), null, null));
+            DBItemStack arrow = arrows.next();
+            if (arrow != null && !arrow.type.isAir()) {
+                inventory.setItem(arrowIndex.next(), arrow.toItem());
             } else arrowIndex.next();
+        }
+        for (int i : FillInventory.getBow())
+            inventory.setItem(i, turret.getBow());
+    }
+
+    public void toTurretInventory(InventoryClickEvent event) {
+        event.setCancelled(true);
+        ItemStack toMoveItem = event.getCurrentItem();
+        if (toMoveItem != null) {
+            if (MaterialUtils.isBowLike(toMoveItem.getType())) {
+                if (turret.getBow() == null || turret.getBow().getType().isAir()) {
+                    // move the bow over
+                    for (int bowSlot : FillInventory.getBow()) {
+                        ItemStack toMoveItemCopy = new ItemStack(toMoveItem);
+                        this.inventory.setItem(bowSlot, toMoveItemCopy);
+                        this.bowChange();
+                        event.getWhoClicked().getInventory().setItem(event.getSlot(),new ItemStack(Material.AIR));
+                        break;
+                    }
+                }
+            } else if (MaterialUtils.isArrow(toMoveItem.getType())) {
+                for (int arrowSlot : FillInventory.getArrow()) {
+                    final ItemStack arrowItem = inventory.getItem(arrowSlot);
+                    if (arrowItem == null || arrowItem.getType().isAir()) {
+                        ItemStack toMoveItemCopy = new ItemStack(toMoveItem);
+                        this.inventory.setItem(arrowSlot, toMoveItemCopy);
+                        this.arrowChange();
+                        event.getWhoClicked().getInventory().setItem(event.getSlot(),new ItemStack(Material.AIR));
+                        break;
+                    }
+                }
+            }
         }
     }
 
-
-    public void dealWithClick(InventoryClickEvent event) {
-        int slot = event.getSlot();
-        InventoryAction action = slotToAction.get(slot);
-        if (action == null) return;
-        action.dealWithClick.accept(event, this);
+    public void toPlayerInventory(InventoryClickEvent event) {
+        final InventoryAction action = slotToAction.get(event.getSlot());
+        if (action != null)
+            action.dealWithToPlayer.accept(event, this);
     }
 
-    private void bowStartChange(InventoryClickEvent event) {
-        final ItemStack cursor = event.getCursor();
-        if (cursor == null || cursor.getType().isAir() || MaterialUtils.isBowLike(cursor.getType()))
-            Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), this::bowChange, 0);
-        else event.setCancelled(true);
+    /**
+     * @param event the event that should send the item to the player
+     * @return whether I updated anything
+     */
+    private boolean itemToPlayer(InventoryClickEvent event) {
+        event.setCancelled(true);
+        ItemStack item = event.getCurrentItem();
+        if (item != null && !item.getType().isAir()) {
+            ItemStack copy = new ItemStack(item);
+            event.getWhoClicked().getInventory().addItem(copy);
+            this.inventory.setItem(event.getSlot(), new ItemStack(Material.AIR));
+            return true;
+        }
+        return false;
+    }
+
+    private void bowToPlayer(InventoryClickEvent click) {
+        if (itemToPlayer(click)) {
+            bowChange(); //if update, do update
+        }
     }
 
     private void bowChange() {
-
+        ItemStack bow = null;
+        for (int index : FillInventory.getBow()) {
+            final ItemStack item = inventory.getItem(index);
+            if (item == null || !MaterialUtils.isBowLike(item.getType()) || item.getAmount() == 0) {
+                bow = null;
+            } else {
+                bow = item;
+            }
+            break;
+        }
+        turret.setBow(bow);
     }
 
-    private void arrowStartChange(InventoryClickEvent event) {
-        final ItemStack cursor = event.getCursor();
-        if (cursor == null || cursor.getType().isAir() || MaterialUtils.isArrow(cursor.getType()))
-            Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), this::arrowChange, 0);
-        else event.setCancelled(true);
+    private void arrowToPlayer(InventoryClickEvent click) {
+        if (itemToPlayer(click)) {
+            arrowChange(); //if update, do update
+        }
     }
 
     private void arrowChange() {
-        List<Pair<Material, Integer>> arrows = new ArrayList<>();
+        List<DBItemStack> arrows = new ArrayList<>();
         for (int index : FillInventory.getArrow()) {
             final ItemStack item = inventory.getItem(index);
             if (item == null || !MaterialUtils.isArrow(item.getType()) || item.getAmount() == 0) {
-                arrows.add(new Pair<>(Material.AIR, 0));
+                arrows.add(new DBItemStack(Material.AIR, 0, ""));
             } else {
-                arrows.add(new Pair<>(item.getType(), item.getAmount()));
+                String nbt = CraftItemStack.asNMSCopy(item).save(new NBTTagCompound()).asString();
+                arrows.add(new DBItemStack(item.getType(), item.getAmount(), nbt));
             }
         }
         turret.setArrows(arrows);
@@ -146,7 +211,6 @@ public class TurretGui implements InventoryHolder {
     public @NotNull Inventory getInventory() {
         return inventory;
     }
-
 
     private enum InventoryAction {
         DONT_TOUCH((click, turretGui) -> {
@@ -185,17 +249,26 @@ public class TurretGui implements InventoryHolder {
             click.setCancelled(true);
         }),
         ARROW_SLOT((click, turretGui) -> {
-            turretGui.arrowStartChange(click);
+            turretGui.arrowToPlayer(click);
         }),
         BOW_SLOT((click, turretGui) -> {
-            turretGui.bowStartChange(click);
+            turretGui.bowToPlayer(click);
+        }),
+        TOGGLE_TARGET((click, turretGui) -> {
+            click.setCancelled(true);
+            turretGui.toggleTarget(click);
         });
 
-        private final BiConsumer<InventoryClickEvent, TurretGui> dealWithClick;
+        private final BiConsumer<InventoryClickEvent, TurretGui> dealWithToPlayer;
 
-        InventoryAction(BiConsumer<InventoryClickEvent, TurretGui> dealWithClick) {
-            this.dealWithClick = dealWithClick;
+        InventoryAction(BiConsumer<InventoryClickEvent, TurretGui> dealWithToPlayer) {
+            this.dealWithToPlayer = dealWithToPlayer;
         }
+    }
+
+    private void toggleTarget(InventoryClickEvent click) {
+        turret.setTargetType(turret.getTargetType().next());
+        updateView();
     }
 
     private void repair(int repairAmount, HumanEntity player) {
@@ -258,7 +331,7 @@ public class TurretGui implements InventoryHolder {
             for (int i = 12; i < 16; i++) filler.add(i);
             for (int i = 30; i < 36; i++) filler.add(i);
             for (int i = 39; i < 45; i++) filler.add(i);
-            for (int i = 48; i < 54; i++) filler.add(i);
+            for (int i = 48; i < 53; i++) filler.add(i);
             return filler;
         }
 
@@ -286,6 +359,10 @@ public class TurretGui implements InventoryHolder {
 
         public static Collection<Integer> getBow() {
             return Collections.singletonList(10);
+        }
+
+        public static Collection<Integer> getToggleTargetType() {
+            return Collections.singletonList(53);
         }
     }
 }

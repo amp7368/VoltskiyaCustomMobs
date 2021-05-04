@@ -34,6 +34,8 @@ public class DBNames {
         public static final String WORLD_UID = "world_uid";
         public static final String ARROW_SLOT_INDEX = "slot_index";
         public static final String TURRET_TYPE = "turret_type";
+        public static final String ARROW_NBT = "arrow_nbt";
+        public static final String TURRET_TARGET_TYPE = "turret_target_type";
     }
 
     public static class MaterialNames {
@@ -48,6 +50,7 @@ public class DBNames {
         public static final String ITEM_COUNT = "item_count";
         public static final String DURABILITY = "durability";
         public static final String ENCHANTMENT_UID = "enchantment_uid";
+        public static final String ENCHANTMENT_NAMESPACE = "enchantment_namespace";
         public static final String ENCHANTMENT_NAME = "enchantment_name";
         public static final String ENCHANTMENT_LEVEL = "enchantment_level";
         public static final String ITEM_TABLE = "item";

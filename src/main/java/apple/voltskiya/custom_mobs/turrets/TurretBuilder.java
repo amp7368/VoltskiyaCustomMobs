@@ -1,8 +1,9 @@
 package apple.voltskiya.custom_mobs.turrets;
 
+import apple.voltskiya.custom_mobs.sql.DBItemStack;
 import apple.voltskiya.custom_mobs.sql.DBUtils;
+import apple.voltskiya.custom_mobs.turrets.gui.TurretTarget;
 import apple.voltskiya.custom_mobs.util.EntityLocation;
-import apple.voltskiya.custom_mobs.util.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -20,7 +21,7 @@ import java.util.UUID;
 public class TurretBuilder {
     private final Location location;
     private final double health;
-    private final List<Pair<Material, Integer>> arrows;
+    private final List<DBItemStack> arrows;
     private final long uid;
     private final long bowUid;
     private List<EntityLocation> turretEntities = new ArrayList<>();
@@ -29,6 +30,7 @@ public class TurretBuilder {
     private EntityLocation refilledEntity;
     private EntityLocation bowEntity;
     private final TurretType turretType;
+    private final TurretTarget.TurretTargetType targetType;
 
     /**
      * create a new TurretMob and register it as a new turret
@@ -42,6 +44,7 @@ public class TurretBuilder {
         this.bowUid = -1;
         this.uid = -1;
         this.turretType = turretType;
+        this.targetType = TurretTarget.TurretTargetType.NONE;
     }
 
     public TurretBuilder(UUID worldUid, double x, double y, double z,
@@ -49,10 +52,11 @@ public class TurretBuilder {
                          List<EntityLocation> turretEntities,
                          EntityLocation durabilityEntity, EntityLocation refilledEntity, EntityLocation bowEntity,
                          double health,
-                         List<Pair<Material, Integer>> arrows,
+                         List<DBItemStack> arrows,
                          long bowUid,
                          long uid,
-                         TurretType turretType
+                         TurretType turretType,
+                         TurretTarget.TurretTargetType turretTargetType
     ) {
         this.turretType = turretType;
         final World world = Bukkit.getWorld(worldUid);
@@ -67,6 +71,7 @@ public class TurretBuilder {
         this.arrows = arrows;
         this.bowUid = bowUid;
         this.uid = uid;
+        this.targetType = turretTargetType;
     }
 
 
@@ -118,7 +123,8 @@ public class TurretBuilder {
                     arrows,
                     new ItemStack(Material.AIR),
                     DBUtils.getAirItemStack(),
-                    turretType
+                    turretType,
+                    targetType
             );
         } else {
             final ItemStack bow = DBUtils.getItemStack(bowUid);
@@ -135,7 +141,8 @@ public class TurretBuilder {
                     bow,
                     bowUid,
                     uid,
-                    turretType
+                    turretType,
+                    targetType
             );
         }
     }
