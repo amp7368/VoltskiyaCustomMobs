@@ -3,6 +3,7 @@ package apple.voltskiya.custom_mobs.sql;
 import apple.voltskiya.custom_mobs.turrets.TurretBuilder;
 import apple.voltskiya.custom_mobs.turrets.TurretMob;
 import apple.voltskiya.custom_mobs.turrets.TurretType;
+import apple.voltskiya.custom_mobs.turrets.gui.TurretTarget;
 import apple.voltskiya.custom_mobs.util.EntityLocation;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -30,16 +31,16 @@ public class TurretsSql {
             Statement statement = VerifyTurretsSql.database.createStatement();
             statement.execute(String.format(
                     "REPLACE INTO %s (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,\n" +
-                            "                    %s, %s)\n" +
-                            "VALUES (%d,'%s',%f,%f,%f,%f,%f,%f,'%s','%s','%s',%d,%f,'%s');\n",
+                            "                    %s, %s, %s)\n" +
+                            "VALUES (%d,'%s',%f,%f,%f,%f,%f,%f,'%s','%s','%s',%d,%f,'%s','%s');\n",
                     TURRETS_TABLE, TURRET_UID, WORLD_UID, X, Y, Z,
                     X_FACING, Y_FACING, Z_FACING,
                     DURABILITY_ENTITY, BOW_ENTITY, REFILLED_ENTITY,
-                    BOW, HEALTH, TURRET_TYPE,
+                    BOW, HEALTH, TURRET_TYPE, TURRET_TARGET_TYPE,
                     turretUid, center.getWorld().getUID(), center.getX(), center.getY(), center.getZ(),
                     facing.getX(), facing.getY(), facing.getZ(),
                     turretMob.getDurabilityEntity().uuid.toString(), turretMob.getBowEntity().uuid.toString(), turretMob.getRefilledEntity().uuid.toString(),
-                    bowId, turretMob.getHealth(), turretMob.getTurretType().name()
+                    bowId, turretMob.getHealth(), turretMob.getTurretType().name(), turretMob.getTargetType().name()
             ));
             for (EntityLocation entityUid : turretMob.getTurretEntities()) {
                 insertEntity(turretUid, statement, entityUid);
@@ -68,7 +69,6 @@ public class TurretsSql {
                     arrows.get(i).count,
                     arrows.get(i).nbt
             ));
-            System.out.println(i);
         }
     }
 
@@ -133,7 +133,8 @@ public class TurretsSql {
                                 arrow,
                                 response.getLong(BOW),
                                 turretUid,
-                                TurretType.valueOf(response.getString(TURRET_TYPE))
+                                TurretType.valueOf(response.getString(TURRET_TYPE)),
+                                TurretTarget.TurretTargetType.valueOf(response.getString(TURRET_TARGET_TYPE))
                         )
                 );
             }

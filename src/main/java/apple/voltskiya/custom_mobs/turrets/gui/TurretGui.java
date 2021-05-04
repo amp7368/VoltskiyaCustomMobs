@@ -41,6 +41,7 @@ public class TurretGui implements InventoryHolder {
 
         for (int i : FillInventory.getArrow()) put(i, InventoryAction.ARROW_SLOT);
         for (int i : FillInventory.getBow()) put(i, InventoryAction.BOW_SLOT);
+        for (int i : FillInventory.getToggleTargetType()) put(i, InventoryAction.TOGGLE_TARGET);
     }};
 
     public TurretGui(TurretMob turret) {
@@ -87,6 +88,12 @@ public class TurretGui implements InventoryHolder {
             inventory.setItem(i, makeItem(Material.ANVIL, 1, "Repair " + TurretMob.HEALTH_PER_REPAIR + " hp",
                     Collections.singletonList("Cost: " + turret.getRepairCost() + " iron")
             ));
+        for (int i : FillInventory.getToggleTargetType()) {
+            final TurretTarget.TurretTargetType targetType = turret.getTargetType();
+            inventory.setItem(i, makeItem(targetType.material(), 1, targetType.display(),
+                    targetType.lore()
+            ));
+        }
         Iterator<DBItemStack> arrows = turret.getArrows().iterator();
         Iterator<Integer> arrowIndex = FillInventory.getArrow().iterator();
         while (arrows.hasNext() && arrowIndex.hasNext()) {
@@ -185,7 +192,6 @@ public class TurretGui implements InventoryHolder {
                 arrows.add(new DBItemStack(item.getType(), item.getAmount(), nbt));
             }
         }
-        System.out.println("set");
         turret.setArrows(arrows);
     }
 
@@ -244,6 +250,10 @@ public class TurretGui implements InventoryHolder {
         }),
         BOW_SLOT((click, turretGui) -> {
             turretGui.bowToPlayer(click);
+        }),
+        TOGGLE_TARGET((click, turretGui) -> {
+            click.setCancelled(true);
+            turretGui.toggleTarget(click);
         });
 
         private final BiConsumer<InventoryClickEvent, TurretGui> dealWithToPlayer;
@@ -251,6 +261,11 @@ public class TurretGui implements InventoryHolder {
         InventoryAction(BiConsumer<InventoryClickEvent, TurretGui> dealWithToPlayer) {
             this.dealWithToPlayer = dealWithToPlayer;
         }
+    }
+
+    private void toggleTarget(InventoryClickEvent click) {
+        turret.setTargetType(turret.getTargetType().next());
+        updateView();
     }
 
     private void repair(int repairAmount, HumanEntity player) {
@@ -313,7 +328,7 @@ public class TurretGui implements InventoryHolder {
             for (int i = 12; i < 16; i++) filler.add(i);
             for (int i = 30; i < 36; i++) filler.add(i);
             for (int i = 39; i < 45; i++) filler.add(i);
-            for (int i = 48; i < 54; i++) filler.add(i);
+            for (int i = 48; i < 53; i++) filler.add(i);
             return filler;
         }
 
@@ -341,6 +356,10 @@ public class TurretGui implements InventoryHolder {
 
         public static Collection<Integer> getBow() {
             return Collections.singletonList(10);
+        }
+
+        public static Collection<Integer> getToggleTargetType() {
+            return Collections.singletonList(53);
         }
     }
 }

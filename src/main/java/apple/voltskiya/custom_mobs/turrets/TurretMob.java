@@ -4,6 +4,7 @@ import apple.voltskiya.custom_mobs.sql.DBItemStack;
 import apple.voltskiya.custom_mobs.sql.DBUtils;
 import apple.voltskiya.custom_mobs.sql.TurretsSql;
 import apple.voltskiya.custom_mobs.turrets.gui.TurretGuiManager;
+import apple.voltskiya.custom_mobs.turrets.gui.TurretTarget;
 import apple.voltskiya.custom_mobs.util.DistanceUtils;
 import apple.voltskiya.custom_mobs.util.EntityLocation;
 import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
@@ -13,10 +14,7 @@ import net.minecraft.server.v1_16_R3.NBTTagCompound;
 import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftArrow;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
@@ -58,10 +56,11 @@ public class TurretMob implements Runnable {
     private long uid;
     private boolean isDead = false;
     private final long callerUid = UpdatedPlayerList.callerUid();
-    private Player target = null;
+    private LivingEntity target = null;
     private final List<Vector> targetLastLocation = new ArrayList<>();
     private boolean isUpdatingDB = false;
     private final TurretType turretType;
+    private TurretTarget.TurretTargetType targetType;
 
     public TurretMob(UUID worldUid, double x, double y, double z,
                      double facingX, double facingY, double facingZ,
@@ -72,7 +71,8 @@ public class TurretMob implements Runnable {
                      List<DBItemStack> arrows,
                      ItemStack bow,
                      long bowId,
-                     TurretType turretType
+                     TurretType turretType,
+                     TurretTarget.TurretTargetType targetType
     ) {
         final World world = Bukkit.getWorld(worldUid);
         this.center = new Location(world, x, y, z);
@@ -90,6 +90,7 @@ public class TurretMob implements Runnable {
         this.bow = bow;
         this.bowId = bowId;
         this.uid = -1;
+        this.targetType = targetType;
         this.turretType = turretType;
     }
 
@@ -102,7 +103,8 @@ public class TurretMob implements Runnable {
                      ItemStack bow,
                      long uid,
                      long bowId,
-                     TurretType turretType
+                     TurretType turretType,
+                     TurretTarget.TurretTargetType targetType
     ) {
         final World world = Bukkit.getWorld(worldUid);
         this.center = new Location(world, x, y, z);
@@ -122,6 +124,7 @@ public class TurretMob implements Runnable {
         this.bowId = bowId;
         this.uid = uid;
         this.turretType = turretType;
+        this.targetType = targetType;
     }
 
     public synchronized void damage(double damage) {
@@ -203,33 +206,41 @@ public class TurretMob implements Runnable {
     public void tick() {
         if (this.durabilityEntityReal.isDead()) remove();
         if (target == null) {
-            List<Player> players = UpdatedPlayerList.getPlayers(callerUid);
-            for (Player player : players) {
-                double distance = DistanceUtils.distance(player.getLocation(), center);
-                if (distance <= MAX_SIGHT && player.hasLineOfSight(durabilityEntityReal) && player.getGameMode() == GameMode.SURVIVAL) {
-                    final Vector newFacing = player.getLocation().subtract(center).toVector().setY(0).normalize();
-                    if (rotate(newFacing)) {
-                        target = player;
-                        return;
-                    } else {
-                        rotate(center.getDirection());
-                    }
+            // if we shouldn't target, don't target
+            if (targetType == TurretTarget.TurretTargetType.NONE) return;
+            for (Entity entity : this.durabilityEntityReal.getNearbyEntities(MAX_SIGHT, MAX_SIGHT, MAX_SIGHT)) {
+                if (shouldTarget(entity)) {
+                    target = (LivingEntity) entity;
+                    shoot(target);
+                    return;
                 }
             }
         } else {
-            double distance = DistanceUtils.distance(target.getLocation(), center);
-            if (distance <= MAX_SIGHT && target.hasLineOfSight(durabilityEntityReal) && target.getGameMode() == GameMode.SURVIVAL && !target.isDead()) {
-                final Vector newFacing = target.getLocation().subtract(center).toVector().setY(0).normalize();
-                if (rotate(newFacing)) {
-                    shoot(target);
-                } else {
-                    rotate(center.getDirection());
-                    target = null;
+            if (shouldTarget(target))
+                shoot(target);
+            else target = null;
+        }
+    }
+
+    private boolean shouldTarget(@Nullable Entity entity) {
+        if (entity instanceof LivingEntity) {
+            LivingEntity alive = (LivingEntity) entity;
+            double distance = DistanceUtils.distance(entity.getLocation(), center);
+            if (!alive.isDead() && alive.hasLineOfSight(durabilityEntityReal) && distance < MAX_SIGHT) {
+                final Vector newFacing = entity.getLocation().subtract(center).toVector().setY(0).normalize();
+                if (entity instanceof Player) {
+                    if (this.targetType.targetsPlayers()) {
+                        Player player = (Player) entity;
+                        if (player.getGameMode() == GameMode.SURVIVAL) {
+                            return rotate(newFacing);
+                        }
+                    } else {
+                        return entity instanceof Monster && this.targetType.targetsMobs();
+                    }
                 }
-            } else {
-                target = null;
             }
         }
+        return false;
     }
 
     /**
@@ -272,7 +283,7 @@ public class TurretMob implements Runnable {
     }
 
 
-    private void shoot(Player target) {
+    private void shoot(LivingEntity target) {
         if (arrowsEmpty() || noBow()) return;
         Location goal = target.getLocation();
         this.targetLastLocation.add(goal.toVector());
@@ -555,6 +566,17 @@ public class TurretMob implements Runnable {
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        }
+    }
+
+    public TurretTarget.TurretTargetType getTargetType() {
+        return this.targetType;
+    }
+
+    public void setTargetType(TurretTarget.TurretTargetType targetType) {
+        this.targetType = targetType;
+        if (isOkayToStart()) {
+            new Thread(this).start();
         }
     }
 }

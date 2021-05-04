@@ -27,7 +27,8 @@ public class VerifyTurretsSql {
                     "    %s   NCHAR(36) NOT NULL,\n" +
                     "    %s              BIGINT,\n" +
                     "    %s           DOUBLE    NOT NULL,\n" +
-                    "    %s           VARCHAR(15)    NOT NULL ",
+                    "    %s           VARCHAR(15)    NOT NULL, "+
+            "    %s           VARCHAR(15)    NOT NULL ",
             DBNames.TurretNames.TURRET_UID,
             DBNames.TurretNames.WORLD_UID,
             DBNames.TurretNames.X,
@@ -41,7 +42,8 @@ public class VerifyTurretsSql {
             DBNames.TurretNames.REFILLED_ENTITY,
             DBNames.TurretNames.BOW,
             DBNames.TurretNames.HEALTH,
-            DBNames.TurretNames.TURRET_TYPE
+            DBNames.TurretNames.TURRET_TYPE,
+            DBNames.TurretNames.TURRET_TARGET_TYPE
     );
     private static final String ARROWS_CONTENT = String.format(
             "    %s         BIGINT  NOT NULL,\n" +
