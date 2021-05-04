@@ -117,6 +117,8 @@ public class TurretGui implements InventoryHolder {
                         ItemStack toMoveItemCopy = new ItemStack(toMoveItem);
                         this.inventory.setItem(bowSlot, toMoveItemCopy);
                         this.bowChange();
+                        event.getWhoClicked().getInventory().setItem(event.getSlot(),new ItemStack(Material.AIR));
+                        break;
                     }
                 }
             } else if (MaterialUtils.isArrow(toMoveItem.getType())) {
@@ -126,6 +128,7 @@ public class TurretGui implements InventoryHolder {
                         ItemStack toMoveItemCopy = new ItemStack(toMoveItem);
                         this.inventory.setItem(arrowSlot, toMoveItemCopy);
                         this.arrowChange();
+                        event.getWhoClicked().getInventory().setItem(event.getSlot(),new ItemStack(Material.AIR));
                         break;
                     }
                 }

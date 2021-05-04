@@ -127,6 +127,9 @@ public class TurretMob implements Runnable {
         this.uid = uid;
         this.turretType = turretType;
         this.targetType = targetType;
+        correctRefilledEntity();
+        correctBowEntity();
+        correctDurabilityEntity();
     }
 
     public synchronized void damage(double damage) {
@@ -213,7 +216,6 @@ public class TurretMob implements Runnable {
                     if (this.tickIndex % ticksPerShoot() == 0) {
                         this.tickIndex = 0;
                         shoot(target);
-                        System.out.println("shoot");
                     }
                     break;
                 }
@@ -311,7 +313,7 @@ public class TurretMob implements Runnable {
 
     private void shoot(LivingEntity target) {
         if (arrowsEmpty() || noBow()) return;
-        Location goal = target.getLocation();
+        Location goal = target.getEyeLocation();
         int lastLocationSize = this.targetLastLocation.size();
         while (lastLocationSize > MAX_TARGET_RECORDING) {
             this.targetLastLocation.remove(0);

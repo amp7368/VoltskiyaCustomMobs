@@ -1,4 +1,4 @@
-name: AppleCustomMobs
+name: VoltskiyaCustomMobs
 version: 1.0
 main: apple.voltskiya.custom_mobs.VoltskiyaPlugin
 api-version: 1.16

@@ -21,7 +21,6 @@ import static apple.voltskiya.custom_mobs.sql.DBNames.TurretNames.*;
 
 public class TurretsSql {
     public static void registerOrUpdate(TurretMob turretMob) throws SQLException {
-        System.out.println("update");
         long turretUid = turretMob.getUniqueId();
         if (turretUid == -1) turretUid = VerifyTurretsSql.currentTurretUid++;
         turretMob.setUniqueId(turretUid);
