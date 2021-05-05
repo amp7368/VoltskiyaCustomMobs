@@ -1,5 +1,6 @@
 package apple.voltskiya.custom_mobs.mobs.pathfinders;
 
+import apple.voltskiya.custom_mobs.PluginDisable;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.abilities.ai_changes.micro_misles.MicroMissileManager;
 import apple.voltskiya.custom_mobs.abilities.ai_changes.micro_misles.MicroMissleShooter;
@@ -10,6 +11,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
+import org.bukkit.plugin.IllegalPluginAccessException;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
@@ -30,6 +32,7 @@ public class PathfinderGoalShootMicroMissle extends PathfinderGoal {
         this.count = count;
         this.missileType = missileType;
         this.a(EnumSet.of(Type.TARGET));
+        PluginDisable.addMob(me.getUniqueID(),this);
     }
 
     /**
@@ -47,9 +50,13 @@ public class PathfinderGoalShootMicroMissle extends PathfinderGoal {
             this.lastShot = this.me.ticksLived;
             if (missileType == MicroMissleShooter.MissileType.FLURRY) {
                 sounds();
-                Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
-                    MicroMissileManager.shoot(this.me.getBukkitEntity().getLocation().add(0, this.me.getHeadHeight(), 0), targetLocation, count, missileType);
-                }, 24);
+                try {
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
+                        MicroMissileManager.shoot(this.me.getBukkitEntity().getLocation().add(0, this.me.getHeadHeight(), 0), targetLocation, count, missileType);
+                    }, 24);
+                } catch (IllegalPluginAccessException ignored) {
+                    // doesn't matter if the action is interuppted
+                }
             } else {
                 singleSound();
                 MicroMissileManager.shoot(this.me.getBukkitEntity().getLocation().add(0, this.me.getHeadHeight(), 0), targetLocation, count, missileType);
@@ -65,18 +72,22 @@ public class PathfinderGoalShootMicroMissle extends PathfinderGoal {
     private void sounds() {
         final Location location = me.getBukkitEntity().getLocation();
         location.getWorld().playSound(location, Sound.ITEM_FIRECHARGE_USE, SoundCategory.HOSTILE, 2f, 1.5f);
-        Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
-            location.getWorld().playSound(location, Sound.ITEM_FIRECHARGE_USE, SoundCategory.HOSTILE, 2.25f, 1.6f);
-        }, 6);
-        Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
-            location.getWorld().playSound(location, Sound.ITEM_FIRECHARGE_USE, SoundCategory.HOSTILE, 2.5f, 1.7f);
-        }, 12);
-        Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
-            location.getWorld().playSound(location, Sound.ITEM_FIRECHARGE_USE, SoundCategory.HOSTILE, 2.75f, 1.8f);
-        }, 18);
-        Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
-            location.getWorld().playSound(location, Sound.ITEM_FIRECHARGE_USE, SoundCategory.HOSTILE, 3f, 1.9f);
-        }, 24);
+        try {
+            Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
+                location.getWorld().playSound(location, Sound.ITEM_FIRECHARGE_USE, SoundCategory.HOSTILE, 2.25f, 1.6f);
+            }, 6);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
+                location.getWorld().playSound(location, Sound.ITEM_FIRECHARGE_USE, SoundCategory.HOSTILE, 2.5f, 1.7f);
+            }, 12);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
+                location.getWorld().playSound(location, Sound.ITEM_FIRECHARGE_USE, SoundCategory.HOSTILE, 2.75f, 1.8f);
+            }, 18);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
+                location.getWorld().playSound(location, Sound.ITEM_FIRECHARGE_USE, SoundCategory.HOSTILE, 3f, 1.9f);
+            }, 24);
+        } catch (IllegalPluginAccessException ignored) {
+            // doesn't matter if the action is interuppted
+        }
     }
 
     @Nullable

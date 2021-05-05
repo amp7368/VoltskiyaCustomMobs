@@ -1,6 +1,6 @@
 package apple.voltskiya.custom_mobs.mobs.testing;
 
-import apple.voltskiya.custom_mobs.mobs.NmsMobsPlugin;
+import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
 import apple.voltskiya.custom_mobs.mobs.parts.*;
 import apple.voltskiya.custom_mobs.mobs.utils.UtilsAttribute;
 import apple.voltskiya.custom_mobs.mobs.utils.UtilsPacket;
@@ -63,7 +63,7 @@ public class MobMiscCustomModel extends EntityZombie {
         final EntityTypes<MobMiscCustomModel> entityTypesFinal = entitytypesBuilder.a(name);
 
         // log it
-        NmsMobsPlugin.get().log(Level.INFO, "registered " + name);
+        PluginNmsMobs.get().log(Level.INFO, "registered " + name);
         return entityTypesFinal;
 
     }
@@ -166,7 +166,7 @@ public class MobMiscCustomModel extends EntityZombie {
         for (MobPartChild child : children) {
             packetsToSend.add(child.moveFromMother(false));
         }
-        UtilsPacket.sendPacketsToAllPlayers(packetsToSend.stream().map(p -> (Packet<?>) p).collect(Collectors.toList()));
+        UtilsPacket.sendPacketsToNearbyPlayers(packetsToSend.stream().map(p -> (Packet<?>) p).collect(Collectors.toList()), this.getBukkitEntity().getLocation());
     }
 
 

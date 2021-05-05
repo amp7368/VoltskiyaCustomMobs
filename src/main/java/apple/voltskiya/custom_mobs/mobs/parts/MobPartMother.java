@@ -4,6 +4,10 @@ import apple.voltskiya.custom_mobs.util.EntityLocation;
 import net.minecraft.server.v1_16_R3.Entity;
 import org.bukkit.Location;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 public class MobPartMother {
     public final Location location;
     public final EntityLocation entityLocation;
@@ -15,5 +19,25 @@ public class MobPartMother {
         this.entity = entity;
         this.location = new Location(null, entityLocation.x, entityLocation.y, entityLocation.z);
         this.scoreboardTag = scoreboardTag;
+    }
+
+
+    public static List<MobPartChild> getChildren(UUID uniqueId, Entity mainEntity, NmsModelEntityConfig selfModel, NmsModelConfig.ModelConfigName modelConfig) {
+        List<MobPartChild> children = new ArrayList<>();
+        EntityLocation motherLocation = new EntityLocation(
+                uniqueId,
+                selfModel.getEntity().x,
+                selfModel.getEntity().y,
+                selfModel.getEntity().z,
+                selfModel.getEntity().facingX,
+                selfModel.getEntity().facingY,
+                selfModel.getEntity().facingZ
+        ); // for simpler rotations
+        MobPartMother motherMe = new MobPartMother(motherLocation, mainEntity, modelConfig.getFile());
+        final NmsModelConfig model = NmsModelConfig.parts(modelConfig);
+        for (NmsModelEntityConfig part : model.others()) {
+            children.add(MobParts.spawnMobPart(motherMe, part));
+        }
+        return children;
     }
 }

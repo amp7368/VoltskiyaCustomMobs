@@ -37,6 +37,11 @@ public class CustomModelPlugin extends VoltskiyaModule {
         return instance;
     }
 
+    @Override
+    public void init() {
+        instance = this;
+    }
+
 
     public void saveSchematic(CustomModelGui gui) throws IOException {
         File file = new File(this.getDataFolder(), YML_FILENAME);
@@ -183,7 +188,6 @@ public class CustomModelPlugin extends VoltskiyaModule {
 
     @Override
     public void enable() {
-        instance = this;
         new CustomModelIO();
     }
 

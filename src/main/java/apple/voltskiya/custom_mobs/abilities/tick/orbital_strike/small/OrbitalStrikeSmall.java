@@ -2,7 +2,9 @@ package apple.voltskiya.custom_mobs.abilities.tick.orbital_strike.small;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.abilities.tick.orbital_strike.OrbitalStrike;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.Vector;
@@ -15,7 +17,6 @@ public class OrbitalStrikeSmall {
     public static final double STRIKE_TARGET_LARGER_RADIUS = SmallOrbitalStrikeManagerTicker.get().STRIKE_TARGET_LARGER_RADIUS;
     public static final double STRIKE_HEIGHT = SmallOrbitalStrikeManagerTicker.get().STRIKE_HEIGHT;
     public static final double STRIKE_MIN_HEIGHT = SmallOrbitalStrikeManagerTicker.get().STRIKE_MIN_HEIGHT;
-    private final long callerUid;
     private final World targetWorld;
     private final List<Integer> xyzsToTime = new ArrayList<>();
     private final int currentTick = 0;
@@ -23,8 +24,7 @@ public class OrbitalStrikeSmall {
     private static final Random random = new Random();
     private final List<Location> previousLocations = new ArrayList<>();
 
-    public OrbitalStrikeSmall(Entity striker, LivingEntity target, long callerUid) {
-        this.callerUid = callerUid;
+    public OrbitalStrikeSmall(Entity striker, LivingEntity target) {
         Location targetLocation = target.getLocation();
         for (int i = 0; i < 5; i++) {
             xyzsToTime.add(
@@ -49,7 +49,7 @@ public class OrbitalStrikeSmall {
                                 center.getX(),
                                 center.getY(),
                                 center.getZ(),
-                                type, callerUid
+                                type
                         );
                     }, xyzToTime
             );

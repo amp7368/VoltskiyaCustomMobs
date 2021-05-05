@@ -1,7 +1,7 @@
 package apple.voltskiya.custom_mobs.util;
 
-import apple.voltskiya.custom_mobs.ticking.HighFrequencyTick;
 import apple.voltskiya.custom_mobs.abilities.tick.Tickable;
+import apple.voltskiya.custom_mobs.ticking.HighFrequencyTick;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -12,21 +12,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class UpdatedPlayerList implements Tickable {
-    private static long callerUid;
-    private static final int RECALCULATE_INTERVAL = 20 ;//* 30;
-    private static int recalculateCountdown = RECALCULATE_INTERVAL;
-    private static final Map<Long, Caller> callsPerInterval = new HashMap<>();
-
-    private static Concern currentConcern = Concern.HIGH_2;
-    private static int tickCountdown = 0;
-    private static long tickId = 0;
     private static List<Player> players = new ArrayList<>(Bukkit.getOnlinePlayers());
-    private static final Object CONCERN_SYNC = new Object();
     private static final Object PLAYER_SYNC = new Object();
 
     public UpdatedPlayerList() {
@@ -35,47 +24,32 @@ public class UpdatedPlayerList implements Tickable {
         }
     }
 
+    @NotNull
+    public static List<Player> getNearbyPlayers(Location location, double distance) {
+        List<Player> nearby = new ArrayList<>();
+        for (Player player : players) {
+            if (DistanceUtils.distance(location, player.getLocation()) <= distance) {
+                nearby.add(player);
+            }
+        }
+        return nearby;
+    }
+
     @Override
     public void tick() {
-        tickId++;
-        if (recalculateCountdown-- == 0) {
-            recalculateCountdown = RECALCULATE_INTERVAL;
-            recalculateConcern();
-        }
-        if (tickCountdown-- == 0) {
-            synchronized (CONCERN_SYNC) {
-                tickCountdown = currentConcern.getTicks();
-            }
-            synchronized (PLAYER_SYNC) {
-                players = new ArrayList<>(Bukkit.getOnlinePlayers());
-            }
+        synchronized (PLAYER_SYNC) {
+            players = new ArrayList<>(Bukkit.getOnlinePlayers());
         }
     }
 
-    public static synchronized long callerUid() {
-        return callerUid++;
-    }
-
-    private static void call(long callerUid) {
-        synchronized (CONCERN_SYNC) {
-            callsPerInterval.compute(callerUid, (id, call) -> {
-                if (call == null) call = new Caller(id);
-                call.call();
-                return call;
-            });
-        }
-    }
-
-    public static List<Player> getPlayers(long callerUid) {
-        call(callerUid);
+    public static List<Player> getPlayers() {
         synchronized (PLAYER_SYNC) {
             return players;
         }
     }
 
     @Nullable
-    public static Player getCollision(BoundingBox other, long callerUid) {
-        call(callerUid);
+    public static Player getCollision(BoundingBox other) {
         synchronized (PLAYER_SYNC) {
             for (Player p : players) {
                 if (p.getGameMode() == GameMode.SURVIVAL) {
@@ -95,8 +69,7 @@ public class UpdatedPlayerList implements Tickable {
     }
 
     @Nullable
-    public static Player getClosestPlayer(Location location, long callerUid) {
-        call(callerUid);
+    public static Player getClosestPlayer(Location location) {
         synchronized (PLAYER_SYNC) {
             Player closest = null;
             double distance = Double.MAX_VALUE;
@@ -135,72 +108,5 @@ public class UpdatedPlayerList implements Tickable {
             if (x == xMax) break;
         }
         return corners;
-    }
-
-    private void recalculateConcern() {
-        synchronized (CONCERN_SYNC) {
-            int maxCalls = 0;
-            for (Caller caller : callsPerInterval.values()) {
-                maxCalls = Math.max(caller.getCallsRecently(), maxCalls);
-            }
-            double callsPerTick = ((double) maxCalls) / RECALCULATE_INTERVAL;
-            currentConcern = Concern.getConcern(callsPerTick);
-        }
-    }
-
-    private enum Concern {
-        HIGH_2(2, null),
-        MEDIUM_10(10, HIGH_2),
-        LOW_20(20, MEDIUM_10),
-        VERY_LOW_400(200, LOW_20);
-
-        private final int ticks;
-        private final Concern upper;
-
-        Concern(int ticks, Concern upper) {
-            this.ticks = ticks;
-            this.upper = upper;
-        }
-
-        private boolean shouldNext(double callsPerTick) {
-            return 1d / ticks < callsPerTick/2; // just some bias /2
-        }
-
-        public int getTicks() {
-            return ticks;
-        }
-
-        @NotNull
-        public static Concern getConcern(double callsPerTick) {
-            Concern proper = VERY_LOW_400;
-            while (proper.upper != null && proper.shouldNext(callsPerTick)) {
-                proper = proper.upper;
-            }
-            return proper;
-        }
-
-    }
-
-    private static class Caller {
-        private final long id;
-        private long lastCall = -1;
-        private int callsRecently = 0;
-
-        public Caller(long id) {
-            this.id = id;
-        }
-
-        private void call() {
-            if (tickId != lastCall) {
-                lastCall = tickId;
-                callsRecently++;
-            }
-        }
-
-        private int getCallsRecently() {
-            int c = callsRecently;
-            callsRecently = 0;
-            return c;
-        }
     }
 }

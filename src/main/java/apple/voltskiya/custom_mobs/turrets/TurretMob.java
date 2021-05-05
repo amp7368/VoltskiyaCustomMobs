@@ -8,7 +8,6 @@ import apple.voltskiya.custom_mobs.turrets.gui.TurretGuiManager;
 import apple.voltskiya.custom_mobs.turrets.gui.TurretTarget;
 import apple.voltskiya.custom_mobs.util.DistanceUtils;
 import apple.voltskiya.custom_mobs.util.EntityLocation;
-import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
 import apple.voltskiya.custom_mobs.util.VectorUtils;
 import apple.voltskiya.custom_mobs.util.minecraft.EnchantmentUtils;
 import apple.voltskiya.custom_mobs.util.minecraft.EntityUtils;
@@ -57,7 +56,6 @@ public class TurretMob implements Runnable {
     private double health;
     private long uid;
     private boolean isDead = false;
-    private final long callerUid = UpdatedPlayerList.callerUid();
     private LivingEntity target = null;
     private final List<Vector> targetLastLocation = new ArrayList<>();
     private boolean isUpdatingDB = false;

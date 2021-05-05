@@ -10,12 +10,15 @@ public abstract class VoltskiyaModule {
     private boolean isEnabled;
     private Logger logger;
 
-    void init() {
+    public void init() {
     }
 
     public abstract void enable();
 
     public abstract String getName();
+
+    public void onDisable() {
+    }
 
     boolean shouldEnable() {
         return true;
@@ -53,5 +56,6 @@ public abstract class VoltskiyaModule {
         if (obj instanceof VoltskiyaModule) return obj.hashCode() == hashCode();
         return false;
     }
+
 
 }

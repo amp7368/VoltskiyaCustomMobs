@@ -3,7 +3,7 @@ package apple.voltskiya.custom_mobs;
 import apple.voltskiya.custom_mobs.abilities.MobTickPlugin;
 import apple.voltskiya.custom_mobs.custom_model.CustomModelPlugin;
 import apple.voltskiya.custom_mobs.leaps.LeapPlugin;
-import apple.voltskiya.custom_mobs.mobs.NmsMobsPlugin;
+import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
 import apple.voltskiya.custom_mobs.ticking.Ticking;
 import apple.voltskiya.custom_mobs.turrets.TurretPlugin;
 import apple.voltskiya.custom_mobs.util.PluginUtils;
@@ -35,28 +35,50 @@ public class VoltskiyaPlugin extends JavaPlugin {
     private LuckPerms luckPerms;
 
     @Override
-    public void onEnable() {
+    public void onLoad() {
         instance = this;
+        manuallyLoadModules();
+    }
+
+
+    @Override
+    public void onEnable() {
         loadDependencies();
         setupACF();
-        manuallyLoadModules();
+        setupLuckPerms();
+        enableModules();
 //        registerModules();
         new Snowball();
     }
 
+    @Override
+    public void onDisable() {
+        for (VoltskiyaModule module : modules) {
+            module.onDisable();
+        }
+    }
 
     private void manuallyLoadModules() {
         final VoltskiyaModule[] modules = new VoltskiyaModule[]{
+                new PluginDisable(),
                 new PluginUtils(),
                 new Ticking(), // this has to go first
                 new MobTickPlugin(),
                 new LeapPlugin(),
                 new TurretPlugin(),
                 new CustomModelPlugin(),
-                new NmsMobsPlugin()
+                new PluginNmsMobs()
         };
         for (VoltskiyaModule module : modules) {
             registerModule(module);
+            if (module.shouldEnable()) {
+                loadModule(module);
+            }
+        }
+    }
+
+    private void enableModules() {
+        for (VoltskiyaModule module : modules) {
             if (module.shouldEnable()) {
                 enableModule(module);
             }
@@ -129,11 +151,13 @@ public class VoltskiyaPlugin extends JavaPlugin {
         modules.add(module);
         module.setLogger(getLogger());
         module.setEnabled(false);
-        setupLuckPerms();
+    }
+
+    private void loadModule(VoltskiyaModule module) {
+        module.init();
     }
 
     public void enableModule(VoltskiyaModule module) {
-        module.init();
         module.setEnabled(true);
         module.enable();
         getLogger().log(Level.INFO, "Enabled Voltskiya Module: " + module.getName());

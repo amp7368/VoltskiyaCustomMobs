@@ -36,7 +36,6 @@ public class TurretManagerTicker implements Listener {
         for (Closeness closeness : Closeness.values())
             put(closeness, new TurretIndividualTicker(closeness));
     }};
-    private final long callerUid = UpdatedPlayerList.callerUid();
 
     public TurretManagerTicker() {
         instance = this;
@@ -105,7 +104,7 @@ public class TurretManagerTicker implements Listener {
 
     private Closeness determineConcern(TurretMob turret) {
         Location turretLocation = turret.getCenter();
-        @Nullable Player player = UpdatedPlayerList.getClosestPlayer(turretLocation, callerUid);
+        @Nullable Player player = UpdatedPlayerList.getClosestPlayer(turretLocation);
         if (player == null)
             return Closeness.lowest();
         else

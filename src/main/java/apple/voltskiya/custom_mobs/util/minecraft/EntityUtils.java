@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 public class EntityUtils {
-    private static HashSet<EntityType> hostiles = new HashSet<>();
+    private static final HashSet<EntityType> hostiles = new HashSet<>();
 
     static {
         File file = new File(PluginUtils.get().getDataFolder(), "hostileMobs.yml");
@@ -27,7 +27,6 @@ public class EntityUtils {
         }
 
         YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
-        System.out.println(config.contains("hostiles"));
         if (!config.contains("hostiles")) {
             config.set("hostiles", Collections.emptyList());
             try {

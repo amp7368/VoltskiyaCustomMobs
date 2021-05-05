@@ -2,11 +2,11 @@ package apple.voltskiya.custom_mobs.abilities.tick.revive;
 
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import apple.voltskiya.custom_mobs.abilities.MobTickPlugin;
+import apple.voltskiya.custom_mobs.abilities.tick.SpawnEater;
+import apple.voltskiya.custom_mobs.sql.MobListSql;
 import apple.voltskiya.custom_mobs.ticking.NormalFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.TickGiverable;
 import apple.voltskiya.custom_mobs.util.DistanceUtils;
-import apple.voltskiya.custom_mobs.sql.MobListSql;
-import apple.voltskiya.custom_mobs.abilities.tick.SpawnEater;
 import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -32,7 +32,6 @@ public class ReviverManagerTicker extends SpawnEater {
         get(Closeness.HIGH_CLOSE).setIsReviving();
     }};
     private static ReviverManagerTicker instance;
-    private final long callerUid = UpdatedPlayerList.callerUid();
 
 
     public ReviverManagerTicker() throws IOException {
@@ -101,17 +100,15 @@ public class ReviverManagerTicker extends SpawnEater {
         if (reviver == null) return Closeness.lowest();
         Location reviverLocation = reviver.getLocation();
 
-        @Nullable Player player = UpdatedPlayerList.getClosestPlayer(reviverLocation, callerUid);
+        @Nullable Player player = UpdatedPlayerList.getClosestPlayer(reviverLocation);
         return player == null ? Closeness.lowest() : Closeness.getCloseness(reviverLocation, player.getLocation());
     }
 
     enum Closeness {
-        HIGH_CLOSE(15, NormalFrequencyTick.get()),
-        NORMAL_CLOSE(50, NormalFrequencyTick.get()),
-        LOW_CLOSE(70, NormalFrequencyTick.get());
+        HIGH_CLOSE(15, NormalFrequencyTick.get());
 
         private final double distance;
-        private static final Closeness[] order = new Closeness[]{HIGH_CLOSE, NORMAL_CLOSE, LOW_CLOSE};
+        private static final Closeness[] order = new Closeness[]{HIGH_CLOSE};
         private final TickGiverable giver;
 
         Closeness(double distance, TickGiverable giver) {

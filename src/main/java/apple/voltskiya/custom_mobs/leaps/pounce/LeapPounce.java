@@ -21,13 +21,17 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.UUID;
 
-public class LeapPounce {
+public class LeapPounce  {
     private static final int CHARGE_UP_TIME = 30;
     public static final AttributeModifier NO_MOVE_ATTRIBUTE = new AttributeModifier(UUID.randomUUID(), "no_move", -100, AttributeModifier.Operation.ADDITION);
     public static final int POUNCE_STUN_TIME = 60;
 
     public static void eatSpawnEvent(CreatureSpawnEvent event, LeapType leapType) {
         EntityLiving creature = ((CraftLivingEntity) event.getEntity()).getHandle();
+        eatEntity(creature,leapType);
+    }
+
+    public static void eatEntity(EntityLiving creature, LeapType leapType) {
         if (creature instanceof EntityInsentient) {
             @Nullable EntityLiving lastTarget = ((EntityInsentient) creature).getGoalTarget();
 
@@ -38,12 +42,11 @@ public class LeapPounce {
                     (entity) -> interruptedLeap(entity, lastTarget),
                     (entity) -> endLeap(entity, lastTarget)
             );
-            final PathfinderGoalLeap pounce = new PathfinderGoalLeap("pounce", (EntityInsentient) creature, leapType.getLeapConfig(), postConfig);
+            final PathfinderGoalLeap pounce = new PathfinderGoalLeap((EntityInsentient) creature, leapType.getLeapConfig(), postConfig);
             pounce.setMoveType(EnumSet.of(PathfinderGoal.Type.TARGET, PathfinderGoal.Type.JUMP));
             ((EntityInsentient) creature).goalSelector.a(0, pounce);
         }
     }
-
     private static boolean shouldStopLeap(EntityLiving creature, @Nullable LeapDo leapDo) {
         if (leapDo != null && leapDo.isMidJump()) {
             List<Entity> nearby = creature.getBukkitEntity().getNearbyEntities(1.5, 2, 1.5);
@@ -57,28 +60,7 @@ public class LeapPounce {
     }
 
     private static void pounceStun(Player bukkitEntity) {
-//        @Nullable PotionEffect oldSlow = bukkitEntity.getPotionEffect(PotionEffectType.SLOW);
-//        @Nullable PotionEffect oldJump = bukkitEntity.getPotionEffect(PotionEffectType.JUMP);
         bukkitEntity.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, POUNCE_STUN_TIME, 7));
-//        bukkitEntity.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, POUNCE_STUN_TIME, 254));
-//        Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
-//            bukkitEntity.removePotionEffect(PotionEffectType.SLOW);
-//            bukkitEntity.removePotionEffect(PotionEffectType.JUMP);
-//            if (oldSlow != null) {
-//                final int newDuration = oldSlow.getDuration() - POUNCE_STUN_TIME;
-//                if (newDuration > 0) {
-//                    PotionEffect newOldSlow = oldSlow.withDuration(newDuration);
-//                    bukkitEntity.addPotionEffect(newOldSlow);
-//                }
-//            }
-//            if (oldJump != null) {
-//                final int newDuration = oldJump.getDuration() - POUNCE_STUN_TIME;
-//                if (newDuration > 0) {
-//                    PotionEffect newOldJump = oldJump.withDuration(newDuration);
-//                    bukkitEntity.addPotionEffect(newOldJump);
-//                }
-//            }
-//        }, POUNCE_STUN_TIME);
     }
 
     private static void preLeap(EntityInsentient entity, LeapDo leapDo, int timeLeft, int index) {

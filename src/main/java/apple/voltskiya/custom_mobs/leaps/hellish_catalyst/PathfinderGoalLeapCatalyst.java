@@ -18,7 +18,7 @@ public class PathfinderGoalLeapCatalyst extends PathfinderGoalLeap {
      * @param postConfig provides any runtime info for the leap
      */
     public PathfinderGoalLeapCatalyst(EntityInsentient me, LeapPreConfig config, LeapPostConfig postConfig) {
-        super("catalyst",me, config, postConfig);
+        super(me, config, postConfig);
     }
 
     /**

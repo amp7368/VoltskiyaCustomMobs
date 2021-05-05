@@ -10,8 +10,12 @@ public class PluginUtils extends VoltskiyaModule {
     }
 
     @Override
-    public void enable() {
+    public void init() {
         instance = this;
+    }
+
+    @Override
+    public void enable() {
     }
 
     @Override

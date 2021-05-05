@@ -1,8 +1,8 @@
 package apple.voltskiya.custom_mobs.abilities.tick.charger;
 
-import apple.voltskiya.custom_mobs.util.DistanceUtils;
 import apple.voltskiya.custom_mobs.abilities.tick.Tickable;
 import apple.voltskiya.custom_mobs.ticking.TickGiverable;
+import apple.voltskiya.custom_mobs.util.DistanceUtils;
 import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -23,7 +23,6 @@ public class ChargerIndividualTicker implements Tickable {
     private final ChargerManagerTicker.Closeness closeness;
     private boolean isTicking = false;
     private long myTickerUid = -1;
-    private final long callerUid = UpdatedPlayerList.callerUid();
     private boolean isCharging = false;
 
 
@@ -73,7 +72,7 @@ public class ChargerIndividualTicker implements Tickable {
             Location chargerLocation = charger.getLocation();
             Player playerToChargeAt = null;
             double chargeError = Double.MAX_VALUE;
-            for (Player player : UpdatedPlayerList.getPlayers(callerUid)) {
+            for (Player player : UpdatedPlayerList.getPlayers()) {
                 if (player.getGameMode() == GameMode.SURVIVAL && chargerLocation.getWorld().getUID().equals(player.getWorld().getUID())) {
                     // check that the player is in the facing direction of the charger
                     Location playerLocation = player.getLocation();
@@ -98,7 +97,7 @@ public class ChargerIndividualTicker implements Tickable {
             }
 
             if (playerToChargeAt != null) {
-                Player player = UpdatedPlayerList.getClosestPlayer(playerToChargeAt.getLocation(), callerUid);
+                Player player = UpdatedPlayerList.getClosestPlayer(playerToChargeAt.getLocation());
                 if (player != null && DistanceUtils.distance(player.getLocation(), playerToChargeAt.getLocation()) < 3) {
                     synchronized (chargersToLastChargeSync) {
                         // say we charged

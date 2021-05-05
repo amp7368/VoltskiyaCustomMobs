@@ -26,7 +26,7 @@ public class PathfinderGoalLeapRevenant extends PathfinderGoalLeap {
      * @param postConfig provides any runtime info for the leap
      */
     public PathfinderGoalLeapRevenant(EntityInsentient me, LeapPreConfig config, LeapPostConfig postConfig) {
-        super("revenant", me, config, postConfig);
+        super(me, config, postConfig);
         this.setMoveType(EnumSet.of(Type.JUMP, Type.MOVE));
     }
 
@@ -39,6 +39,14 @@ public class PathfinderGoalLeapRevenant extends PathfinderGoalLeap {
                 (this.currentLeap == null || !this.currentLeap.isLeaping()) &&
                 !this.postConfig.shouldStopCurrentLeap(null) &&
                 this.postConfig.isOnGround();
+    }
+
+    /**
+     * @return round 2 of whether I want to run ?
+     */
+    @Override
+    public boolean b() {
+        return super.b();
     }
 
     /**
@@ -107,13 +115,5 @@ public class PathfinderGoalLeapRevenant extends PathfinderGoalLeap {
             index++;
         }
         return null;
-    }
-
-    /**
-     * @return the height of me
-     */
-    @Override
-    protected double getHitBoxHeight() {
-        return 4;
     }
 }

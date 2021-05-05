@@ -1,6 +1,6 @@
 package apple.voltskiya.custom_mobs.mobs.testing.aledar;
 
-import apple.voltskiya.custom_mobs.mobs.NmsMobsPlugin;
+import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
 import apple.voltskiya.custom_mobs.mobs.parts.*;
 import apple.voltskiya.custom_mobs.mobs.utils.UtilsAttribute;
 import apple.voltskiya.custom_mobs.mobs.utils.UtilsPacket;
@@ -62,7 +62,7 @@ public class MobAledar extends EntityPillager {
         mobAledarEntityType = entitytypesBuilder.a(REGISTERED_NAME);
 
         // log it
-        NmsMobsPlugin.get().log(Level.INFO, "registered " + REGISTERED_NAME);
+        PluginNmsMobs.get().log(Level.INFO, "registered " + REGISTERED_NAME);
     }
 
     /**
@@ -165,7 +165,7 @@ public class MobAledar extends EntityPillager {
         for (MobPartChild child : children) {
             packetsToSend.add(child.moveFromMother(false));
         }
-        UtilsPacket.sendPacketsToAllPlayers(packetsToSend);
+        UtilsPacket.sendPacketsToNearbyPlayers(packetsToSend, this.getBukkitEntity().getLocation());
     }
 
     @Override

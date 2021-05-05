@@ -1,6 +1,6 @@
 package apple.voltskiya.custom_mobs.mobs.testing;
 
-import apple.voltskiya.custom_mobs.mobs.NmsMobsPlugin;
+import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
 import apple.voltskiya.custom_mobs.mobs.utils.UtilsAttribute;
 import com.mojang.datafixers.DataFixUtils;
 import com.mojang.datafixers.DataFixer;
@@ -63,7 +63,7 @@ public class MobPiglinVex extends EntityVex implements IRangedEntity, IEntityAng
         // build it
         entityTypes = entitytypesBuilder.a(REGISTERED_NAME);
         // log it
-        NmsMobsPlugin.get().log(Level.INFO, "registered " + REGISTERED_NAME);
+        PluginNmsMobs.get().log(Level.INFO, "registered " + REGISTERED_NAME);
     }
 
     /**

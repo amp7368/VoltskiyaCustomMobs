@@ -60,7 +60,7 @@ public class MobsSpawnCommand extends BaseCommand {
 
         @Subcommand("nether_parasite")
         public void spawnParasite(Player player) {
-            MobParasite.spawn(player.getLocation(), null);
+            MobParasite.spawn(player.getLocation(), null, null);
         }
 
         @Subcommand("enderman_vex")
@@ -90,7 +90,7 @@ public class MobsSpawnCommand extends BaseCommand {
     }
 
     public static Collection<String> getSchematics(BukkitCommandCompletionContext context) {
-        File folder = NmsMobsPlugin.get().getModelDataFolder();
+        File folder = PluginNmsMobs.get().getModelDataFolder();
         return Arrays.stream(folder.list(
                 (f, f2) ->
                         f2.endsWith(".yml") && !PRESET_NAMES.contains(f2) && f2.startsWith(context.getInput())

@@ -59,7 +59,7 @@ public class MobParts {
             for (MobPartChild child : children) {
                 packetsToSend.add(child.moveFromMother(true));
             }
-            UtilsPacket.sendPacketsToAllPlayers(packetsToSend);
+            UtilsPacket.sendPacketsToNearbyPlayers(packetsToSend, this.a.getBukkitEntity().getLocation());
         }
 
     }

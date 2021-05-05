@@ -1,20 +1,15 @@
 package apple.voltskiya.custom_mobs.mobs.modified.illager.pillager;
 
-import apple.voltskiya.custom_mobs.mobs.NmsMobsPlugin;
+import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
 import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
-import com.mojang.datafixers.DataFixUtils;
-import com.mojang.datafixers.DataFixer;
-import com.mojang.datafixers.schemas.Schema;
 import com.mojang.datafixers.types.Type;
-import com.mojang.datafixers.types.templates.TaggedChoice;
 import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.logging.Level;
 
@@ -26,53 +21,75 @@ public class MobIllagerPillagerExaminer extends EntityPillager {
         super(EntityTypes.PILLAGER, world);
     }
 
-    /**
-     * registers the IllagerExaminer as an entity
-     */
+
     public static void initialize() {
-        EntityTypes.Builder<MobIllagerPillagerExaminer> entitytypesBuilder = EntityTypes.Builder.a(MobIllagerPillagerExaminer::new, EnumCreatureType.MONSTER);
-
-        // this version of minecraft (whatever it happens to be)
-        final int keyForVersion = DataFixUtils.makeKey(SharedConstants.getGameVersion().getWorldVersion());
-        // the thing to register stuff I think?
-        final DataFixer dataFixerToRegister = DataConverterRegistry.a();
-
-        final Schema schemaForSomething = dataFixerToRegister.getSchema(keyForVersion);
-        final TaggedChoice.TaggedChoiceType<?> choiceType = schemaForSomething.findChoiceType(DataConverterTypes.ENTITY_TREE);
-
-        // copy the zombie type to the warped gremlin type
-        // todo understand this more
-        Map<? super Object, Type<?>> types = (Map<? super Object, Type<?>>) choiceType.types();
+        Map<? super Object, Type<?>> types = PluginNmsMobs.getMinecraftTypes();
         final Type<?> oldType = types.get("minecraft:pillager");
-        types.put("minecraft:" + REGISTERED_NAME, oldType);
+        types.put(registeredNameId(), oldType);
 
         // build it
+        EntityTypes.Builder<MobIllagerPillagerExaminer> entitytypesBuilder = EntityTypes.Builder.a(MobIllagerPillagerExaminer::new, EnumCreatureType.MONSTER);
         entityTypes = entitytypesBuilder.a(REGISTERED_NAME);
+        entityTypes = IRegistry.a(IRegistry.ENTITY_TYPE, IRegistry.ENTITY_TYPE.a(EntityTypes.PILLAGER), REGISTERED_NAME, entityTypes); // this is good
 
         // log it
-        NmsMobsPlugin.get().log(Level.INFO, "registered " + REGISTERED_NAME);
+        PluginNmsMobs.get().log(Level.INFO, "registered " + registeredNameId());
     }
 
+    @NotNull
+    private static String registeredNameId() {
+        return "minecraft" + ":" + REGISTERED_NAME;
+    }
+
+    @Override
+    public EntityTypes<?> getEntityType() {
+        return entityTypes;
+    }
+
+    /**
+     * spawns a WarpedGremlin
+     *
+     * @param location the org.bukkit location where the mob should be spawned
+     * @param oldNbt   the nbt of the previously spawned mob or null if no entity existed
+     */
+    public static void spawn(Location location, NBTTagCompound oldNbt) {
+        CraftWorld world = (CraftWorld) location.getWorld();
+        final MobIllagerPillagerExaminer entity = new MobIllagerPillagerExaminer(entityTypes, world.getHandle());
+        entity.prepare(location, oldNbt);
+        entity.addScoreboardTag(SpawnCustomMobListener.CUSTOM_SPAWN_COMPLETE_TAG);
+        entity.addScoreboardTag(REGISTERED_NAME);
+        world.getHandle().addEntity(entity);
+    }
+
+
     public static void spawnEat(CreatureSpawnEvent event) {
-        final LivingEntity entity = event.getEntity();
-        Location location = entity.getLocation();
-        spawn(location, ((CraftEntity) entity).getHandle().save(new NBTTagCompound()));
+        Location location = event.getEntity().getLocation();
+        spawn(location, ((CraftEntity) event.getEntity()).getHandle().save(new NBTTagCompound()));
         event.setCancelled(true);
     }
 
-    private static void spawn(Location location, @Nullable NBTTagCompound oldNbt) {
-        CraftWorld world = (CraftWorld) location.getWorld();
-        final MobIllagerPillagerExaminer examiner = new MobIllagerPillagerExaminer(entityTypes, world.getHandle());
-        examiner.prepare(location, oldNbt);
-        examiner.addScoreboardTag(SpawnCustomMobListener.CUSTOM_SPAWN_COMPLETE_TAG);
-        examiner.addScoreboardTag(REGISTERED_NAME);
-        world.getHandle().addEntity(examiner);
-    }
-
     private void prepare(Location location, NBTTagCompound oldNbt) {
-        this.loadData(oldNbt);
+        if (oldNbt != null){
+            oldNbt.remove("UUID");
+            this.load(oldNbt);
+        }
         this.setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
     }
+
+
+    @Override
+    public void load(NBTTagCompound nbttagcompound) {
+        nbttagcompound.setString("id", registeredNameId());
+        super.load(nbttagcompound);
+    }
+
+    @Override
+    public NBTTagCompound save(NBTTagCompound nbttagcompound) {
+        NBTTagCompound data = super.save(nbttagcompound);
+        data.setString("id", registeredNameId());
+        return data;
+    }
+
 
     @Override
     protected void initPathfinder() {

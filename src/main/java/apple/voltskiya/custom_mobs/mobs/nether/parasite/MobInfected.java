@@ -16,7 +16,6 @@ public class MobInfected {
     public static final String PARASITE_INFECTED_TAG = "PARASITE_INFECTED";
     private static final long EXPLODE_TO_PARASITES_DELAY = 20 * 30;
     private EntityCreature entity;
-    private int explode = 50;
 
     public MobInfected(EntityCreature entity) {
         this.entity = entity;

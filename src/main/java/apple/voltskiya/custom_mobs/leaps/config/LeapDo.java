@@ -103,7 +103,6 @@ public class LeapDo implements Runnable {
         // set the yVelocity to what it should
         yVelocity = yVelocityInitial + gravity * currentTime++;
         bukkitEntity.setVelocity(new Vector(xVelocity, yVelocity, zVelocity));
-
         Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), this, 1);
     }
 
