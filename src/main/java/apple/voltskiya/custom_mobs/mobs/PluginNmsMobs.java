@@ -21,11 +21,12 @@ import com.mojang.datafixers.DataFixer;
 import com.mojang.datafixers.schemas.Schema;
 import com.mojang.datafixers.types.Type;
 import com.mojang.datafixers.types.templates.TaggedChoice;
-import net.minecraft.server.v1_16_R3.DataConverterRegistry;
-import net.minecraft.server.v1_16_R3.DataConverterTypes;
-import net.minecraft.server.v1_16_R3.SharedConstants;
+import net.minecraft.server.v1_16_R3.*;
 
 import java.io.File;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.HashMap;
 import java.util.Map;
 
 public class PluginNmsMobs extends VoltskiyaModule {
@@ -51,8 +52,9 @@ public class PluginNmsMobs extends VoltskiyaModule {
     }
 
     @Override
-    public void init(){
+    public void init() {
         instance = this;
+        AttributeDefaults.a();
         NmsModelConfig.initialize();
         MobZombieCow.initialize();
         MobWarpedGremlin.initialize();
@@ -69,6 +71,28 @@ public class PluginNmsMobs extends VoltskiyaModule {
         MobRevenant.initialize();
     }
 
+    private void initAttributeDefaults() {
+        try {
+            Field attributes = AttributeDefaults.class.getDeclaredField("b");
+            attributes.setAccessible(true);
+            Map<EntityTypes<? extends EntityLiving>, AttributeProvider> attributeMap = (Map<EntityTypes<? extends EntityLiving>, AttributeProvider>) attributes.get(null);
+            attributeMap = new HashMap<>(attributeMap);
+            setFinalStatic(attributes, attributeMap);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private static void setFinalStatic(Field field, Object newValue) throws NoSuchFieldException, IllegalAccessException {
+        field.setAccessible(true);
+
+        Field modifiersField = field.getClass().getDeclaredField("modifiers");
+        modifiersField.setAccessible(true);
+        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+
+        field.set(null, newValue);
+    }
 
     @Override
     public void enable() {

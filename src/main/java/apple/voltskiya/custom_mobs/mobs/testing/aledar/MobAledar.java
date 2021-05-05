@@ -165,7 +165,7 @@ public class MobAledar extends EntityPillager {
         for (MobPartChild child : children) {
             packetsToSend.add(child.moveFromMother(false));
         }
-        UtilsPacket.sendPacketsToAllPlayers(packetsToSend, this.getBukkitEntity().getLocation());
+        UtilsPacket.sendPacketsToNearbyPlayers(packetsToSend, this.getBukkitEntity().getLocation());
     }
 
     @Override

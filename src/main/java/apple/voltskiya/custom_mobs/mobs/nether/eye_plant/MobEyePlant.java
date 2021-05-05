@@ -3,32 +3,29 @@ package apple.voltskiya.custom_mobs.mobs.nether.eye_plant;
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
 import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
 import apple.voltskiya.custom_mobs.mobs.parts.*;
-import apple.voltskiya.custom_mobs.mobs.utils.UtilsAttribute;
-import apple.voltskiya.custom_mobs.util.EntityLocation;
-import com.mojang.datafixers.DataFixUtils;
-import com.mojang.datafixers.DataFixer;
-import com.mojang.datafixers.schemas.Schema;
+import apple.voltskiya.custom_mobs.mobs.utils.UtilsPacket;
 import com.mojang.datafixers.types.Type;
-import com.mojang.datafixers.types.templates.TaggedChoice;
 import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftZombie;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 public class MobEyePlant extends EntityZombie {
     public static final NmsModelConfig.ModelConfigName REGISTERED_MODEL = NmsModelConfig.ModelConfigName.EYE_PLANT;
     public static final String REGISTERED_NAME = REGISTERED_MODEL.getFile();
-    public static final AttributeProvider ATTRIBUTE_PROVIDER = EntityZombie.eS().a();
-    private static EntityTypes<MobEyePlant> warpedGremlinEntityType;
-    private NmsModelEntityConfig selfModel;
-    private EntityTypes<?> selfModelType;
-    private final List<MobPartChild> children = new ArrayList<>();
+    private static EntityTypes<MobEyePlant> entityTypes;
+    private static NmsModelEntityConfig selfModel;
+    private List<MobPartChild> children = null;
+    private AttributeMapBase attributeMap = null;
 
     /**
      * constructor to match the EntityTypes requirement
@@ -37,35 +34,27 @@ public class MobEyePlant extends EntityZombie {
      */
 
     public MobEyePlant(EntityTypes<MobEyePlant> entityTypes, World world) {
-        super(EntityTypes.ZOMBIE, world);
-        UtilsAttribute.fillAttributes(this.getAttributeMap(), getAttributeProvider());
+        super(entityTypes, world);
     }
 
     /**
      * registers the EyePlant as an entity
      */
     public static void initialize() {
-        EntityTypes.Builder<MobEyePlant> entitytypesBuilder = EntityTypes.Builder.a(MobEyePlant::new, EnumCreatureType.MONSTER);
-
-        // this version of minecraft (whatever it happens to be)
-        final int keyForVersion = DataFixUtils.makeKey(SharedConstants.getGameVersion().getWorldVersion());
-        // the thing to register stuff I think?
-        final DataFixer dataFixerToRegister = DataConverterRegistry.a();
-
-        final Schema schemaForSomething = dataFixerToRegister.getSchema(keyForVersion);
-        final TaggedChoice.TaggedChoiceType<?> choiceType = schemaForSomething.findChoiceType(DataConverterTypes.ENTITY_TREE);
-
-        // copy the zombie type to the warped gremlin type
-        // todo understand this more
-        Map<? super Object, Type<?>> types = (Map<? super Object, Type<?>>) choiceType.types();
+        Map<? super Object, Type<?>> types = PluginNmsMobs.getMinecraftTypes();
         final Type<?> zombieType = types.get("minecraft:zombie");
-        types.put("minecraft:" + REGISTERED_NAME, zombieType);
+        types.put(registeredNameId(), zombieType);
 
         // build it
-        warpedGremlinEntityType = entitytypesBuilder.a(REGISTERED_NAME);
+        EntityTypes.Builder<MobEyePlant> entitytypesBuilder = EntityTypes.Builder.a(MobEyePlant::new, EnumCreatureType.MONSTER);
+        entityTypes = entitytypesBuilder.a(REGISTERED_NAME);
+        entityTypes = IRegistry.a(IRegistry.ENTITY_TYPE, IRegistry.ENTITY_TYPE.a(EntityTypes.ZOMBIE), REGISTERED_NAME, entityTypes); // this is good
         // log it
-        PluginNmsMobs.get().log(Level.INFO, "registered " + REGISTERED_NAME);
+        PluginNmsMobs.get().log(Level.INFO, "registered " + registeredNameId());
+        final NmsModelConfig model = NmsModelConfig.parts(REGISTERED_MODEL);
+        selfModel = model.mainPart();
     }
+
 
     /**
      * spawns a WarpedGremlin
@@ -75,11 +64,12 @@ public class MobEyePlant extends EntityZombie {
      */
     public static void spawn(Location location, @Nullable NBTTagCompound oldNbt) {
         CraftWorld world = (CraftWorld) location.getWorld();
-        final MobEyePlant eyePlant = new MobEyePlant(warpedGremlinEntityType, world.getHandle());
+        final MobEyePlant eyePlant = new MobEyePlant(entityTypes, world.getHandle());
         eyePlant.prepare(location, oldNbt);
         eyePlant.addScoreboardTag(SpawnCustomMobListener.CUSTOM_SPAWN_COMPLETE_TAG);
         eyePlant.addScoreboardTag(REGISTERED_NAME);
         world.getHandle().addEntity(eyePlant);
+        eyePlant.addChildren();
     }
 
     public static void spawnEat(CreatureSpawnEvent event) {
@@ -89,32 +79,19 @@ public class MobEyePlant extends EntityZombie {
     }
 
     private void prepare(Location location, NBTTagCompound oldNbt) {
-        final NmsModelConfig model = NmsModelConfig.parts(REGISTERED_MODEL);
-        this.selfModel = model.mainPart();
-        final NBTTagCompound newNbt = this.selfModel.getEntity().nbt;
+        final NBTTagCompound newNbt = selfModel.getEntity().nbt;
         final NBTTagCompound mergedNbt = oldNbt == null ? newNbt : oldNbt.a(newNbt);
-        this.loadData(mergedNbt);
+        this.load(mergedNbt);
         this.setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
-        final Optional<EntityTypes<?>> entityTypes = EntityTypes.a(this.selfModel.getEntity().type.getKey().getKey());
-        if (entityTypes.isPresent()) {
-            this.selfModelType = entityTypes.get();
-            EntityLocation motherLocation = new EntityLocation(
-                    this.getUniqueID(),
-                    this.selfModel.getEntity().x,
-                    this.selfModel.getEntity().y,
-                    this.selfModel.getEntity().z,
-                    this.selfModel.getEntity().facingX,
-                    this.selfModel.getEntity().facingY,
-                    this.selfModel.getEntity().facingZ
-            ); // for simpler rotations
-            MobPartMother motherMe = new MobPartMother(motherLocation, this, REGISTERED_NAME);
-            for (NmsModelEntityConfig part : model.others()) {
-                this.children.add(MobParts.spawnMobPart(motherMe, part));
+    }
+
+    private void addChildren() {
+        if (this.children != null) {
+            for (MobPartChild child : children) {
+                child.die();
             }
-        } else {
-            this.selfModelType = EntityTypes.AREA_EFFECT_CLOUD;
-            this.die();
         }
+        this.children = MobPartMother.getChildren(this.getUniqueID(), this, selfModel, REGISTERED_MODEL);
         this.lookController = new MobParts.ControllerLookChildrenFollow(this, this.children);
     }
 
@@ -125,26 +102,63 @@ public class MobEyePlant extends EntityZombie {
     }
 
     @Override
+    public AttributeMapBase getAttributeMap() {
+        return this.attributeMap == null ? this.attributeMap = new AttributeMapBase(getAttributeProvider()) : this.attributeMap;
+    }
+
+    @Override
     public boolean isFireProof() {
         return true;
     }
 
     @Override
-    public void loadData(NBTTagCompound nbttagcompound) {
-        super.loadData(nbttagcompound);
+    public void load(NBTTagCompound nbttagcompound) {
+        nbttagcompound.setString("id", registeredNameId());
+        super.load(nbttagcompound);
         final boolean invisible = nbttagcompound.getBoolean("Invisible");
-        ((CraftZombie) getBukkitEntity()).setInvisible(invisible);
-        this.setInvisible(invisible);
+        ((CraftZombie)this.getBukkitEntity()).setInvisible(invisible);
+    }
+    @Override
+    public void killEntity() {
+        // fix this maybe later
+        this.die();
+    }
+
+    @Override
+    public NBTTagCompound save(NBTTagCompound nbttagcompound) {
+        NBTTagCompound data = super.save(nbttagcompound);
+        data.setString("id", registeredNameId());
+        return data;
+    }
+
+
+    @NotNull
+    private static String registeredNameId() {
+        return "minecraft" + ":" + REGISTERED_NAME;
     }
 
     public AttributeProvider getAttributeProvider() {
-        return ATTRIBUTE_PROVIDER;
+        return AttributeDefaults.a(EntityTypes.ZOMBIE);
     }
 
     @Override
     public void setOnFire(int i) {
 
     }
+
+    @Override
+    public void move(EnumMoveType enummovetype, Vec3D vec3d) {
+        super.move(enummovetype, vec3d);
+        List<Packet<?>> packetsToSend = new ArrayList<>();
+        if (this.children == null) {
+            this.addChildren();
+        }
+        for (MobPartChild child : children) {
+            packetsToSend.add(child.moveFromMother(false));
+        }
+        UtilsPacket.sendPacketsToNearbyPlayers(packetsToSend, this.getBukkitEntity().getLocation());
+    }
+
 
     @Override
     protected SoundEffect getSoundAmbient() {
@@ -174,20 +188,9 @@ public class MobEyePlant extends EntityZombie {
         }
     }
 
-
     @Override
     public EntityTypes<?> getEntityType() {
-        return this.selfModelType;
-    }
-
-    @Override
-    public void movementTick() {
-        super.movementTick();
-    }
-
-    @Override
-    public void move(EnumMoveType enummovetype, Vec3D vec3d) {
-        super.move(enummovetype, vec3d);
+        return entityTypes;
     }
 
     @Override
@@ -198,27 +201,19 @@ public class MobEyePlant extends EntityZombie {
         }
     }
 
-
-    //todo
+    /**
+     * change worlds
+     */
     @Override
-    public Iterable<ItemStack> getArmorItems() {
-        return Collections.emptyList();
-    }
-
-    //todo
-    @Override
-    public ItemStack getEquipment(EnumItemSlot enumItemSlot) {
-        return ItemStack.b;
-    }
-
-    //todo
-    @Override
-    public void setSlot(EnumItemSlot enumItemSlot, ItemStack itemStack) {
-
-    }
-
-    @Override
-    public EnumMainHand getMainHand() {
-        return EnumMainHand.RIGHT;
+    public @Nullable
+    Entity b(WorldServer worldserver) {
+        final Entity result = super.b(worldserver);
+        if (result instanceof MobEyePlant) {
+            for (MobPartChild child : children) {
+                child.die();
+            }
+            ((MobEyePlant) result).addChildren();
+        }
+        return result;
     }
 }

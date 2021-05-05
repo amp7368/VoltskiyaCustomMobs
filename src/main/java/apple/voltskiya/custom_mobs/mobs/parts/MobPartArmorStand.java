@@ -56,6 +56,7 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild 
         this.addScoreboardTag(SpawnCustomMobListener.CUSTOM_SPAWN_COMPLETE_TAG);
     }
 
+
     public static void initialize() {
         Map<? super Object, Type<?>> types = PluginNmsMobs.getMinecraftTypes();
         final Type<?> oldType = types.get("minecraft:armor_stand");

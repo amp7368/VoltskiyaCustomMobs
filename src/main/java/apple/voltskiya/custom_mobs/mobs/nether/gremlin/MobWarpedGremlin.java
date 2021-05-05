@@ -26,7 +26,7 @@ import java.util.logging.Level;
 public class MobWarpedGremlin extends EntityZombie {
     public static final ModelConfigName REGISTERED_MODEL = ModelConfigName.WARPED_GREMLIN;
     public static final String REGISTERED_NAME = REGISTERED_MODEL.getFile();
-    private static EntityTypes<MobWarpedGremlin> warpedGremlinEntityType;
+    private static EntityTypes<MobWarpedGremlin> entityTypes;
     private static NmsModelEntityConfig selfModel;
     private List<MobPartChild> children = null;
     private AttributeMapBase attributeMap = null;
@@ -38,7 +38,7 @@ public class MobWarpedGremlin extends EntityZombie {
      */
 
     public MobWarpedGremlin(EntityTypes<MobWarpedGremlin> entityTypes, World world) {
-        super(entityTypes, world);
+        super(EntityTypes.ZOMBIE, world);
     }
 
     /**
@@ -51,13 +51,21 @@ public class MobWarpedGremlin extends EntityZombie {
 
         // build it
         EntityTypes.Builder<MobWarpedGremlin> entitytypesBuilder = EntityTypes.Builder.a(MobWarpedGremlin::new, EnumCreatureType.MONSTER);
-        warpedGremlinEntityType = entitytypesBuilder.a(REGISTERED_NAME);
-        warpedGremlinEntityType = IRegistry.a(IRegistry.ENTITY_TYPE, IRegistry.ENTITY_TYPE.a(EntityTypes.ZOMBIE), REGISTERED_NAME, warpedGremlinEntityType); // this is good
+        entityTypes = entitytypesBuilder.a(REGISTERED_NAME);
+        entityTypes = IRegistry.a(IRegistry.ENTITY_TYPE, IRegistry.ENTITY_TYPE.a(EntityTypes.ZOMBIE), REGISTERED_NAME, entityTypes); // this is good
 
         // log it
         PluginNmsMobs.get().log(Level.INFO, "registered " + registeredNameId());
         final NmsModelConfig model = NmsModelConfig.parts(REGISTERED_MODEL);
         selfModel = model.mainPart();
+
+        System.out.println(AttributeDefaults.b(entityTypes));
+
+    }
+
+    @Override
+    public EntityTypes<?> getEntityType() {
+        return entityTypes;
     }
 
     /**
@@ -68,9 +76,10 @@ public class MobWarpedGremlin extends EntityZombie {
      */
     public static void spawn(Location location, NBTTagCompound oldNbt) {
         CraftWorld world = (CraftWorld) location.getWorld();
-        final MobWarpedGremlin gremlin = new MobWarpedGremlin(warpedGremlinEntityType, world.getHandle());
+        final MobWarpedGremlin gremlin = new MobWarpedGremlin(entityTypes, world.getHandle());
         gremlin.prepare(location, oldNbt);
         gremlin.addScoreboardTag(SpawnCustomMobListener.CUSTOM_SPAWN_COMPLETE_TAG);
+        gremlin.addScoreboardTag(REGISTERED_NAME);
         world.getHandle().addEntity(gremlin);
         gremlin.addChildren();
     }
@@ -104,13 +113,14 @@ public class MobWarpedGremlin extends EntityZombie {
         nbttagcompound.setString("id", registeredNameId());
         super.load(nbttagcompound);
         final boolean invisible = nbttagcompound.getBoolean("Invisible");
-        ((CraftZombie) getBukkitEntity()).setInvisible(invisible);
+        ((CraftZombie) this.getBukkitEntity()).setInvisible(invisible);
         this.setInvisible(invisible);
     }
 
     @Override
     public NBTTagCompound save(NBTTagCompound nbttagcompound) {
         NBTTagCompound data = super.save(nbttagcompound);
+        data.setBoolean("Invisible", this.isInvisible());
         data.setString("id", registeredNameId());
         return data;
     }
@@ -124,9 +134,10 @@ public class MobWarpedGremlin extends EntityZombie {
     @Override
     public void die() {
         super.die();
-        for (MobPartChild child : children) {
-            child.die();
-        }
+        if (this.children != null)
+            for (MobPartChild child : children) {
+                child.die();
+            }
     }
 
 
@@ -139,14 +150,7 @@ public class MobWarpedGremlin extends EntityZombie {
      * @return the default attributeMap
      */
     private static AttributeProvider getAttributeProvider() {
-        return EntityLiving.cL()
-                .a(GenericAttributes.FOLLOW_RANGE, 35.0D)
-                .a(GenericAttributes.MOVEMENT_SPEED, 0.23000000417232513D)
-                .a(GenericAttributes.ATTACK_DAMAGE, 3.0D)
-                .a(GenericAttributes.ARMOR, 2.0D)
-                .a(GenericAttributes.SPAWN_REINFORCEMENTS)
-                .a(GenericAttributes.ATTACK_KNOCKBACK, 1D)
-                .a();
+        return AttributeDefaults.a(EntityTypes.ZOMBIE);
     }
 
 
@@ -160,7 +164,7 @@ public class MobWarpedGremlin extends EntityZombie {
         for (MobPartChild child : children) {
             packetsToSend.add(child.moveFromMother(false));
         }
-        UtilsPacket.sendPacketsToAllPlayers(packetsToSend, this.getBukkitEntity().getLocation());
+        UtilsPacket.sendPacketsToNearbyPlayers(packetsToSend, this.getBukkitEntity().getLocation());
     }
 
 

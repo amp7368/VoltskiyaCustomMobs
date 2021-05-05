@@ -166,7 +166,7 @@ public class MobMiscCustomModel extends EntityZombie {
         for (MobPartChild child : children) {
             packetsToSend.add(child.moveFromMother(false));
         }
-        UtilsPacket.sendPacketsToAllPlayers(packetsToSend.stream().map(p -> (Packet<?>) p).collect(Collectors.toList()), this.getBukkitEntity().getLocation());
+        UtilsPacket.sendPacketsToNearbyPlayers(packetsToSend.stream().map(p -> (Packet<?>) p).collect(Collectors.toList()), this.getBukkitEntity().getLocation());
     }
 
 

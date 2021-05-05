@@ -14,9 +14,8 @@ import java.util.List;
 public class UtilsPacket {
     public static final int VIEW_DISTANCE = Bukkit.getViewDistance();
 
-    public static void sendPacketsToAllPlayers(List<Packet<?>> packetsToSend, Location location) {
+    public static void sendPacketsToNearbyPlayers(List<Packet<?>> packetsToSend, Location location) {
         final Collection<? extends Player> nearbyPlayers = UpdatedPlayerList.getNearbyPlayers(location, VIEW_DISTANCE);
-
         int previousPriority = Thread.currentThread().getPriority();
         Thread.currentThread().setPriority(Thread.MAX_PRIORITY); // try to send all these
         for (Player player : nearbyPlayers) {
