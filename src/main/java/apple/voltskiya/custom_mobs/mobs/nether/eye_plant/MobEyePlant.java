@@ -34,7 +34,7 @@ public class MobEyePlant extends EntityZombie {
      */
 
     public MobEyePlant(EntityTypes<MobEyePlant> entityTypes, World world) {
-        super(entityTypes, world);
+        super(EntityTypes.ZOMBIE, world);
     }
 
     /**
@@ -116,17 +116,13 @@ public class MobEyePlant extends EntityZombie {
         nbttagcompound.setString("id", registeredNameId());
         super.load(nbttagcompound);
         final boolean invisible = nbttagcompound.getBoolean("Invisible");
-        ((CraftZombie)this.getBukkitEntity()).setInvisible(invisible);
-    }
-    @Override
-    public void killEntity() {
-        // fix this maybe later
-        this.die();
+        ((CraftZombie) this.getBukkitEntity()).setInvisible(invisible);
     }
 
     @Override
     public NBTTagCompound save(NBTTagCompound nbttagcompound) {
         NBTTagCompound data = super.save(nbttagcompound);
+        data.setBoolean("Invisible", this.isInvisible());
         data.setString("id", registeredNameId());
         return data;
     }

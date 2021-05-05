@@ -24,7 +24,7 @@ public class UtilsPacket {
                 ((CraftPlayer) player).getHandle().playerConnection.networkManager.sendPacket(p);
             }
             ((CraftPlayer) player).getHandle().playerConnection.networkManager.channel.config().setAutoRead(true);
-            ((CraftPlayer) player).getHandle().playerConnection.networkManager.a();
+            ((CraftPlayer) player).getHandle().playerConnection.networkManager.channel.flush();
         }
         Thread.currentThread().setPriority(previousPriority);
     }
