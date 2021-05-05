@@ -26,7 +26,6 @@ public class SmallOrbitalStrikeIndividualTicker implements Tickable {
     private boolean isTicking = false;
     private long myTickerUid;
     private final Random random = new Random();
-    private final long callerUid = UpdatedPlayerList.callerUid();
 
 
     public SmallOrbitalStrikeIndividualTicker(SmallOrbitalStrikeManagerTicker.Closeness closeness) {
@@ -87,7 +86,7 @@ public class SmallOrbitalStrikeIndividualTicker implements Tickable {
         Location strikerLocation = striker.getLocation();
         @Nullable LivingEntity target = ((Mob) striker).getTarget();
         if (target == null) {
-            Player closest = UpdatedPlayerList.getClosestPlayer(striker.getLocation(), callerUid);
+            Player closest = UpdatedPlayerList.getClosestPlayer(striker.getLocation());
             if (closest != null) {
                 Location pLocation = closest.getLocation();
                 double d = DistanceUtils.distance(pLocation, strikerLocation);
@@ -98,7 +97,7 @@ public class SmallOrbitalStrikeIndividualTicker implements Tickable {
         }
         if (target != null) {
             // we have the target. time to orbital strike it
-            new OrbitalStrikeSmall(striker, target, callerUid);
+            new OrbitalStrikeSmall(striker, target);
             strikerUid.setValue(System.currentTimeMillis());
         }
     }

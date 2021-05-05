@@ -1,11 +1,13 @@
 package apple.voltskiya.custom_mobs.abilities.tick.orbital_strike;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
 import apple.voltskiya.custom_mobs.abilities.tick.orbital_strike.large.LargeOrbitalStrikeManagerTicker;
 import apple.voltskiya.custom_mobs.abilities.tick.orbital_strike.small.SmallOrbitalStrikeManagerTicker;
+import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
 import org.bukkit.*;
-import org.bukkit.entity.*;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Fireball;
+import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +19,6 @@ import java.util.function.Function;
 
 
 public class OrbitalStrike {
-    private final long callerUid;
     private final World targetWorld;
     private final OrbitalStrikeType type;
     private double xt;
@@ -29,8 +30,7 @@ public class OrbitalStrike {
     private final List<Location> previousLocations = new ArrayList<>();
     private final double targetRadius;
 
-    public OrbitalStrike(World targetWorld, double xt, double yt, double zt, OrbitalStrike.OrbitalStrikeType type, long callerUid) {
-        this.callerUid = callerUid;
+    public OrbitalStrike(World targetWorld, double xt, double yt, double zt, OrbitalStrike.OrbitalStrikeType type) {
         this.targetRadius = type.getTargetRadius();
         this.xt = xt;
         this.yt = yt;
@@ -166,7 +166,7 @@ public class OrbitalStrike {
     private void targetModify() {
         final Location oldLocation = new Location(targetWorld, xt, yt, zt);
         previousLocations.add(oldLocation);
-        Player closest = UpdatedPlayerList.getClosestPlayer(oldLocation, callerUid);
+        Player closest = UpdatedPlayerList.getClosestPlayer(oldLocation);
         if (closest != null) {
             final Location closestLocation = closest.getLocation();
             double dx = closestLocation.getX() - xt;

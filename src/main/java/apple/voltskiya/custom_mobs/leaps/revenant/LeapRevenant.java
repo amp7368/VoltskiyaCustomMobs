@@ -35,7 +35,8 @@ public class LeapRevenant {
 
     private static void endLeap(EntityInsentient entity, EntityLiving lastTarget) {
         entity.getBukkitEntity().setVelocity(new Vector(0, 0, 0));
-        entity.setGoalTarget(lastTarget);
+        if (lastTarget != null)
+            entity.setGoalTarget(lastTarget);
     }
 
     private static void interruptedLeap(EntityInsentient entity) {

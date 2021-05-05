@@ -1,14 +1,17 @@
 package apple.voltskiya.custom_mobs.abilities.tick.lost_soul;
 
-import apple.voltskiya.custom_mobs.sql.MobListSql;
 import apple.voltskiya.custom_mobs.abilities.tick.Tickable;
+import apple.voltskiya.custom_mobs.sql.MobListSql;
 import apple.voltskiya.custom_mobs.ticking.TickGiverable;
 import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Vex;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -21,7 +24,6 @@ public class LostSoulIndividualTicker implements Tickable {
     private boolean isTicking = false;
     private boolean isCheckCollision = false;
     private long myTickerUid = -1;
-    private final long callerUid = UpdatedPlayerList.callerUid();
 
 
     public LostSoulIndividualTicker(TickGiverable giver, LostSoulManagerTicker.Closeness closeness) {
@@ -60,7 +62,7 @@ public class LostSoulIndividualTicker implements Tickable {
 
     private synchronized void tickVex(Vex vex) {
         if (isCheckCollision) {
-            Player player = UpdatedPlayerList.getCollision(vex.getBoundingBox(),callerUid);
+            Player player = UpdatedPlayerList.getCollision(vex.getBoundingBox());
             if (player != null) {
                 Location location = vex.getLocation();
                 location.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, player.getEyeLocation(), 0);

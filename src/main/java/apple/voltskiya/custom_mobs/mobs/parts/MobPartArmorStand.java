@@ -1,25 +1,19 @@
 package apple.voltskiya.custom_mobs.mobs.parts;
 
 import apple.voltskiya.custom_mobs.custom_model.CustomModel;
-import apple.voltskiya.custom_mobs.mobs.NmsMobsPlugin;
+import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
 import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
 import apple.voltskiya.custom_mobs.mobs.utils.NbtConstants;
-import apple.voltskiya.custom_mobs.mobs.utils.UtilsAttribute;
 import apple.voltskiya.custom_mobs.util.EntityLocation;
 import apple.voltskiya.custom_mobs.util.VectorUtils;
-import com.mojang.datafixers.DataFixUtils;
-import com.mojang.datafixers.DataFixer;
-import com.mojang.datafixers.schemas.Schema;
 import com.mojang.datafixers.types.Type;
-import com.mojang.datafixers.types.templates.TaggedChoice;
 import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
 import org.bukkit.util.BoundingBox;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
@@ -27,23 +21,19 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild 
     private static final String REGISTERED_NAME = "mobpart_armorstand";
     private static final double DEATH_PARTICLES_DENSITY = 0.001d;
     private static EntityTypes<MobPartArmorStand> entityTypes;
-
     private MobPartMother mainMob;
     private NmsModelEntityConfig entityConfig;
     private EntityLocation entityLocation;
-    private final List<ItemStack> armorItems = new ArrayList<>() {{
-        for (EnumItemSlot slot : EnumItemSlot.values()) {
-            if (slot.a() == EnumItemSlot.Function.ARMOR) add(ItemStack.b);
-        }
-    }};
-    private final List<ItemStack> handItems = new ArrayList<>() {{
-        for (EnumItemSlot slot : EnumItemSlot.values())
-            if (slot.a() == EnumItemSlot.Function.HAND) add(ItemStack.b);
-    }};
+    private AttributeMapBase attributeMap;
 
-    public MobPartArmorStand(EntityTypes<MobPartArmorStand> mainMob, World world) {
-        super(EntityTypes.ARMOR_STAND, world);
-        UtilsAttribute.fillAttributes(this.getAttributeMap(), getAttributeProvider());
+    public MobPartArmorStand(EntityTypes<MobPartArmorStand> entityTypes, World world) {
+        super(entityTypes, world);
+        this.die(); // just die on restarts because we'll be remade
+    }
+
+    public MobPartArmorStand(EntityTypes<MobPartArmorStand> entityTypes, World world, MobPartMother mother, NmsModelEntityConfig config) {
+        super(entityTypes, world);
+        prepare(mother, config);
     }
 
     public void prepare(MobPartMother mother, NmsModelEntityConfig config) {
@@ -62,75 +52,71 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild 
         this.loadData(entity.nbt);
         this.setInvisible(true);
         this.moveFromMother(false);
+        this.addScoreboardTag(mother.scoreboardTag);
+        this.addScoreboardTag(SpawnCustomMobListener.CUSTOM_SPAWN_COMPLETE_TAG);
     }
 
     public static void initialize() {
-        EntityTypes.Builder<MobPartArmorStand> entitytypesBuilder = EntityTypes.Builder.a(MobPartArmorStand::new, EnumCreatureType.MONSTER);
-
-        // this version of minecraft (whatever it happens to be)
-        final int keyForVersion = DataFixUtils.makeKey(SharedConstants.getGameVersion().getWorldVersion());
-        // the thing to register stuff I think?
-        final DataFixer dataFixerToRegister = DataConverterRegistry.a();
-
-        final Schema schemaForSomething = dataFixerToRegister.getSchema(keyForVersion);
-        final TaggedChoice.TaggedChoiceType<?> choiceType = schemaForSomething.findChoiceType(DataConverterTypes.ENTITY_TREE);
-
-
-        // copy the zombie type to the warped gremlin type
-        Map<? super Object, Type<?>> types = (Map<? super Object, Type<?>>) choiceType.types();
-        final Type<?> zombieType = types.get("minecraft:armor_stand");
-        types.put("minecraft:" + REGISTERED_NAME, zombieType);
+        Map<? super Object, Type<?>> types = PluginNmsMobs.getMinecraftTypes();
+        final Type<?> oldType = types.get("minecraft:armor_stand");
+        types.put(registeredNameId(), oldType);
 
         // build it
+        EntityTypes.Builder<MobPartArmorStand> entitytypesBuilder = EntityTypes.Builder.a(MobPartArmorStand::new, EnumCreatureType.MONSTER);
         entityTypes = entitytypesBuilder.a(REGISTERED_NAME);
+        entityTypes = IRegistry.a(IRegistry.ENTITY_TYPE, IRegistry.ENTITY_TYPE.a(EntityTypes.ARMOR_STAND), REGISTERED_NAME, entityTypes); // this is good
 
         // log it
-        NmsMobsPlugin.get().log(Level.INFO, "registered " + REGISTERED_NAME);
+        PluginNmsMobs.get().log(Level.INFO, "registered " + registeredNameId());
+    }
+
+    @NotNull
+    private static String registeredNameId() {
+        return "minecraft" + ":" + REGISTERED_NAME;
     }
 
     public static MobPartArmorStand spawnMobPart(MobPartMother mother, NmsModelEntityConfig config) {
         final World world = mother.entity.getWorld();
-        final MobPartArmorStand bodyPart = entityTypes.a(world);
-        if (bodyPart == null) return null;
-        bodyPart.addScoreboardTag(mother.scoreboardTag);
-        bodyPart.addScoreboardTag(SpawnCustomMobListener.CUSTOM_SPAWN_COMPLETE_TAG);
-        bodyPart.prepare(mother, config);
+        final MobPartArmorStand bodyPart = new MobPartArmorStand(entityTypes, world, mother, config);
         world.addEntity(bodyPart);
         return bodyPart;
     }
 
     @Override
+    public void load(NBTTagCompound nbttagcompound) {
+        nbttagcompound.setString("id", registeredNameId());
+        super.load(nbttagcompound);
+    }
+
+    @Override
     public void loadData(NBTTagCompound nbttagcompound) {
         super.loadData(nbttagcompound);
-        if (nbttagcompound.hasKeyOfType(NbtConstants.ARMOR_ITEMS, 9)) {
-            NBTTagList nbttaglist = nbttagcompound.getList(NbtConstants.ARMOR_ITEMS, 10);
-            for (int i = 0; i < nbttaglist.size(); i++) {
-                this.setSlot(EnumItemSlot.a(EnumItemSlot.Function.ARMOR, i), ItemStack.a(nbttaglist.getCompound(i)));
-            }
-        }
-        if (nbttagcompound.hasKeyOfType(NbtConstants.HAND_ITEMS, 9)) {
-            NBTTagList nbttaglist = nbttagcompound.getList(NbtConstants.HAND_ITEMS, 10);
-            for (int i = 0; i < nbttaglist.size(); ++i) {
-                this.setSlot(EnumItemSlot.a(EnumItemSlot.Function.HAND, i), ItemStack.a(nbttaglist.getCompound(i)));
-            }
-        }
         if (this.entityConfig == null)
             this.entityConfig = new NmsModelEntityConfig(nbttagcompound.getCompound(NbtConstants.ENTITY_LOCATION_RELATIVE_CONFIG));
+    }
+
+
+    @Override
+    public Entity getThisEntity() {
+        return this;
+    }
+
+    @Override
+    public NBTTagCompound save(NBTTagCompound nbttagcompound) {
+        NBTTagCompound data = super.save(nbttagcompound);
+        data.setString("id", registeredNameId());
+        return data;
     }
 
     @Override
     public void saveData(NBTTagCompound nbttagcompound) {
         super.saveData(nbttagcompound);
-
-        final NBTTagList armor = new NBTTagList();
-        for (ItemStack armorItem : this.armorItems) armor.add(armorItem.save(new NBTTagCompound()));
-        nbttagcompound.set(NbtConstants.ARMOR_ITEMS, armor);
-
-        final NBTTagList hands = new NBTTagList();
-        for (ItemStack handItem : this.handItems) hands.add(handItem.save(new NBTTagCompound()));
-        nbttagcompound.set(NbtConstants.HAND_ITEMS, hands);
-
         nbttagcompound.set(NbtConstants.ENTITY_LOCATION_RELATIVE_CONFIG, entityConfig.toNbt());
+    }
+
+    @Override
+    public AttributeMapBase getAttributeMap() {
+        return this.attributeMap == null ? this.attributeMap = new AttributeMapBase(getAttributeProvider()) : this.attributeMap;
     }
 
     /**
@@ -140,12 +126,6 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild 
     public EnumMonsterType getMonsterType() {
         return EnumMonsterType.ILLAGER;
     }
-
-    @Override
-    public EntityTypes<?> getEntityType() {
-        return EntityTypes.ARMOR_STAND;
-    }
-
 
     /**
      * @return the default attributeMap
@@ -264,18 +244,12 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild 
     }
 
     @Override
-    public Entity getThisEntity() {
-        return this;
-    }
-
-    @Override
     public EnumInteractionResult a(EntityHuman entityhuman, Vec3D vec3d, EnumHand enumhand) {
         return this.mainMob.entity.a(entityhuman, enumhand);
     }
 
     @Override
     public MobPartChild remake(WorldServer worldserver, MobPartMother parent) {
-
         final NBTTagCompound oldNbt = this.save(new NBTTagCompound());
         @Nullable MobPartArmorStand newMobPart = entityTypes.a(worldserver);
         if (newMobPart != null) {
@@ -290,40 +264,4 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild 
         this.bN();
         return null;
     }
-
-
-    @Override
-    public Iterable<ItemStack> getArmorItems() {
-        return armorItems;
-    }
-
-    @Override
-    public ItemStack getEquipment(EnumItemSlot enumItemSlot) {
-        EnumItemSlot.Function slotType = enumItemSlot.a();
-        int subSlot = enumItemSlot.b();
-        switch (slotType) {
-            case ARMOR:
-                return armorItems.get(subSlot);
-            case HAND:
-                return handItems.get(subSlot);
-        }
-        return ItemStack.b;
-    }
-
-    @Override
-    public void setSlot(EnumItemSlot enumItemSlot, ItemStack itemStack) {
-        EnumItemSlot.Function slotType = enumItemSlot.a();
-        int subSlot = enumItemSlot.b();
-        switch (slotType) {
-            case ARMOR:
-                if (subSlot >= armorItems.size()) return;
-                armorItems.set(subSlot, itemStack);
-                break;
-            case HAND:
-                if (subSlot >= handItems.size()) return;
-                handItems.set(subSlot, itemStack);
-                break;
-        }
-    }
-
 }

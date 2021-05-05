@@ -1,6 +1,6 @@
 package apple.voltskiya.custom_mobs.mobs.nether.eye_plant;
 
-import apple.voltskiya.custom_mobs.mobs.NmsMobsPlugin;
+import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
 import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
 import apple.voltskiya.custom_mobs.mobs.parts.*;
 import apple.voltskiya.custom_mobs.mobs.utils.UtilsAttribute;
@@ -63,9 +63,8 @@ public class MobEyePlant extends EntityZombie {
 
         // build it
         warpedGremlinEntityType = entitytypesBuilder.a(REGISTERED_NAME);
-
         // log it
-        NmsMobsPlugin.get().log(Level.INFO, "registered " + REGISTERED_NAME);
+        PluginNmsMobs.get().log(Level.INFO, "registered " + REGISTERED_NAME);
     }
 
     /**

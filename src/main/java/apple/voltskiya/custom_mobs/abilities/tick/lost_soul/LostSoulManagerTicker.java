@@ -1,13 +1,13 @@
 package apple.voltskiya.custom_mobs.abilities.tick.lost_soul;
 
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
+import apple.voltskiya.custom_mobs.abilities.MobTickPlugin;
+import apple.voltskiya.custom_mobs.abilities.tick.SpawnEater;
 import apple.voltskiya.custom_mobs.ticking.HighFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.LowFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.NormalFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.TickGiverable;
 import apple.voltskiya.custom_mobs.util.DistanceUtils;
-import apple.voltskiya.custom_mobs.abilities.tick.SpawnEater;
-import apple.voltskiya.custom_mobs.abilities.*;
 import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -19,7 +19,9 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class LostSoulManagerTicker extends SpawnEater {
     protected final double DAMAGE_AMOUNT;
@@ -28,7 +30,6 @@ public class LostSoulManagerTicker extends SpawnEater {
         for (Closeness closeness : Closeness.values())
             put(closeness, new LostSoulIndividualTicker(closeness.getGiver(), closeness));
     }};
-    private final long callerUid = UpdatedPlayerList.callerUid();
 
     public LostSoulManagerTicker() throws IOException {
         instance = this;
@@ -90,7 +91,7 @@ public class LostSoulManagerTicker extends SpawnEater {
     private Closeness determineConcern(Vex vex) {
         Location vexLocation = vex.getLocation();
 
-        @Nullable Player player = UpdatedPlayerList.getClosestPlayer(vexLocation, callerUid);
+        @Nullable Player player = UpdatedPlayerList.getClosestPlayer(vexLocation);
         if (player == null)
             return Closeness.lowest();
         else

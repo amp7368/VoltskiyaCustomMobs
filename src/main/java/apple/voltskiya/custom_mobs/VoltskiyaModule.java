@@ -10,7 +10,7 @@ public abstract class VoltskiyaModule {
     private boolean isEnabled;
     private Logger logger;
 
-    void init() {
+    public void init() {
     }
 
     public abstract void enable();

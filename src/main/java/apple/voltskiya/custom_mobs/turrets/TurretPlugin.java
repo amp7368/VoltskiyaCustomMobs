@@ -10,8 +10,12 @@ public class TurretPlugin extends VoltskiyaModule {
     private static TurretPlugin instance;
 
     @Override
-    public void enable() {
+    public void init() {
         instance = this;
+    }
+
+    @Override
+    public void enable() {
         VerifyTurretsSql.initialize();
         new TurretCommand();
         Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {

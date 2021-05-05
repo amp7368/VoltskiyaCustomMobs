@@ -13,8 +13,12 @@ public class LeapPlugin extends VoltskiyaModule {
     }
 
     @Override
-    public void enable() {
+    public void init() {
         instance = this;
+    }
+
+    @Override
+    public void enable() {
         try {
             new LeapConfigManager();
             new LeapSpawnListener();

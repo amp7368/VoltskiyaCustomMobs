@@ -2,12 +2,12 @@ package apple.voltskiya.custom_mobs.abilities.tick.charger;
 
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import apple.voltskiya.custom_mobs.abilities.MobTickPlugin;
+import apple.voltskiya.custom_mobs.abilities.tick.SpawnEater;
 import apple.voltskiya.custom_mobs.ticking.HighFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.LowFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.NormalFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.TickGiverable;
 import apple.voltskiya.custom_mobs.util.DistanceUtils;
-import apple.voltskiya.custom_mobs.abilities.tick.SpawnEater;
 import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -39,7 +39,6 @@ public class ChargerManagerTicker extends SpawnEater {
             put(closeness, new ChargerIndividualTicker(closeness.getGiver(), closeness));
         get(Closeness.HIGH_CHARGE_CLOSE).setChargeTick();
     }};
-    private final long callerUid = UpdatedPlayerList.callerUid();
 
     public ChargerManagerTicker() throws IOException {
         instance = this;
@@ -117,7 +116,7 @@ public class ChargerManagerTicker extends SpawnEater {
     private Closeness determineConcern(Mob charger) {
         Location chargerLocation = charger.getLocation();
 
-        @Nullable Player player = UpdatedPlayerList.getClosestPlayer(chargerLocation, callerUid);
+        @Nullable Player player = UpdatedPlayerList.getClosestPlayer(chargerLocation);
         if (player == null)
             return Closeness.lowest();
         else

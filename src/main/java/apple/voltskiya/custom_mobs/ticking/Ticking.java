@@ -7,6 +7,13 @@ import org.bukkit.Bukkit;
 
 public class Ticking extends VoltskiyaModule {
     private Tickable[] tickables;
+    private Ticking instance;
+
+
+    @Override
+    public void init() {
+        instance = this;
+    }
 
     public void tick() {
         for (Tickable tickable : tickables) {

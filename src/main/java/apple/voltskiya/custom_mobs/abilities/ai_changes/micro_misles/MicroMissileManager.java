@@ -3,11 +3,13 @@ package apple.voltskiya.custom_mobs.abilities.ai_changes.micro_misles;
 import apple.voltskiya.custom_mobs.abilities.tick.Tickable;
 import apple.voltskiya.custom_mobs.ticking.HighFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.TickGiverable;
+import net.minecraft.server.v1_16_R3.DamageSource;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftLivingEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -119,7 +121,7 @@ public class MicroMissileManager implements Tickable {
                 Collection<Entity> nearbyEntities = location.getNearbyEntities(1, 1, 1);
                 for (Entity nearby : nearbyEntities) {
                     if (nearby instanceof LivingEntity) {
-                        ((LivingEntity) nearby).damage(damage);
+                        damage((CraftLivingEntity) nearby);
                     }
                 }
                 this.die();
@@ -127,13 +129,17 @@ public class MicroMissileManager implements Tickable {
                 Collection<Entity> nearbyEntities = location.getNearbyEntities(1, 1, 1);
                 for (Entity nearby : nearbyEntities) {
                     if (nearby instanceof Player) {
-                        ((LivingEntity) nearby).damage(damage);
+                        damage((CraftLivingEntity) nearby);
                         this.die();
                         break;
                     }
                 }
             }
             ticksLived++;
+        }
+
+        private boolean damage(CraftLivingEntity nearby) {
+            return nearby.getHandle().damageEntity(DamageSource.explosion(null), (float) damage);
         }
 
         private void movementTick() {

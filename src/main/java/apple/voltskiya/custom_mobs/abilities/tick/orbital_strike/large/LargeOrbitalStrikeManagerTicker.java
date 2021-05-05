@@ -2,12 +2,12 @@ package apple.voltskiya.custom_mobs.abilities.tick.orbital_strike.large;
 
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import apple.voltskiya.custom_mobs.abilities.MobTickPlugin;
+import apple.voltskiya.custom_mobs.abilities.tick.SpawnEater;
+import apple.voltskiya.custom_mobs.sql.MobListSql;
 import apple.voltskiya.custom_mobs.ticking.LowFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.TickGiverable;
 import apple.voltskiya.custom_mobs.ticking.VeryLowFrequencyTick;
 import apple.voltskiya.custom_mobs.util.DistanceUtils;
-import apple.voltskiya.custom_mobs.sql.MobListSql;
-import apple.voltskiya.custom_mobs.abilities.tick.SpawnEater;
 import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -17,7 +17,9 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class LargeOrbitalStrikeManagerTicker extends SpawnEater {
     public final double STRIKE_MOVEMENT_SPEED;
@@ -37,7 +39,6 @@ public class LargeOrbitalStrikeManagerTicker extends SpawnEater {
         for (Closeness closeness : Closeness.values())
             put(closeness, new LargeOrbitalStrikeIndividualTicker(closeness));
     }};
-    private final long callerUid = UpdatedPlayerList.callerUid();
 
     public LargeOrbitalStrikeManagerTicker() throws IOException {
         this.STRIKE_CHANCE = (double) getValueOrInit("large", YmlSettings.STRIKE_CHANCE.getPath());
@@ -111,7 +112,7 @@ public class LargeOrbitalStrikeManagerTicker extends SpawnEater {
         Location strikerLocation = striker.getLocation();
 
 
-        @Nullable Player player = UpdatedPlayerList.getClosestPlayer(strikerLocation, callerUid);
+        @Nullable Player player = UpdatedPlayerList.getClosestPlayer(strikerLocation);
         if (player == null)
             return Closeness.lowest();
         else

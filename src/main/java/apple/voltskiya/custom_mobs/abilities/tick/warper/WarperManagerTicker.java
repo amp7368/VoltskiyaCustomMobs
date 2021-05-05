@@ -2,12 +2,12 @@ package apple.voltskiya.custom_mobs.abilities.tick.warper;
 
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import apple.voltskiya.custom_mobs.abilities.MobTickPlugin;
+import apple.voltskiya.custom_mobs.abilities.tick.SpawnEater;
 import apple.voltskiya.custom_mobs.ticking.HighFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.LowFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.NormalFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.TickGiverable;
 import apple.voltskiya.custom_mobs.util.DistanceUtils;
-import apple.voltskiya.custom_mobs.abilities.tick.SpawnEater;
 import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -29,7 +29,6 @@ public class WarperManagerTicker extends SpawnEater {
         get(Closeness.HIGH_CLOSE).setIsWarping();
     }};
     private static WarperManagerTicker instance;
-    private final long callerUid = UpdatedPlayerList.callerUid();
 
     public WarperManagerTicker() throws IOException {
         instance = this;
@@ -85,7 +84,7 @@ public class WarperManagerTicker extends SpawnEater {
     private WarperManagerTicker.Closeness determineConcern(Entity warper) {
         Location warperLocation = warper.getLocation();
 
-        @Nullable Player player = UpdatedPlayerList.getClosestPlayer(warperLocation, callerUid);
+        @Nullable Player player = UpdatedPlayerList.getClosestPlayer(warperLocation);
         if (player == null)
             return WarperManagerTicker.Closeness.lowest();
         else

@@ -2,13 +2,13 @@ package apple.voltskiya.custom_mobs.abilities.tick.orbital_strike.small;
 
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import apple.voltskiya.custom_mobs.abilities.MobTickPlugin;
+import apple.voltskiya.custom_mobs.abilities.tick.SpawnEater;
+import apple.voltskiya.custom_mobs.sql.MobListSql;
 import apple.voltskiya.custom_mobs.ticking.LowFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.NormalFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.TickGiverable;
 import apple.voltskiya.custom_mobs.ticking.VeryLowFrequencyTick;
 import apple.voltskiya.custom_mobs.util.DistanceUtils;
-import apple.voltskiya.custom_mobs.sql.MobListSql;
-import apple.voltskiya.custom_mobs.abilities.tick.SpawnEater;
 import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -42,7 +42,6 @@ public class SmallOrbitalStrikeManagerTicker extends SpawnEater {
         for (Closeness closeness : Closeness.values())
             put(closeness, new SmallOrbitalStrikeIndividualTicker(closeness));
     }};
-    private final long callerUid = UpdatedPlayerList.callerUid();
 
     public SmallOrbitalStrikeManagerTicker() throws IOException {
         this.STRIKE_CHANCE = (double) getValueOrInit("small", YmlSettings.STRIKE_CHANCE.getPath());
@@ -118,7 +117,7 @@ public class SmallOrbitalStrikeManagerTicker extends SpawnEater {
         Location strikerLocation = striker.getLocation();
 
 
-        @Nullable Player player = UpdatedPlayerList.getClosestPlayer(strikerLocation, callerUid);
+        @Nullable Player player = UpdatedPlayerList.getClosestPlayer(strikerLocation);
         if (player == null)
             return Closeness.lowest();
         else

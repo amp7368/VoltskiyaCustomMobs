@@ -2,7 +2,7 @@ package apple.voltskiya.custom_mobs.mobs.parts;
 
 import apple.voltskiya.custom_mobs.custom_model.CustomModel;
 import apple.voltskiya.custom_mobs.custom_model.CustomModelPlugin;
-import apple.voltskiya.custom_mobs.mobs.NmsMobsPlugin;
+import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,7 +16,7 @@ import java.util.logging.Level;
 
 public class NmsModelConfig {
     private static final Map<ModelConfigName, NmsModelConfig> ALL_PARTS = new HashMap<>();
-    public static final File MODEL_FOLDER = NmsMobsPlugin.get().getModelDataFolder();
+    public static final File MODEL_FOLDER = PluginNmsMobs.get().getModelDataFolder();
     private final NmsModelEntityConfig mainConfig;
     private final List<NmsModelEntityConfig> partsConfig;
 
@@ -43,7 +43,7 @@ public class NmsModelConfig {
     private static NmsModelConfig registerModel(File folder, String name) {
         @Nullable CustomModel model = CustomModelPlugin.get().loadSchematic(new File(folder, name + ".yml"));
         if (model == null) {
-            NmsMobsPlugin.get().log(Level.WARNING, name + " has no schematic");
+            PluginNmsMobs.get().log(Level.WARNING, name + " has no schematic");
             return null;
         }
         final ArrayList<NmsModelEntityConfig> partList = new ArrayList<>();
@@ -55,7 +55,7 @@ public class NmsModelConfig {
             } else partList.add(piece);
         }
         if (main == null) {
-            NmsMobsPlugin.get().log(Level.WARNING, name + " has an invalid schematic");
+            PluginNmsMobs.get().log(Level.WARNING, name + " has an invalid schematic");
             return null;
         } else {
             partList.trimToSize();

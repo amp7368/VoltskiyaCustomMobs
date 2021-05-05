@@ -1,6 +1,6 @@
 package apple.voltskiya.custom_mobs.mobs.nether.revenant;
 
-import apple.voltskiya.custom_mobs.mobs.NmsMobsPlugin;
+import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
 import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
 import apple.voltskiya.custom_mobs.mobs.pathfinders.PathfinderGoalBowShootNoBow;
 import com.mojang.datafixers.DataFixUtils;
@@ -54,7 +54,7 @@ public class MobRevenant extends EntitySkeleton {
         entityTypes = entitytypesBuilder.a(REGISTERED_NAME);
 
         // log it
-        NmsMobsPlugin.get().log(Level.INFO, "registered " + REGISTERED_NAME);
+        PluginNmsMobs.get().log(Level.INFO, "registered " + REGISTERED_NAME);
     }
 
     /**

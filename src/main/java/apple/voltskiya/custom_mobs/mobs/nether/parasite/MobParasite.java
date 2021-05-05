@@ -2,7 +2,7 @@ package apple.voltskiya.custom_mobs.mobs.nether.parasite;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.custom_model.CustomModel;
-import apple.voltskiya.custom_mobs.mobs.NmsMobsPlugin;
+import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
 import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
 import apple.voltskiya.custom_mobs.mobs.parts.*;
 import apple.voltskiya.custom_mobs.mobs.parts.NmsModelConfig.ModelConfigName;
@@ -70,7 +70,7 @@ public class MobParasite extends EntityZombie {
         entityTypes = entitytypesBuilder.a(REGISTERED_NAME);
 
         // log it
-        NmsMobsPlugin.get().log(Level.INFO, "registered " + REGISTERED_NAME);
+        PluginNmsMobs.get().log(Level.INFO, "registered " + REGISTERED_NAME);
     }
 
     /**
@@ -239,7 +239,7 @@ public class MobParasite extends EntityZombie {
         for (MobPartChild child : children) {
             packetsToSend.add(child.moveFromMother(false));
         }
-        UtilsPacket.sendPacketsToAllPlayers(packetsToSend);
+        UtilsPacket.sendPacketsToAllPlayers(packetsToSend, this.getBukkitEntity().getLocation());
     }
 
 

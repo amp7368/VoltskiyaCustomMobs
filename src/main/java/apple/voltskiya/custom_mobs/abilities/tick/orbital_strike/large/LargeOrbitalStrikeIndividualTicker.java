@@ -27,7 +27,6 @@ public class LargeOrbitalStrikeIndividualTicker {
     private boolean isTicking = false;
     private long myTickerUid;
     private final Random random = new Random();
-    private final long callerUid = UpdatedPlayerList.callerUid();
 
 
     public LargeOrbitalStrikeIndividualTicker(LargeOrbitalStrikeManagerTicker.Closeness closeness) {
@@ -87,7 +86,7 @@ public class LargeOrbitalStrikeIndividualTicker {
         Location strikerLocation = striker.getLocation();
         @Nullable LivingEntity target = ((Mob) striker).getTarget();
         if (target == null) {
-            Player closest = UpdatedPlayerList.getClosestPlayer(striker.getLocation(), callerUid);
+            Player closest = UpdatedPlayerList.getClosestPlayer(striker.getLocation());
             if (closest != null) {
                 Location pLocation = closest.getLocation();
                 double d = DistanceUtils.distance(pLocation, strikerLocation);
@@ -101,7 +100,7 @@ public class LargeOrbitalStrikeIndividualTicker {
             final Location targetLocation = target.getLocation();
             ((Mob) striker).setAI(false);
             ((Mob) striker).setTarget(null);
-            new OrbitalStrike(target.getWorld(), targetLocation.getX(), targetLocation.getY(), targetLocation.getZ(), OrbitalStrike.OrbitalStrikeType.LARGE, callerUid);
+            new OrbitalStrike(target.getWorld(), targetLocation.getX(), targetLocation.getY(), targetLocation.getZ(), OrbitalStrike.OrbitalStrikeType.LARGE);
             strikerUid.setValue(System.currentTimeMillis());
             @Nullable LivingEntity finalTarget = target;
             Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {

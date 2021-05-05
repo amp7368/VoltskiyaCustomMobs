@@ -1,35 +1,35 @@
 package apple.voltskiya.custom_mobs.mobs.nether.gremlin;
 
-import apple.voltskiya.custom_mobs.mobs.NmsMobsPlugin;
+import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
 import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
-import apple.voltskiya.custom_mobs.mobs.parts.*;
+import apple.voltskiya.custom_mobs.mobs.parts.MobPartChild;
+import apple.voltskiya.custom_mobs.mobs.parts.MobPartMother;
+import apple.voltskiya.custom_mobs.mobs.parts.NmsModelConfig;
 import apple.voltskiya.custom_mobs.mobs.parts.NmsModelConfig.ModelConfigName;
-import apple.voltskiya.custom_mobs.mobs.utils.UtilsAttribute;
+import apple.voltskiya.custom_mobs.mobs.parts.NmsModelEntityConfig;
 import apple.voltskiya.custom_mobs.mobs.utils.UtilsPacket;
-import apple.voltskiya.custom_mobs.util.EntityLocation;
-import com.mojang.datafixers.DataFixUtils;
-import com.mojang.datafixers.DataFixer;
-import com.mojang.datafixers.schemas.Schema;
 import com.mojang.datafixers.types.Type;
-import com.mojang.datafixers.types.templates.TaggedChoice;
 import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftZombie;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 public class MobWarpedGremlin extends EntityZombie {
     public static final ModelConfigName REGISTERED_MODEL = ModelConfigName.WARPED_GREMLIN;
     public static final String REGISTERED_NAME = REGISTERED_MODEL.getFile();
     private static EntityTypes<MobWarpedGremlin> warpedGremlinEntityType;
-    private NmsModelEntityConfig selfModel;
-    private EntityTypes<?> selfModelType;
-    private final List<MobPartChild> children = new ArrayList<>();
+    private static NmsModelEntityConfig selfModel;
+    private List<MobPartChild> children = null;
+    private AttributeMapBase attributeMap = null;
 
     /**
      * constructor to match the EntityTypes requirement
@@ -38,35 +38,26 @@ public class MobWarpedGremlin extends EntityZombie {
      */
 
     public MobWarpedGremlin(EntityTypes<MobWarpedGremlin> entityTypes, World world) {
-        super(EntityTypes.ZOMBIE, world);
-        UtilsAttribute.fillAttributes(this.getAttributeMap(), getAttributeProvider());
+        super(entityTypes, world);
     }
 
     /**
      * registers the WarpedGremlin as an entity
      */
     public static void initialize() {
-        EntityTypes.Builder<MobWarpedGremlin> entitytypesBuilder = EntityTypes.Builder.a(MobWarpedGremlin::new, EnumCreatureType.MONSTER);
-
-        // this version of minecraft (whatever it happens to be)
-        final int keyForVersion = DataFixUtils.makeKey(SharedConstants.getGameVersion().getWorldVersion());
-        // the thing to register stuff I think?
-        final DataFixer dataFixerToRegister = DataConverterRegistry.a();
-
-        final Schema schemaForSomething = dataFixerToRegister.getSchema(keyForVersion);
-        final TaggedChoice.TaggedChoiceType<?> choiceType = schemaForSomething.findChoiceType(DataConverterTypes.ENTITY_TREE);
-
-        // copy the zombie type to the warped gremlin type
-        // todo understand this more
-        Map<? super Object, Type<?>> types = (Map<? super Object, Type<?>>) choiceType.types();
+        Map<? super Object, Type<?>> types = PluginNmsMobs.getMinecraftTypes();
         final Type<?> zombieType = types.get("minecraft:zombie");
-        types.put("minecraft:" + REGISTERED_NAME, zombieType);
+        types.put(registeredNameId(), zombieType);
 
         // build it
+        EntityTypes.Builder<MobWarpedGremlin> entitytypesBuilder = EntityTypes.Builder.a(MobWarpedGremlin::new, EnumCreatureType.MONSTER);
         warpedGremlinEntityType = entitytypesBuilder.a(REGISTERED_NAME);
+        warpedGremlinEntityType = IRegistry.a(IRegistry.ENTITY_TYPE, IRegistry.ENTITY_TYPE.a(EntityTypes.ZOMBIE), REGISTERED_NAME, warpedGremlinEntityType); // this is good
 
         // log it
-        NmsMobsPlugin.get().log(Level.INFO, "registered " + REGISTERED_NAME);
+        PluginNmsMobs.get().log(Level.INFO, "registered " + registeredNameId());
+        final NmsModelConfig model = NmsModelConfig.parts(REGISTERED_MODEL);
+        selfModel = model.mainPart();
     }
 
     /**
@@ -78,10 +69,12 @@ public class MobWarpedGremlin extends EntityZombie {
     public static void spawn(Location location, NBTTagCompound oldNbt) {
         CraftWorld world = (CraftWorld) location.getWorld();
         final MobWarpedGremlin gremlin = new MobWarpedGremlin(warpedGremlinEntityType, world.getHandle());
-        gremlin.prepare(location,oldNbt);
+        gremlin.prepare(location, oldNbt);
         gremlin.addScoreboardTag(SpawnCustomMobListener.CUSTOM_SPAWN_COMPLETE_TAG);
         world.getHandle().addEntity(gremlin);
+        gremlin.addChildren();
     }
+
 
     public static void spawnEat(CreatureSpawnEvent event) {
         Location location = event.getEntity().getLocation();
@@ -90,62 +83,43 @@ public class MobWarpedGremlin extends EntityZombie {
     }
 
     private void prepare(Location location, NBTTagCompound oldNbt) {
-        final NmsModelConfig model = NmsModelConfig.parts(REGISTERED_MODEL);
-        this.selfModel = model.mainPart();
-        final NBTTagCompound newNbt = this.selfModel.getEntity().nbt;
+        final NBTTagCompound newNbt = selfModel.getEntity().nbt;
         final NBTTagCompound mergedNbt = oldNbt == null ? newNbt : oldNbt.a(newNbt);
-        this.loadData(mergedNbt);
+        this.load(mergedNbt);
         this.setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
-        final Optional<EntityTypes<?>> entityTypes = EntityTypes.a(this.selfModel.getEntity().type.getKey().getKey());
-        if (entityTypes.isPresent()) {
-            this.selfModelType = entityTypes.get();
-            EntityLocation motherLocation = new EntityLocation(
-                    this.getUniqueID(),
-                    selfModel.getEntity().x,
-                    selfModel.getEntity().y,
-                    selfModel.getEntity().z,
-                    selfModel.getEntity().facingX,
-                    selfModel.getEntity().facingY,
-                    selfModel.getEntity().facingZ
-            ); // for simpler rotations
-            MobPartMother motherMe = new MobPartMother(motherLocation, this, REGISTERED_NAME);
-            for (NmsModelEntityConfig part : model.others()) {
-                children.add(MobParts.spawnMobPart(motherMe, part));
+    }
+
+    private void addChildren() {
+        if (this.children != null) {
+            for (MobPartChild child : children) {
+                child.die();
             }
-        } else {
-            this.selfModelType = EntityTypes.AREA_EFFECT_CLOUD;
-            this.die();
         }
-//        this.lookController = new MobParts.ControllerLookChildrenFollow(this, children);
+        this.children = MobPartMother.getChildren(this.getUniqueID(), this, selfModel, REGISTERED_MODEL);
     }
 
-    @Override
-    protected void initPathfinder() {
-        // only look aat the player
-//        this.goalSelector.a(8, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 8.0F));
-        super.initPathfinder();
-    }
 
     @Override
-    public void loadData(NBTTagCompound nbttagcompound) {
-        super.loadData(nbttagcompound);
+    public void load(NBTTagCompound nbttagcompound) {
+        nbttagcompound.setString("id", registeredNameId());
+        super.load(nbttagcompound);
         final boolean invisible = nbttagcompound.getBoolean("Invisible");
         ((CraftZombie) getBukkitEntity()).setInvisible(invisible);
         this.setInvisible(invisible);
     }
 
-    /**
-     * @return EnumMonsterType.ARTHROPOD || EnumMonsterType.ILLAGER || ...
-     */
     @Override
-    public EnumMonsterType getMonsterType() {
-        return super.getMonsterType();
+    public NBTTagCompound save(NBTTagCompound nbttagcompound) {
+        NBTTagCompound data = super.save(nbttagcompound);
+        data.setString("id", registeredNameId());
+        return data;
     }
 
-    @Override
-    public EntityTypes<?> getEntityType() {
-        return this.selfModelType;
+    @NotNull
+    private static String registeredNameId() {
+        return "minecraft" + ":" + REGISTERED_NAME;
     }
+
 
     @Override
     public void die() {
@@ -155,6 +129,11 @@ public class MobWarpedGremlin extends EntityZombie {
         }
     }
 
+
+    @Override
+    public AttributeMapBase getAttributeMap() {
+        return this.attributeMap == null ? this.attributeMap = new AttributeMapBase(getAttributeProvider()) : this.attributeMap;
+    }
 
     /**
      * @return the default attributeMap
@@ -175,10 +154,13 @@ public class MobWarpedGremlin extends EntityZombie {
     public void move(EnumMoveType enummovetype, Vec3D vec3d) {
         super.move(enummovetype, vec3d);
         List<Packet<?>> packetsToSend = new ArrayList<>();
+        if (this.children == null) {
+            this.addChildren();
+        }
         for (MobPartChild child : children) {
             packetsToSend.add(child.moveFromMother(false));
         }
-        UtilsPacket.sendPacketsToAllPlayers(packetsToSend);
+        UtilsPacket.sendPacketsToAllPlayers(packetsToSend, this.getBukkitEntity().getLocation());
     }
 
 
@@ -193,29 +175,13 @@ public class MobWarpedGremlin extends EntityZombie {
     @Override
     public @Nullable
     Entity b(WorldServer worldserver) {
-        return super.b(worldserver);
-    }
-
-    //todo
-    @Override
-    public Iterable<ItemStack> getArmorItems() {
-        return Collections.emptyList();
-    }
-
-    //todo
-    @Override
-    public ItemStack getEquipment(EnumItemSlot enumItemSlot) {
-        return ItemStack.b;
-    }
-
-    //todo
-    @Override
-    public void setSlot(EnumItemSlot enumItemSlot, ItemStack itemStack) {
-
-    }
-
-    @Override
-    public EnumMainHand getMainHand() {
-        return EnumMainHand.RIGHT;
+        final Entity result = super.b(worldserver);
+        if (result instanceof MobWarpedGremlin) {
+            for (MobPartChild child : children) {
+                child.die();
+            }
+            ((MobWarpedGremlin) result).addChildren();
+        }
+        return result;
     }
 }

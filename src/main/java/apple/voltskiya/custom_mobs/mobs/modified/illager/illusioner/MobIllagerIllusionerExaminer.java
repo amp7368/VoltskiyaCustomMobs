@@ -1,6 +1,6 @@
 package apple.voltskiya.custom_mobs.mobs.modified.illager.illusioner;
 
-import apple.voltskiya.custom_mobs.mobs.NmsMobsPlugin;
+import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
 import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
 import com.mojang.datafixers.DataFixUtils;
 import com.mojang.datafixers.DataFixer;
@@ -50,7 +50,7 @@ public class MobIllagerIllusionerExaminer extends EntityIllagerIllusioner {
         entityTypes = entitytypesBuilder.a(REGISTERED_NAME);
 
         // log it
-        NmsMobsPlugin.get().log(Level.INFO, "registered " + REGISTERED_NAME);
+        PluginNmsMobs.get().log(Level.INFO, "registered " + REGISTERED_NAME);
     }
 
     public static void spawnEat(CreatureSpawnEvent event) {

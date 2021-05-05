@@ -16,18 +16,42 @@ import apple.voltskiya.custom_mobs.mobs.testing.MobZombieCow;
 import apple.voltskiya.custom_mobs.mobs.testing.aledar.AledarNavigation;
 import apple.voltskiya.custom_mobs.mobs.testing.aledar.MobAledar;
 import apple.voltskiya.custom_mobs.mobs.testing.aledar.MobCart;
+import com.mojang.datafixers.DataFixUtils;
+import com.mojang.datafixers.DataFixer;
+import com.mojang.datafixers.schemas.Schema;
+import com.mojang.datafixers.types.Type;
+import com.mojang.datafixers.types.templates.TaggedChoice;
+import net.minecraft.server.v1_16_R3.DataConverterRegistry;
+import net.minecraft.server.v1_16_R3.DataConverterTypes;
+import net.minecraft.server.v1_16_R3.SharedConstants;
 
 import java.io.File;
+import java.util.Map;
 
-public class NmsMobsPlugin extends VoltskiyaModule {
-    private static NmsMobsPlugin instance;
+public class PluginNmsMobs extends VoltskiyaModule {
+    private static PluginNmsMobs instance;
 
-    public static NmsMobsPlugin get() {
+    public static PluginNmsMobs get() {
         return instance;
     }
 
+    public static Map<? super Object, Type<?>> getMinecraftTypes() {
+        // this version of minecraft (whatever it happens to be)
+        final int keyForVersion = DataFixUtils.makeKey(SharedConstants.getGameVersion().getWorldVersion());
+        // the thing to register stuff I think?
+        final DataFixer dataFixerToRegister = DataConverterRegistry.a();
+
+        final Schema schemaForSomething = dataFixerToRegister.getSchema(keyForVersion);
+        final TaggedChoice.TaggedChoiceType<?> choiceType = schemaForSomething.findChoiceType(DataConverterTypes.ENTITY_TREE);
+
+
+        // copy the zombie type to the warped gremlin type
+        Map<? super Object, Type<?>> types = (Map<? super Object, Type<?>>) choiceType.types();
+        return types;
+    }
+
     @Override
-    public void enable() {
+    public void init(){
         instance = this;
         NmsModelConfig.initialize();
         MobZombieCow.initialize();
@@ -43,6 +67,11 @@ public class NmsMobsPlugin extends VoltskiyaModule {
         MobIllagerIllusionerExaminer.initialize();
         MobIllagerPillagerExaminer.initialize();
         MobRevenant.initialize();
+    }
+
+
+    @Override
+    public void enable() {
         new AledarNavigation();
         new MobsSpawnCommand();
         new SpawnCustomMobListener();
