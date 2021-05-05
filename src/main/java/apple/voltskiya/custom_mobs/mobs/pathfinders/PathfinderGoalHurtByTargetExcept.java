@@ -1,5 +1,6 @@
 package apple.voltskiya.custom_mobs.mobs.pathfinders;
 
+import apple.voltskiya.custom_mobs.PluginDisable;
 import net.minecraft.server.v1_16_R3.EntityCreature;
 import net.minecraft.server.v1_16_R3.EntityInsentient;
 import net.minecraft.server.v1_16_R3.EntityLiving;
@@ -13,6 +14,7 @@ public class PathfinderGoalHurtByTargetExcept extends PathfinderGoalHurtByTarget
     public PathfinderGoalHurtByTargetExcept(EntityCreature entitycreature, Predicate<EntityLiving> confirmTarget, Class<?>... aclass) {
         super(entitycreature, aclass);
         this.confirmTarget = confirmTarget;
+        PluginDisable.addMob(entitycreature.getUniqueID(),this);
     }
 
     @Override

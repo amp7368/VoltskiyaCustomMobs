@@ -22,7 +22,7 @@ public class LeapSpecificMisc {
                     LeapSpecificMisc::interruptedLeap,
                     LeapSpecificMisc::endLeap
             );
-            ((EntityInsentient) creature).goalSelector.a(0, new PathfinderGoalLeap("misc",(EntityInsentient) creature, config, postConfig));
+            ((EntityInsentient) creature).goalSelector.a(0, new PathfinderGoalLeap((EntityInsentient) creature, config, postConfig));
         }
     }
 

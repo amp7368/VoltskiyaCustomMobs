@@ -1,5 +1,7 @@
 package apple.voltskiya.custom_mobs.leaps;
 
+import apple.voltskiya.custom_mobs.PluginDisable;
+import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.leaps.config.LeapDo;
 import apple.voltskiya.custom_mobs.leaps.config.LeapPostConfig;
 import apple.voltskiya.custom_mobs.leaps.config.LeapPreConfig;
@@ -16,7 +18,6 @@ public class PathfinderGoalLeap extends PathfinderGoal {
     protected final EntityInsentient me;
     protected final Random random = new Random();
     protected final LeapPreConfig config;
-    private final String name;
     protected LeapPostConfig postConfig;
     protected LeapDo currentLeap = null;
     protected Integer timeOfLastJump = null;
@@ -28,12 +29,12 @@ public class PathfinderGoalLeap extends PathfinderGoal {
      * @param config     the config for the leap
      * @param postConfig provides any runtime info for the leap
      */
-    public PathfinderGoalLeap(String name,EntityInsentient me, LeapPreConfig config, LeapPostConfig postConfig) {
+    public PathfinderGoalLeap(EntityInsentient me, LeapPreConfig config, LeapPostConfig postConfig) {
         this.config = config;
         this.me = me;
         this.postConfig = postConfig;
-        this.name = name;
         this.setMoveType(EnumSet.of(Type.JUMP));
+        PluginDisable.addMob(me.getUniqueID(),this);
     }
 
     /**
@@ -63,7 +64,7 @@ public class PathfinderGoalLeap extends PathfinderGoal {
     @Override
     public boolean b() {
         // navigationAbstract.m() returns true if the entity is *not* navigating anywhere
-        return this.a();
+        return this.a() && VoltskiyaPlugin.get().isEnabled();
     }
 
     /**
@@ -73,7 +74,9 @@ public class PathfinderGoalLeap extends PathfinderGoal {
      */
     @Override
     public boolean C_() {
-        return true;
+        final boolean enabled = VoltskiyaPlugin.get().isEnabled();
+        System.out.println(enabled);
+        return false;
     }
 
     /**
@@ -106,6 +109,7 @@ public class PathfinderGoalLeap extends PathfinderGoal {
     @Override
     public void d() {
         // quit going to the location
+
         this.currentLeap = null;
     }
 

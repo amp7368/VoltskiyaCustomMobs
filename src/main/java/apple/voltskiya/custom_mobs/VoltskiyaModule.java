@@ -17,6 +17,9 @@ public abstract class VoltskiyaModule {
 
     public abstract String getName();
 
+    public void onDisable() {
+    }
+
     boolean shouldEnable() {
         return true;
     }
@@ -53,5 +56,6 @@ public abstract class VoltskiyaModule {
         if (obj instanceof VoltskiyaModule) return obj.hashCode() == hashCode();
         return false;
     }
+
 
 }

@@ -51,9 +51,16 @@ public class VoltskiyaPlugin extends JavaPlugin {
         new Snowball();
     }
 
+    @Override
+    public void onDisable() {
+        for (VoltskiyaModule module : modules) {
+            module.onDisable();
+        }
+    }
 
     private void manuallyLoadModules() {
         final VoltskiyaModule[] modules = new VoltskiyaModule[]{
+                new PluginDisable(),
                 new PluginUtils(),
                 new Ticking(), // this has to go first
                 new MobTickPlugin(),

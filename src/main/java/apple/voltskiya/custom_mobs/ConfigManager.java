@@ -15,6 +15,7 @@ public abstract class ConfigManager {
     private static final String defaultConfig = "config";
     private File folder = null;
     private final Map<String, YamlConfiguration> ymls = new HashMap<>();
+
     /**
      * @return the name of the sub_module (a step below a module)
      */
@@ -37,9 +38,7 @@ public abstract class ConfigManager {
     }
 
     /**
-     * gets the module associated with this config
-     *
-     * @return
+     * @return the module associated with this config
      */
     protected abstract VoltskiyaModule getPlugin();
 

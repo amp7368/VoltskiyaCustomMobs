@@ -27,7 +27,7 @@ public class LeapSpawnListener implements Listener {
         for (String tag : event.getEntity().getScoreboardTags()) {
             LeapType leapType = spawnEaters.get(tag);
             if (leapType != null) {
-                leapType.getLeapEater().eatSpawnEvent(event, leapType);
+                leapType.getLeapEater().eatSpawnEvent(event);
             } else {
                 LeapPreConfig config = LeapConfigManager.get().getLeap(tag);
                 if (config != null) LeapSpecificMisc.eatSpawnEvent(event, config);
@@ -36,6 +36,6 @@ public class LeapSpawnListener implements Listener {
     }
 
     public interface CustomSpawnEater {
-        void eatSpawnEvent(CreatureSpawnEvent event, LeapType leapType);
+        void eatSpawnEvent(CreatureSpawnEvent event);
     }
 }

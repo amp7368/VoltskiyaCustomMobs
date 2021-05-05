@@ -19,7 +19,7 @@ public class PathfinderGoalLeapUpwards extends PathfinderGoalLeap {
      * @param postConfig provides any runtime info for the leap
      */
     public PathfinderGoalLeapUpwards(EntityInsentient me, LeapType type, LeapPostConfig postConfig) {
-        super("upwards",me, type.getLeapConfig(), postConfig);
+        super(me, type.getLeapConfig(), postConfig);
     }
 
     /**

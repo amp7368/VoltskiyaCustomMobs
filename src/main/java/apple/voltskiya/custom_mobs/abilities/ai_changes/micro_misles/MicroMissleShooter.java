@@ -51,7 +51,7 @@ public class MicroMissleShooter extends SpawnEater {
      */
     @Override
     public String getName() {
-        return "micro_missle_shooter";
+        return "micro_missile_shooter";
     }
 
     /**

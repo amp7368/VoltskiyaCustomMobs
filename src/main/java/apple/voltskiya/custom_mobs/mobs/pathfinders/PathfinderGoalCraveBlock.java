@@ -1,5 +1,6 @@
 package apple.voltskiya.custom_mobs.mobs.pathfinders;
 
+import apple.voltskiya.custom_mobs.PluginDisable;
 import net.minecraft.server.v1_16_R3.EntityInsentient;
 import net.minecraft.server.v1_16_R3.PathfinderGoal;
 import org.bukkit.Material;
@@ -40,6 +41,7 @@ public class PathfinderGoalCraveBlock extends PathfinderGoal {
         this.checkInterval = checkInterval;
         this.speed = speed;
         this.setMoveType(EnumSet.of(Type.MOVE));
+        PluginDisable.addMob(me.getUniqueID(),this);
     }
 
     /**
