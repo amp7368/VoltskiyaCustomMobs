@@ -60,7 +60,7 @@ public class MobsSpawnCommand extends BaseCommand {
 
         @Subcommand("nether_parasite")
         public void spawnParasite(Player player) {
-            MobParasite.spawn(player.getLocation(), null);
+            MobParasite.spawn(player.getLocation(), null, null);
         }
 
         @Subcommand("enderman_vex")

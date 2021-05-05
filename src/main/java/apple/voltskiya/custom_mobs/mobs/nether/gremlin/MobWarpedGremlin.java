@@ -60,7 +60,6 @@ public class MobWarpedGremlin extends EntityZombie {
         selfModel = model.mainPart();
 
         System.out.println(AttributeDefaults.b(entityTypes));
-
     }
 
     @Override
