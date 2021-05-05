@@ -23,7 +23,7 @@ import java.util.Map;
 
 public class MobSpawnListener implements Listener {
     private static final Map<String, SpawnEater> spawnEater = new HashMap<>();
-    private static final Map<String, SpawnModifier> spawnModifier = new HashMap<>();
+    private static final Map<String, SpawnEater> spawnModifier = new HashMap<>();
 
     public MobSpawnListener() {
         Bukkit.getPluginManager().registerEvents(this, VoltskiyaPlugin.get());
@@ -55,6 +55,8 @@ public class MobSpawnListener implements Listener {
             System.err.println("There was an issue with one of the config settings of spawnModifiers.\n" +
                     "You may have changed a setting that resulted in changing the type of data that was in one of the fields.");
             e.printStackTrace();
+        }for (SpawnEater spawnEater : spawnModifier.values()) {
+            spawnEater.registerInDB();
         }
     }
 
@@ -63,12 +65,8 @@ public class MobSpawnListener implements Listener {
         for (String tag : event.getEntity().getScoreboardTags()) {
             SpawnEater eater = spawnEater.get(tag);
             if (eater != null) eater.eatEvent(event);
-            SpawnModifier modifier = spawnModifier.get(tag);
-            if (modifier != null) modifier.modifySpawn(event);
+            SpawnEater modifier = spawnModifier.get(tag);
+            if (modifier != null) modifier.eatEvent(event);
         }
-    }
-
-    public interface SpawnModifier {
-        void modifySpawn(CreatureSpawnEvent event);
     }
 }
