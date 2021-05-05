@@ -8,7 +8,6 @@ public class UtilsAttribute {
             final AttributeModifiable attribute = new AttributeModifiable(attributeGeneric.get(), (o) -> {
             });
             for (AttributeModifiable s : attributeMap.b()) {
-                System.out.println(s.getAttribute().getName() + " " + s.getValue());
             }
 
 
@@ -17,9 +16,7 @@ public class UtilsAttribute {
 //            // if the attribute exists, set it
 //            if (attributeProvider.c(attributeGeneric.get())) {
 //                attribute.setValue(attributeProvider.a(attributeGeneric.get()));
-//                System.out.println(attributeGeneric.get().getName());
 //                attributeMap.b(attributeProvider);
-//                //                System.out.println(attributeMap.a(attributeGeneric.get()).getAttribute().getName() + " " + attributeMap.a(attributeGeneric.get()).getValue());
 //            }
         }
     }

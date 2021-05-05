@@ -63,7 +63,6 @@ public class MobParasite extends EntityZombie {
         final NmsModelConfig model = NmsModelConfig.parts(REGISTERED_MODEL);
         selfModel = model.mainPart();
 
-        System.out.println(AttributeDefaults.b(entityTypes));
     }
 
     @Override
