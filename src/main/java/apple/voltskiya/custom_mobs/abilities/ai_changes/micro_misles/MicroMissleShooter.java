@@ -37,13 +37,13 @@ public class MicroMissleShooter extends SpawnEater {
         @Nullable Entity entity = ((CraftEntity) event.getEntity()).getHandle();
         if (entity instanceof EntityInsentient) {
             eatEntity((EntityInsentient) entity);
-            addMobs(entity.getUniqueID());
         }
     }
 
     private void eatEntity(EntityInsentient mob) {
         mob.goalSelector.a(0, new PathfinderGoalShootMicroMissle(mob, 2 * 20, 1, MissileType.LONER));
         mob.goalSelector.a(1, new PathfinderGoalShootMicroMissle(mob, COOLDOWN, 5, MissileType.FLURRY));
+        addMobs(mob.getUniqueID());
     }
 
     /**

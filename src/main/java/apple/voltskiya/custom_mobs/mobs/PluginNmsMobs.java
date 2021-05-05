@@ -23,7 +23,6 @@ import com.mojang.datafixers.DataFixer;
 import com.mojang.datafixers.schemas.Schema;
 import com.mojang.datafixers.types.Type;
 import com.mojang.datafixers.types.templates.TaggedChoice;
-import net.minecraft.server.v1_16_R3.AttributeDefaults;
 import net.minecraft.server.v1_16_R3.DataConverterRegistry;
 import net.minecraft.server.v1_16_R3.DataConverterTypes;
 import net.minecraft.server.v1_16_R3.SharedConstants;
@@ -72,7 +71,6 @@ public class PluginNmsMobs extends VoltskiyaModule {
         MobIllagerVindicatorExaminer.initialize();
         MobIllagerEvokerExaminer.initialize();
         MobRevenant.initialize();
-        AttributeDefaults.a();
     }
 
     @Override
