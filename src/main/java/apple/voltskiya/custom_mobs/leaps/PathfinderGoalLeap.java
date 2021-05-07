@@ -74,8 +74,6 @@ public class PathfinderGoalLeap extends PathfinderGoal {
      */
     @Override
     public boolean C_() {
-        final boolean enabled = VoltskiyaPlugin.get().isEnabled();
-        System.out.println(enabled);
         return false;
     }
 

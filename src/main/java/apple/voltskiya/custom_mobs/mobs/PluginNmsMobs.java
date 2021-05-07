@@ -6,6 +6,7 @@ import apple.voltskiya.custom_mobs.mobs.modified.illager.illusioner.MobIllagerIl
 import apple.voltskiya.custom_mobs.mobs.modified.illager.pillager.MobIllagerPillagerExaminer;
 import apple.voltskiya.custom_mobs.mobs.modified.illager.vindicator.MobIllagerVindicatorExaminer;
 import apple.voltskiya.custom_mobs.mobs.modified.iron_golem.MobIronGolemExaminer;
+import apple.voltskiya.custom_mobs.mobs.nether.angered_soul.MobAngeredSoul;
 import apple.voltskiya.custom_mobs.mobs.nether.eye_plant.MobEyePlant;
 import apple.voltskiya.custom_mobs.mobs.nether.gremlin.MobWarpedGremlin;
 import apple.voltskiya.custom_mobs.mobs.nether.parasite.MobParasite;
@@ -71,6 +72,7 @@ public class PluginNmsMobs extends VoltskiyaModule {
         MobIllagerVindicatorExaminer.initialize();
         MobIllagerEvokerExaminer.initialize();
         MobRevenant.initialize();
+        MobAngeredSoul.initialize();
     }
 
     @Override
