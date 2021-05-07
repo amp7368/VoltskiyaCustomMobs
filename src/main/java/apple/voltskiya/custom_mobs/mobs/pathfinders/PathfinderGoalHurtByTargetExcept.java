@@ -14,7 +14,7 @@ public class PathfinderGoalHurtByTargetExcept extends PathfinderGoalHurtByTarget
     public PathfinderGoalHurtByTargetExcept(EntityCreature entitycreature, Predicate<EntityLiving> confirmTarget, Class<?>... aclass) {
         super(entitycreature, aclass);
         this.confirmTarget = confirmTarget;
-        PluginDisable.addMob(entitycreature.getUniqueID(),this);
+        PluginDisable.addMob(entitycreature,this);
     }
 
     @Override

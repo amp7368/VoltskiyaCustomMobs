@@ -33,7 +33,7 @@ public class PathfinderGoalApproachSlowly extends PathfinderGoal {
         this.runAfterClose = runAfterClose;
         this.approachedDistance = approachedDistance;
         this.setMoveType(EnumSet.of(Type.MOVE));
-        PluginDisable.addMob(me.getUniqueID(), this);
+        PluginDisable.addMob(me, this);
     }
 
     /**

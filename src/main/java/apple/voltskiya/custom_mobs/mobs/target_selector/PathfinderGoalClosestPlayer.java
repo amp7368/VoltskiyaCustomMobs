@@ -27,7 +27,7 @@ public class PathfinderGoalClosestPlayer extends PathfinderGoal {
         this.sight = sight;
         this.seeThroughBlocks = seeThroughBlocks;
         this.setMoveType(EnumSet.of(Type.TARGET));
-        PluginDisable.addMob(me.getUniqueID(), this);
+        PluginDisable.addMob(me, this);
     }
 
     @Override

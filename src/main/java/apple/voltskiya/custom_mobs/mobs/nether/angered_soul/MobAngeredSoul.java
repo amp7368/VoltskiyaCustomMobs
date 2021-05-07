@@ -138,7 +138,7 @@ public class MobAngeredSoul extends EntitySkeleton {
                                 0,
                                 false,
                                 Explosion.Effect.NONE
-                        )), 15f);
+                        )), 7f);
             }
             final Location location = this.getBukkitEntity().getLocation();
             location.getWorld().spawnParticle(org.bukkit.Particle.EXPLOSION_LARGE, location, 1);
@@ -179,8 +179,6 @@ public class MobAngeredSoul extends EntitySkeleton {
     protected void initPathfinder() {
         this.navigation = new NavigationFlying(this, world);
         this.moveController = new ControllerMoveGhost(this, 1d); // no gravity true
-        this.goalSelector = new PathfinderGoalSelector(world.getMethodProfilerSupplier());
-        this.targetSelector = new PathfinderGoalSelector(world.getMethodProfilerSupplier());
         this.goalSelector.a(1, new PathfinderGoalApproachSlowly(this, 1, 10, new AngeredSoulScream(this)));
         this.goalSelector.a(0, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 1));
         this.targetSelector.a(1, new PathfinderGoalClosestPlayer(this, SIGHT, true));

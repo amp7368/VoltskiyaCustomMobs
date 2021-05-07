@@ -13,7 +13,6 @@ import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
 import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.logging.Level;
 
@@ -27,12 +26,12 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild 
     private AttributeMapBase attributeMap;
 
     public MobPartArmorStand(EntityTypes<MobPartArmorStand> entityTypes, World world) {
-        super(entityTypes, world);
+        super(EntityTypes.ARMOR_STAND, world);
         this.die(); // just die on restarts because we'll be remade
     }
 
     public MobPartArmorStand(EntityTypes<MobPartArmorStand> entityTypes, World world, MobPartMother mother, NmsModelEntityConfig config) {
-        super(entityTypes, world);
+        super(EntityTypes.ARMOR_STAND, world);
         prepare(mother, config);
     }
 
@@ -172,7 +171,6 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild 
         double nowX = newLocation.getX();
         double nowY = newLocation.getY();
         double nowZ = newLocation.getZ();
-
         this.setLocation(nowX, nowY, nowZ, newLocation.getYaw(), newLocation.getPitch());
         return new PacketPlayOutEntityStatus(this, (byte) 9);
     }
@@ -247,22 +245,5 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild 
     @Override
     public EnumInteractionResult a(EntityHuman entityhuman, Vec3D vec3d, EnumHand enumhand) {
         return this.mainMob.entity.a(entityhuman, enumhand);
-    }
-
-    @Override
-    public MobPartChild remake(WorldServer worldserver, MobPartMother parent) {
-        final NBTTagCompound oldNbt = this.save(new NBTTagCompound());
-        @Nullable MobPartArmorStand newMobPart = entityTypes.a(worldserver);
-        if (newMobPart != null) {
-            newMobPart.prepare(parent, this.entityConfig);
-            newMobPart.load(oldNbt);
-            newMobPart.setLocation(parent.entity.locX(), parent.entity.locY(), parent.entity.locZ(), parent.entity.yaw, parent.entity.pitch);
-            newMobPart.resetPortalCooldown();
-            (worldserver).addEntity(newMobPart);
-            this.bN();
-            return newMobPart;
-        }
-        this.bN();
-        return null;
     }
 }

@@ -54,7 +54,8 @@ public class VoltskiyaPlugin extends JavaPlugin {
     @Override
     public void onDisable() {
         for (VoltskiyaModule module : modules) {
-            module.onDisable();
+            if (module.shouldEnable())
+                module.onDisable();
         }
     }
 
