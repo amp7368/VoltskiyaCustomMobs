@@ -98,6 +98,7 @@ public class MobEyePlant extends EntityZombie {
     @Override
     protected void initPathfinder() {
         // only look aat the player
+        if (this.children != null) this.lookController = new MobParts.ControllerLookChildrenFollow(this, this.children);
         this.goalSelector.a(0, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 8.0F));
     }
 
@@ -195,21 +196,5 @@ public class MobEyePlant extends EntityZombie {
         for (MobPartChild child : children) {
             child.die();
         }
-    }
-
-    /**
-     * change worlds
-     */
-    @Override
-    public @Nullable
-    Entity b(WorldServer worldserver) {
-        final Entity result = super.b(worldserver);
-        if (result instanceof MobEyePlant) {
-            for (MobPartChild child : children) {
-                child.die();
-            }
-            ((MobEyePlant) result).addChildren();
-        }
-        return result;
     }
 }

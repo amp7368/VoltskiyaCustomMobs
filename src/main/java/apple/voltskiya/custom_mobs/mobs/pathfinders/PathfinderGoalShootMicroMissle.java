@@ -32,7 +32,7 @@ public class PathfinderGoalShootMicroMissle extends PathfinderGoal {
         this.count = count;
         this.missileType = missileType;
         this.a(EnumSet.of(Type.TARGET));
-        PluginDisable.addMob(me.getUniqueID(),this);
+        PluginDisable.addMob(me,this);
     }
 
     /**

@@ -34,7 +34,7 @@ public class PathfinderGoalLeap extends PathfinderGoal {
         this.me = me;
         this.postConfig = postConfig;
         this.setMoveType(EnumSet.of(Type.JUMP));
-        PluginDisable.addMob(me.getUniqueID(),this);
+        PluginDisable.addMob(me,this);
     }
 
     /**
@@ -74,8 +74,6 @@ public class PathfinderGoalLeap extends PathfinderGoal {
      */
     @Override
     public boolean C_() {
-        final boolean enabled = VoltskiyaPlugin.get().isEnabled();
-        System.out.println(enabled);
         return false;
     }
 

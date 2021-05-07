@@ -2,36 +2,42 @@ package apple.voltskiya.custom_mobs;
 
 import net.minecraft.server.v1_16_R3.EntityInsentient;
 import net.minecraft.server.v1_16_R3.PathfinderGoal;
-import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
-import org.bukkit.entity.Entity;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
-import java.util.UUID;
 
 public class PluginDisable extends VoltskiyaModule {
-    private static Map<UUID, PathfinderGoal> mobs = new HashMap<>();
+    private static Map<EntityInsentient, PathfinderGoal> mobs;
+    private static int i = 0;
 
-    public static synchronized void addMob(UUID mob, PathfinderGoal pathfinder) {
+    public static synchronized void addMob(EntityInsentient mob, PathfinderGoal pathfinder) {
         mobs.put(mob, pathfinder);
+        if (i++ % 100 == 0) {
+            Iterator<Map.Entry<EntityInsentient, PathfinderGoal>> iterator = mobs.entrySet().iterator();
+            if (iterator.hasNext()) {
+                if (!iterator.next().getKey().isAlive())
+                    iterator.remove();
+            }
+        }
     }
 
     @Override
     public void enable() {
+        mobs = new HashMap<>();
+    }
 
+    @Override
+    boolean shouldEnable() {
+        return false;
     }
 
     @Override
     public void onDisable() {
-        for (Map.Entry<UUID, PathfinderGoal> mobPathfinder : mobs.entrySet()) {
-            Entity mob = Bukkit.getEntity(mobPathfinder.getKey());
-            if (mob != null) {
-                net.minecraft.server.v1_16_R3.Entity entity = ((CraftEntity) mob).getHandle();
-                if (entity instanceof EntityInsentient) {
-                    ((EntityInsentient) entity).goalSelector.a(mobPathfinder.getValue());
-                    ((EntityInsentient) entity).targetSelector.a(mobPathfinder.getValue());
-                }
+        for (Map.Entry<EntityInsentient, PathfinderGoal> mob : mobs.entrySet()) {
+            if (mob != null && mob.getKey().isAlive()) {
+                mob.getKey().goalSelector.a(mob.getValue());
+                mob.getKey().targetSelector.a(mob.getValue());
             }
         }
     }

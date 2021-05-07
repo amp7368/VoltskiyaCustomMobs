@@ -41,7 +41,7 @@ public class PathfinderGoalCraveBlock extends PathfinderGoal {
         this.checkInterval = checkInterval;
         this.speed = speed;
         this.setMoveType(EnumSet.of(Type.MOVE));
-        PluginDisable.addMob(me.getUniqueID(),this);
+        PluginDisable.addMob(me,this);
     }
 
     /**
