@@ -1,4 +1,4 @@
-package apple.voltskiya.custom_mobs.mobs.pathfinders;
+package apple.voltskiya.custom_mobs.pathfinders.spell;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.abilities.ai_changes.fire_fangs.FireFangs;

@@ -4,7 +4,7 @@ import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import apple.voltskiya.custom_mobs.YmlSettings;
 import apple.voltskiya.custom_mobs.abilities.MobTickPlugin;
 import apple.voltskiya.custom_mobs.abilities.tick.SpawnEater;
-import apple.voltskiya.custom_mobs.mobs.pathfinders.PathfinderGoalShootMicroMissle;
+import apple.voltskiya.custom_mobs.pathfinders.spell.PathfinderGoalShootMicroMissle;
 import apple.voltskiya.custom_mobs.sql.MobListSql;
 import net.minecraft.server.v1_16_R3.Entity;
 import net.minecraft.server.v1_16_R3.EntityInsentient;

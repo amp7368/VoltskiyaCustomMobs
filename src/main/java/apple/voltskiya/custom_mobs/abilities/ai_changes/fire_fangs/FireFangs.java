@@ -3,7 +3,7 @@ package apple.voltskiya.custom_mobs.abilities.ai_changes.fire_fangs;
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import apple.voltskiya.custom_mobs.abilities.MobTickPlugin;
 import apple.voltskiya.custom_mobs.abilities.tick.SpawnEater;
-import apple.voltskiya.custom_mobs.mobs.pathfinders.PathfinderGoalShootFireFangs;
+import apple.voltskiya.custom_mobs.pathfinders.spell.PathfinderGoalShootFireFangs;
 import apple.voltskiya.custom_mobs.sql.MobListSql;
 import net.minecraft.server.v1_16_R3.Entity;
 import net.minecraft.server.v1_16_R3.EntityInsentient;

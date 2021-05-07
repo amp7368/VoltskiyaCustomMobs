@@ -1,8 +1,7 @@
 package apple.voltskiya.custom_mobs.abilities.tick.revive;
 
-import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
+import apple.voltskiya.custom_mobs.pathfinders.utilities.PathfinderGoalMoveToTarget;
 import apple.voltskiya.custom_mobs.sql.MobListSql;
-import apple.voltskiya.custom_mobs.util.DistanceUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftMob;
@@ -15,6 +14,7 @@ import java.util.Random;
 import java.util.UUID;
 
 public class ReviverIndividualTicker {
+    public static final int GIVE_UP_MOVE_TICK = 200;
     private final ReviverManagerTicker.Closeness closeness;
     private boolean isReviving;
     private final ArrayList<Reviver> revivers = new ArrayList<>();
@@ -77,48 +77,11 @@ public class ReviverIndividualTicker {
     }
 
     private synchronized void reviveGoal(Entity entity, Reviver reviverObject) {
-        ReviveDeadManager.RecordedMob mobToRevive = ReviveDeadManager.get().reviveStart(entity.getLocation());
+        RecordedMob mobToRevive = ReviveDeadManager.get().reviveStart(entity.getLocation());
         if (mobToRevive != null && entity instanceof CraftMob) {
-            CraftMob reviver = (CraftMob) entity;
+            CraftMob reviver = ((CraftMob) entity);
             Location target = mobToRevive.getEntity().getLocation();
-            new MoveToTarget(mobToRevive, target, reviver, reviverObject, 0).run();
-        }
-    }
-
-    private static class MoveToTarget implements Runnable {
-        private final ReviveDeadManager.RecordedMob reviveMe;
-        private final Location target;
-        private final CraftMob reviver;
-        private final Reviver reviverObject;
-        private int count;
-        private static final int MAX_COUNT = 200;
-
-        public MoveToTarget(ReviveDeadManager.RecordedMob reviveMe, Location target, CraftMob reviver, Reviver reviverObject, int count) {
-            this.reviveMe = reviveMe;
-            this.target = target;
-            this.reviver = reviver;
-            this.reviverObject = reviverObject;
-            this.count = count;
-        }
-
-        @Override
-        public void run() {
-            if (reviver.isDead()) {
-                MobListSql.removeMob(reviver.getUniqueId());
-                reviverObject.kill();
-                return;
-            }
-            if (count == MAX_COUNT) return;
-            double x = target.getX();
-            double y = target.getY();
-            double z = target.getZ();
-            if (DistanceUtils.distance(reviver.getLocation(), target) > 1.5) {
-                count++;
-                Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), this, 1);
-            } else {
-                ReviveDeadManager.get().reviveStart(reviveMe, reviver, reviverObject);
-            }
-            reviver.getHandle().getNavigation().a(x, y, z, 1.6f);
+            reviver.getHandle().goalSelector.a(-1, new PathfinderGoalMoveToTarget(reviver.getHandle(), target, 1.6, GIVE_UP_MOVE_TICK, () -> ReviveDeadManager.get().reviveStart(mobToRevive, reviver, reviverObject)));
         }
     }
 }

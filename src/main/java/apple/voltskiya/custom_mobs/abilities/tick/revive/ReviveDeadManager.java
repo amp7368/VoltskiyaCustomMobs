@@ -4,13 +4,11 @@ import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.abilities.MobTickPlugin;
 import apple.voltskiya.custom_mobs.abilities.tick.DeathEater;
-import net.minecraft.server.v1_16_R3.*;
+import net.minecraft.server.v1_16_R3.NBTTagCompound;
+import net.minecraft.server.v1_16_R3.NBTTagInt;
+import net.minecraft.server.v1_16_R3.NBTTagString;
 import org.bukkit.*;
-import org.bukkit.Particle;
-import org.bukkit.SoundCategory;
-import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftMob;
 import org.bukkit.entity.LivingEntity;
@@ -18,20 +16,19 @@ import org.bukkit.entity.Mob;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.loot.LootTables;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Random;
 
 public class ReviveDeadManager extends DeathEater {
 
     private static final double PARTICLE_RADIUS = .5;
+    public static final int DIED_COOLDOWN = 1000 * 5;
     private static int TIME_TO_RISE;
-    public long MAX_DEAD_TIME;
+    public static long MAX_DEAD_TIME;
     private static ReviveDeadManager instance;
     private final ArrayList<RecordedMob> dead = new ArrayList<>();
     private final Random random = new Random();
@@ -50,8 +47,7 @@ public class ReviveDeadManager extends DeathEater {
     @Override
     public synchronized void eatEvent(EntityDeathEvent event) {
         if (event.getEntity().getScoreboardTags().contains("was_revived_2")) return;
-        final long now = System.currentTimeMillis();
-        dead.removeIf(uuid -> now - uuid.diedTime > MAX_DEAD_TIME);
+        dead.removeIf(RecordedMob::shouldRemove);
         dead.add(new RecordedMob(event.getEntity()));
         dead.trimToSize();
         // don't add it to the db
@@ -81,11 +77,9 @@ public class ReviveDeadManager extends DeathEater {
 
     @Nullable
     public synchronized RecordedMob reviveStart(Location location) {
-        Iterator<RecordedMob> iterator = dead.iterator();
-        while (iterator.hasNext()) {
-            RecordedMob mob = iterator.next();
-            if (mob.isNearby(location)) {
-                iterator.remove();
+        for (RecordedMob mob : dead) {
+            if (mob.isNearby(location) && mob.isReviveableNow()) {
+                mob.setReviving();
                 return mob;
             }
         }
@@ -96,7 +90,7 @@ public class ReviveDeadManager extends DeathEater {
         reviver.setAI(false);
 
         final Location reviverLocation = reviver.getLocation();
-        final Location reviveMeLocation = reviveMe.getEntity().getLocation();
+        final Location reviveMeLocation = reviveMe.location;
         double x = reviveMeLocation.getX() - reviverLocation.getX();
         double z = reviveMeLocation.getZ() - reviverLocation.getZ();
         double magnitude = x * x + z * z;
@@ -109,22 +103,28 @@ public class ReviveDeadManager extends DeathEater {
         final int time = ReviverManagerTicker.get().REVIVE_RITUAL_TIME + TIME_TO_RISE;
         for (int timeI = 0; timeI < time; timeI += 3) {
             Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
-                double xLoc = reviverLocation.getX();
-                double yLoc = reviverLocation.getY();
-                double zLoc = reviverLocation.getZ();
-                for (int i = 0; i < 15; i++) {
-                    double xi = random.nextDouble() - .5;
-                    double yi = random.nextDouble() * 2;
-                    double zi = random.nextDouble() - .5;
-                    world.spawnParticle(Particle.REDSTONE, xLoc + xi, yLoc + yi, zLoc + zi, 1, new Particle.DustOptions(Color.RED, 1f));
+                if (reviver.getHandle().ticksLived - reviver.getHandle().hurtTimestamp >= time) {
+                    double xLoc = reviverLocation.getX();
+                    double yLoc = reviverLocation.getY();
+                    double zLoc = reviverLocation.getZ();
+                    for (int i = 0; i < 15; i++) {
+                        double xi = random.nextDouble() - .5;
+                        double yi = random.nextDouble() * 2;
+                        double zi = random.nextDouble() - .5;
+                        world.spawnParticle(Particle.REDSTONE, xLoc + xi, yLoc + yi, zLoc + zi, 1, new Particle.DustOptions(Color.RED, 1f));
+                    }
+                } else {
+                    reviver.setAI(true);
+                    reviveMe.resetCooldown();
                 }
             }, timeI);
         }
         Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
             if (!reviver.isDead()) {
                 reviver.setAI(true);
-                reviver.removePotionEffect(PotionEffectType.SPEED);
-                reviveProcess(reviveMe, reviver, reviverObject);
+                if (reviver.getHandle().ticksLived - reviver.getHandle().hurtTimestamp >= time) {
+                    reviveProcess(reviveMe, reviver, reviverObject);
+                }
             }
         }, time);
     }
@@ -169,6 +169,7 @@ public class ReviveDeadManager extends DeathEater {
                         ((LivingEntity) newMob).setAI(true);
                         newMob.setInvulnerable(false);
                         ((Mob) newMob).setLootTable(LootTables.EMPTY.getLootTable());
+                        reviveMe.remove();
                     }, TIME_TO_RISE);
                 }
         );
@@ -186,33 +187,6 @@ public class ReviveDeadManager extends DeathEater {
             double z = Math.sin(Math.toRadians(theta)) * radius;
             double y = random.nextDouble() * 2;
             location.getWorld().spawnParticle(Particle.SPELL_WITCH, xi + x, yi + y, zi + z, 1);
-        }
-    }
-
-    public static class RecordedMob {
-
-        private final double health;
-        private final Location location;
-        private final LivingEntity entity;
-        public long diedTime = System.currentTimeMillis();
-
-        public RecordedMob(LivingEntity entity) {
-            @Nullable AttributeInstance hp = entity.getAttribute(Attribute.GENERIC_MAX_HEALTH);
-            this.health = hp == null ? 0 : hp.getBaseValue();
-            this.location = entity.getLocation();
-            this.entity = entity;
-        }
-
-        public double getHealth() {
-            return health;
-        }
-
-        public boolean isNearby(Location loc) {
-            return location.getWorld().equals(loc.getWorld()) && location.distance(loc) <= ReviverManagerTicker.get().REVIVE_DISTANCE;
-        }
-
-        public LivingEntity getEntity() {
-            return entity;
         }
     }
 

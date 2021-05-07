@@ -8,7 +8,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class PluginDisable extends VoltskiyaModule {
-    private static Map<EntityInsentient, PathfinderGoal> mobs;
+    private static final Map<EntityInsentient, PathfinderGoal> mobs = new HashMap<>();
     private static int i = 0;
 
     public static synchronized void addMob(EntityInsentient mob, PathfinderGoal pathfinder) {
@@ -24,7 +24,6 @@ public class PluginDisable extends VoltskiyaModule {
 
     @Override
     public void enable() {
-        mobs = new HashMap<>();
     }
 
     @Override

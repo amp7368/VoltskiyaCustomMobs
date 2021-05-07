@@ -2,7 +2,7 @@ package apple.voltskiya.custom_mobs.mobs.modified.iron_golem;
 
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
 import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
-import apple.voltskiya.custom_mobs.mobs.pathfinders.PathfinderGoalHurtByTargetExcept;
+import apple.voltskiya.custom_mobs.pathfinders.utilities.PathfinderGoalHurtByTargetExcept;
 import com.mojang.datafixers.types.Type;
 import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.Location;

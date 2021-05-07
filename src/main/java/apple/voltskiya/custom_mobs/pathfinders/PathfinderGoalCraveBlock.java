@@ -1,4 +1,4 @@
-package apple.voltskiya.custom_mobs.mobs.pathfinders;
+package apple.voltskiya.custom_mobs.pathfinders;
 
 import apple.voltskiya.custom_mobs.PluginDisable;
 import net.minecraft.server.v1_16_R3.EntityInsentient;
