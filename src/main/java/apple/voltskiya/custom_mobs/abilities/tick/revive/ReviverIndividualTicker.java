@@ -1,8 +1,8 @@
 package apple.voltskiya.custom_mobs.abilities.tick.revive;
 
-import apple.voltskiya.custom_mobs.util.DistanceUtils;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.sql.MobListSql;
+import apple.voltskiya.custom_mobs.util.DistanceUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftMob;
@@ -90,7 +90,7 @@ public class ReviverIndividualTicker {
         private final Location target;
         private final CraftMob reviver;
         private final Reviver reviverObject;
-        private final int count;
+        private int count;
         private static final int MAX_COUNT = 200;
 
         public MoveToTarget(ReviveDeadManager.RecordedMob reviveMe, Location target, CraftMob reviver, Reviver reviverObject, int count) {
@@ -113,7 +113,8 @@ public class ReviverIndividualTicker {
             double y = target.getY();
             double z = target.getZ();
             if (DistanceUtils.distance(reviver.getLocation(), target) > 1.5) {
-                Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), new MoveToTarget(reviveMe, target, reviver, reviverObject, count + 1), 1);
+                count++;
+                Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), this, 1);
             } else {
                 ReviveDeadManager.get().reviveStart(reviveMe, reviver, reviverObject);
             }

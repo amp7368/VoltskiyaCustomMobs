@@ -45,7 +45,7 @@ public class PathfinderGoalCraveBlock extends PathfinderGoal {
     }
 
     /**
-     * @return whether I even want to consider checking whether to run
+     * @return whether this pathfinder should be started
      */
     @Override
     public boolean a() {
@@ -104,7 +104,7 @@ public class PathfinderGoalCraveBlock extends PathfinderGoal {
     }
 
     /**
-     * @return round 2 of whether I want to run ?
+     * @return true if we should keep running. otherwise false
      */
     @Override
     public boolean b() {
@@ -113,8 +113,6 @@ public class PathfinderGoalCraveBlock extends PathfinderGoal {
     }
 
     /**
-     * todo does something I'm sure
-     *
      * @return something
      */
     @Override
@@ -123,10 +121,17 @@ public class PathfinderGoalCraveBlock extends PathfinderGoal {
     }
 
     /**
+     * start the pathfinding
+     */
+    @Override
+    public void c(){
+
+    }
+    /**
      * run the pathfinding
      */
     @Override
-    public void c() {
+    public void e() {
         // go to the location
         this.me.getNavigation().a(this.foundCravedBlock.getX(), this.foundCravedBlock.getY(), this.foundCravedBlock.getZ(), speed);
     }
@@ -140,12 +145,6 @@ public class PathfinderGoalCraveBlock extends PathfinderGoal {
         this.me.getNavigation().o();
     }
 
-    /**
-     * todo does something I'm sure
-     */
-    @Override
-    public void e() {
-    }
 
     public void setMoveType(EnumSet<Type> moveType) {
         super.a(moveType);
