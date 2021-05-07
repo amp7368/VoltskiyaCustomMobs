@@ -86,15 +86,28 @@ public class BlemishSpawnManager extends SpawnEater implements Listener {
                     direction.multiply(0.3);
 
                     Vector directionLeft = new Vector().copy(direction);
-                    directionLeft.setX(directionLeft.getX() * Math.cos(Math.toRadians(30)) - Math.sin(Math.toRadians(30)) * directionLeft.getZ());
-                    directionLeft.setZ(directionLeft.getX() * Math.sin(Math.toRadians(30)) + Math.cos(Math.toRadians(30)) * directionLeft.getZ());
+                    final int angleClose = 22;
+                    directionLeft.setX(directionLeft.getX() * Math.cos(Math.toRadians(angleClose)) - Math.sin(Math.toRadians(angleClose)) * directionLeft.getZ());
+                    directionLeft.setZ(directionLeft.getX() * Math.sin(Math.toRadians(angleClose)) + Math.cos(Math.toRadians(angleClose)) * directionLeft.getZ());
 
                     Vector directionRight = new Vector().copy(direction);
-                    directionRight.setX(directionRight.getX() * Math.cos(Math.toRadians(-30)) - Math.sin(Math.toRadians(-30)) * directionRight.getZ());
-                    directionRight.setZ(directionRight.getX() * Math.sin(Math.toRadians(-30)) + Math.cos(Math.toRadians(-30)) * directionRight.getZ());
+                    directionRight.setX(directionRight.getX() * Math.cos(Math.toRadians(-angleClose)) - Math.sin(Math.toRadians(-angleClose)) * directionRight.getZ());
+                    directionRight.setZ(directionRight.getX() * Math.sin(Math.toRadians(-angleClose)) + Math.cos(Math.toRadians(-angleClose)) * directionRight.getZ());
+
+                    Vector directionLeftLeft = new Vector().copy(direction);
+                    final int angleFar = 45;
+                    directionLeftLeft.setX(directionLeftLeft.getX() * Math.cos(Math.toRadians(angleFar)) - Math.sin(Math.toRadians(angleFar)) * directionLeftLeft.getZ());
+                    directionLeftLeft.setZ(directionLeftLeft.getX() * Math.sin(Math.toRadians(angleFar)) + Math.cos(Math.toRadians(angleFar)) * directionLeftLeft.getZ());
+
+                    Vector directionRightRight = new Vector().copy(direction);
+                    directionRightRight.setX(directionRightRight.getX() * Math.cos(Math.toRadians(-angleFar)) - Math.sin(Math.toRadians(-angleFar)) * directionRightRight.getZ());
+                    directionRightRight.setZ(directionRightRight.getX() * Math.sin(Math.toRadians(-angleFar)) + Math.cos(Math.toRadians(-angleFar)) * directionRightRight.getZ());
 
 
                     String cmd = "execute at " + nearby.getUniqueId() + " run summon vex " + location.getX() + " " + location.getY() + " " + location.getZ() + " " + SUMMON_VEX;
+                    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), cmd);
+                    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), cmd);
+                    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), cmd);
                     Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), cmd);
                     Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), cmd);
                     Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
@@ -104,10 +117,19 @@ public class BlemishSpawnManager extends SpawnEater implements Listener {
                             Vector v;
                             switch (i++) {
                                 case 0:
-                                    v = directionLeft;
+                                    v = directionLeftLeft;
                                     break;
                                 case 1:
+                                    v = directionRightRight;
+                                    break;
+                                case 2:
+                                    v = directionLeft;
+                                    break;
+                                case 3:
                                     v = directionRight;
+                                    break;
+                                case 4:
+                                    v =direction;
                                     break;
                                 default:
                                     v = null;
