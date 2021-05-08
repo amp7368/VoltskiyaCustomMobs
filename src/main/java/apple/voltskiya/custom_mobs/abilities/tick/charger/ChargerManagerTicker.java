@@ -23,40 +23,48 @@ import java.util.Map;
 import java.util.UUID;
 
 public class ChargerManagerTicker extends SpawnEater {
-    public static long CHARGE_STUN_TIME;
-    public static int CHARGE_UP_TIME;
-    public static long CHARGE_COOLDOWN;
-    public static double CHARGE_CHANCE;
-    public static int MAX_CHARGE_TIME;
-    public static long CHARGE_TIRED_TIME;
-    protected static double TOO_CLOSE_TO_CHARGE;
-    protected static double MARGIN_OF_ERROR;
-    protected static double OVERSHOOT_SPEED;
-    protected static int OVERSHOOT_DISTANCE;
     private static ChargerManagerTicker instance;
     private final Map<Closeness, ChargerIndividualTicker> closenessToChargeres = new HashMap<>() {{
         for (Closeness closeness : Closeness.values())
             put(closeness, new ChargerIndividualTicker(closeness.getGiver(), closeness));
-        get(Closeness.HIGH_CHARGE_CLOSE).setChargeTick();
+        get(Closeness.HIGH_CLOSE).setChargeTick();
     }};
 
     public ChargerManagerTicker() throws IOException {
         instance = this;
-        OVERSHOOT_DISTANCE = (int) getValueOrInit(YmlSettings.OVERSHOOT_DISTANCE.getPath());
-        OVERSHOOT_SPEED = (double) getValueOrInit(YmlSettings.OVERSHOOT_SPEED.getPath());
-        TOO_CLOSE_TO_CHARGE = (double) getValueOrInit(YmlSettings.TOO_CLOSE_TO_CHARGE.getPath());
-        MARGIN_OF_ERROR = (double) getValueOrInit(YmlSettings.MARGIN_OF_ERROR.getPath());
-        MAX_CHARGE_TIME = (int) getValueOrInit(YmlSettings.MAX_CHARGE_TIME.getPath());
-        CHARGE_CHANCE = (double) getValueOrInit(YmlSettings.CHARGE_CHANCE.getPath());
-        CHARGE_COOLDOWN = ((int) getValueOrInit(YmlSettings.CHARGE_COOLDOWN.getPath())) * 1000 / 20;
-        CHARGE_UP_TIME = ((int) getValueOrInit(YmlSettings.CHARGE_UP_TIME.getPath()));
-        CHARGE_STUN_TIME = ((int) getValueOrInit(YmlSettings.CHARGE_STUN_TIME.getPath()));
-        CHARGE_TIRED_TIME = ((int) getValueOrInit(YmlSettings.CHARGE_TIRED_TIME.getPath()));
+        ChargerType.NORMAL.set(
+                (int) getValueOrInit(YmlSettings.NORMAL_OVERSHOOT_DISTANCE.getPath()),
+                (double) getValueOrInit(YmlSettings.NORMAL_OVERSHOOT_SPEED.getPath()),
+                (double) getValueOrInit(YmlSettings.NORMAL_TOO_CLOSE_TO_CHARGE.getPath()),
+                (double) getValueOrInit(YmlSettings.NORMAL_MARGIN_OF_ERROR.getPath()),
+                (int) getValueOrInit(YmlSettings.NORMAL_MAX_CHARGE_TIME.getPath()),
+                (double) getValueOrInit(YmlSettings.NORMAL_CHARGE_CHANCE.getPath()),
+                ((int) getValueOrInit(YmlSettings.NORMAL_CHARGE_COOLDOWN.getPath())) ,
+                ((int) getValueOrInit(YmlSettings.NORMAL_CHARGE_UP_TIME.getPath())),
+                ((int) getValueOrInit(YmlSettings.NORMAL_CHARGE_STUN_TIME.getPath())),
+                ((int) getValueOrInit(YmlSettings.NORMAL_CHARGE_TIRED_TIME.getPath()))
+        );
+        ChargerType.QUICK.set(
+                (int) getValueOrInit(YmlSettings.QUICK_OVERSHOOT_DISTANCE.getPath()),
+                (double) getValueOrInit(YmlSettings.QUICK_OVERSHOOT_SPEED.getPath()),
+                (double) getValueOrInit(YmlSettings.QUICK_TOO_CLOSE_TO_CHARGE.getPath()),
+                (double) getValueOrInit(YmlSettings.QUICK_MARGIN_OF_ERROR.getPath()),
+                (int) getValueOrInit(YmlSettings.QUICK_MAX_CHARGE_TIME.getPath()),
+                (double) getValueOrInit(YmlSettings.QUICK_CHARGE_CHANCE.getPath()),
+                ((int) getValueOrInit(YmlSettings.QUICK_CHARGE_COOLDOWN.getPath())) ,
+                ((int) getValueOrInit(YmlSettings.QUICK_CHARGE_UP_TIME.getPath())),
+                ((int) getValueOrInit(YmlSettings.QUICK_CHARGE_STUN_TIME.getPath())),
+                ((int) getValueOrInit(YmlSettings.QUICK_CHARGE_TIRED_TIME.getPath()))
+        );
         for (UUID mob : getMobs()) {
             @Nullable Entity striker = Bukkit.getEntity(mob);
             if (!(striker instanceof Mob)) continue;
             Closeness closeness = determineConcern((Mob) striker);
-            closenessToChargeres.get(closeness).giveCharger((Mob) striker);
+            for (ChargerType type : ChargerType.values()) {
+                if (striker.getScoreboardTags().contains(type.getTag())) {
+                    closenessToChargeres.get(closeness).giveCharger(new Charger((Mob) striker,type));
+                }
+            }
         }
     }
 
@@ -70,16 +78,13 @@ public class ChargerManagerTicker extends SpawnEater {
             // this is a charger
             final Mob charger = (Mob) event.getEntity();
             Closeness closeness = determineConcern(charger);
-            closenessToChargeres.get(closeness).giveCharger(charger);
+            for (ChargerType type : ChargerType.values()) {
+                if (charger.getScoreboardTags().contains(type.getTag())) {
+                    closenessToChargeres.get(closeness).giveCharger(new Charger(charger,type));
+                }
+            }
             addMobs(charger.getUniqueId());
         }
-    }
-
-    public void eatMob(Mob charger) {
-        // this is a charger
-        Closeness closeness = determineConcern(charger);
-        closenessToChargeres.get(closeness).giveCharger(charger);
-        addMobs(charger.getUniqueId());
     }
 
     @Override
@@ -104,8 +109,8 @@ public class ChargerManagerTicker extends SpawnEater {
     }
 
 
-    public boolean amIGivingCharger(Mob charger, Closeness currentCloseness) {
-        Closeness actualCloseness = determineConcern(charger);
+    public boolean amIGivingCharger(Charger charger, Closeness currentCloseness) {
+        Closeness actualCloseness = determineConcern(charger.getEntity());
         if (actualCloseness != currentCloseness) {
             closenessToChargeres.get(actualCloseness).giveCharger(charger);
             return true;
@@ -124,13 +129,12 @@ public class ChargerManagerTicker extends SpawnEater {
     }
 
     enum Closeness {
-        HIGH_CHARGE_CLOSE(15, HighFrequencyTick.get()),
         HIGH_CLOSE(40, HighFrequencyTick.get()),
         NORMAL_CLOSE(80, NormalFrequencyTick.get()),
         LOW_CLOSE(150, LowFrequencyTick.get());
 
         private final double distance;
-        private static final Closeness[] order = new Closeness[]{HIGH_CHARGE_CLOSE, HIGH_CLOSE, NORMAL_CLOSE, LOW_CLOSE};
+        private static final Closeness[] order = new Closeness[]{HIGH_CLOSE, NORMAL_CLOSE, LOW_CLOSE};
         private final TickGiverable giver;
 
         Closeness(double distance, TickGiverable giver) {
@@ -158,16 +162,26 @@ public class ChargerManagerTicker extends SpawnEater {
     }
 
     private enum YmlSettings implements apple.voltskiya.custom_mobs.YmlSettings {
-        OVERSHOOT_DISTANCE("overshoot_distance", 10),
-        OVERSHOOT_SPEED("charge_speed", 2.0d),
-        TOO_CLOSE_TO_CHARGE("too_close_to_charge", 4d),
-        MARGIN_OF_ERROR("margin_of_error_in_charge_choice", 2.5),
-        MAX_CHARGE_TIME("charge_exit_failsafe", 20 * 5),
-        CHARGE_CHANCE("charge_chance", 0.02),
-        CHARGE_COOLDOWN("charge_cooldown", 90),
-        CHARGE_UP_TIME("charge_up_time", 20),
-        CHARGE_STUN_TIME("charge_stun_time", 100),
-        CHARGE_TIRED_TIME("charge_tired_time", 50);
+        NORMAL_OVERSHOOT_DISTANCE("normal.overshoot_distance", 10),
+        NORMAL_OVERSHOOT_SPEED("normal.charge_speed", 2.0d),
+        NORMAL_TOO_CLOSE_TO_CHARGE("normal.too_close_to_charge", 4d),
+        NORMAL_MARGIN_OF_ERROR("normal.margin_of_error_in_charge_choice", 2.5),
+        NORMAL_MAX_CHARGE_TIME("normal.charge_exit_failsafe", 20 * 5),
+        NORMAL_CHARGE_CHANCE("normal.charge_chance", 0.02),
+        NORMAL_CHARGE_COOLDOWN("normal.charge_cooldown", 90),
+        NORMAL_CHARGE_UP_TIME("normal.charge_up_time", 20),
+        NORMAL_CHARGE_STUN_TIME("normal.charge_stun_time", 100),
+        NORMAL_CHARGE_TIRED_TIME("normal.charge_tired_time", 50),
+        QUICK_OVERSHOOT_DISTANCE("quick.overshoot_distance", 10),
+        QUICK_OVERSHOOT_SPEED("quick.charge_speed", 2.0d),
+        QUICK_TOO_CLOSE_TO_CHARGE("quick.too_close_to_charge", 4d),
+        QUICK_MARGIN_OF_ERROR("quick.margin_of_error_in_charge_choice", 2.5),
+        QUICK_MAX_CHARGE_TIME("quick.charge_exit_failsafe", 20 * 5),
+        QUICK_CHARGE_CHANCE("quick.charge_chance", 0.02),
+        QUICK_CHARGE_COOLDOWN("quick.charge_cooldown", 90),
+        QUICK_CHARGE_UP_TIME("quick.charge_up_time", 20),
+        QUICK_CHARGE_STUN_TIME("quick.charge_stun_time", 100),
+        QUICK_CHARGE_TIRED_TIME("quick.charge_tired_time", 50);
 
         private final String path;
         private final Object value;

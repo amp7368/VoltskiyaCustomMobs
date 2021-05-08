@@ -48,10 +48,7 @@ public class MobSpawnListener implements Listener {
         try {
             new MicroMissileConfig();
             spawnModifier.put("micro_missile_shooter", new MicroMissleShooter());
-            final FireFangs fireFangsManager = new FireFangs();
-            for (String tag : fireFangsManager.tagToFangType.keySet()) {
-                spawnModifier.put(tag, fireFangsManager);
-            }
+            spawnModifier.put("fire_fangs", new FireFangs());
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassCastException e) {

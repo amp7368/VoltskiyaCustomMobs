@@ -41,7 +41,6 @@ public class PathfinderGoalClosestPlayer extends PathfinderGoal {
                     this.me.locZ(),
                     this.me.getBoundingBox().grow(sight, sight / 2, sight)
             );
-            System.out.println(player);
             if ((this.newTarget = player) == null) {
                 return false;
             } else {

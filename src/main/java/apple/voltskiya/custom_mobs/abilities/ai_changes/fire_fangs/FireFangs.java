@@ -41,10 +41,10 @@ public class FireFangs extends SpawnEater {
         FangsType.TRIPLE_STRAIGHT.step = (double) getValueOrInit(YmlSettings.TRIPLE_STRAIGHT_STEP.getPath());
         FangsType.TRIPLE_STRAIGHT.cooldown = (int) getValueOrInit(YmlSettings.TRIPLE_STRAIGHT_COOLDOWN.getPath());
         tagToFangType = new HashMap<>() {{
-            put("fire_fangs", FangsType.NORMAL);
+            put("fire_fangs_basic", FangsType.NORMAL);
             put("fire_fangs_triple", FangsType.TRIPLE);
             put("fire_fangs_triple_straight", FangsType.TRIPLE_STRAIGHT);
-            put("fire_fangs_blue", FangsType.BLUE_NORMAL);
+            put("fire_fangs_basic_blue", FangsType.BLUE_NORMAL);
             put("fire_fangs_triple_blue", FangsType.BLUE_TRIPLE);
             put("fire_fangs_triple_blue_straight", FangsType.BLUE_TRIPLE_STRAIGHT);
         }};
