@@ -10,15 +10,13 @@ import org.bukkit.Bukkit;
 
 public class PathfinderGoalShootFireFangs extends PathfinderGoal {
     private final EntityInsentient me;
-    private final int cooldown;
     private final FireFangs.FangsType type;
     private int lastShot;
 
     public PathfinderGoalShootFireFangs(EntityInsentient me, FireFangs.FangsType type) {
         this.me = me;
-        this.cooldown = type.getCooldown();
         this.type = type;
-        this.lastShot = -this.cooldown;
+        this.lastShot = -type.getCooldown();
     }
 
     /**
@@ -27,7 +25,7 @@ public class PathfinderGoalShootFireFangs extends PathfinderGoal {
     @Override
     public boolean a() {
         return this.me.isAlive() &&
-                this.me.ticksLived - lastShot >= cooldown &&
+                this.me.ticksLived - lastShot >= type.getCooldown() &&
                 this.me.getGoalTarget() != null &&
                 DistanceUtils.distance(
                         this.me.getGoalTarget().getBukkitEntity().getLocation(),

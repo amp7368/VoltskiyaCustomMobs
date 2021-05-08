@@ -13,18 +13,32 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class FireFangs extends SpawnEater {
-    private static int NORMAL_COOLDOWN;
-    private static double NORMAL_STEP;
-    private static double NORMAL_RANGE;
+    public Map<String, FangsType> tagToFangType;
 
     public FireFangs() throws IOException {
-        NORMAL_RANGE = (double) getValueOrInit(YmlSettings.NORMAL_RANGE.getPath());
-        NORMAL_STEP = (double) getValueOrInit(YmlSettings.NORMAL_STEP.getPath());
-        NORMAL_COOLDOWN = (int) getValueOrInit(YmlSettings.NORMAL_COOLDOWN.getPath());
-
+        FangsType.NORMAL.range = (double) getValueOrInit(YmlSettings.NORMAL_RANGE.getPath());
+        FangsType.NORMAL.step = (double) getValueOrInit(YmlSettings.NORMAL_STEP.getPath());
+        FangsType.NORMAL.cooldown = (int) getValueOrInit(YmlSettings.NORMAL_COOLDOWN.getPath());
+        FangsType.TRIPLE.range = (double) getValueOrInit(YmlSettings.TRIPLE_RANGE.getPath());
+        FangsType.TRIPLE.step = (double) getValueOrInit(YmlSettings.TRIPLE_STEP.getPath());
+        FangsType.TRIPLE.cooldown = (int) getValueOrInit(YmlSettings.TRIPLE_COOLDOWN.getPath());
+        FangsType.BLUE_NORMAL.range = (double) getValueOrInit(YmlSettings.BLUE_NORMAL_RANGE.getPath());
+        FangsType.BLUE_NORMAL.step = (double) getValueOrInit(YmlSettings.BLUE_NORMAL_STEP.getPath());
+        FangsType.BLUE_NORMAL.cooldown = (int) getValueOrInit(YmlSettings.BLUE_NORMAL_COOLDOWN.getPath());
+        FangsType.BLUE_TRIPLE.range = (double) getValueOrInit(YmlSettings.BLUE_TRIPLE_RANGE.getPath());
+        FangsType.BLUE_TRIPLE.step = (double) getValueOrInit(YmlSettings.BLUE_TRIPLE_STEP.getPath());
+        FangsType.BLUE_TRIPLE.cooldown = (int) getValueOrInit(YmlSettings.BLUE_TRIPLE_COOLDOWN.getPath());
+        tagToFangType = new HashMap<>() {{
+            put("fire_fangs", FangsType.NORMAL);
+            put("fire_fangs_triple", FangsType.TRIPLE);
+            put("fire_fangs_blue", FangsType.BLUE_NORMAL);
+            put("fire_fangs_triple_blue", FangsType.BLUE_TRIPLE);
+        }};
         for (UUID mob : this.getMobs()) {
             final CraftEntity entityBukkit = (CraftEntity) Bukkit.getEntity(mob);
             if (entityBukkit != null) {
@@ -39,7 +53,12 @@ public class FireFangs extends SpawnEater {
     }
 
     private void eatEntity(EntityInsentient entity) {
-        entity.goalSelector.a(0, new PathfinderGoalShootFireFangs(entity,  FangsType.NORMAL));
+        for (String tag : entity.getScoreboardTags()) {
+            FangsType type = tagToFangType.get(tag);
+            if (type != null) {
+                entity.goalSelector.a(0, new PathfinderGoalShootFireFangs(entity, type));
+            }
+        }
     }
 
     @Override
@@ -75,9 +94,18 @@ public class FireFangs extends SpawnEater {
     }
 
     public enum YmlSettings implements apple.voltskiya.custom_mobs.YmlSettings {
-        NORMAL_RANGE("normal.range", 3d),
+        NORMAL_RANGE("normal.range", 15d),
         NORMAL_STEP("normal.step", 1d),
-        NORMAL_COOLDOWN("normal.cooldown", 300);
+        NORMAL_COOLDOWN("normal.cooldown", 300),
+        TRIPLE_RANGE("triple.range", 15d),
+        TRIPLE_STEP("triple.step", 1d),
+        TRIPLE_COOLDOWN("triple.cooldown", 300),
+        BLUE_NORMAL_RANGE("blue_normal.range", 15d),
+        BLUE_NORMAL_STEP("blue_normal.step", 1d),
+        BLUE_NORMAL_COOLDOWN("blue_normal.cooldown", 300),
+        BLUE_TRIPLE_RANGE("blue_triple.range", 15d),
+        BLUE_TRIPLE_STEP("blue_triple.step", 1d),
+        BLUE_TRIPLE_COOLDOWN("blue_triple.cooldown", 300);
 
         private final String path;
         private final Object value;
@@ -97,16 +125,21 @@ public class FireFangs extends SpawnEater {
     }
 
     public enum FangsType {
-        NORMAL(FireFangs.NORMAL_RANGE, FireFangs.NORMAL_STEP, FireFangs.NORMAL_COOLDOWN);
+        NORMAL(0, 0, 0,false),
+        TRIPLE(0, 0, 0,false),
+        BLUE_NORMAL(0, 0, 0,true),
+        BLUE_TRIPLE(0, 0, 0,true); //default to 0 until someone sets it outside of us
 
-        private final double range;
-        private final double step;
-        private final int cooldown;
+        private final boolean isBlue;
+        private double range;
+        private double step;
+        private int cooldown;
 
-        FangsType(double range, double step, int cooldown) {
+        FangsType(double range, double step, int cooldown, boolean isBlue) {
             this.range = range;
             this.step = step;
             this.cooldown = cooldown;
+            this.isBlue = isBlue;
         }
 
         public double getRange() {
@@ -123,6 +156,9 @@ public class FireFangs extends SpawnEater {
 
         public int getFireLength() {
             return 250;
+        }
+        public boolean isBlue(){
+            return isBlue;
         }
     }
 }

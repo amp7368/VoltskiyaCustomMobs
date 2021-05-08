@@ -50,14 +50,18 @@ public class MobSpawnListener implements Listener {
         try {
             new MicroMissileConfig();
             spawnModifier.put("micro_missile_shooter", new MicroMissleShooter());
-            spawnModifier.put("fire_fangs", new FireFangs());
+            final FireFangs fireFangsManager = new FireFangs();
+            for (String tag : fireFangsManager.tagToFangType.keySet()) {
+                spawnModifier.put(tag, fireFangsManager);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassCastException e) {
             System.err.println("There was an issue with one of the config settings of spawnModifiers.\n" +
                     "You may have changed a setting that resulted in changing the type of data that was in one of the fields.");
             e.printStackTrace();
-        }for (SpawnEater spawnEater : spawnModifier.values()) {
+        }
+        for (SpawnEater spawnEater : spawnModifier.values()) {
             spawnEater.registerInDB();
         }
     }
