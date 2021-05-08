@@ -20,7 +20,7 @@ import java.util.Collections;
 
 import static apple.voltskiya.custom_mobs.abilities.tick.charger.ChargerChargeHelper.*;
 
-public class ChargerChargeSpell {
+public class ChargerChargeSpell{
     protected final Charger charger;
     protected final Mob chargerMob;
     protected Location finalLocation;
@@ -44,10 +44,11 @@ public class ChargerChargeSpell {
         x *= 3;
         y *= 3;
         z *= 3;
-        this.finalLocation = chargerLocation.clone().add(x, y, z);
+        Vector overshoot = new Vector(x, y, z).normalize().multiply(this.charger.getType().getOvershootDistance());
+        this.finalLocation = chargerLocation.clone().add(overshoot).add(x, y, z);
     }
 
-    protected void stateChoice() {
+    public void stateChoice() {
         switch (state) {
             case CHARGE_UP:
                 new ChargeUp().run();

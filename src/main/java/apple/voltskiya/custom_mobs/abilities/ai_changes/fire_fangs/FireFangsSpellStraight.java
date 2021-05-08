@@ -1,6 +1,5 @@
 package apple.voltskiya.custom_mobs.abilities.ai_changes.fire_fangs;
 
-import net.minecraft.server.v1_16_R3.EntityInsentient;
 import net.minecraft.server.v1_16_R3.EntityLiving;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
@@ -11,7 +10,7 @@ public class FireFangsSpellStraight extends FireFangsSpell {
     private int nextSpawnCountdown;
     private int count = 2;
 
-    public FireFangsSpellStraight(EntityInsentient me, FireFangs.FangsType type) {
+    public FireFangsSpellStraight(FireFangsCaster me, FireFangs.FangsType type) {
         super(me, type);
         final FireFangLine firstFangLine = this.fangLines.get(0);
         if (firstFangLine != null) {
@@ -23,7 +22,7 @@ public class FireFangsSpellStraight extends FireFangsSpell {
 
 
     @Override
-    public void run() {
+    public void stateChoice() {
         if (this.nextSpawnCountdown-- == 0 && count > 0) {
             this.nextSpawnCountdown = this.nextSpawnTime;
             this.count--;
@@ -40,7 +39,7 @@ public class FireFangsSpellStraight extends FireFangsSpell {
                     this.type.getFireLength()
             ));
         }
-        super.run();
+        super.stateChoice();
     }
 
     @Override

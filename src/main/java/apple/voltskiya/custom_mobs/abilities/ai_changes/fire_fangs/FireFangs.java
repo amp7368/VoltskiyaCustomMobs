@@ -3,7 +3,7 @@ package apple.voltskiya.custom_mobs.abilities.ai_changes.fire_fangs;
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import apple.voltskiya.custom_mobs.abilities.MobTickPlugin;
 import apple.voltskiya.custom_mobs.abilities.tick.SpawnEater;
-import apple.voltskiya.custom_mobs.pathfinders.spell.PathfinderGoalShootFireFangs;
+import apple.voltskiya.custom_mobs.pathfinders.spell.PathfinderGoalShootSpell;
 import apple.voltskiya.custom_mobs.sql.MobListSql;
 import net.minecraft.server.v1_16_R3.Entity;
 import net.minecraft.server.v1_16_R3.EntityInsentient;
@@ -65,7 +65,7 @@ public class FireFangs extends SpawnEater {
         for (String tag : entity.getScoreboardTags()) {
             FangsType type = tagToFangType.get(tag);
             if (type != null) {
-                entity.goalSelector.a(0, new PathfinderGoalShootFireFangs(entity, type));
+                entity.goalSelector.a(0, new PathfinderGoalShootSpell<>(new FireFangsCaster(entity), type));
             }
         }
     }
@@ -139,7 +139,7 @@ public class FireFangs extends SpawnEater {
         }
     }
 
-    public enum FangsType {
+    public enum FangsType implements PathfinderGoalShootSpell.SpellType<FireFangsCaster> {
         NORMAL(0, 0, 0, false, FireFangsSpell::new),
         TRIPLE(0, 0, 0, false, FireFangsSpell::new),
         TRIPLE_STRAIGHT(0, 0, 0, false, FireFangsSpellStraight::new),
@@ -148,12 +148,12 @@ public class FireFangs extends SpawnEater {
         BLUE_TRIPLE_STRAIGHT(0, 0, 0, true, FireFangsSpellStraight::new); //default to 0 until someone sets it outside of us
 
         private final boolean isBlue;
-        private final BiFunction<EntityInsentient, FangsType, FireFangsSpell> runnableConstructor;
+        private final BiFunction<FireFangsCaster, FangsType, FireFangsSpell> runnableConstructor;
         private double range;
         private double step;
         private int cooldown;
 
-        FangsType(double range, double step, int cooldown, boolean isBlue, BiFunction<EntityInsentient, FangsType, FireFangsSpell> runnableConstructor) {
+        FangsType(double range, double step, int cooldown, boolean isBlue, BiFunction<FireFangsCaster, FangsType, FireFangsSpell> runnableConstructor) {
             this.range = range;
             this.step = step;
             this.cooldown = cooldown;
@@ -181,7 +181,7 @@ public class FireFangs extends SpawnEater {
             return isBlue;
         }
 
-        public FireFangsSpell construct(EntityInsentient me) {
+        public FireFangsSpell construct(FireFangsCaster me) {
             return runnableConstructor.apply(me, this);
         }
     }

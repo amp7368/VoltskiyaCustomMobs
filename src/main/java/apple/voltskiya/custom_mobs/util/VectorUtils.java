@@ -83,6 +83,10 @@ public class VectorUtils {
         double x = velocity.getX();
         double y = velocity.getY();
         double z = velocity.getZ();
+        return magnitude(x, y, z);
+    }
+
+    public static double magnitude(double x, double y, double z) {
         return Math.sqrt(x * x + y * y + z * z);
     }
 }

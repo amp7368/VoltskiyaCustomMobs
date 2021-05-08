@@ -63,7 +63,10 @@ public class MaterialUtils {
             TALL_GRASS,
             LARGE_FERN,
             REDSTONE,
-            STRING
+            STRING,
+            FIRE,
+            RAIL,
+            SOUL_FIRE
     )) {{
         addAll(TRAP_DOORS);
         addAll(BUTTONS);

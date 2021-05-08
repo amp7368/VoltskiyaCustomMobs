@@ -6,7 +6,7 @@ import org.bukkit.craftbukkit.v1_16_R3.entity.CraftMob;
 import org.bukkit.entity.Mob;
 import org.jetbrains.annotations.NotNull;
 
-public class Charger {
+public class Charger{
     private final Mob charger;
     private final ChargerType type;
     private final EntityInsentient chargerHandle;

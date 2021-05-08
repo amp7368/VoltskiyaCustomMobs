@@ -1,19 +1,20 @@
 package apple.voltskiya.custom_mobs.pathfinders.spell;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import apple.voltskiya.custom_mobs.abilities.ai_changes.fire_fangs.FireFangs;
 import apple.voltskiya.custom_mobs.util.DistanceUtils;
 import net.minecraft.server.v1_16_R3.EntityInsentient;
 import net.minecraft.server.v1_16_R3.PathfinderGoal;
 import org.bukkit.Bukkit;
 
-public class PathfinderGoalShootFireFangs extends PathfinderGoal {
-    private final EntityInsentient me;
-    private final FireFangs.FangsType type;
-    private int lastShot;
+public class PathfinderGoalShootSpell<Caster extends PathfinderGoalShootSpell.SpellCaster> extends PathfinderGoal {
+    protected final EntityInsentient me;
+    protected final SpellType<Caster> type;
+    protected final Caster spellCaster;
+    protected int lastShot;
 
-    public PathfinderGoalShootFireFangs(EntityInsentient me, FireFangs.FangsType type) {
-        this.me = me;
+    public PathfinderGoalShootSpell(Caster spellCaster, SpellType<Caster> type) {
+        this.me = spellCaster.getEntity();
+        this.spellCaster = spellCaster;
         this.type = type;
         this.lastShot = -type.getCooldown();
     }
@@ -47,7 +48,31 @@ public class PathfinderGoalShootFireFangs extends PathfinderGoal {
      */
     @Override
     public void c() {
-        Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), type.construct(me));
+        Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), type.construct(spellCaster)::stateChoice);
         this.lastShot = this.me.ticksLived;
+    }
+
+    public interface SpellType<Caster extends SpellCaster> {
+        int getCooldown();
+
+        double getRange();
+
+        Spell construct(Caster me);
+    }
+
+    public interface Spell {
+        void stateChoice();
+    }
+
+    public static class SpellCaster {
+        protected EntityInsentient me;
+
+        public SpellCaster(EntityInsentient me) {
+            this.me = me;
+        }
+
+        public EntityInsentient getEntity() {
+            return this.me;
+        }
     }
 }

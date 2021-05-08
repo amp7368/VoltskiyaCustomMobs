@@ -1,6 +1,7 @@
 package apple.voltskiya.custom_mobs.abilities.ai_changes.fire_fangs;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
+import apple.voltskiya.custom_mobs.pathfinders.spell.PathfinderGoalShootSpell;
 import apple.voltskiya.custom_mobs.util.VectorUtils;
 import apple.voltskiya.custom_mobs.util.minecraft.MaterialUtils;
 import net.minecraft.server.v1_16_R3.EntityInsentient;
@@ -16,15 +17,15 @@ import org.bukkit.util.Vector;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FireFangsSpell implements Runnable {
+public class FireFangsSpell implements PathfinderGoalShootSpell.Spell {
     protected final List<FireFangLine> fangLines = new ArrayList<>();
     protected final FireFangs.FangsType type;
     protected final EntityInsentient me;
 
-    public FireFangsSpell(EntityInsentient me, FireFangs.FangsType type) {
-        this.me = me;
-        Location mainLocation = me.getBukkitEntity().getLocation();
-        final EntityLiving goalTarget = me.getGoalTarget();
+    public FireFangsSpell(FireFangsCaster me, FireFangs.FangsType type) {
+        this.me = me.getEntity();
+        Location mainLocation = this.me.getBukkitEntity().getLocation();
+        final EntityLiving goalTarget = this.me.getGoalTarget();
         Vector mainDirection;
         if (goalTarget == null) mainDirection = mainLocation.getDirection().normalize().multiply(type.getStep());
         else
@@ -62,7 +63,7 @@ public class FireFangsSpell implements Runnable {
 
 
     @Override
-    public void run() {
+    public void stateChoice() {
         for (final FireFangLine fireFangLine : this.fangLines) {
             Location location = fireFangLine.getLocation();
             Vector direction = fireFangLine.getDirection();
@@ -94,7 +95,7 @@ public class FireFangsSpell implements Runnable {
         }
         this.fangLines.removeIf(FireFangLine::isDead);
         if (this.shouldRun()) {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), this, 1);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), this::stateChoice, 1);
         }
     }
 
