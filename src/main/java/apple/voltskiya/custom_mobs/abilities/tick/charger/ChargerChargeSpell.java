@@ -138,7 +138,8 @@ public class ChargerChargeSpell {
             final World world = here.getWorld();
             here.add(finalLocation.clone().subtract(here).toVector().setY(0).normalize());
             Material blockInFront = world.getBlockAt(here).getType();
-            if (MaterialUtils.isWalkThroughable(blockInFront)) blockInFront = world.getBlockAt(here.add(0, 1, 0)).getType();
+            if (MaterialUtils.isWalkThroughable(blockInFront))
+                blockInFront = world.getBlockAt(here.add(0, 1, 0)).getType();
 
             chargerMob.setVelocity(new Vector(0, 0, 0));
             runFeetParticles(chargerMob.getEyeLocation(), blockInFront, 50);
@@ -153,6 +154,7 @@ public class ChargerChargeSpell {
             Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
                 chargerMob.removeScoreboardTag(TagConstants.isDoingAbility);
                 chargerMob.setAI(true);
+                ChargerManagerTicker.get().giveCharger(charger);
             }, chargeStunTime);
 
         }

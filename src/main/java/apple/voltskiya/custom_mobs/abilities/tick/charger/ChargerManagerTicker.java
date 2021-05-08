@@ -39,7 +39,7 @@ public class ChargerManagerTicker extends SpawnEater {
                 (double) getValueOrInit(YmlSettings.NORMAL_MARGIN_OF_ERROR.getPath()),
                 (int) getValueOrInit(YmlSettings.NORMAL_MAX_CHARGE_TIME.getPath()),
                 (double) getValueOrInit(YmlSettings.NORMAL_CHARGE_CHANCE.getPath()),
-                ((int) getValueOrInit(YmlSettings.NORMAL_CHARGE_COOLDOWN.getPath())) ,
+                ((int) getValueOrInit(YmlSettings.NORMAL_CHARGE_COOLDOWN.getPath())),
                 ((int) getValueOrInit(YmlSettings.NORMAL_CHARGE_UP_TIME.getPath())),
                 ((int) getValueOrInit(YmlSettings.NORMAL_CHARGE_STUN_TIME.getPath())),
                 ((int) getValueOrInit(YmlSettings.NORMAL_CHARGE_TIRED_TIME.getPath()))
@@ -51,7 +51,7 @@ public class ChargerManagerTicker extends SpawnEater {
                 (double) getValueOrInit(YmlSettings.QUICK_MARGIN_OF_ERROR.getPath()),
                 (int) getValueOrInit(YmlSettings.QUICK_MAX_CHARGE_TIME.getPath()),
                 (double) getValueOrInit(YmlSettings.QUICK_CHARGE_CHANCE.getPath()),
-                ((int) getValueOrInit(YmlSettings.QUICK_CHARGE_COOLDOWN.getPath())) ,
+                ((int) getValueOrInit(YmlSettings.QUICK_CHARGE_COOLDOWN.getPath())),
                 ((int) getValueOrInit(YmlSettings.QUICK_CHARGE_UP_TIME.getPath())),
                 ((int) getValueOrInit(YmlSettings.QUICK_CHARGE_STUN_TIME.getPath())),
                 ((int) getValueOrInit(YmlSettings.QUICK_CHARGE_TIRED_TIME.getPath()))
@@ -62,7 +62,7 @@ public class ChargerManagerTicker extends SpawnEater {
             Closeness closeness = determineConcern((Mob) striker);
             for (ChargerType type : ChargerType.values()) {
                 if (striker.getScoreboardTags().contains(type.getTag())) {
-                    closenessToChargeres.get(closeness).giveCharger(new Charger((Mob) striker,type));
+                    closenessToChargeres.get(closeness).giveCharger(new Charger((Mob) striker, type));
                 }
             }
         }
@@ -80,10 +80,19 @@ public class ChargerManagerTicker extends SpawnEater {
             Closeness closeness = determineConcern(charger);
             for (ChargerType type : ChargerType.values()) {
                 if (charger.getScoreboardTags().contains(type.getTag())) {
-                    closenessToChargeres.get(closeness).giveCharger(new Charger(charger,type));
+                    closenessToChargeres.get(closeness).giveCharger(new Charger(charger, type));
                 }
             }
             addMobs(charger.getUniqueId());
+        }
+    }
+
+    public void giveCharger(Charger charger) {
+        Closeness closeness = determineConcern(charger.getEntity());
+        for (ChargerType type : ChargerType.values()) {
+            if (charger.getEntity().getScoreboardTags().contains(type.getTag())) {
+                closenessToChargeres.get(closeness).giveCharger(charger);
+            }
         }
     }
 

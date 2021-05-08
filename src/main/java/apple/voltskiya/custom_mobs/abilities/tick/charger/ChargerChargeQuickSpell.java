@@ -14,7 +14,7 @@ public class ChargerChargeQuickSpell extends ChargerChargeSpell {
     @Override
     protected void stateChoice() {
         if (state == ChargingState.HIT_WALL || state == ChargingState.TIRED)
-            if (chargeCount++ < 3) {
+            if (chargeCount++ < 2) {
                 state = ChargingState.CHARGE_UP;
                 setFinalLocation(this.charger, this.target);
             }

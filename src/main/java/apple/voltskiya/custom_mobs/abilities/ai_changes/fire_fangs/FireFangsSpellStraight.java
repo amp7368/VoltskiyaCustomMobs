@@ -9,7 +9,7 @@ public class FireFangsSpellStraight extends FireFangsSpell {
     private final int nextSpawnTime;
     private final int ticksToLive;
     private int nextSpawnCountdown;
-    private int count = 3;
+    private int count = 2;
 
     public FireFangsSpellStraight(EntityInsentient me, FireFangs.FangsType type) {
         super(me, type);
@@ -24,7 +24,7 @@ public class FireFangsSpellStraight extends FireFangsSpell {
 
     @Override
     public void run() {
-        if (this.nextSpawnCountdown-- == 0 && count != 0) {
+        if (this.nextSpawnCountdown-- == 0 && count > 0) {
             this.nextSpawnCountdown = this.nextSpawnTime;
             this.count--;
             Location mainLocation = this.me.getBukkitEntity().getLocation();
@@ -45,6 +45,6 @@ public class FireFangsSpellStraight extends FireFangsSpell {
 
     @Override
     protected boolean shouldRun() {
-        return super.shouldRun() || this.count != 0;
+        return super.shouldRun() || this.count >= 0;
     }
 }

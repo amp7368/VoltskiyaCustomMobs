@@ -72,7 +72,7 @@ public class FireFangsSpell implements Runnable {
             if (MaterialUtils.isPassable(blockTypeHere) || blockTypeHere == Material.FIRE || blockTypeHere == Material.SOUL_FIRE) {
                 // go down
                 int downAmount = 0;
-                while (MaterialUtils.isPassable(location.add(0, -1, 0).getBlock().getType()) && downAmount++ != 2) ;
+                while (MaterialUtils.isPassable(location.add(0, -1, 0).getBlock().getType()) && downAmount++ != 6) ;
                 // we're at ground
                 location.add(0, 1, 0);
             } else {

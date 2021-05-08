@@ -17,7 +17,6 @@ import java.util.Random;
 public class ChargerIndividualTicker implements Tickable {
     private final TickGiverable giver;
     private final ArrayList<Charger> chargers = new ArrayList<>();
-    private final static Object chargersToLastChargeSync = new Object();
     private final ChargerManagerTicker.Closeness closeness;
     private boolean isTicking = false;
     private long myTickerUid = -1;
@@ -57,7 +56,7 @@ public class ChargerIndividualTicker implements Tickable {
     }
 
     private synchronized boolean tickCharger(Charger charger) {
-        if (!isCharging ) return false;
+        if (!isCharging) return false;
         if (charger.isChargeable()) {
             if (new Random().nextDouble() < charger.getType().getChargeChance() * giver.getTickSpeed()) {
                 Location chargerLocation = charger.getEntity().getLocation();
@@ -90,10 +89,8 @@ public class ChargerIndividualTicker implements Tickable {
                 if (playerToChargeAt != null) {
                     Player player = UpdatedPlayerList.getClosestPlayer(playerToChargeAt.getLocation());
                     if (player != null && DistanceUtils.distance(player.getLocation(), playerToChargeAt.getLocation()) < 3) {
-                        synchronized (chargersToLastChargeSync) {
-                            // say we charged
-                            charger.chargeNow();
-                        }
+                        // say we charged
+                        charger.chargeNow();
                         charger.getType().construct(charger, playerToChargeAt);
                         return true;
                     }
