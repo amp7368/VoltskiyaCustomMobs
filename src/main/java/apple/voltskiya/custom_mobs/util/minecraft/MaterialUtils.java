@@ -19,4 +19,8 @@ public class MaterialUtils {
     public static boolean isBowLike(Material m) {
         return Material.BOW == m || Material.CROSSBOW == m;
     }
+
+    public static boolean isPassable(Material m) {
+        return m.isAir() || m == Material.SNOW;
+    }
 }

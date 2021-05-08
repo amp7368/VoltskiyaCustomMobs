@@ -26,7 +26,8 @@ import java.util.List;
 import java.util.UUID;
 
 public class BlemishSpawnManager extends SpawnEater implements Listener {
-    public final String SUMMON_VEX;
+    public static final String NAME = "blemish_gateway";
+    public static String SUMMON_VEX;
     private final HashSet<UUID> ghasts = new HashSet<>();
 
     public BlemishSpawnManager() throws IOException {
@@ -82,68 +83,70 @@ public class BlemishSpawnManager extends SpawnEater implements Listener {
                 if (ghasts.contains(nearby.getUniqueId())) {
                     event.setCancelled(true);
                     Location location = event.getEntity().getLocation();
-                    Vector direction = location.getDirection();
-                    direction.multiply(0.3);
-
-                    Vector directionLeft = new Vector().copy(direction);
-                    final int angleClose = 22;
-                    directionLeft.setX(directionLeft.getX() * Math.cos(Math.toRadians(angleClose)) - Math.sin(Math.toRadians(angleClose)) * directionLeft.getZ());
-                    directionLeft.setZ(directionLeft.getX() * Math.sin(Math.toRadians(angleClose)) + Math.cos(Math.toRadians(angleClose)) * directionLeft.getZ());
-
-                    Vector directionRight = new Vector().copy(direction);
-                    directionRight.setX(directionRight.getX() * Math.cos(Math.toRadians(-angleClose)) - Math.sin(Math.toRadians(-angleClose)) * directionRight.getZ());
-                    directionRight.setZ(directionRight.getX() * Math.sin(Math.toRadians(-angleClose)) + Math.cos(Math.toRadians(-angleClose)) * directionRight.getZ());
-
-                    Vector directionLeftLeft = new Vector().copy(direction);
-                    final int angleFar = 45;
-                    directionLeftLeft.setX(directionLeftLeft.getX() * Math.cos(Math.toRadians(angleFar)) - Math.sin(Math.toRadians(angleFar)) * directionLeftLeft.getZ());
-                    directionLeftLeft.setZ(directionLeftLeft.getX() * Math.sin(Math.toRadians(angleFar)) + Math.cos(Math.toRadians(angleFar)) * directionLeftLeft.getZ());
-
-                    Vector directionRightRight = new Vector().copy(direction);
-                    directionRightRight.setX(directionRightRight.getX() * Math.cos(Math.toRadians(-angleFar)) - Math.sin(Math.toRadians(-angleFar)) * directionRightRight.getZ());
-                    directionRightRight.setZ(directionRightRight.getX() * Math.sin(Math.toRadians(-angleFar)) + Math.cos(Math.toRadians(-angleFar)) * directionRightRight.getZ());
-
-
-                    String cmd = "execute at " + nearby.getUniqueId() + " run summon vex " + location.getX() + " " + location.getY() + " " + location.getZ() + " " + SUMMON_VEX;
-                    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), cmd);
-                    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), cmd);
-                    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), cmd);
-                    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), cmd);
-                    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), cmd);
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
-                        @NotNull Collection<? extends Entity> vexes = location.getWorld().getNearbyEntitiesByType(EntityType.VEX.getEntityClass(), location, 2);
-                        int i = 0;
-                        for (Entity entity : vexes) {
-                            Vector v;
-                            switch (i++) {
-                                case 0:
-                                    v = directionLeftLeft;
-                                    break;
-                                case 1:
-                                    v = directionRightRight;
-                                    break;
-                                case 2:
-                                    v = directionLeft;
-                                    break;
-                                case 3:
-                                    v = directionRight;
-                                    break;
-                                case 4:
-                                    v =direction;
-                                    break;
-                                default:
-                                    v = null;
-                                    break;
-                            }
-                            if (v == null) break;
-                            ((Vex) entity).setSummoner((Mob) nearby);
-                            entity.setVelocity(v);
-                            ((Vex) entity).setCharging(true);
-                        }
-                    }, 1);
+                    shoot(nearby, location, 2);
                 }
             }
         }
+    }
+
+    public static void shoot(Entity me, Location location, int spawns) {
+        Vector direction = location.getDirection();
+        direction.multiply(0.3);
+
+        Vector directionLeft = new Vector().copy(direction);
+        final int angleClose = 22;
+        directionLeft.setX(directionLeft.getX() * Math.cos(Math.toRadians(angleClose)) - Math.sin(Math.toRadians(angleClose)) * directionLeft.getZ());
+        directionLeft.setZ(directionLeft.getX() * Math.sin(Math.toRadians(angleClose)) + Math.cos(Math.toRadians(angleClose)) * directionLeft.getZ());
+
+        Vector directionRight = new Vector().copy(direction);
+        directionRight.setX(directionRight.getX() * Math.cos(Math.toRadians(-angleClose)) - Math.sin(Math.toRadians(-angleClose)) * directionRight.getZ());
+        directionRight.setZ(directionRight.getX() * Math.sin(Math.toRadians(-angleClose)) + Math.cos(Math.toRadians(-angleClose)) * directionRight.getZ());
+
+        Vector directionLeftLeft = new Vector().copy(direction);
+        final int angleFar = 45;
+        directionLeftLeft.setX(directionLeftLeft.getX() * Math.cos(Math.toRadians(angleFar)) - Math.sin(Math.toRadians(angleFar)) * directionLeftLeft.getZ());
+        directionLeftLeft.setZ(directionLeftLeft.getX() * Math.sin(Math.toRadians(angleFar)) + Math.cos(Math.toRadians(angleFar)) * directionLeftLeft.getZ());
+
+        Vector directionRightRight = new Vector().copy(direction);
+        directionRightRight.setX(directionRightRight.getX() * Math.cos(Math.toRadians(-angleFar)) - Math.sin(Math.toRadians(-angleFar)) * directionRightRight.getZ());
+        directionRightRight.setZ(directionRightRight.getX() * Math.sin(Math.toRadians(-angleFar)) + Math.cos(Math.toRadians(-angleFar)) * directionRightRight.getZ());
+
+
+        String cmd = "execute at " + me.getUniqueId() + " run summon vex " + location.getX() + " " + location.getY() + " " + location.getZ() + " " + SUMMON_VEX;
+        for (int i = 0; i < spawns; i++) {
+            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), cmd);
+        }
+        Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
+            @NotNull Collection<? extends Entity> vexes = location.getWorld().getNearbyEntitiesByType(EntityType.VEX.getEntityClass(), location, 2);
+            int i = 0;
+            for (Entity entity : vexes) {
+                Vector v;
+                switch (i++) {
+                    case 0:
+                        v = directionLeft;
+                        break;
+                    case 1:
+                        v = directionRight;
+                        break;
+                    case 2:
+                        v = direction;
+                        break;
+                    case 3:
+                        v = directionLeftLeft;
+                        break;
+                    case 4:
+                        v = directionRightRight;
+                        break;
+                    default:
+                        v = null;
+                        break;
+                }
+                if (v == null) break;
+                ((Vex) entity).setSummoner((Mob) me);
+                entity.setVelocity(v);
+                ((Vex) entity).setCharging(true);
+            }
+        }, 1);
     }
 
     private synchronized void trim() {

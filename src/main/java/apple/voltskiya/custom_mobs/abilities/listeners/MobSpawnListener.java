@@ -30,7 +30,7 @@ public class MobSpawnListener implements Listener {
         Bukkit.getPluginManager().registerEvents(this, VoltskiyaPlugin.get());
         try {
             spawnEater.put("lost_soul", new LostSoulManagerTicker());
-            spawnEater.put("blemish_gateway", new BlemishSpawnManager());
+            spawnEater.put(BlemishSpawnManager.NAME, new BlemishSpawnManager());
             spawnEater.put("orbital_striker", new LargeOrbitalStrikeManagerTicker());
             spawnEater.put("orbital_striker_small", new SmallOrbitalStrikeManagerTicker());
             spawnEater.put("warper", new WarperManagerTicker());

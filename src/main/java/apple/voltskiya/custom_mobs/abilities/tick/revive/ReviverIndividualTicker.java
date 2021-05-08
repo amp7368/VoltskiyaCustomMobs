@@ -81,7 +81,11 @@ public class ReviverIndividualTicker {
         if (mobToRevive != null && entity instanceof CraftMob) {
             CraftMob reviver = ((CraftMob) entity);
             Location target = mobToRevive.getEntity().getLocation();
-            reviver.getHandle().goalSelector.a(-1, new PathfinderGoalMoveToTarget(reviver.getHandle(), target, 1.6, GIVE_UP_MOVE_TICK, () -> ReviveDeadManager.get().reviveStart(mobToRevive, reviver, reviverObject)));
+            reviver.getHandle().goalSelector.a(-1, new PathfinderGoalMoveToTarget(reviver.getHandle(), target, 1.6, GIVE_UP_MOVE_TICK, () -> {
+                if (mobToRevive.isNearby(reviver.getLocation())) {
+                    ReviveDeadManager.get().reviveStart(mobToRevive, reviver, reviverObject);
+                }
+            }));
         }
     }
 }

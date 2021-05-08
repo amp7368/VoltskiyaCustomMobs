@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.BiFunction;
 
 public class FireFangs extends SpawnEater {
     public Map<String, FangsType> tagToFangType;
@@ -33,11 +34,19 @@ public class FireFangs extends SpawnEater {
         FangsType.BLUE_TRIPLE.range = (double) getValueOrInit(YmlSettings.BLUE_TRIPLE_RANGE.getPath());
         FangsType.BLUE_TRIPLE.step = (double) getValueOrInit(YmlSettings.BLUE_TRIPLE_STEP.getPath());
         FangsType.BLUE_TRIPLE.cooldown = (int) getValueOrInit(YmlSettings.BLUE_TRIPLE_COOLDOWN.getPath());
+        FangsType.BLUE_TRIPLE_STRAIGHT.range = (double) getValueOrInit(YmlSettings.BLUE_TRIPLE_STRAIGHT_RANGE.getPath());
+        FangsType.BLUE_TRIPLE_STRAIGHT.step = (double) getValueOrInit(YmlSettings.BLUE_TRIPLE_STRAIGHT_STEP.getPath());
+        FangsType.BLUE_TRIPLE_STRAIGHT.cooldown = (int) getValueOrInit(YmlSettings.BLUE_TRIPLE_STRAIGHT_COOLDOWN.getPath());
+        FangsType.TRIPLE_STRAIGHT.range = (double) getValueOrInit(YmlSettings.TRIPLE_STRAIGHT_RANGE.getPath());
+        FangsType.TRIPLE_STRAIGHT.step = (double) getValueOrInit(YmlSettings.TRIPLE_STRAIGHT_STEP.getPath());
+        FangsType.TRIPLE_STRAIGHT.cooldown = (int) getValueOrInit(YmlSettings.TRIPLE_STRAIGHT_COOLDOWN.getPath());
         tagToFangType = new HashMap<>() {{
             put("fire_fangs", FangsType.NORMAL);
             put("fire_fangs_triple", FangsType.TRIPLE);
+            put("fire_fangs_triple_straight", FangsType.TRIPLE_STRAIGHT);
             put("fire_fangs_blue", FangsType.BLUE_NORMAL);
             put("fire_fangs_triple_blue", FangsType.BLUE_TRIPLE);
+            put("fire_fangs_triple_blue_straight", FangsType.BLUE_TRIPLE_STRAIGHT);
         }};
         for (UUID mob : this.getMobs()) {
             final CraftEntity entityBukkit = (CraftEntity) Bukkit.getEntity(mob);
@@ -105,7 +114,13 @@ public class FireFangs extends SpawnEater {
         BLUE_NORMAL_COOLDOWN("blue_normal.cooldown", 300),
         BLUE_TRIPLE_RANGE("blue_triple.range", 15d),
         BLUE_TRIPLE_STEP("blue_triple.step", 1d),
-        BLUE_TRIPLE_COOLDOWN("blue_triple.cooldown", 300);
+        BLUE_TRIPLE_COOLDOWN("blue_triple.cooldown", 300),
+        BLUE_TRIPLE_STRAIGHT_RANGE("blue_triple_straight.range", 15d),
+        BLUE_TRIPLE_STRAIGHT_STEP("blue_triple_straight.step", 1d),
+        BLUE_TRIPLE_STRAIGHT_COOLDOWN("blue_triple_straight.cooldown", 300),
+        TRIPLE_STRAIGHT_RANGE("triple_straight.range", 15d),
+        TRIPLE_STRAIGHT_STEP("triple_straight.step", 1d),
+        TRIPLE_STRAIGHT_COOLDOWN("triple_straight.cooldown", 300);
 
         private final String path;
         private final Object value;
@@ -125,21 +140,25 @@ public class FireFangs extends SpawnEater {
     }
 
     public enum FangsType {
-        NORMAL(0, 0, 0,false),
-        TRIPLE(0, 0, 0,false),
-        BLUE_NORMAL(0, 0, 0,true),
-        BLUE_TRIPLE(0, 0, 0,true); //default to 0 until someone sets it outside of us
+        NORMAL(0, 0, 0, false, FireFangsSpell::new),
+        TRIPLE(0, 0, 0, false, FireFangsSpell::new),
+        TRIPLE_STRAIGHT(0, 0, 0, false, FireFangsSpellStraight::new),
+        BLUE_NORMAL(0, 0, 0, true, FireFangsSpell::new),
+        BLUE_TRIPLE(0, 0, 0, true, FireFangsSpell::new),
+        BLUE_TRIPLE_STRAIGHT(0, 0, 0, true, FireFangsSpellStraight::new); //default to 0 until someone sets it outside of us
 
         private final boolean isBlue;
+        private final BiFunction<EntityInsentient, FangsType, FireFangsSpell> runnableConstructor;
         private double range;
         private double step;
         private int cooldown;
 
-        FangsType(double range, double step, int cooldown, boolean isBlue) {
+        FangsType(double range, double step, int cooldown, boolean isBlue, BiFunction<EntityInsentient, FangsType, FireFangsSpell> runnableConstructor) {
             this.range = range;
             this.step = step;
             this.cooldown = cooldown;
             this.isBlue = isBlue;
+            this.runnableConstructor = runnableConstructor;
         }
 
         public double getRange() {
@@ -157,8 +176,13 @@ public class FireFangs extends SpawnEater {
         public int getFireLength() {
             return 250;
         }
-        public boolean isBlue(){
+
+        public boolean isBlue() {
             return isBlue;
+        }
+
+        public FireFangsSpell construct(EntityInsentient me) {
+            return runnableConstructor.apply(me, this);
         }
     }
 }

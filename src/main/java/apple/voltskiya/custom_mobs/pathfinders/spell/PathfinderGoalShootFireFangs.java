@@ -2,7 +2,6 @@ package apple.voltskiya.custom_mobs.pathfinders.spell;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.abilities.ai_changes.fire_fangs.FireFangs;
-import apple.voltskiya.custom_mobs.abilities.ai_changes.fire_fangs.FireFangsSpell;
 import apple.voltskiya.custom_mobs.util.DistanceUtils;
 import net.minecraft.server.v1_16_R3.EntityInsentient;
 import net.minecraft.server.v1_16_R3.PathfinderGoal;
@@ -48,7 +47,7 @@ public class PathfinderGoalShootFireFangs extends PathfinderGoal {
      */
     @Override
     public void c() {
-        Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), new FireFangsSpell(me, type));
+        Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), type.construct(me));
         this.lastShot = this.me.ticksLived;
     }
 }
