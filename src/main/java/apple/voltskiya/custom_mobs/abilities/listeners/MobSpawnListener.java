@@ -6,7 +6,6 @@ import apple.voltskiya.custom_mobs.abilities.ai_changes.micro_misles.MicroMissil
 import apple.voltskiya.custom_mobs.abilities.ai_changes.micro_misles.MicroMissleShooter;
 import apple.voltskiya.custom_mobs.abilities.tick.SpawnEater;
 import apple.voltskiya.custom_mobs.abilities.tick.charger.ChargerManagerTicker;
-import apple.voltskiya.custom_mobs.abilities.tick.hell_blazer.HellGuardManagerTicker;
 import apple.voltskiya.custom_mobs.abilities.tick.lost_soul.BlemishSpawnManager;
 import apple.voltskiya.custom_mobs.abilities.tick.lost_soul.LostSoulManagerTicker;
 import apple.voltskiya.custom_mobs.abilities.tick.orbital_strike.large.LargeOrbitalStrikeManagerTicker;
@@ -35,7 +34,6 @@ public class MobSpawnListener implements Listener {
             spawnEater.put("orbital_striker_small", new SmallOrbitalStrikeManagerTicker());
             spawnEater.put("warper", new WarperManagerTicker());
             spawnEater.put("reviver", new ReviverManagerTicker());
-            spawnEater.put("hell_blazer", new HellGuardManagerTicker());
             spawnEater.put("charger", new ChargerManagerTicker());
         } catch (IOException e) {
             e.printStackTrace();

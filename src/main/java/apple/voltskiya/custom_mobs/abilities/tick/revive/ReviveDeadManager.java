@@ -4,6 +4,7 @@ import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.abilities.MobTickPlugin;
 import apple.voltskiya.custom_mobs.abilities.tick.DeathEater;
+import apple.voltskiya.custom_mobs.util.constants.TagConstants;
 import net.minecraft.server.v1_16_R3.NBTTagCompound;
 import net.minecraft.server.v1_16_R3.NBTTagInt;
 import net.minecraft.server.v1_16_R3.NBTTagString;
@@ -115,12 +116,14 @@ public class ReviveDeadManager extends DeathEater {
                     }
                 } else {
                     reviver.setAI(true);
+                    reviver.removeScoreboardTag(TagConstants.isDoingAbility);
                     reviveMe.resetCooldown();
                 }
             }, timeI);
         }
         Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
             if (!reviver.isDead()) {
+                reviver.removeScoreboardTag(TagConstants.isDoingAbility);
                 reviver.setAI(true);
                 if (reviver.getHandle().ticksLived - reviver.getHandle().hurtTimestamp >= time) {
                     reviveProcess(reviveMe, reviver, reviverObject);

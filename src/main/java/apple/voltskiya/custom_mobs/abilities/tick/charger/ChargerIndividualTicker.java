@@ -4,6 +4,7 @@ import apple.voltskiya.custom_mobs.abilities.tick.Tickable;
 import apple.voltskiya.custom_mobs.ticking.TickGiverable;
 import apple.voltskiya.custom_mobs.util.DistanceUtils;
 import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
+import apple.voltskiya.custom_mobs.util.constants.TagConstants;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -61,7 +62,7 @@ public class ChargerIndividualTicker implements Tickable {
     }
 
     private synchronized boolean tickCharger(Mob charger) {
-        if (!isCharging) return false;
+        if (!isCharging || charger.getScoreboardTags().contains(TagConstants.isDoingAbility)) return false;
         synchronized (chargersToLastChargeSync) {
             long lastCharge = chargersToLastCharge.getOrDefault(charger.getUniqueId(), 0L);
             if (System.currentTimeMillis() - lastCharge < ChargerManagerTicker.CHARGE_COOLDOWN) {

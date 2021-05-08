@@ -1,7 +1,8 @@
 package apple.voltskiya.custom_mobs.abilities.tick.charger;
 
-import apple.voltskiya.custom_mobs.util.DistanceUtils;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
+import apple.voltskiya.custom_mobs.util.DistanceUtils;
+import apple.voltskiya.custom_mobs.util.constants.TagConstants;
 import net.minecraft.server.v1_16_R3.BlockPosition;
 import net.minecraft.server.v1_16_R3.PathEntity;
 import org.bukkit.*;
@@ -28,6 +29,7 @@ public class ChargerCharge {
         y *= 3;
         z *= 3;
         Location finalLocation = chargerLocation.clone().add(x, y, z);
+        charger.addScoreboardTag(TagConstants.isDoingAbility);
         new ChargeUp(charger, finalLocation, finalLocation.clone().add(x / 2, y / 2, z / 2)).charge();
     }
 
@@ -109,8 +111,11 @@ public class ChargerCharge {
                     charger.teleport(newLocation);
                     stunned(newLocation);
                     Location eyeLocation = charger.getEyeLocation();
-                    stunParticles(eyeLocation,ChargerManagerTicker.CHARGE_STUN_TIME);
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> charger.setAI(true), ChargerManagerTicker.CHARGE_STUN_TIME);
+                    stunParticles(eyeLocation, ChargerManagerTicker.CHARGE_STUN_TIME);
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
+                        charger.removeScoreboardTag(TagConstants.isDoingAbility);
+                        charger.setAI(true);
+                    }, ChargerManagerTicker.CHARGE_STUN_TIME);
                     return;
                 }
             }
@@ -121,10 +126,11 @@ public class ChargerCharge {
                 // we're done
                 // add this back to the charge manager
                 charger.setAI(false);
-                Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(),()->charger.setAI(true),ChargerManagerTicker.CHARGE_TIRED_TIME);
-                stunParticles(charger.getEyeLocation(),ChargerManagerTicker.CHARGE_TIRED_TIME);
+                Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> charger.setAI(true), ChargerManagerTicker.CHARGE_TIRED_TIME);
+                stunParticles(charger.getEyeLocation(), ChargerManagerTicker.CHARGE_TIRED_TIME);
                 ChargerManagerTicker.get().eatMob(charger);
                 charger.removePotionEffect(PotionEffectType.INCREASE_DAMAGE);
+                charger.removeScoreboardTag(TagConstants.isDoingAbility);
             }
             double x;
             double y;
@@ -139,8 +145,8 @@ public class ChargerCharge {
 
     }
 
-    private static void stunParticles(Location eyeLocation,long upper) {
-        for (int time = 0; time < upper; time+=3) {
+    private static void stunParticles(Location eyeLocation, long upper) {
+        for (int time = 0; time < upper; time += 3) {
             Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
                 for (int i = 0; i < 20; i++) {
                     double xi = random.nextDouble() * 1.5 - .75;

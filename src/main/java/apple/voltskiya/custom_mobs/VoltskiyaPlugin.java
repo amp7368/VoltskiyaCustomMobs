@@ -68,7 +68,8 @@ public class VoltskiyaPlugin extends JavaPlugin {
                 new LeapPlugin(),
                 new TurretPlugin(),
                 new CustomModelPlugin(),
-                new PluginNmsMobs()
+                new PluginNmsMobs(),
+                new PluginEnable()
         };
         for (VoltskiyaModule module : modules) {
             registerModule(module);

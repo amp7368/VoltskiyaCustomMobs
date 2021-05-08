@@ -20,7 +20,6 @@ public class OrbitalStrikeSmall {
     private final World targetWorld;
     private final List<Integer> xyzsToTime = new ArrayList<>();
     private final int currentTick = 0;
-    private final VoltskiyaPlugin plugin = VoltskiyaPlugin.get();
     private static final Random random = new Random();
     private final List<Location> previousLocations = new ArrayList<>();
 

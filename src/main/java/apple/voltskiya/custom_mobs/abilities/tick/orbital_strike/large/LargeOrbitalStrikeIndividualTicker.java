@@ -5,6 +5,7 @@ import apple.voltskiya.custom_mobs.abilities.tick.orbital_strike.OrbitalStrike;
 import apple.voltskiya.custom_mobs.sql.MobListSql;
 import apple.voltskiya.custom_mobs.util.DistanceUtils;
 import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
+import apple.voltskiya.custom_mobs.util.constants.TagConstants;
 import apple.voltskiya.custom_mobs.util.data_structures.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -75,7 +76,7 @@ public class LargeOrbitalStrikeIndividualTicker {
     }
 
     private synchronized void tickStriker(Entity striker, Pair<UUID, Long> strikerUid) {
-        if (isCheckStrike) {
+        if (isCheckStrike && !striker.getScoreboardTags().contains(TagConstants.isDoingAbility)) {
             if (random.nextDouble() < LargeOrbitalStrikeManagerTicker.get().STRIKE_CHANCE * closeness.getGiver().getTickSpeed()) {
                 checkStrike(striker, strikerUid);
             }
@@ -96,6 +97,7 @@ public class LargeOrbitalStrikeIndividualTicker {
             }
         }
         if (target != null) {
+            striker.addScoreboardTag(TagConstants.isDoingAbility);
             // we have the target. time to orbital strike it
             final Location targetLocation = target.getLocation();
             ((Mob) striker).setAI(false);
@@ -106,6 +108,7 @@ public class LargeOrbitalStrikeIndividualTicker {
             Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
                 ((Mob) striker).setAI(true);
                 ((Mob) striker).setTarget(finalTarget);
+                striker.removeScoreboardTag(TagConstants.isDoingAbility);
             }, LargeOrbitalStrikeManagerTicker.get().STRIKE_TIME);
         }
     }
