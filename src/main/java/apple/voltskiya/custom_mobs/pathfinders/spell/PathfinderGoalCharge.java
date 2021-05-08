@@ -2,6 +2,7 @@ package apple.voltskiya.custom_mobs.pathfinders.spell;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.util.DistanceUtils;
+import apple.voltskiya.custom_mobs.util.minecraft.MaterialUtils;
 import net.minecraft.server.v1_16_R3.EntityInsentient;
 import net.minecraft.server.v1_16_R3.PathfinderGoal;
 import org.bukkit.Bukkit;
@@ -60,14 +61,13 @@ public class PathfinderGoalCharge extends PathfinderGoal {
             } else {
                 final World world = here.getWorld();
                 here.add(this.target.clone().subtract(here).toVector().setY(0).normalize());
-                if (world.getBlockAt(here).getType().isSolid() && world.getBlockAt(here.add(0, 1, 0)).getType().isSolid()) {
+                if (!MaterialUtils.isWalkThroughable(world.getBlockAt(here).getType()) && !MaterialUtils.isWalkThroughable(world.getBlockAt(here.add(0, 1, 0)).getType())) {
                     chargeResultTemp = ChargeResult.HIT_WALL;
                 } else {
                     final List<Entity> nearbyEntities = this.bukkitEntity.getNearbyEntities(2d, 2d, 2d);
                     for (Entity nearby : nearbyEntities) {
                         if (nearby != this.bukkitEntity && nearby instanceof LivingEntity && !(nearby instanceof ArmorStand)) {
                             chargeResultTemp = ChargeResult.HIT_ENTITY;
-                            this.e(); // run e at least once if we hit something
                             break;
                         }
                     }
@@ -79,7 +79,7 @@ public class PathfinderGoalCharge extends PathfinderGoal {
         if (bothOn.contains(chargeResultTemp)) {
             callBack.accept(chargeResultTemp);
             return !this.isCircling;
-        } else return chargeResult == null && !this.isCircling;
+        } else return chargeResultTemp == null && !this.isCircling;
     }
 
     /**
@@ -115,13 +115,12 @@ public class PathfinderGoalCharge extends PathfinderGoal {
         while (this.lastLocations.size() > MAX_LOCATION_TRACKING) this.lastLocations.remove(0);
         if (this.lastLocations.size() == MAX_LOCATION_TRACKING && DistanceUtils.distance(this.lastLocations.get(0), here) < minSpeed * MAX_LOCATION_TRACKING) {
             this.isCircling = true;
-            System.out.println("true");
         }
         here = here.clone();
         // go to the location
         Vector direction = this.target.clone().subtract(here).toVector().setY(0).normalize().multiply(0.9);
         here.setDirection(direction);
-        if (here.getWorld().getBlockAt(here.add(direction)).isSolid()) {
+        if (!MaterialUtils.isWalkThroughable(here.getWorld().getBlockAt(here.add(direction)).getType())) {
             this.me.getControllerJump().jump();
         }
         this.me.pitch = 0f;

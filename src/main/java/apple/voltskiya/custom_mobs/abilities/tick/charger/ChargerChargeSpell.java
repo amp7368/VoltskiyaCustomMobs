@@ -3,6 +3,7 @@ package apple.voltskiya.custom_mobs.abilities.tick.charger;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.pathfinders.spell.PathfinderGoalCharge;
 import apple.voltskiya.custom_mobs.util.constants.TagConstants;
+import apple.voltskiya.custom_mobs.util.minecraft.MaterialUtils;
 import net.minecraft.server.v1_16_R3.EntityInsentient;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -137,7 +138,7 @@ public class ChargerChargeSpell {
             final World world = here.getWorld();
             here.add(finalLocation.clone().subtract(here).toVector().setY(0).normalize());
             Material blockInFront = world.getBlockAt(here).getType();
-            if (!blockInFront.isSolid()) blockInFront = world.getBlockAt(here.add(0, 1, 0)).getType();
+            if (MaterialUtils.isWalkThroughable(blockInFront)) blockInFront = world.getBlockAt(here.add(0, 1, 0)).getType();
 
             chargerMob.setVelocity(new Vector(0, 0, 0));
             runFeetParticles(chargerMob.getEyeLocation(), blockInFront, 50);

@@ -3,6 +3,7 @@ package apple.voltskiya.custom_mobs.abilities.ai_changes.micro_misles;
 import apple.voltskiya.custom_mobs.abilities.tick.Tickable;
 import apple.voltskiya.custom_mobs.ticking.HighFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.TickGiverable;
+import apple.voltskiya.custom_mobs.util.minecraft.MaterialUtils;
 import net.minecraft.server.v1_16_R3.DamageSource;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
@@ -117,7 +118,7 @@ public class MicroMissileManager implements Tickable {
             particles(location);
             if (this.ticksLived == this.ticksToLive) this.die();
             this.movementTick();
-            if (location.getBlock().getType().isSolid()) {
+            if (!MaterialUtils.isWalkThroughable(location.getBlock().getType())) {
                 Collection<Entity> nearbyEntities = location.getNearbyEntities(1, 1, 1);
                 for (Entity nearby : nearbyEntities) {
                     if (nearby instanceof LivingEntity) {
