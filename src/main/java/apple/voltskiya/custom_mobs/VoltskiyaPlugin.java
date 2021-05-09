@@ -1,9 +1,9 @@
 package apple.voltskiya.custom_mobs;
 
-import apple.voltskiya.custom_mobs.abilities.MobTickPlugin;
 import apple.voltskiya.custom_mobs.custom_model.CustomModelPlugin;
 import apple.voltskiya.custom_mobs.leaps.LeapPlugin;
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
+import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
 import apple.voltskiya.custom_mobs.ticking.Ticking;
 import apple.voltskiya.custom_mobs.turrets.TurretPlugin;
 import apple.voltskiya.custom_mobs.util.PluginUtils;

@@ -27,10 +27,10 @@ public class PathfinderGoalShootSpell<Caster extends PathfinderGoalShootSpell.Sp
         return this.me.isAlive() &&
                 this.me.ticksLived - lastShot >= type.getCooldown() &&
                 this.me.getGoalTarget() != null &&
-                DistanceUtils.distance(
+                type.inRange(DistanceUtils.distance(
                         this.me.getGoalTarget().getBukkitEntity().getLocation(),
                         this.me.getBukkitEntity().getLocation()
-                ) <= type.getRange();
+                ));
     }
 
     /**
@@ -55,7 +55,7 @@ public class PathfinderGoalShootSpell<Caster extends PathfinderGoalShootSpell.Sp
     public interface SpellType<Caster extends SpellCaster> {
         int getCooldown();
 
-        double getRange();
+        boolean inRange(double distance);
 
         Spell construct(Caster me);
     }

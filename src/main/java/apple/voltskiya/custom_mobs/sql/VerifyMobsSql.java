@@ -1,7 +1,7 @@
 package apple.voltskiya.custom_mobs.sql;
 
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
-import apple.voltskiya.custom_mobs.abilities.MobTickPlugin;
+import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
 
 import java.io.File;
 import java.sql.Connection;
@@ -10,7 +10,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
 
-import static apple.voltskiya.custom_mobs.sql.DBNames.*;
+import static apple.voltskiya.custom_mobs.sql.DBNames.MobNames;
 
 public class VerifyMobsSql {
     private static final String MOB_UID_CONTENT = String.format("    %s INTEGER   NOT NULL,\n" +

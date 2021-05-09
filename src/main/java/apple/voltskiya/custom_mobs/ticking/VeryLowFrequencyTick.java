@@ -1,6 +1,6 @@
 package apple.voltskiya.custom_mobs.ticking;
 
-import apple.voltskiya.custom_mobs.abilities.tick.Tickable;
+import apple.voltskiya.custom_mobs.mobs.abilities.tick.Tickable;
 
 import java.util.ArrayList;
 import java.util.HashMap;

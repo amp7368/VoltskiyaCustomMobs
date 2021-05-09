@@ -127,18 +127,7 @@ public class MobAngeredSoul extends EntitySkeleton {
                 final EntityLiving handle = ((CraftLivingEntity) nearby).getHandle();
                 if (handle != this)
                     if (!handle.isBlocking())
-                        handle.damageEntity(DamageSource.explosion(new Explosion(
-                                this.world,
-                                null,
-                                null,
-                                null,
-                                1,
-                                1,
-                                1,
-                                0,
-                                false,
-                                Explosion.Effect.NONE
-                        )), 7f);
+                        handle.damageEntity(DamageSource.OUT_OF_WORLD, 10f);
             }
             final Location location = this.getBukkitEntity().getLocation();
             location.getWorld().spawnParticle(org.bukkit.Particle.EXPLOSION_LARGE, location, 1);
