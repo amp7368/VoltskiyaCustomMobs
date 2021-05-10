@@ -12,6 +12,7 @@ public class DungeonGui extends InventoryGui {
         this.player = player;
         this.dungeonScanner = dungeonScanner;
         addPage(new DungeonPageSettings1(this),
+                new DungeonPageMobConfigs(this),
                 new DungeonPageMobs(),
                 new DungeonPageChests()
         );

@@ -37,9 +37,22 @@ public class DungeonCommand extends BaseCommand {
     }
 
     @Subcommand("scan")
-    public void scan(Player player) {
-        DungeonScanner scanner = playerDungeonScanners.computeIfAbsent(player.getUniqueId(), s -> new DungeonScanner());
-        scanner.scan();
+    public class Scan extends BaseCommand {
+        @Subcommand("dungeon")
+        public void scan(Player player) {
+            DungeonScanner scanner = playerDungeonScanners.computeIfAbsent(player.getUniqueId(), s -> new DungeonScanner());
+            scanner.scan();
+        }
+
+        @Subcommand("mob_config")
+        public void mobConfig(Player player) {
+            DungeonScanner scanner = playerDungeonScanners.computeIfAbsent(player.getUniqueId(), s -> new DungeonScanner());
+            try {
+                scanner.scanMobConfig();
+            } catch (IllegalArgumentException | IllegalStateException e) {
+                player.sendMessage(ChatColor.RED + e.getMessage());
+            }
+        }
     }
 
     @Subcommand("gui")

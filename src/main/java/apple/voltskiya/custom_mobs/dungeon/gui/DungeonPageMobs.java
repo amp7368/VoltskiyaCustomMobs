@@ -5,7 +5,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class DungeonPageMobs implements InventoryGui.InventoryGuiPage {
@@ -26,15 +25,6 @@ public class DungeonPageMobs implements InventoryGui.InventoryGuiPage {
 
     }
 
-    @Override
-    public void setSlot(InventoryGui.InventoryGuiSlot item, Collection<Integer> slot) {
-
-    }
-
-    @Override
-    public void setSlot(InventoryGui.InventoryGuiSlot item, int... slot) {
-
-    }
 
     @Override
     public void dealWithClick(InventoryClickEvent event) {

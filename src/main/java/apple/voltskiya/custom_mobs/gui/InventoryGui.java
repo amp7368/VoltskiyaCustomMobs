@@ -1,18 +1,15 @@
 package apple.voltskiya.custom_mobs.gui;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
-import java.util.function.Consumer;
 
 public abstract class InventoryGui implements InventoryHolder {
     protected List<InventoryGuiPage> pageMap = new ArrayList<>();
@@ -23,6 +20,23 @@ public abstract class InventoryGui implements InventoryHolder {
         for (InventoryGuiPage pageGui : pageGuis) {
             pageGui.fillInventory();
             pageMap.add(pageGui);
+        }
+    }
+
+    public void nextPage(int count) {
+        List<HumanEntity> viewers = getInventory().getViewers();
+
+        page += count;
+        page = Math.max(0, page);
+        page = Math.min(pageMap.size() - 1, page);
+        update(viewers);
+    }
+
+    private void update(@Nullable List<HumanEntity> viewers) {
+        for (HumanEntity viewer : new ArrayList<>(viewers == null ? getInventory().getViewers() : viewers)) {
+            final InventoryGuiPage inventoryGuiPage = pageMap.get(page);
+            inventoryGuiPage.update();
+            viewer.openInventory(inventoryGuiPage.getInventory());
         }
     }
 
@@ -52,9 +66,9 @@ public abstract class InventoryGui implements InventoryHolder {
 
         void fillInventory();
 
-        void setSlot(InventoryGuiSlot item, Collection<Integer> slot);
-
-        void setSlot(InventoryGuiSlot item, int... slot);
+        default void update() {
+            fillInventory();
+        }
 
         void dealWithClick(InventoryClickEvent event);
 
@@ -67,85 +81,4 @@ public abstract class InventoryGui implements InventoryHolder {
         ItemStack getItem();
     }
 
-    public abstract static class InventoryGuiPageSimple implements InventoryGuiPage {
-        private final Inventory inventory;
-        private final InventoryGuiSlot[] clicking = new InventoryGuiSlot[size()];
-
-        public InventoryGuiPageSimple(InventoryHolder holder) {
-            this.inventory = Bukkit.createInventory(holder, size(), getName());
-            Arrays.fill(clicking, InventoryGuiSlotDoNothing.get());
-        }
-
-
-        @Override
-        public Inventory getInventory() {
-            return inventory;
-        }
-
-        @Override
-        public void fillInventory() {
-            for (int i = 0; i < clicking.length; i++) {
-                this.getInventory().setItem(i, clicking[i].getItem());
-            }
-        }
-
-        @Override
-        public void setSlot(InventoryGuiSlot item, Collection<Integer> slot) {
-            for (Integer i : slot) {
-                clicking[i] = item;
-            }
-        }
-
-        @Override
-        public void setSlot(InventoryGuiSlot item, int... slot) {
-            for (Integer i : slot) {
-                clicking[i] = item;
-            }
-        }
-
-        @Override
-        public void dealWithClick(InventoryClickEvent event) {
-            int slot = event.getSlot();
-            if (slot < 0 || slot >= clicking.length) return;
-            clicking[slot].dealWithClick(event);
-        }
-    }
-
-    public static class InventoryGuiSlotGeneric implements InventoryGuiSlot {
-        private final Consumer<InventoryClickEvent> dealWithEvent;
-        private final ItemStack item;
-
-        public InventoryGuiSlotGeneric(Consumer<InventoryClickEvent> dealWithEvent, ItemStack item) {
-            this.dealWithEvent = dealWithEvent;
-            this.item = item;
-        }
-
-        @Override
-        public void dealWithClick(InventoryClickEvent event) {
-            dealWithEvent.accept(event);
-        }
-
-        @Override
-        public ItemStack getItem() {
-            return item;
-        }
-    }
-
-    private static class InventoryGuiSlotDoNothing implements InventoryGuiSlot {
-        private static InventoryGuiSlotDoNothing instance = null;
-
-        public static InventoryGuiSlotDoNothing get() {
-            if (instance == null) instance = new InventoryGuiSlotDoNothing();
-            return instance;
-        }
-
-        @Override
-        public void dealWithClick(InventoryClickEvent event) {
-        }
-
-        @Override
-        public ItemStack getItem() {
-            return new ItemStack(Material.AIR);
-        }
-    }
 }

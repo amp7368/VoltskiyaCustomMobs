@@ -1,6 +1,8 @@
 package apple.voltskiya.custom_mobs.dungeon.gui;
 
 import apple.voltskiya.custom_mobs.gui.InventoryGui;
+import apple.voltskiya.custom_mobs.gui.InventoryGuiPageSimple;
+import apple.voltskiya.custom_mobs.gui.InventoryGuiSlotGeneric;
 import apple.voltskiya.custom_mobs.util.minecraft.InventoryUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -9,7 +11,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Collections;
 
-public class DungeonPageSettings1 extends InventoryGui.InventoryGuiPageSimple {
+public class DungeonPageSettings1 extends InventoryGuiPageSimple {
     private final DungeonGui dungeonGui;
 
     public DungeonPageSettings1(DungeonGui holder) {
@@ -17,6 +19,8 @@ public class DungeonPageSettings1 extends InventoryGui.InventoryGuiPageSimple {
         this.dungeonGui = holder;
         setSlot(new Pos1(), 1);
         setSlot(new Pos2(), 2);
+        setSlot(new InventoryGuiSlotGeneric((e1) -> holder.nextPage(1), InventoryUtils.makeItem(Material.GREEN_TERRACOTTA, 1, "Next Page", null)
+        ), 8);
     }
 
     @Override
