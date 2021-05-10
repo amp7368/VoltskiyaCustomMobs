@@ -1,6 +1,9 @@
-package apple.voltskiya.custom_mobs.dungeon;
+package apple.voltskiya.custom_mobs.dungeon.scanner;
 
+import apple.voltskiya.custom_mobs.dungeon.DungeonChestConfig;
+import apple.voltskiya.custom_mobs.dungeon.PluginDungeon;
 import apple.voltskiya.custom_mobs.dungeon.gui.DungeonGui;
+import apple.voltskiya.custom_mobs.dungeon.scanned.DungeonScanned;
 import co.aikar.commands.BukkitCommandCompletionContext;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -14,6 +17,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.FileReader;
@@ -31,11 +35,12 @@ public class DungeonScanner {
     private Location pos2 = null;
     private final String name;
     private boolean wasLoaded;
+    private DungeonScanned currentScannedDungeon = null;
 
     public DungeonScanner(String name) {
         this.name = name;
         try {
-            load(name);
+            fromJson(name);
         } catch (IOException | CommandSyntaxException e) {
             e.printStackTrace();
         }
@@ -47,25 +52,6 @@ public class DungeonScanner {
 
     public void pos2(Location location) {
         this.pos2 = location;
-    }
-
-    private void load(String name) throws IOException, CommandSyntaxException {
-        File scannerFile = getScannerFile(name + ".json");
-        if (!scannerFile.exists()) {
-            this.wasLoaded = false;
-        } else {
-            this.wasLoaded = true;
-            JsonObject json = new Gson().fromJson(new FileReader(scannerFile), JsonObject.class);
-            JsonArray mobConfigs = json.get(JsonKeys.MOB_CONFIGS).getAsJsonArray();
-            for (JsonElement mobConfig : mobConfigs) {
-                DungeonMobConfig realConfig = new DungeonMobConfig(mobConfig.getAsJsonObject());
-                this.nameToMobConfig.put(realConfig.getName(), realConfig);
-            }
-        }
-    }
-
-    private static File getScannerFile(String name) throws IOException {
-        return new File(getScannerFolder(), name);
     }
 
 
@@ -81,10 +67,23 @@ public class DungeonScanner {
         return pos2;
     }
 
-    public List<DungeonMobConfig> getMobConfigs() {
-        List<DungeonMobConfig> configs = new ArrayList<>(this.nameToMobConfig.values());
-        configs.sort((c1, c2) -> c1.getName().compareToIgnoreCase(c2.getName()));
-        return configs;
+    private void fromJson(String name) throws IOException, CommandSyntaxException {
+        File scannerFile = getScannerFile(name + ".json");
+        if (!scannerFile.exists()) {
+            this.wasLoaded = false;
+        } else {
+            this.wasLoaded = true;
+            JsonObject json = new Gson().fromJson(new FileReader(scannerFile), JsonObject.class);
+            JsonArray mobConfigs = json.get(JsonKeys.MOB_CONFIGS).getAsJsonArray();
+            for (JsonElement mobConfig : mobConfigs) {
+                DungeonMobConfig realConfig = new DungeonMobConfig(mobConfig.getAsJsonObject());
+                this.nameToMobConfig.put(realConfig.getName(), realConfig);
+            }
+        }
+    }
+
+    private static File getScannerFile(String name) {
+        return new File(getScannerFolder(), name);
     }
 
     @NotNull
@@ -101,25 +100,20 @@ public class DungeonScanner {
         return Arrays.asList(files);
     }
 
-    public void scan() {
-        try {
-            save();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void scanDungeon(String dungeonInstanceName, Boolean scanBlocks, Boolean scanMobs, Boolean scanChests) {
+        this.currentScannedDungeon = new DungeonScanned(this, dungeonInstanceName);
+        if (scanBlocks == null && scanMobs == null && scanChests == null)
+            this.currentScannedDungeon.scanAll();
+        else if (scanBlocks == null)
+            this.currentScannedDungeon.scanBlocks(true);
+        else if (scanMobs == null)
+            this.currentScannedDungeon.scanMobs(true);
+        else if (scanChests == null)
+            this.currentScannedDungeon.scanChests(true);
     }
 
-    public void save() throws IOException {
-        File scannerFile = getScannerFile(name + ".json");
-        scannerFile.createNewFile();
-        JsonObject json = new JsonObject();
-        final JsonArray mobConfigs = new JsonArray();
-        for (DungeonMobConfig mobConfig : nameToMobConfig.values())
-            mobConfigs.add(mobConfig.toJson());
-        json.add(JsonKeys.MOB_CONFIGS, mobConfigs);
-        final FileWriter writer = new FileWriter(scannerFile);
-        new Gson().toJson(json, writer);
-        writer.close();
+    public void loadDungeonInstance(String dungeonInstanceName) {
+        this.currentScannedDungeon = new DungeonScanned(this, dungeonInstanceName);
     }
 
     public void scanMobConfig() {
@@ -150,14 +144,49 @@ public class DungeonScanner {
         }
         nameToMobConfig.put(configName, mobConfig);
         try {
-            save();
+            toJson();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    public void toJson() throws IOException {
+        File scannerFile = getScannerFile(name + ".json");
+        scannerFile.createNewFile();
+        JsonObject json = new JsonObject();
+        final JsonArray mobConfigs = new JsonArray();
+        for (DungeonMobConfig mobConfig : nameToMobConfig.values())
+            mobConfigs.add(mobConfig.toJson());
+        json.add(JsonKeys.MOB_CONFIGS, mobConfigs);
+        final FileWriter writer = new FileWriter(scannerFile);
+        new Gson().toJson(json, writer);
+        writer.close();
+    }
+
     public boolean wasLoaded() {
         return wasLoaded;
+    }
+
+    public List<DungeonMobConfig> getMobConfigs() {
+        List<DungeonMobConfig> configs = new ArrayList<>(this.nameToMobConfig.values());
+        configs.sort((c1, c2) -> c1.getName().compareToIgnoreCase(c2.getName()));
+        return configs;
+    }
+
+    public @Nullable DungeonMobConfig getMobConfig(Entity e) {
+        for (String tag : e.getScoreboardTags()) {
+            DungeonMobConfig config = this.nameToMobConfig.get(tag);
+            if (config != null) return config;
+        }
+        return null;
+    }
+
+    public String name() {
+        return name;
+    }
+
+    public @Nullable DungeonMobConfig getMobConfig(String name) {
+        return this.nameToMobConfig.get(name);
     }
 
     public static class JsonKeys {
@@ -165,5 +194,10 @@ public class DungeonScanner {
         public static final String MOB_CONFIG_NAME = "name";
         public static final String MOB_CONFIG_MOBS = "mobs";
         public static final String MOB_CONFIG_NBT = "nbt";
+        public static final String DUNGEON_MOBS = "mobs";
+        public static final String DUNGEON_NAME = "dungeon_name";
+        public static final String SCANNER_NAME = "scanner_name";
+        public static final String DUNGEON_MOB_PRIMARY = "mobPrimary";
+        public static final String DUNGEON_MOB_CONFIG = "mobConfig";
     }
 }

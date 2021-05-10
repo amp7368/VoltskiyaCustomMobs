@@ -1,11 +1,9 @@
 package apple.voltskiya.custom_mobs.dungeon;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
+import apple.voltskiya.custom_mobs.dungeon.scanner.DungeonScanner;
 import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandCompletion;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Subcommand;
+import co.aikar.commands.annotation.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -23,18 +21,33 @@ public class DungeonCommand extends BaseCommand {
     public DungeonCommand() {
         VoltskiyaPlugin.get().getCommandManager().registerCommand(this);
         VoltskiyaPlugin.get().getCommandManager().getCommandCompletions().registerCompletion("dungeon-scanners", DungeonScanner::getSchematics);
+        VoltskiyaPlugin.get().getCommandManager().getCommandCompletions().registerCompletion("dungeon-instances", DungeonScanner::getSchematics);
     }
 
     @Subcommand("load")
-    @CommandCompletion("@dungeon-scanners")
-    public void load(Player player, String dungeonScannerName) {
-        DungeonScanner scanner;
-        scanner = new DungeonScanner(dungeonScannerName);
-        playerDungeonScanners.put(player.getUniqueId(), scanner);
-        if (scanner.wasLoaded()) {
-            player.sendMessage(ChatColor.AQUA + "Loaded dungeon scanner " + dungeonScannerName + " from the database");
-        } else {
-            player.sendMessage(ChatColor.AQUA + "This dungeon scanner did not previously exist. Load a different scanner if you do not wish to create a new one");
+    public class Load extends BaseCommand {
+        @Subcommand("scanner")
+        @CommandCompletion("@dungeon-scanners|name")
+        public void loadScanner(Player player, @Single String dungeonScannerName) {
+            DungeonScanner scanner;
+            scanner = new DungeonScanner(dungeonScannerName);
+            playerDungeonScanners.put(player.getUniqueId(), scanner);
+            if (scanner.wasLoaded()) {
+                player.sendMessage(ChatColor.AQUA + "Loaded dungeon scanner " + dungeonScannerName + " from the database");
+            } else {
+                player.sendMessage(ChatColor.AQUA + "This dungeon scanner did not previously exist. Load a different scanner if you do not wish to create a new one");
+            }
+        }
+
+        @Subcommand("dungeon")
+        @CommandCompletion("@dungeon-instances|name")
+        public void loadDungeon(Player player, @Single String dungeonInstanceName) {
+            @Nullable DungeonScanner scanner = playerDungeonScanners.get(player.getUniqueId());
+            if (scanner == null) {
+                player.sendMessage("Please load a dungeon scanner before attempting this");
+                return;
+            }
+            scanner.loadDungeonInstance(dungeonInstanceName);
         }
     }
 
@@ -75,13 +88,14 @@ public class DungeonCommand extends BaseCommand {
     @Subcommand("scan")
     public class Scan extends BaseCommand {
         @Subcommand("dungeon")
-        public void scan(Player player) {
+        @CommandCompletion("name")
+        public void scan(Player player, @Single String dungeonName, @Optional Boolean scanBlocks, @Optional Boolean scanMobs, @Optional Boolean scanChests) {
             @Nullable DungeonScanner scanner = playerDungeonScanners.get(player.getUniqueId());
             if (scanner == null) {
                 player.sendMessage("Please load a dungeon scanner before attempting this");
                 return;
             }
-            scanner.scan();
+            scanner.scanDungeon(dungeonName, scanBlocks, scanMobs, scanChests);
         }
 
         @Subcommand("mob_config")

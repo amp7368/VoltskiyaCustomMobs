@@ -1,4 +1,4 @@
-package apple.voltskiya.custom_mobs.dungeon;
+package apple.voltskiya.custom_mobs.dungeon.scanner;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -11,6 +11,9 @@ import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 
+/**
+ * a single mob
+ */
 public class DungeonMobInfo {
     public NBTTagCompound nbt;
     public EntityTypes<?> mobType;

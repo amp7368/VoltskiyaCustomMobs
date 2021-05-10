@@ -1,8 +1,8 @@
 package apple.voltskiya.custom_mobs.dungeon.gui.mobs;
 
-import apple.voltskiya.custom_mobs.dungeon.DungeonMobConfig;
-import apple.voltskiya.custom_mobs.dungeon.DungeonMobInfo;
 import apple.voltskiya.custom_mobs.dungeon.gui.DungeonGui;
+import apple.voltskiya.custom_mobs.dungeon.scanner.DungeonMobConfig;
+import apple.voltskiya.custom_mobs.dungeon.scanner.DungeonMobInfo;
 import apple.voltskiya.custom_mobs.gui.InventoryGuiPageScrollable;
 import apple.voltskiya.custom_mobs.gui.InventoryGuiSlotGeneric;
 import apple.voltskiya.custom_mobs.gui.InventoryGuiSlotScrollable;

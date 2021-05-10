@@ -1,4 +1,4 @@
-package apple.voltskiya.custom_mobs.dungeon;
+package apple.voltskiya.custom_mobs.dungeon.scanner;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;

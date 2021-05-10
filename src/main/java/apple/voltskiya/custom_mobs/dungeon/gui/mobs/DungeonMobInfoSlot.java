@@ -1,7 +1,7 @@
 package apple.voltskiya.custom_mobs.dungeon.gui.mobs;
 
-import apple.voltskiya.custom_mobs.dungeon.DungeonMobInfo;
 import apple.voltskiya.custom_mobs.dungeon.gui.DungeonGui;
+import apple.voltskiya.custom_mobs.dungeon.scanner.DungeonMobInfo;
 import apple.voltskiya.custom_mobs.gui.InventoryGuiSlotScrollable;
 import apple.voltskiya.custom_mobs.util.minecraft.InventoryUtils;
 import org.bukkit.event.inventory.InventoryClickEvent;
