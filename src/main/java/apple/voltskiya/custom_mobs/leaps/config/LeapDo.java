@@ -1,10 +1,12 @@
 package apple.voltskiya.custom_mobs.leaps.config;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
+import apple.voltskiya.custom_mobs.util.constants.TagConstants;
 import net.minecraft.server.v1_16_R3.EntityInsentient;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.plugin.IllegalPluginAccessException;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nullable;
@@ -77,6 +79,7 @@ public class LeapDo implements Runnable {
     }
 
     public void leap() {
+        bukkitEntity.addScoreboardTag(TagConstants.isDoingAbility);
         bukkitEntity.setVelocity(new Vector(xVelocity, yVelocity, zVelocity));
         if (!this.alreadyHadNoFallDamage)
             this.bukkitEntity.addScoreboardTag(NO_FALL_DAMAGE_TAG);
@@ -90,6 +93,7 @@ public class LeapDo implements Runnable {
             if (!alreadyHadNoFallDamage) this.bukkitEntity.removeScoreboardTag(NO_FALL_DAMAGE_TAG);
             this.isLeaping = false;
             this.isMidJump = false;
+            bukkitEntity.removeScoreboardTag(TagConstants.isDoingAbility);
             this.postConfig.runEnd(this.entity);
             return;
         }
@@ -97,13 +101,17 @@ public class LeapDo implements Runnable {
             if (!alreadyHadNoFallDamage) this.bukkitEntity.removeScoreboardTag(NO_FALL_DAMAGE_TAG);
             this.isMidJump = false;
             this.isLeaping = false;
+            bukkitEntity.removeScoreboardTag(TagConstants.isDoingAbility);
             this.postConfig.runInterrupted(this.entity);
             return;
         }
         // set the yVelocity to what it should
         yVelocity = yVelocityInitial + gravity * currentTime++;
         bukkitEntity.setVelocity(new Vector(xVelocity, yVelocity, zVelocity));
-        Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), this, 1);
+        try {
+            Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), this, 1);
+        } catch (IllegalPluginAccessException ignored) {
+        }
     }
 
     public boolean isLeaping() {

@@ -1,6 +1,7 @@
 package apple.voltskiya.custom_mobs.mobs.testing;
 
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
+import apple.voltskiya.custom_mobs.mobs.RegisteredCustomMob;
 import apple.voltskiya.custom_mobs.mobs.utils.UtilsAttribute;
 import com.mojang.datafixers.DataFixUtils;
 import com.mojang.datafixers.DataFixer;
@@ -16,7 +17,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.logging.Level;
 
-public class MobZombieCow extends EntityPhantom {
+public class MobZombieCow extends EntityPhantom implements RegisteredCustomMob {
     public static final String REGISTERED_NAME = "phantom_cow";
     private static EntityTypes<MobZombieCow> warpedGremlinEntityType;
 

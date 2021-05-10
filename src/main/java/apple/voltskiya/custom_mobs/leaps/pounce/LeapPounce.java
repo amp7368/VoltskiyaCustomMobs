@@ -1,17 +1,15 @@
 package apple.voltskiya.custom_mobs.leaps.pounce;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import apple.voltskiya.custom_mobs.leaps.LeapType;
 import apple.voltskiya.custom_mobs.leaps.PathfinderGoalLeap;
 import apple.voltskiya.custom_mobs.leaps.config.LeapDo;
 import apple.voltskiya.custom_mobs.leaps.config.LeapPostConfig;
+import apple.voltskiya.custom_mobs.leaps.config.LeapPreConfig;
 import apple.voltskiya.custom_mobs.leaps.sounds.LeapSounds;
 import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftLivingEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
@@ -26,12 +24,7 @@ public class LeapPounce  {
     public static final AttributeModifier NO_MOVE_ATTRIBUTE = new AttributeModifier(UUID.randomUUID(), "no_move", -100, AttributeModifier.Operation.ADDITION);
     public static final int POUNCE_STUN_TIME = 60;
 
-    public static void eatSpawnEvent(CreatureSpawnEvent event, LeapType leapType) {
-        EntityLiving creature = ((CraftLivingEntity) event.getEntity()).getHandle();
-        eatEntity(creature,leapType);
-    }
-
-    public static void eatEntity(EntityLiving creature, LeapType leapType) {
+    public static void eatEntity(EntityLiving creature, LeapPreConfig config) {
         if (creature instanceof EntityInsentient) {
             @Nullable EntityLiving lastTarget = ((EntityInsentient) creature).getGoalTarget();
 
@@ -42,7 +35,7 @@ public class LeapPounce  {
                     (entity) -> interruptedLeap(entity, lastTarget),
                     (entity) -> endLeap(entity, lastTarget)
             );
-            final PathfinderGoalLeap pounce = new PathfinderGoalLeap((EntityInsentient) creature, leapType.getLeapConfig(), postConfig);
+            final PathfinderGoalLeap pounce = new PathfinderGoalLeap((EntityInsentient) creature, config, postConfig);
             pounce.setMoveType(EnumSet.of(PathfinderGoal.Type.TARGET, PathfinderGoal.Type.JUMP));
             ((EntityInsentient) creature).goalSelector.a(0, pounce);
         }

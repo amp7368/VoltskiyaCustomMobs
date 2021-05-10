@@ -1,6 +1,7 @@
 package apple.voltskiya.custom_mobs.mobs.modified.illager.vindicator;
 
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
+import apple.voltskiya.custom_mobs.mobs.RegisteredCustomMob;
 import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
 import com.mojang.datafixers.types.Type;
 import net.minecraft.server.v1_16_R3.*;
@@ -13,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 import java.util.logging.Level;
 
-public class MobIllagerVindicatorExaminer extends EntityVindicator {
+public class MobIllagerVindicatorExaminer extends EntityVindicator implements RegisteredCustomMob {
     public static final String REGISTERED_NAME = "mob.examiner.vindicator";
     private static EntityTypes<MobIllagerVindicatorExaminer> entityTypes;
 

@@ -1,6 +1,7 @@
 package apple.voltskiya.custom_mobs.mobs.testing;
 
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
+import apple.voltskiya.custom_mobs.mobs.RegisteredCustomMob;
 import apple.voltskiya.custom_mobs.mobs.utils.UtilsAttribute;
 import com.mojang.datafixers.DataFixUtils;
 import com.mojang.datafixers.DataFixer;
@@ -14,7 +15,7 @@ import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import java.util.Map;
 import java.util.logging.Level;
 
-public class MobEndermanVex extends EntityEnderman {
+public class MobEndermanVex extends EntityEnderman implements RegisteredCustomMob {
     public static final String REGISTERED_NAME = "enderman_vex";
     private static EntityTypes<MobEndermanVex> entityTypes;
     private final AttributeMapBase attributeMap = null;

@@ -1,8 +1,8 @@
 package apple.voltskiya.custom_mobs.leaps.upwards;
 
-import apple.voltskiya.custom_mobs.leaps.LeapType;
 import apple.voltskiya.custom_mobs.leaps.PathfinderGoalLeap;
 import apple.voltskiya.custom_mobs.leaps.config.LeapPostConfig;
+import apple.voltskiya.custom_mobs.leaps.config.LeapPreConfig;
 import net.minecraft.server.v1_16_R3.EntityInsentient;
 import net.minecraft.server.v1_16_R3.EntityLiving;
 
@@ -18,8 +18,8 @@ public class PathfinderGoalLeapUpwards extends PathfinderGoalLeap {
      * @param type       the type of leap I am
      * @param postConfig provides any runtime info for the leap
      */
-    public PathfinderGoalLeapUpwards(EntityInsentient me, LeapType type, LeapPostConfig postConfig) {
-        super(me, type.getLeapConfig(), postConfig);
+    public PathfinderGoalLeapUpwards(EntityInsentient me, LeapPreConfig type, LeapPostConfig postConfig) {
+        super(me, type, postConfig);
     }
 
     /**

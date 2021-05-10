@@ -1,6 +1,7 @@
 package apple.voltskiya.custom_mobs.mobs.modified.illager.evoker;
 
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
+import apple.voltskiya.custom_mobs.mobs.RegisteredCustomMob;
 import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
 import com.mojang.datafixers.types.Type;
 import net.minecraft.server.v1_16_R3.*;
@@ -13,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 import java.util.logging.Level;
 
-public class MobIllagerEvokerExaminer extends EntityEvoker {
+public class MobIllagerEvokerExaminer extends EntityEvoker implements RegisteredCustomMob {
     public static final String REGISTERED_NAME = "mob.examiner.evoker";
     private static EntityTypes<MobIllagerEvokerExaminer> entityTypes;
 
@@ -71,7 +72,7 @@ public class MobIllagerEvokerExaminer extends EntityEvoker {
     }
 
     private void prepare(Location location, NBTTagCompound oldNbt) {
-        if (oldNbt != null){
+        if (oldNbt != null) {
             oldNbt.remove("UUID");
             this.load(oldNbt);
         }

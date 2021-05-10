@@ -18,6 +18,7 @@ public class AngeredSoulScream implements Runnable {
     private Vector velocity = null;
     private int soundTick = 0;
     private int velocityTick = 0;
+    private boolean ran = false;
 
     public AngeredSoulScream(MobAngeredSoul me) {
         this.me = me;
@@ -26,16 +27,18 @@ public class AngeredSoulScream implements Runnable {
 
     @Override
     public void run() {
+        if (this.ran) return;
+        this.ran = true;
         @Nullable EntityLiving targetEntity = this.me.getGoalTarget();
         final Location myLocation = this.me.getBukkitEntity().getLocation();
         this.velocity = (targetEntity == null) ?
                 myLocation.getDirection() :
                 targetEntity.getBukkitEntity().getLocation().toVector().subtract(myLocation.toVector()).normalize().multiply(VELOCITY);
-        this.me.getBukkitEntity().teleport(this.me.getBukkitEntity().getLocation().setDirection(velocity));
         this.firstSound();
-        Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), this::sound, 27);
+        for (int i = 0; i < 27; i += 3) {
+            Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), this::face, i);
+        }
         Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), this::postRun, 27);
-        postRun();
     }
 
     private void postRun() {
@@ -44,7 +47,13 @@ public class AngeredSoulScream implements Runnable {
         this.velocity = (targetEntity == null) ?
                 myLocation.getDirection() :
                 targetEntity.getBukkitEntity().getLocation().toVector().subtract(myLocation.toVector()).normalize().multiply(VELOCITY);
+        face();
+        this.sound();
         this.velocity();
+    }
+
+    private void face() {
+        this.bukkitMe.teleport(this.bukkitMe.getLocation().setDirection(velocity));
     }
 
     private void velocity() {

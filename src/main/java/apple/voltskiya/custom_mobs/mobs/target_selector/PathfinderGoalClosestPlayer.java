@@ -1,6 +1,6 @@
 package apple.voltskiya.custom_mobs.mobs.target_selector;
 
-import apple.voltskiya.custom_mobs.PluginDisable;
+import apple.voltskiya.custom_mobs.reload.PluginDisable;
 import net.minecraft.server.v1_16_R3.EntityHuman;
 import net.minecraft.server.v1_16_R3.EntityInsentient;
 import net.minecraft.server.v1_16_R3.PathfinderGoal;
@@ -17,8 +17,8 @@ public class PathfinderGoalClosestPlayer extends PathfinderGoal {
     private final EntityInsentient me;
     private final double sight;
     private final boolean seeThroughBlocks;
-    private Random random = new Random();
-    private int checkInterval = 10;
+    private final Random random = new Random();
+    private final int checkInterval = 10;
     private EntityHuman newTarget = null;
     private boolean isRunning = false;
 
@@ -41,7 +41,6 @@ public class PathfinderGoalClosestPlayer extends PathfinderGoal {
                     this.me.locZ(),
                     this.me.getBoundingBox().grow(sight, sight / 2, sight)
             );
-            System.out.println(player);
             if ((this.newTarget = player) == null) {
                 return false;
             } else {

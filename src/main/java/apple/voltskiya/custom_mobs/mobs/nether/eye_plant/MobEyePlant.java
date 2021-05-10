@@ -1,6 +1,7 @@
 package apple.voltskiya.custom_mobs.mobs.nether.eye_plant;
 
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
+import apple.voltskiya.custom_mobs.mobs.RegisteredCustomMob;
 import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
 import apple.voltskiya.custom_mobs.mobs.parts.*;
 import apple.voltskiya.custom_mobs.mobs.utils.UtilsPacket;
@@ -19,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
-public class MobEyePlant extends EntityZombie {
+public class MobEyePlant extends EntityZombie implements RegisteredCustomMob {
     public static final NmsModelConfig.ModelConfigName REGISTERED_MODEL = NmsModelConfig.ModelConfigName.EYE_PLANT;
     public static final String REGISTERED_NAME = REGISTERED_MODEL.getFile();
     private static EntityTypes<MobEyePlant> entityTypes;

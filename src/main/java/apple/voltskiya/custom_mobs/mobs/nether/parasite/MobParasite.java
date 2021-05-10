@@ -2,14 +2,15 @@ package apple.voltskiya.custom_mobs.mobs.nether.parasite;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
+import apple.voltskiya.custom_mobs.mobs.RegisteredCustomMob;
 import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
 import apple.voltskiya.custom_mobs.mobs.parts.MobPartChild;
 import apple.voltskiya.custom_mobs.mobs.parts.MobPartMother;
 import apple.voltskiya.custom_mobs.mobs.parts.NmsModelConfig;
 import apple.voltskiya.custom_mobs.mobs.parts.NmsModelConfig.ModelConfigName;
 import apple.voltskiya.custom_mobs.mobs.parts.NmsModelEntityConfig;
-import apple.voltskiya.custom_mobs.mobs.pathfinders.PathfinderGoalCraveBlock;
 import apple.voltskiya.custom_mobs.mobs.utils.UtilsPacket;
+import apple.voltskiya.custom_mobs.pathfinders.PathfinderGoalCraveBlock;
 import com.mojang.datafixers.types.Type;
 import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.Bukkit;
@@ -27,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
-public class MobParasite extends EntityZombie {
+public class MobParasite extends EntityZombie implements RegisteredCustomMob {
     public static final ModelConfigName REGISTERED_MODEL = ModelConfigName.PARASITE;
     public static final String REGISTERED_NAME = REGISTERED_MODEL.getFile();
     private static EntityTypes<MobParasite> entityTypes;

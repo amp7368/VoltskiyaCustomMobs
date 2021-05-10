@@ -1,9 +1,10 @@
 package apple.voltskiya.custom_mobs.mobs.nether.angered_soul;
 
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
+import apple.voltskiya.custom_mobs.mobs.RegisteredCustomMob;
 import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
-import apple.voltskiya.custom_mobs.mobs.pathfinders.PathfinderGoalApproachSlowly;
 import apple.voltskiya.custom_mobs.mobs.target_selector.PathfinderGoalClosestPlayer;
+import apple.voltskiya.custom_mobs.pathfinders.PathfinderGoalApproachSlowly;
 import com.mojang.datafixers.types.Type;
 import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.Location;
@@ -20,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
-public class MobAngeredSoul extends EntitySkeleton {
+public class MobAngeredSoul extends EntitySkeleton implements RegisteredCustomMob {
     public static final String REGISTERED_NAME = "angered_soul";
     private static final double SIGHT = 100;
     private static EntityTypes<MobAngeredSoul> entityTypes;
@@ -127,18 +128,7 @@ public class MobAngeredSoul extends EntitySkeleton {
                 final EntityLiving handle = ((CraftLivingEntity) nearby).getHandle();
                 if (handle != this)
                     if (!handle.isBlocking())
-                        handle.damageEntity(DamageSource.explosion(new Explosion(
-                                this.world,
-                                null,
-                                null,
-                                null,
-                                1,
-                                1,
-                                1,
-                                0,
-                                false,
-                                Explosion.Effect.NONE
-                        )), 7f);
+                        handle.damageEntity(DamageSource.OUT_OF_WORLD, 10f);
             }
             final Location location = this.getBukkitEntity().getLocation();
             location.getWorld().spawnParticle(org.bukkit.Particle.EXPLOSION_LARGE, location, 1);

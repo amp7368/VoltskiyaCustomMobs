@@ -1,10 +1,11 @@
 package apple.voltskiya.custom_mobs.leaps;
 
-import apple.voltskiya.custom_mobs.PluginDisable;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.leaps.config.LeapDo;
 import apple.voltskiya.custom_mobs.leaps.config.LeapPostConfig;
 import apple.voltskiya.custom_mobs.leaps.config.LeapPreConfig;
+import apple.voltskiya.custom_mobs.reload.PluginDisable;
+import apple.voltskiya.custom_mobs.util.constants.TagConstants;
 import net.minecraft.server.v1_16_R3.EntityInsentient;
 import net.minecraft.server.v1_16_R3.EntityLiving;
 import net.minecraft.server.v1_16_R3.PathfinderGoal;
@@ -42,7 +43,7 @@ public class PathfinderGoalLeap extends PathfinderGoal {
      */
     @Override
     public boolean a() {
-        if (this.random.nextInt(config.getCheckInterval()) == 0) {
+        if (this.random.nextInt(config.getCheckInterval()) == 0 && !this.me.getScoreboardTags().contains(TagConstants.isDoingAbility)) {
             final Location themLocation = this.getGoalLocation();
             if (themLocation == null) return false;
             final Location meLocation = this.me.getBukkitEntity().getLocation();
@@ -107,7 +108,6 @@ public class PathfinderGoalLeap extends PathfinderGoal {
     @Override
     public void d() {
         // quit going to the location
-
         this.currentLeap = null;
     }
 

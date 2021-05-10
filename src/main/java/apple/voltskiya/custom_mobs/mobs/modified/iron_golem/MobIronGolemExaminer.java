@@ -1,8 +1,9 @@
 package apple.voltskiya.custom_mobs.mobs.modified.iron_golem;
 
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
+import apple.voltskiya.custom_mobs.mobs.RegisteredCustomMob;
 import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
-import apple.voltskiya.custom_mobs.mobs.pathfinders.PathfinderGoalHurtByTargetExcept;
+import apple.voltskiya.custom_mobs.pathfinders.utilities.PathfinderGoalHurtByTargetExcept;
 import com.mojang.datafixers.types.Type;
 import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.Location;
@@ -14,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 import java.util.logging.Level;
 
-public class MobIronGolemExaminer extends EntityIronGolem {
+public class MobIronGolemExaminer extends EntityIronGolem implements RegisteredCustomMob {
     public static final String REGISTERED_NAME = "mob.examiner.iron_golem";
     private static EntityTypes<MobIronGolemExaminer> entityTypes;
 

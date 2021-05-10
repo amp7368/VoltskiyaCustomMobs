@@ -1,6 +1,7 @@
 package apple.voltskiya.custom_mobs.mobs.testing;
 
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
+import apple.voltskiya.custom_mobs.mobs.RegisteredCustomMob;
 import apple.voltskiya.custom_mobs.mobs.parts.*;
 import apple.voltskiya.custom_mobs.mobs.utils.UtilsAttribute;
 import apple.voltskiya.custom_mobs.mobs.utils.UtilsPacket;
@@ -19,7 +20,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
-public class MobMiscCustomModel extends EntityZombie {
+public class MobMiscCustomModel extends EntityZombie implements RegisteredCustomMob {
     private NmsModelEntityConfig selfModel;
     private EntityTypes<?> selfModelType;
     private final AttributeMapBase attributeMap = null;

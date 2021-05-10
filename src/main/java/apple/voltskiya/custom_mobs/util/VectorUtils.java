@@ -20,6 +20,7 @@ public class VectorUtils {
         return new Vector(x2New - x1New, y, z2New - z1New);
     }
 
+    @NotNull
     public static Vector rotateVector(double facingX, double facingZ, double facingY, double rotation) {
         double angleStarting = Math.atan2(facingZ, facingX);
         angleStarting += rotation;
@@ -35,7 +36,8 @@ public class VectorUtils {
      * @param isModifyEntity whether to modify the specified entity's location
      * @return the new rotated loaction
      */
-    public static @NotNull Location rotate(EntityLocation entityLocation, float yaw, Location center, boolean isModifyEntity) {
+    @NotNull
+    public static Location rotate(EntityLocation entityLocation, float yaw, Location center, boolean isModifyEntity) {
         Location l = new Location(null, 0, 0, 0, yaw % 360, 0);
         return rotate(entityLocation, l.getDirection(), center, isModifyEntity);
     }
@@ -83,6 +85,22 @@ public class VectorUtils {
         double x = velocity.getX();
         double y = velocity.getY();
         double z = velocity.getZ();
+        return magnitude(x, y, z);
+    }
+
+    public static double magnitude(double x, double y, double z) {
         return Math.sqrt(x * x + y * y + z * z);
+    }
+
+    public static double magnitude(double x, double y) {
+        return Math.sqrt(x * x + y * y);
+    }
+
+    public static double dot(double a1, double a2, double b1, double b2) {
+        return a1 * b1 + a2 * b2;
+    }
+
+    public static double dot(double a1, double a2, double a3, double b1, double b2, double b3) {
+        return a1 * b1 + a2 * b2 + a3 * b3;
     }
 }

@@ -1,18 +1,22 @@
 package apple.voltskiya.custom_mobs.leaps.config;
 
-import apple.voltskiya.custom_mobs.ConfigManager;
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import apple.voltskiya.custom_mobs.leaps.LeapPlugin;
+import apple.voltskiya.custom_mobs.leaps.misc.LeapSpecificMisc;
+import apple.voltskiya.custom_mobs.mobs.ConfigManager;
+import apple.voltskiya.custom_mobs.mobs.YmlSettings;
+import apple.voltskiya.custom_mobs.sql.MobListSql;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftMob;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.sql.SQLException;
+import java.util.*;
 
 
 public class LeapConfigManager extends ConfigManager {
@@ -35,6 +39,30 @@ public class LeapConfigManager extends ConfigManager {
                 }
             }
         }
+        registerLeaps();
+    }
+
+    private void registerLeaps() {
+        for (Map.Entry<String, LeapPreConfig> leapType : leapTypeNames.entrySet()) {
+            try {
+                MobListSql.registerName(leapType.getKey());
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+            List<UUID> uuids = null;
+            try {
+                uuids = MobListSql.getMobs(getName());
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+            if (uuids == null) continue;
+            for (UUID uuid : uuids) {
+                org.bukkit.entity.Entity mob = Bukkit.getEntity(uuid);
+                if (mob instanceof CraftMob)
+                    LeapSpecificMisc.eatEntity(((CraftMob) mob).getHandle(), leapType.getValue());
+                else MobListSql.removeMob(uuid);
+            }
+        }
     }
 
     public static LeapConfigManager get() {
@@ -42,8 +70,8 @@ public class LeapConfigManager extends ConfigManager {
     }
 
     @Nullable
-    public final LeapPreConfig getLeap(String name) {
-        return leapTypeNames.get(name);
+    public static LeapPreConfig getLeap(String name) {
+        return get().leapTypeNames.get(name);
     }
 
     @Override
@@ -52,7 +80,7 @@ public class LeapConfigManager extends ConfigManager {
     }
 
     @Override
-    public apple.voltskiya.custom_mobs.YmlSettings[] getSettings() {
+    public YmlSettings[] getSettings() {
         return LeapYmlSettings.values();
     }
 
@@ -61,7 +89,7 @@ public class LeapConfigManager extends ConfigManager {
         return LeapPlugin.get();
     }
 
-    private enum LeapYmlSettings implements apple.voltskiya.custom_mobs.YmlSettings {
+    private enum LeapYmlSettings implements YmlSettings {
         TIME_FULL("time_full", 17),
         PEAK("peak", 6),
         DISTANCE_MIN("distance_min", 5.0),

@@ -1,6 +1,6 @@
 package apple.voltskiya.custom_mobs.util;
 
-import apple.voltskiya.custom_mobs.abilities.tick.Tickable;
+import apple.voltskiya.custom_mobs.mobs.abilities.tick.Tickable;
 import apple.voltskiya.custom_mobs.ticking.HighFrequencyTick;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
