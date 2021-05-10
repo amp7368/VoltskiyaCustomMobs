@@ -60,16 +60,15 @@ public class PathfinderGoalLeap extends PathfinderGoal {
 
 
     /**
-     * @return round 2 of whether I want to run ?
+     * @return whether to keep running the pathfinder
      */
     @Override
     public boolean b() {
         // navigationAbstract.m() returns true if the entity is *not* navigating anywhere
-        return this.a() && VoltskiyaPlugin.get().isEnabled();
+        return this.a() && VoltskiyaPlugin.get().isEnabled() && (currentLeap == null || !currentLeap.isLeaping());
     }
 
     /**
-     * todo does something I'm sure
      *
      * @return something
      */

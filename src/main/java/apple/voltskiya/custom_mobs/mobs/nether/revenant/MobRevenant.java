@@ -18,6 +18,7 @@ import java.util.logging.Level;
 public class MobRevenant extends EntitySkeleton implements RegisteredCustomMob {
     public static final String REGISTERED_NAME = "revenant";
     private static EntityTypes<MobRevenant> entityTypes;
+    private AttributeMapBase attributeMap = null;
 
     public MobRevenant(EntityTypes<? extends EntitySkeleton> entitytypes, World world) {
         super(EntityTypes.SKELETON, world);
@@ -45,6 +46,17 @@ public class MobRevenant extends EntitySkeleton implements RegisteredCustomMob {
     @Override
     public EntityTypes<?> getEntityType() {
         return entityTypes;
+    }
+
+    @Override
+    public AttributeMapBase getAttributeMap() {
+        return this.attributeMap == null ? this.attributeMap = new AttributeMapBase(getAttributeProvider()) : this.attributeMap;
+    }
+
+    public AttributeProvider getAttributeProvider() {
+        return EntitySkeleton.eR()
+                .a(GenericAttributes.FOLLOW_RANGE, 50)
+                .a();
     }
 
     /**
@@ -91,11 +103,13 @@ public class MobRevenant extends EntitySkeleton implements RegisteredCustomMob {
         return data;
     }
 
+    @Override
+    public void eL() {
+        // do no special pathfinding
+    }
 
     @Override
     protected void initPathfinder() {
-        final AttributeModifiable followRange = this.getAttributeInstance(GenericAttributes.FOLLOW_RANGE);
-        if (followRange != null) followRange.setValue(50);
         super.initPathfinder();
         this.goalSelector.a(4, new PathfinderGoalBowShootNoBow<>(this, 1.0D, 20, 15.0F));
     }

@@ -1,4 +1,4 @@
-package apple.voltskiya.custom_mobs.util;
+package apple.voltskiya.custom_mobs.util.minecraft;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class InventoryManagement {
+public class InventoryUtils {
     public static ItemStack makeItem(Material material, int amount, @Nullable String name, @Nullable List<String> lore) {
         final ItemStack item = new ItemStack(material, amount);
 
