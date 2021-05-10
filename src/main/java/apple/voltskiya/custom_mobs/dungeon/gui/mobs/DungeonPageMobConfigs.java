@@ -25,7 +25,8 @@ public class DungeonPageMobConfigs extends InventoryGuiPageScrollable {
     @Override
     public void setSlots() {
         super.setSlots();
-        setSlot(new InventoryGuiSlotGeneric((e1) -> dungeonGui.nextPage(-1), InventoryUtils.makeItem(Material.GREEN_TERRACOTTA, 1, "Back", null)));
+        setSlot(new InventoryGuiSlotGeneric((e1) -> dungeonGui.nextPage(-1),
+                InventoryUtils.makeItem(Material.GREEN_TERRACOTTA, 1, "Back", null)));
     }
 
     @Override

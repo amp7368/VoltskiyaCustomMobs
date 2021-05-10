@@ -1,5 +1,11 @@
 package apple.voltskiya.custom_mobs.dungeon;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +22,14 @@ public class DungeonMobConfig {
         this.nameToRepresentMob = configName;
     }
 
+    public DungeonMobConfig(JsonObject loadFrom) throws CommandSyntaxException {
+        nameToRepresentMob = loadFrom.get(DungeonScanner.JsonKeys.MOB_CONFIG_NAME).getAsString();
+        JsonArray mobsJson = loadFrom.get(DungeonScanner.JsonKeys.MOB_CONFIG_MOBS).getAsJsonArray();
+        for (JsonElement element : mobsJson) {
+            mobs.add(new DungeonMobInfo(element.getAsJsonObject()));
+        }
+    }
+
     public void add(DungeonMobInfo mob) {
         this.mobs.add(mob);
     }
@@ -26,5 +40,17 @@ public class DungeonMobConfig {
 
     public List<DungeonMobInfo> getMobs() {
         return mobs;
+    }
+
+    public JsonElement toJson() {
+        JsonObject json = new JsonObject();
+        json.add(DungeonScanner.JsonKeys.MOB_CONFIG_NAME, new JsonPrimitive(nameToRepresentMob));
+        final JsonArray jsonMobs = new JsonArray();
+        for (DungeonMobInfo mob : mobs) {
+            jsonMobs.add(mob.toJson());
+        }
+        json.add(DungeonScanner.JsonKeys.MOB_CONFIG_MOBS, jsonMobs);
+
+        return json;
     }
 }
