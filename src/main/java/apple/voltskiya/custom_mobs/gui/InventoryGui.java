@@ -38,8 +38,9 @@ public abstract class InventoryGui implements InventoryHolder {
         update(viewers);
     }
 
+    @NotNull
     @Override
-    public @NotNull Inventory getInventory() {
+    public Inventory getInventory() {
         return getPage().getInventory();
     }
 
@@ -69,10 +70,10 @@ public abstract class InventoryGui implements InventoryHolder {
         event.setCancelled(true);
     }
 
-    public interface InventoryGuiPage {
+    public interface InventoryGuiPage extends InventoryHolder {
         String getName();
 
-        Inventory getInventory();
+        @NotNull Inventory getInventory();
 
         void fillInventory();
 

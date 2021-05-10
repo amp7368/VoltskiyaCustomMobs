@@ -1,6 +1,6 @@
-package apple.voltskiya.custom_mobs.dungeon.gui.mobs;
+package apple.voltskiya.custom_mobs.dungeon.gui;
 
-import apple.voltskiya.custom_mobs.dungeon.gui.DungeonGui;
+import apple.voltskiya.custom_mobs.dungeon.gui.mob_configs.DungeonMobConfigSlot;
 import apple.voltskiya.custom_mobs.dungeon.scanner.DungeonMobConfig;
 import apple.voltskiya.custom_mobs.gui.InventoryGuiPageScrollable;
 import apple.voltskiya.custom_mobs.gui.InventoryGuiSlotGeneric;
@@ -26,7 +26,9 @@ public class DungeonPageMobConfigs extends InventoryGuiPageScrollable {
     public void setSlots() {
         super.setSlots();
         setSlot(new InventoryGuiSlotGeneric((e1) -> dungeonGui.nextPage(-1),
-                InventoryUtils.makeItem(Material.GREEN_TERRACOTTA, 1, "Back", null)));
+                InventoryUtils.makeItem(Material.GREEN_TERRACOTTA, 1, "Previous Page", null)), 0);
+        setSlot(new InventoryGuiSlotGeneric((e1) -> dungeonGui.nextPage(1), InventoryUtils.makeItem(Material.GREEN_TERRACOTTA, 1, "Next Page", null)
+        ), 8);
     }
 
     @Override

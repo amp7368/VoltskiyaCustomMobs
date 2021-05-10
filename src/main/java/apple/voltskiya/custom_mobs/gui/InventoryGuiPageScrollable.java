@@ -22,8 +22,9 @@ public abstract class InventoryGuiPageScrollable extends InventoryGuiPageSimple 
             if (clicking[i] instanceof InventoryGuiSlotScrollable) {
                 if (scrollableIndex < scrollables.size()) {
                     this.setSlot(scrollables.get(scrollableIndex++), i);
+                } else {
+                    this.setSlot(InventoryGuiSlotScrollable.get());
                 }
-                this.setSlot(InventoryGuiSlotScrollable.get());
             }
         }
         super.fillInventory();
@@ -35,9 +36,9 @@ public abstract class InventoryGuiPageScrollable extends InventoryGuiPageSimple 
                 setSlot(InventoryGuiSlotScrollable.get(), i);
         }
         setSlot(new InventoryGuiSlotGeneric((e) -> this.next(-getScrollIncrement()),
-                InventoryUtils.makeItem(Material.REDSTONE_TORCH, 1, "Up", null)), 8);
+                InventoryUtils.makeItem(Material.REDSTONE_TORCH, 1, "Up", null)), 17);
         setSlot(new InventoryGuiSlotGeneric((e) -> this.next(getScrollIncrement()),
-                InventoryUtils.makeItem(Material.LEVER, 1, "Down", null)), 17);
+                InventoryUtils.makeItem(Material.LEVER, 1, "Down", null)), 26);
     }
 
 

@@ -1,6 +1,7 @@
 package apple.voltskiya.custom_mobs.dungeon;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
+import apple.voltskiya.custom_mobs.dungeon.scanned.DungeonScanned;
 import apple.voltskiya.custom_mobs.dungeon.scanner.DungeonScanner;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
@@ -21,7 +22,7 @@ public class DungeonCommand extends BaseCommand {
     public DungeonCommand() {
         VoltskiyaPlugin.get().getCommandManager().registerCommand(this);
         VoltskiyaPlugin.get().getCommandManager().getCommandCompletions().registerCompletion("dungeon-scanners", DungeonScanner::getSchematics);
-        VoltskiyaPlugin.get().getCommandManager().getCommandCompletions().registerCompletion("dungeon-instances", DungeonScanner::getSchematics);
+        VoltskiyaPlugin.get().getCommandManager().getCommandCompletions().registerCompletion("dungeon-instances", DungeonScanned::getSchematics);
     }
 
     @Subcommand("load")

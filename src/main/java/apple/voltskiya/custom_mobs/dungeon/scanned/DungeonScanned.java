@@ -3,6 +3,7 @@ package apple.voltskiya.custom_mobs.dungeon.scanned;
 import apple.voltskiya.custom_mobs.dungeon.PluginDungeon;
 import apple.voltskiya.custom_mobs.dungeon.scanner.DungeonMobConfig;
 import apple.voltskiya.custom_mobs.dungeon.scanner.DungeonScanner;
+import co.aikar.commands.BukkitCommandCompletionContext;
 import com.google.gson.*;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import org.bukkit.Location;
@@ -16,9 +17,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class DungeonScanned {
     private final DungeonScanner dungeonScanner;
@@ -127,5 +126,16 @@ public class DungeonScanned {
         final FileWriter writer = new FileWriter(file);
         new Gson().toJson(toJson(), writer);
         writer.close();
+    }
+
+    public static Collection<String> getSchematics(BukkitCommandCompletionContext bukkitCommandCompletionContext) {
+        final String[] files = getDungeonFolder().list((f, name) -> name.endsWith(".json"));
+        if (files == null) return Collections.singleton("");
+        for (int i = 0; i < files.length; i++) files[i] = files[i].substring(0, files[i].length() - 5);
+        return Arrays.asList(files);
+    }
+
+    public List<DungeonMobScanned> getMobs() {
+        return mobs;
     }
 }

@@ -17,8 +17,8 @@ public class DungeonPageSettings1 extends InventoryGuiPageSimple {
     public DungeonPageSettings1(DungeonGui holder) {
         super(holder);
         this.dungeonGui = holder;
-        setSlot(new Pos1(), 1);
-        setSlot(new Pos2(), 2);
+        setSlot(new Pos1(), 2);
+        setSlot(new Pos2(), 3);
         setSlot(new InventoryGuiSlotGeneric((e1) -> holder.nextPage(1), InventoryUtils.makeItem(Material.GREEN_TERRACOTTA, 1, "Next Page", null)
         ), 8);
     }

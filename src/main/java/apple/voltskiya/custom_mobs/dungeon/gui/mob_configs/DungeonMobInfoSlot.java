@@ -1,9 +1,8 @@
-package apple.voltskiya.custom_mobs.dungeon.gui.mobs;
+package apple.voltskiya.custom_mobs.dungeon.gui.mob_configs;
 
 import apple.voltskiya.custom_mobs.dungeon.gui.DungeonGui;
 import apple.voltskiya.custom_mobs.dungeon.scanner.DungeonMobInfo;
 import apple.voltskiya.custom_mobs.gui.InventoryGuiSlotScrollable;
-import apple.voltskiya.custom_mobs.util.minecraft.InventoryUtils;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -23,6 +22,6 @@ public class DungeonMobInfoSlot extends InventoryGuiSlotScrollable {
 
     @Override
     public ItemStack getItem() {
-        return InventoryUtils.makeItem(mob.getSpawnEgg(), 1, mob.getName(), null);
+        return mob.toItem();
     }
 }

@@ -1,33 +1,25 @@
 package apple.voltskiya.custom_mobs.dungeon.gui;
 
-import apple.voltskiya.custom_mobs.gui.InventoryGui;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.Inventory;
+import apple.voltskiya.custom_mobs.gui.InventoryGuiPageScrollable;
+import org.bukkit.inventory.InventoryHolder;
 
-public class DungeonPageChests implements InventoryGui.InventoryGuiPage {
+public class DungeonPageChests extends InventoryGuiPageScrollable {
+    public DungeonPageChests(InventoryHolder holder) {
+        super(holder);
+    }
+
     @Override
     public String getName() {
-        return null;
-    }
-
-    @Override
-    public Inventory getInventory() {
-        return null;
-    }
-
-    @Override
-    public void fillInventory() {
-
-    }
-
-
-    @Override
-    public void dealWithClick(InventoryClickEvent event) {
-
+        return "Chests";
     }
 
     @Override
     public int size() {
-        return 0;
+        return 54;
+    }
+
+    @Override
+    protected int getScrollIncrement() {
+        return 9;
     }
 }

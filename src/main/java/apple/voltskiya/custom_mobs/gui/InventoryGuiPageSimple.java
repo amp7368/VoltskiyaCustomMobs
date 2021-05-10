@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -24,7 +25,7 @@ public abstract class InventoryGuiPageSimple implements InventoryGui.InventoryGu
     }
 
     @Override
-    public Inventory getInventory() {
+    public @NotNull Inventory getInventory() {
         return inventory;
     }
 
@@ -48,5 +49,4 @@ public abstract class InventoryGuiPageSimple implements InventoryGui.InventoryGu
         if (slot < 0 || slot >= clicking.length) return;
         clicking[slot].dealWithClick(event);
     }
-
 }

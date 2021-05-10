@@ -1,12 +1,16 @@
 package apple.voltskiya.custom_mobs.dungeon.scanner;
 
+import apple.voltskiya.custom_mobs.util.minecraft.InventoryUtils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -52,5 +56,13 @@ public class DungeonMobConfig {
         json.add(DungeonScanner.JsonKeys.MOB_CONFIG_MOBS, jsonMobs);
 
         return json;
+    }
+
+    public ItemStack toItem() {
+        return InventoryUtils.makeItem(
+                Material.ARMOR_STAND,
+                1,
+                this.getName(),
+                Collections.emptyList());
     }
 }

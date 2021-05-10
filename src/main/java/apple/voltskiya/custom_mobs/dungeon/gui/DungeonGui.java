@@ -1,6 +1,5 @@
 package apple.voltskiya.custom_mobs.dungeon.gui;
 
-import apple.voltskiya.custom_mobs.dungeon.gui.mobs.DungeonPageMobConfigs;
 import apple.voltskiya.custom_mobs.dungeon.scanner.DungeonScanner;
 import apple.voltskiya.custom_mobs.gui.InventoryGui;
 import org.bukkit.entity.Player;
@@ -14,8 +13,8 @@ public class DungeonGui extends InventoryGui {
         this.dungeonScanner = dungeonScanner;
         addPage(new DungeonPageSettings1(this),
                 new DungeonPageMobConfigs(this),
-                new DungeonPageMobs(),
-                new DungeonPageChests()
+                new DungeonPageMobs(this),
+                new DungeonPageChests(this)
         );
         this.player.openInventory(this.getInventory());
     }

@@ -175,8 +175,11 @@ public class DungeonScanner {
 
     public @Nullable DungeonMobConfig getMobConfig(Entity e) {
         for (String tag : e.getScoreboardTags()) {
-            DungeonMobConfig config = this.nameToMobConfig.get(tag);
-            if (config != null) return config;
+            if (tag.startsWith(DungeonMobConfig.PREFIX_TAG)) {
+                String configName = tag.substring(DungeonMobConfig.PREFIX_TAG.length());
+                DungeonMobConfig config = this.nameToMobConfig.get(configName);
+                if (config != null) return config;
+            }
         }
         return null;
     }
@@ -187,6 +190,11 @@ public class DungeonScanner {
 
     public @Nullable DungeonMobConfig getMobConfig(String name) {
         return this.nameToMobConfig.get(name);
+    }
+
+    @Nullable
+    public DungeonScanned getDungeonInstance() {
+        return currentScannedDungeon;
     }
 
     public static class JsonKeys {

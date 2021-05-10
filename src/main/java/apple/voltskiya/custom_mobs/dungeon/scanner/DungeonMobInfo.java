@@ -1,5 +1,6 @@
 package apple.voltskiya.custom_mobs.dungeon.scanner;
 
+import apple.voltskiya.custom_mobs.util.minecraft.InventoryUtils;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
@@ -10,6 +11,7 @@ import net.minecraft.server.v1_16_R3.NBTTagCompound;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
 import org.bukkit.entity.Entity;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * a single mob
@@ -42,5 +44,9 @@ public class DungeonMobInfo {
         JsonObject json = new JsonObject();
         json.add(DungeonScanner.JsonKeys.MOB_CONFIG_NBT, new JsonPrimitive(nbt.asString()));
         return json;
+    }
+
+    public ItemStack toItem() {
+        return InventoryUtils.makeItem(this.getSpawnEgg(), 1, this.getName(), null);
     }
 }
