@@ -1,6 +1,6 @@
 package apple.voltskiya.custom_mobs.pathfinders;
 
-import apple.voltskiya.custom_mobs.PluginDisable;
+import apple.voltskiya.custom_mobs.disable.PluginDisable;
 import net.minecraft.server.v1_16_R3.EntityMonster;
 import net.minecraft.server.v1_16_R3.IRangedEntity;
 import net.minecraft.server.v1_16_R3.PathfinderGoalBowShoot;

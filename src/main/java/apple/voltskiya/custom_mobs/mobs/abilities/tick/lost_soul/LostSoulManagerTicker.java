@@ -1,29 +1,26 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.tick.lost_soul;
 
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
+import apple.voltskiya.custom_mobs.mobs.ConfigManager;
+import apple.voltskiya.custom_mobs.mobs.RegisteredEntityEater;
 import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
-import apple.voltskiya.custom_mobs.mobs.abilities.tick.SpawnEater;
 import apple.voltskiya.custom_mobs.ticking.HighFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.LowFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.NormalFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.TickGiverable;
 import apple.voltskiya.custom_mobs.util.DistanceUtils;
 import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Vex;
-import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
-public class LostSoulManagerTicker extends SpawnEater {
+public class LostSoulManagerTicker extends ConfigManager implements RegisteredEntityEater {
     protected final double DAMAGE_AMOUNT;
     private static LostSoulManagerTicker instance;
     private final Map<Closeness, LostSoulIndividualTicker> closenessToVexes = new HashMap<>() {{
@@ -35,12 +32,6 @@ public class LostSoulManagerTicker extends SpawnEater {
         instance = this;
         closenessToVexes.get(Closeness.HIGH_CLOSE).setIsCheckCollision();
         DAMAGE_AMOUNT = (double) getValueOrInit(YmlSettings.DAMAGE_AMOUNT.getPath());
-        for (UUID mob : getMobs()) {
-            @Nullable Entity striker = Bukkit.getEntity(mob);
-            if (!(striker instanceof Vex)) continue;
-            Closeness closeness = determineConcern((Vex) striker);
-            closenessToVexes.get(closeness).giveVex((Vex) striker);
-        }
     }
 
     public static LostSoulManagerTicker get() {
@@ -48,13 +39,13 @@ public class LostSoulManagerTicker extends SpawnEater {
     }
 
     @Override
-    public void eatEvent(CreatureSpawnEvent event) {
-        if (event.getEntity().getType() == EntityType.VEX) {
+    public void eatEntity(Mob entity) {
+        if (entity instanceof Vex) {
             // this is a vex
-            final Vex vex = (Vex) event.getEntity();
+            final Vex vex = (Vex) entity;
             Closeness closeness = determineConcern(vex);
             closenessToVexes.get(closeness).giveVex(vex);
-            addMobs(vex.getUniqueId());
+            addMob(vex.getUniqueId());
         }
     }
 
@@ -64,7 +55,7 @@ public class LostSoulManagerTicker extends SpawnEater {
     }
 
     @Override
-    public apple.voltskiya.custom_mobs.YmlSettings[] getSettings() {
+    public apple.voltskiya.custom_mobs.mobs.YmlSettings[] getSettings() {
         return YmlSettings.values();
     }
 
@@ -131,7 +122,7 @@ public class LostSoulManagerTicker extends SpawnEater {
         }
     }
 
-    private enum YmlSettings implements apple.voltskiya.custom_mobs.YmlSettings {
+    private enum YmlSettings implements apple.voltskiya.custom_mobs.mobs.YmlSettings {
         DAMAGE_AMOUNT("damageAmount", 2d);
 
         private final String path;

@@ -1,7 +1,7 @@
 package apple.voltskiya.custom_mobs.pathfinders.spell;
 
-import apple.voltskiya.custom_mobs.PluginDisable;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
+import apple.voltskiya.custom_mobs.disable.PluginDisable;
 import apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.micro_misles.MicroMissileManager;
 import apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.micro_misles.MicroMissleShooter;
 import net.minecraft.server.v1_16_R3.EntityInsentient;

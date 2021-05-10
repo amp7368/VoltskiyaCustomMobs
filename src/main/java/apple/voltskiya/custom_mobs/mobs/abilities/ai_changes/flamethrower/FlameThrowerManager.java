@@ -1,21 +1,18 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.flamethrower;
 
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
+import apple.voltskiya.custom_mobs.mobs.ConfigManager;
+import apple.voltskiya.custom_mobs.mobs.RegisteredEntityEater;
 import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
-import apple.voltskiya.custom_mobs.mobs.abilities.tick.SpawnEater;
 import apple.voltskiya.custom_mobs.pathfinders.spell.PathfinderGoalShootSpell;
 import net.minecraft.server.v1_16_R3.EntityInsentient;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftMob;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Mob;
-import org.bukkit.event.entity.CreatureSpawnEvent;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
 
-public class FlameThrowerManager extends SpawnEater {
+public class FlameThrowerManager extends ConfigManager implements RegisteredEntityEater {
     public Map<String, FlamethrowerType> tagToFlamethrowerType;
 
     public FlameThrowerManager() throws IOException {
@@ -29,7 +26,7 @@ public class FlameThrowerManager extends SpawnEater {
         };
     }
 
-    private void eatEntity(EntityInsentient entity) {
+    public void eatEntity(EntityInsentient entity) {
         for (String tag : entity.getScoreboardTags()) {
             FlamethrowerType type = tagToFlamethrowerType.get(tag);
             if (type != null) {
@@ -38,19 +35,6 @@ public class FlameThrowerManager extends SpawnEater {
         }
     }
 
-    @Override
-    public void eatEvent(CreatureSpawnEvent event) {
-        LivingEntity e = event.getEntity();
-        if (e instanceof Mob) {
-            EntityInsentient entity = ((CraftMob) e).getHandle();
-            for (String tag : entity.getScoreboardTags()) {
-                FlamethrowerType type = tagToFlamethrowerType.get(tag);
-                if (type != null) {
-                    entity.goalSelector.a(0, new PathfinderGoalShootSpell<>(new FlameThrowerCaster(entity), type));
-                }
-            }
-        }
-    }
 
     /**
      * @return the name of the sub_module (a step below a module)
@@ -77,7 +61,7 @@ public class FlameThrowerManager extends SpawnEater {
     }
 
 
-    public enum YmlSettings implements apple.voltskiya.custom_mobs.YmlSettings {
+    public enum YmlSettings implements apple.voltskiya.custom_mobs.mobs.YmlSettings {
         NORMAL_RANGE("normal.range", 13d),
         NORMAL_COOLDOWN("normal.cooldown", 300),
         NORMAL_MIN_RANGE("normal.min_range", 4d);

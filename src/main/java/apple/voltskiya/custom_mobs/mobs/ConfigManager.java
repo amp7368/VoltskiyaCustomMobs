@@ -1,6 +1,6 @@
-package apple.voltskiya.custom_mobs;
+package apple.voltskiya.custom_mobs.mobs;
 
-import apple.voltskiya.custom_mobs.sql.MobListSql;
+import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
@@ -8,8 +8,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.SQLException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class ConfigManager {
     private static final String defaultConfig = "config";
@@ -226,32 +226,4 @@ public abstract class ConfigManager {
         }
         return this.folder;
     }
-
-    public List<UUID> getMobs() {
-        List<UUID> mobs = null;
-        try {
-            mobs = MobListSql.getMobs(getName());
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-        if (mobs == null) return Collections.emptyList();
-        return mobs;
-    }
-
-    public void addMobs(UUID uuid) {
-        try {
-            MobListSql.addMob(getName(), uuid);
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-    }
-
-    public void registerInDB() {
-        try {
-            MobListSql.registerName(getName());
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-    }
-
 }

@@ -1,7 +1,7 @@
 package apple.voltskiya.custom_mobs.leaps;
 
-import apple.voltskiya.custom_mobs.PluginDisable;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
+import apple.voltskiya.custom_mobs.disable.PluginDisable;
 import apple.voltskiya.custom_mobs.leaps.config.LeapDo;
 import apple.voltskiya.custom_mobs.leaps.config.LeapPostConfig;
 import apple.voltskiya.custom_mobs.leaps.config.LeapPreConfig;

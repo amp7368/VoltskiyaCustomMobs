@@ -1,27 +1,21 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.fire_fangs;
 
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
+import apple.voltskiya.custom_mobs.mobs.ConfigManager;
+import apple.voltskiya.custom_mobs.mobs.RegisteredEntityEater;
 import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
-import apple.voltskiya.custom_mobs.mobs.abilities.tick.SpawnEater;
 import apple.voltskiya.custom_mobs.pathfinders.spell.PathfinderGoalShootSpell;
-import apple.voltskiya.custom_mobs.sql.MobListSql;
-import net.minecraft.server.v1_16_R3.Entity;
 import net.minecraft.server.v1_16_R3.EntityInsentient;
-import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
-import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 import java.util.function.BiFunction;
 
-public class FireFangs extends SpawnEater {
+public class FireFangsManager extends ConfigManager implements RegisteredEntityEater {
     public Map<String, FangsType> tagToFangType;
 
-    public FireFangs() throws IOException {
+    public FireFangsManager() throws IOException {
         FangsType.NORMAL.range = (double) getValueOrInit(YmlSettings.NORMAL_RANGE.getPath());
         FangsType.NORMAL.step = (double) getValueOrInit(YmlSettings.NORMAL_STEP.getPath());
         FangsType.NORMAL.cooldown = (int) getValueOrInit(YmlSettings.NORMAL_COOLDOWN.getPath());
@@ -48,33 +42,16 @@ public class FireFangs extends SpawnEater {
             put("fire_fangs_triple_blue", FangsType.BLUE_TRIPLE);
             put("fire_fangs_triple_blue_straight", FangsType.BLUE_TRIPLE_STRAIGHT);
         }};
-        for (UUID mob : this.getMobs()) {
-            final CraftEntity entityBukkit = (CraftEntity) Bukkit.getEntity(mob);
-            if (entityBukkit != null) {
-                @Nullable Entity entity = entityBukkit.getHandle();
-                if (entity instanceof EntityInsentient) {
-                    this.eatEntity((EntityInsentient) entity);
-                    continue;
-                }
-            }
-            MobListSql.removeMob(mob);
-        }
+
     }
 
-    private void eatEntity(EntityInsentient entity) {
+    @Override
+    public void eatEntity(EntityInsentient entity) {
         for (String tag : entity.getScoreboardTags()) {
             FangsType type = tagToFangType.get(tag);
             if (type != null) {
                 entity.goalSelector.a(0, new PathfinderGoalShootSpell<>(new FireFangsCaster(entity), type));
             }
-        }
-    }
-
-    @Override
-    public void eatEvent(CreatureSpawnEvent event) {
-        @Nullable Entity entity = ((CraftEntity) event.getEntity()).getHandle();
-        if (entity instanceof EntityInsentient) {
-            this.eatEntity((EntityInsentient) entity);
         }
     }
 
@@ -102,7 +79,7 @@ public class FireFangs extends SpawnEater {
         return MobTickPlugin.get();
     }
 
-    public enum YmlSettings implements apple.voltskiya.custom_mobs.YmlSettings {
+    public enum YmlSettings implements apple.voltskiya.custom_mobs.mobs.YmlSettings {
         NORMAL_RANGE("normal.range", 15d),
         NORMAL_STEP("normal.step", 1d),
         NORMAL_COOLDOWN("normal.cooldown", 300),

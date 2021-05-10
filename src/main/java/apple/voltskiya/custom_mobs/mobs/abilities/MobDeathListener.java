@@ -1,4 +1,4 @@
-package apple.voltskiya.custom_mobs.mobs.abilities.listeners;
+package apple.voltskiya.custom_mobs.mobs.abilities;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.DeathEater;
@@ -26,9 +26,6 @@ public class MobDeathListener implements @NotNull Listener {
             System.err.println("There was an issue with one of the config settings.\n" +
                     "You may have changed a setting that resulted in changing the type of data that was in one of the fields.");
             e.printStackTrace();
-        }
-        for (DeathEater spawnEater : deathEater.values()) {
-            spawnEater.registerInDB();
         }
     }
 

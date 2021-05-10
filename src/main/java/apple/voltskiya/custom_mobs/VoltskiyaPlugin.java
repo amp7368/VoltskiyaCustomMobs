@@ -1,6 +1,7 @@
 package apple.voltskiya.custom_mobs;
 
 import apple.voltskiya.custom_mobs.custom_model.CustomModelPlugin;
+import apple.voltskiya.custom_mobs.disable.PluginDisable;
 import apple.voltskiya.custom_mobs.leaps.LeapPlugin;
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
 import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;

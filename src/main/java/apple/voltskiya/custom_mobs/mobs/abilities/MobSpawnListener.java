@@ -1,12 +1,12 @@
-package apple.voltskiya.custom_mobs.mobs.abilities.listeners;
+package apple.voltskiya.custom_mobs.mobs.abilities;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
+import apple.voltskiya.custom_mobs.mobs.RegisteredEntityEater;
 import apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.delay_pathfinding.DelayPathfinding;
-import apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.fire_fangs.FireFangs;
+import apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.fire_fangs.FireFangsManager;
 import apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.flamethrower.FlameThrowerManager;
 import apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.micro_misles.MicroMissileConfig;
 import apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.micro_misles.MicroMissleShooter;
-import apple.voltskiya.custom_mobs.mobs.abilities.tick.SpawnEater;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.charger.ChargerManagerTicker;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.lost_soul.BlemishSpawnManager;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.lost_soul.LostSoulManagerTicker;
@@ -24,8 +24,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MobSpawnListener implements Listener {
-    private static final Map<String, SpawnEater> spawnEater = new HashMap<>();
-    private static final Map<String, SpawnEater> spawnModifier = new HashMap<>();
+    private static final Map<String, RegisteredEntityEater> spawnEater = new HashMap<>();
+    private static final Map<String, RegisteredEntityEater> spawnModifier = new HashMap<>();
 
     public MobSpawnListener() {
         Bukkit.getPluginManager().registerEvents(this, VoltskiyaPlugin.get());
@@ -44,13 +44,14 @@ public class MobSpawnListener implements Listener {
                     "You may have changed a setting that resulted in changing the type of data that was in one of the fields.");
             e.printStackTrace();
         }
-        for (SpawnEater spawnEater : spawnEater.values()) {
+        for (RegisteredEntityEater spawnEater : spawnEater.values()) {
             spawnEater.registerInDB();
+            spawnEater.eatMobs();
         }
         try {
             new MicroMissileConfig();
             spawnModifier.put("micro_missile_shooter", new MicroMissleShooter());
-            spawnModifier.put("fire_fangs", new FireFangs());
+            spawnModifier.put("fire_fangs", new FireFangsManager());
             spawnModifier.put("flamethrower", new FlameThrowerManager());
             spawnModifier.put("guard_stare", new DelayPathfinding());
         } catch (IOException e) {
@@ -60,18 +61,19 @@ public class MobSpawnListener implements Listener {
                     "You may have changed a setting that resulted in changing the type of data that was in one of the fields.");
             e.printStackTrace();
         }
-        for (SpawnEater spawnEater : spawnModifier.values()) {
+        for (RegisteredEntityEater spawnEater : spawnModifier.values()) {
             spawnEater.registerInDB();
+            spawnEater.eatMobs();
         }
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onSpawn(CreatureSpawnEvent event) {
         for (String tag : event.getEntity().getScoreboardTags()) {
-            SpawnEater eater = spawnEater.get(tag);
-            if (eater != null) eater.eatEvent(event);
-            SpawnEater modifier = spawnModifier.get(tag);
-            if (modifier != null) modifier.eatEvent(event);
+            RegisteredEntityEater eater = spawnEater.get(tag);
+            if (eater != null) eater.eatAndRegisterEvent(event);
+            RegisteredEntityEater modifier = spawnModifier.get(tag);
+            if (modifier != null) modifier.eatAndRegisterEvent(event);
         }
     }
 }

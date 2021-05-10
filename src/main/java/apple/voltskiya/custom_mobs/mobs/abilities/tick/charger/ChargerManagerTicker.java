@@ -1,28 +1,25 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.tick.charger;
 
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
+import apple.voltskiya.custom_mobs.mobs.ConfigManager;
+import apple.voltskiya.custom_mobs.mobs.RegisteredEntityEater;
 import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
-import apple.voltskiya.custom_mobs.mobs.abilities.tick.SpawnEater;
 import apple.voltskiya.custom_mobs.ticking.HighFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.LowFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.NormalFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.TickGiverable;
 import apple.voltskiya.custom_mobs.util.DistanceUtils;
 import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
-public class ChargerManagerTicker extends SpawnEater {
+public class ChargerManagerTicker extends ConfigManager implements RegisteredEntityEater {
     private static ChargerManagerTicker instance;
     private final Map<Closeness, ChargerIndividualTicker> closenessToChargeres = new HashMap<>() {{
         for (Closeness closeness : Closeness.values())
@@ -56,35 +53,20 @@ public class ChargerManagerTicker extends SpawnEater {
                 ((int) getValueOrInit(YmlSettings.QUICK_CHARGE_STUN_TIME.getPath())),
                 ((int) getValueOrInit(YmlSettings.QUICK_CHARGE_TIRED_TIME.getPath()))
         );
-        for (UUID mob : getMobs()) {
-            @Nullable Entity striker = Bukkit.getEntity(mob);
-            if (!(striker instanceof Mob)) continue;
-            Closeness closeness = determineConcern((Mob) striker);
-            for (ChargerType type : ChargerType.values()) {
-                if (striker.getScoreboardTags().contains(type.getTag())) {
-                    closenessToChargeres.get(closeness).giveCharger(new Charger((Mob) striker, type));
-                }
-            }
-        }
     }
 
     public static ChargerManagerTicker get() {
         return instance;
     }
 
-    @Override
-    public void eatEvent(CreatureSpawnEvent event) {
-        if (event.getEntity() instanceof Mob) {
-            // this is a charger
-            final Mob charger = (Mob) event.getEntity();
-            Closeness closeness = determineConcern(charger);
-            for (ChargerType type : ChargerType.values()) {
-                if (charger.getScoreboardTags().contains(type.getTag())) {
-                    closenessToChargeres.get(closeness).giveCharger(new Charger(charger, type));
-                }
+    public void eatEntity(Mob charger) {
+        Closeness closeness = determineConcern(charger);
+        for (ChargerType type : ChargerType.values()) {
+            if (charger.getScoreboardTags().contains(type.getTag())) {
+                closenessToChargeres.get(closeness).giveCharger(new Charger(charger, type));
             }
-            addMobs(charger.getUniqueId());
         }
+        addMob(charger.getUniqueId());
     }
 
     public void giveCharger(Charger charger) {
@@ -102,7 +84,7 @@ public class ChargerManagerTicker extends SpawnEater {
     }
 
     @Override
-    public apple.voltskiya.custom_mobs.YmlSettings[] getSettings() {
+    public apple.voltskiya.custom_mobs.mobs.YmlSettings[] getSettings() {
         return YmlSettings.values();
     }
 
@@ -170,7 +152,7 @@ public class ChargerManagerTicker extends SpawnEater {
         }
     }
 
-    private enum YmlSettings implements apple.voltskiya.custom_mobs.YmlSettings {
+    private enum YmlSettings implements apple.voltskiya.custom_mobs.mobs.YmlSettings {
         NORMAL_OVERSHOOT_DISTANCE("normal.overshoot_distance", 10),
         NORMAL_OVERSHOOT_SPEED("normal.charge_speed", 2.0d),
         NORMAL_TOO_CLOSE_TO_CHARGE("normal.too_close_to_charge", 4d),

@@ -16,7 +16,7 @@ public class FlameThrowerShot {
     private final EntityInsentient handle;
     private final CraftMob bukkitEntity;
     private final double radius;
-    private FlameThrowerCaster me;
+    private final FlameThrowerCaster me;
     private final double radiansWide;
     private double length;
     private final Random random = new Random();

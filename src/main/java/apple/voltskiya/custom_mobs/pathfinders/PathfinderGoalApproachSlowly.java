@@ -1,7 +1,7 @@
 package apple.voltskiya.custom_mobs.pathfinders;
 
-import apple.voltskiya.custom_mobs.PluginDisable;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
+import apple.voltskiya.custom_mobs.disable.PluginDisable;
 import apple.voltskiya.custom_mobs.util.DistanceUtils;
 import net.minecraft.server.v1_16_R3.EntityInsentient;
 import net.minecraft.server.v1_16_R3.EntityLiving;

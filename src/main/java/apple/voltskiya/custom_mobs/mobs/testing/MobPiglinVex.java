@@ -1,6 +1,7 @@
 package apple.voltskiya.custom_mobs.mobs.testing;
 
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
+import apple.voltskiya.custom_mobs.mobs.RegisteredCustomMob;
 import apple.voltskiya.custom_mobs.mobs.utils.UtilsAttribute;
 import com.mojang.datafixers.DataFixUtils;
 import com.mojang.datafixers.DataFixer;
@@ -21,7 +22,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 
-public class MobPiglinVex extends EntityVex implements IRangedEntity, IEntityAngerable {
+public class MobPiglinVex extends EntityVex implements IRangedEntity, IEntityAngerable, RegisteredCustomMob {
     public static final String REGISTERED_NAME = "piglin_vex";
     private static EntityTypes<MobPiglinVex> entityTypes;
     private final AttributeMapBase attributeMap = null;

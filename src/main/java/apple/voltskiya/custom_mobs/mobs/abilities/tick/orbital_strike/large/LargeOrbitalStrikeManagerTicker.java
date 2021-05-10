@@ -1,27 +1,24 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.tick.orbital_strike.large;
 
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
+import apple.voltskiya.custom_mobs.mobs.ConfigManager;
+import apple.voltskiya.custom_mobs.mobs.RegisteredEntityEater;
 import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
-import apple.voltskiya.custom_mobs.mobs.abilities.tick.SpawnEater;
-import apple.voltskiya.custom_mobs.sql.MobListSql;
 import apple.voltskiya.custom_mobs.ticking.LowFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.TickGiverable;
 import apple.voltskiya.custom_mobs.ticking.VeryLowFrequencyTick;
 import apple.voltskiya.custom_mobs.util.DistanceUtils;
 import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
-public class LargeOrbitalStrikeManagerTicker extends SpawnEater {
+public class LargeOrbitalStrikeManagerTicker extends ConfigManager implements RegisteredEntityEater {
     public final double STRIKE_MOVEMENT_SPEED;
     public final double STRIKE_MOVEMENT_LAG;
     public final double STRIKE_CHANCE;
@@ -53,29 +50,27 @@ public class LargeOrbitalStrikeManagerTicker extends SpawnEater {
         this.STRIKE_MOVEMENT_LAG = (int) getValueOrInit("large", YmlSettings.STRIKE_MOVEMENT_LAG.getPath());
         instance = this;
         closenessToStrikeres.get(Closeness.HIGH_CLOSE).setIsCheckStrike();
-        for (UUID mob : getMobs()) {
-            @Nullable Entity striker = Bukkit.getEntity(mob);
-            if (striker == null) {
-                MobListSql.removeMob(mob);
-                continue;
-            }
-            Closeness closeness = determineConcern(striker);
-            closenessToStrikeres.get(closeness).giveStriker(striker, 0);
-        }
     }
 
     public static LargeOrbitalStrikeManagerTicker get() {
         return instance;
     }
 
+
+    /**
+     * eat an entity
+     * please override one of the eatEntity events
+     * (there's 3 cause it makes things easier and lets the programmer choose what they need)
+     *
+     * @param striker the entity to eat
+     */
     @Override
-    public void eatEvent(CreatureSpawnEvent event) {
+    public void eatEntity(Entity striker) {
         // this is a striker
-        final Entity striker = event.getEntity();
         Closeness closeness = determineConcern(striker);
         closenessToStrikeres.get(closeness).giveStriker(striker, 0);
-        addMobs(striker.getUniqueId());
     }
+
 
     @Override
     public String getName() {
@@ -83,7 +78,7 @@ public class LargeOrbitalStrikeManagerTicker extends SpawnEater {
     }
 
     @Override
-    public apple.voltskiya.custom_mobs.YmlSettings[] getSettings() {
+    public apple.voltskiya.custom_mobs.mobs.YmlSettings[] getSettings() {
         return YmlSettings.values();
     }
 
@@ -151,7 +146,7 @@ public class LargeOrbitalStrikeManagerTicker extends SpawnEater {
         }
     }
 
-    private enum YmlSettings implements apple.voltskiya.custom_mobs.YmlSettings {
+    private enum YmlSettings implements apple.voltskiya.custom_mobs.mobs.YmlSettings {
         STRIKE_CHANCE("chancePerTick", 0.01d),
         STRIKE_COOLDOWN("cooldown", 800),
         STRIKE_DISTANCE("targetingRange", 100),

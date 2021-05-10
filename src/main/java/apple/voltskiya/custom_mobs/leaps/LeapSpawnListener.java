@@ -3,7 +3,11 @@ package apple.voltskiya.custom_mobs.leaps;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.leaps.config.LeapConfigManager;
 import apple.voltskiya.custom_mobs.leaps.config.LeapPreConfig;
+import apple.voltskiya.custom_mobs.leaps.hellish_catalyst.LeapHellishCatalyst;
 import apple.voltskiya.custom_mobs.leaps.misc.LeapSpecificMisc;
+import apple.voltskiya.custom_mobs.leaps.pounce.LeapPounceNormal;
+import apple.voltskiya.custom_mobs.leaps.pounce.LeapPounceUpwards;
+import apple.voltskiya.custom_mobs.leaps.revenant.LeapRevenant;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -13,29 +17,33 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class LeapSpawnListener implements Listener {
-    private final Map<String, LeapType> spawnEaters = new HashMap<>();
+    private final Map<String, LeapEater> spawnEaters = new HashMap<>();
 
     public LeapSpawnListener() {
         Bukkit.getPluginManager().registerEvents(this, VoltskiyaPlugin.get());
-        for (LeapType type : LeapType.values()) {
-            this.spawnEaters.put(type.getTypeName(), type);
-        }
+        addEaters(new LeapHellishCatalyst(),
+                new LeapRevenant(),
+                new LeapPounceUpwards(),
+                new LeapPounceNormal());
+    }
+
+    private void addEaters(LeapEater... eaters) {
+        for (LeapEater eater : eaters)
+            spawnEaters.put(eater.getName(), eater);
     }
 
     @EventHandler
     public void onLeapSpawn(CreatureSpawnEvent event) {
         for (String tag : event.getEntity().getScoreboardTags()) {
-            LeapType leapType = spawnEaters.get(tag);
-            if (leapType != null) {
-                leapType.getLeapEater().eatSpawnEvent(event);
-            } else {
-                LeapPreConfig config = LeapConfigManager.get().getLeap(tag);
-                if (config != null) LeapSpecificMisc.eatSpawnEvent(event, config);
+            LeapEater leapEater = spawnEaters.get(tag);
+            if (leapEater != null)
+                leapEater.eatAndRegisterEvent(event);
+            else {
+                LeapPreConfig config = LeapConfigManager.getLeap(tag);
+                if (config != null) {
+                    LeapSpecificMisc.eatSpawnEvent(event, tag, config);
+                }
             }
         }
-    }
-
-    public interface CustomSpawnEater {
-        void eatSpawnEvent(CreatureSpawnEvent event);
     }
 }

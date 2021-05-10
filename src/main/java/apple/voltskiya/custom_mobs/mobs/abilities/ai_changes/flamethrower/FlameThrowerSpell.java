@@ -8,8 +8,8 @@ import org.bukkit.Bukkit;
 public class FlameThrowerSpell implements PathfinderGoalShootSpell.Spell {
     public static final VoltskiyaPlugin PLUGIN = VoltskiyaPlugin.get();
     private State state;
-    private EntityInsentient me;
-    private FlameThrowerManager.FlamethrowerType flamethrowerType;
+    private final EntityInsentient me;
+    private final FlameThrowerManager.FlamethrowerType flamethrowerType;
     private final FlameThrowerShot flameThrower;
 
 
@@ -17,7 +17,7 @@ public class FlameThrowerSpell implements PathfinderGoalShootSpell.Spell {
         this.me = me.getEntity();
         this.flamethrowerType = type;
         this.state = FlameThrowerSpell.State.CHARGE_UP;
-        this.flameThrower = new FlameThrowerShot(me,3, 45);
+        this.flameThrower = new FlameThrowerShot(me, 3, 45);
     }
 
     @Override

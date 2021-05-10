@@ -2,6 +2,7 @@ package apple.voltskiya.custom_mobs.mobs.abilities.tick.revive;
 
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
+import apple.voltskiya.custom_mobs.mobs.ConfigManager;
 import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.DeathEater;
 import apple.voltskiya.custom_mobs.util.constants.TagConstants;
@@ -24,7 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class ReviveDeadManager extends DeathEater {
+public class ReviveDeadManager extends ConfigManager implements DeathEater {
 
     private static final double PARTICLE_RADIUS = .5;
     public static final int DIED_COOLDOWN = 1000 * 5;
@@ -60,7 +61,7 @@ public class ReviveDeadManager extends DeathEater {
     }
 
     @Override
-    public apple.voltskiya.custom_mobs.YmlSettings[] getSettings() {
+    public apple.voltskiya.custom_mobs.mobs.YmlSettings[] getSettings() {
         return YmlSettings.values();
     }
 
@@ -193,7 +194,7 @@ public class ReviveDeadManager extends DeathEater {
         }
     }
 
-    private enum YmlSettings implements apple.voltskiya.custom_mobs.YmlSettings {
+    private enum YmlSettings implements apple.voltskiya.custom_mobs.mobs.YmlSettings {
         MAX_DEAD_TIME("max_dead_time", 600),
         TIME_TO_RISE("time_to_rise", 50);
 

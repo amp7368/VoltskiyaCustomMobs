@@ -1,6 +1,7 @@
 package apple.voltskiya.custom_mobs.mobs.nether.revenant;
 
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
+import apple.voltskiya.custom_mobs.mobs.RegisteredCustomMob;
 import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
 import apple.voltskiya.custom_mobs.pathfinders.PathfinderGoalBowShootNoBow;
 import com.mojang.datafixers.types.Type;
@@ -14,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 import java.util.logging.Level;
 
-public class MobRevenant extends EntitySkeleton {
+public class MobRevenant extends EntitySkeleton implements RegisteredCustomMob {
     public static final String REGISTERED_NAME = "revenant";
     private static EntityTypes<MobRevenant> entityTypes;
 

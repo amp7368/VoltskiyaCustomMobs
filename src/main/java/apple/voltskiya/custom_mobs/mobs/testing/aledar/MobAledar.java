@@ -1,6 +1,7 @@
 package apple.voltskiya.custom_mobs.mobs.testing.aledar;
 
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
+import apple.voltskiya.custom_mobs.mobs.RegisteredCustomMob;
 import apple.voltskiya.custom_mobs.mobs.parts.*;
 import apple.voltskiya.custom_mobs.mobs.utils.UtilsAttribute;
 import apple.voltskiya.custom_mobs.mobs.utils.UtilsPacket;
@@ -18,7 +19,7 @@ import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPillager;
 import java.util.*;
 import java.util.logging.Level;
 
-public class MobAledar extends EntityPillager {
+public class MobAledar extends EntityPillager implements RegisteredCustomMob {
     private static final NmsModelConfig.ModelConfigName REGISTERED_MODEL = NmsModelConfig.ModelConfigName.ALEDAR_CART;
     private static final String REGISTERED_NAME = REGISTERED_MODEL.getFile();
     public static final String IS_WHEEL_RIGHT_IDENTIFIER = "isRightWheel";

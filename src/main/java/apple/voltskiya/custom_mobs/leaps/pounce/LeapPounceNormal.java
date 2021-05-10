@@ -1,46 +1,16 @@
 package apple.voltskiya.custom_mobs.leaps.pounce;
 
-import apple.voltskiya.custom_mobs.ConfigManager;
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
-import apple.voltskiya.custom_mobs.YmlSettings;
+import apple.voltskiya.custom_mobs.leaps.LeapEater;
 import apple.voltskiya.custom_mobs.leaps.LeapPlugin;
-import apple.voltskiya.custom_mobs.leaps.LeapType;
-import apple.voltskiya.custom_mobs.sql.MobListSql;
-import net.minecraft.server.v1_16_R3.Entity;
+import apple.voltskiya.custom_mobs.mobs.ConfigManager;
+import apple.voltskiya.custom_mobs.mobs.YmlSettings;
 import net.minecraft.server.v1_16_R3.EntityInsentient;
-import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
-import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.UUID;
+public class LeapPounceNormal extends ConfigManager implements LeapEater {
 
-public class LeapPounceNormal extends ConfigManager {
-    private static LeapPounceNormal instance;
-
-    public LeapPounceNormal() {
-        instance = this;
-        for (UUID mob : getMobs()) {
-            final CraftEntity entityBukkit = (CraftEntity) Bukkit.getEntity(mob);
-            if (entityBukkit != null) {
-                @Nullable Entity entity = entityBukkit.getHandle();
-                if (entity instanceof EntityInsentient) {
-                    eatEntity((EntityInsentient) entity);
-                    continue;
-                }
-            }
-            MobListSql.removeMob(mob);
-        }
-    }
-
-    private void eatEntity(EntityInsentient entity) {
-        LeapPounce.eatEntity(entity, LeapType.POUNCE_LEAP_NORMAL);
-        instance.addMobs(entity.getUniqueID());
-    }
-
-    public static void eatSpawnEvent(CreatureSpawnEvent event) {
-        LeapPounce.eatSpawnEvent(event, LeapType.POUNCE_LEAP_NORMAL);
-        instance.addMobs(event.getEntity().getUniqueId());
+    public void eatEntity(EntityInsentient entity) {
+        LeapPounce.eatEntity(entity, getConfig());
     }
 
     /**
@@ -48,7 +18,7 @@ public class LeapPounceNormal extends ConfigManager {
      */
     @Override
     public String getName() {
-        return "pounce_normal_leap";
+        return "pounce_leap";
     }
 
     /**

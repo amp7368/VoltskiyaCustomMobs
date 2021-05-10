@@ -1,27 +1,24 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.tick.revive;
 
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
+import apple.voltskiya.custom_mobs.mobs.ConfigManager;
+import apple.voltskiya.custom_mobs.mobs.RegisteredEntityEater;
 import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
-import apple.voltskiya.custom_mobs.mobs.abilities.tick.SpawnEater;
-import apple.voltskiya.custom_mobs.sql.MobListSql;
 import apple.voltskiya.custom_mobs.ticking.NormalFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.TickGiverable;
 import apple.voltskiya.custom_mobs.util.DistanceUtils;
 import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
-public class ReviverManagerTicker extends SpawnEater {
+public class ReviverManagerTicker extends ConfigManager implements RegisteredEntityEater {
 
     public int REVIVE_RITUAL_TIME;
     public double REVIVE_DISTANCE;
@@ -39,28 +36,24 @@ public class ReviverManagerTicker extends SpawnEater {
         REVIVE_CHANCE = (double) getValueOrInit(getName(), YmlSettings.REVIVE_CHANCE.getPath(), "reviver");
         REVIVE_DISTANCE = (int) getValueOrInit(getName(), YmlSettings.REVIVE_DISTANCE.getPath(), "reviver");
         REVIVE_RITUAL_TIME = (int) getValueOrInit(getName(), YmlSettings.REVIVE_RITUAL_TIME.getPath(), "reviver");
-        for (UUID mob : getMobs()) {
-            @Nullable Entity reviver = Bukkit.getEntity(mob);
-            if (reviver == null) {
-                MobListSql.removeMob(mob);
-                continue;
-            }
-            Closeness c = determineConcern(reviver);
-            closenessToReviveres.get(c).giveReviver(new Reviver(reviver));
-        }
     }
 
     public static ReviverManagerTicker get() {
         return instance;
     }
 
+    /**
+     * eat an entity
+     * please override one of the eatEntity events
+     * (there's 3 cause it makes things easier and lets the programmer choose what they need)
+     *
+     * @param reviver the entity to eat
+     */
     @Override
-    public void eatEvent(CreatureSpawnEvent event) {
+    public void eatEntity(Entity reviver) {
         // this is a reviver
-        final Entity reviver = event.getEntity();
         Closeness closeness = determineConcern(reviver);
         closenessToReviveres.get(closeness).giveReviver(new Reviver(reviver));
-        addMobs(reviver.getUniqueId());
     }
 
     @Override
@@ -69,7 +62,7 @@ public class ReviverManagerTicker extends SpawnEater {
     }
 
     @Override
-    public apple.voltskiya.custom_mobs.YmlSettings[] getSettings() {
+    public apple.voltskiya.custom_mobs.mobs.YmlSettings[] getSettings() {
         return YmlSettings.values();
     }
 
@@ -135,7 +128,7 @@ public class ReviverManagerTicker extends SpawnEater {
         }
     }
 
-    private enum YmlSettings implements apple.voltskiya.custom_mobs.YmlSettings {
+    private enum YmlSettings implements apple.voltskiya.custom_mobs.mobs.YmlSettings {
         REVIVE_CHANCE("reviveChance", 0.03),
         REVIVE_DISTANCE("reviveDistance", 15),
         REVIVE_RITUAL_TIME("reviveRitualTime", 13);

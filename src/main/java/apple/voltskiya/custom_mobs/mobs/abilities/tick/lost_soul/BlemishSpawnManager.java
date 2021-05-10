@@ -2,22 +2,19 @@ package apple.voltskiya.custom_mobs.mobs.abilities.tick.lost_soul;
 
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
+import apple.voltskiya.custom_mobs.mobs.ConfigManager;
+import apple.voltskiya.custom_mobs.mobs.RegisteredEntityEater;
 import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
-import apple.voltskiya.custom_mobs.mobs.abilities.tick.SpawnEater;
 import apple.voltskiya.custom_mobs.sql.MobListSql;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Mob;
-import org.bukkit.entity.Vex;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -25,7 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
-public class BlemishSpawnManager extends SpawnEater implements Listener {
+public class BlemishSpawnManager extends ConfigManager implements RegisteredEntityEater, Listener {
     public static final String NAME = "blemish_gateway";
     public static String SUMMON_VEX;
     private final HashSet<UUID> ghasts = new HashSet<>();
@@ -33,22 +30,28 @@ public class BlemishSpawnManager extends SpawnEater implements Listener {
     public BlemishSpawnManager() throws IOException {
         SUMMON_VEX = (String) getValueOrInit(YmlSettings.SUMMON_VEX.getPath());
         Bukkit.getPluginManager().registerEvents(this, VoltskiyaPlugin.get());
-        for (UUID mob : getMobs()) {
-            @Nullable Entity ghast = Bukkit.getEntity(mob);
-            if (ghast == null) {
-                MobListSql.removeMob(mob);
-                continue;
-            }
-            ghasts.add(mob);
-        }
     }
 
     @Override
+    @EventHandler
     public synchronized void eatEvent(CreatureSpawnEvent event) {
-        if (event.getEntityType() == EntityType.GHAST) {
-            final UUID uuid = event.getEntity().getUniqueId();
+        if (event.getEntity().getScoreboardTags().contains(NAME))
+            eatAndRegisterEvent(event);
+    }
+
+    /**
+     * eat an entity
+     * please override one of the eatEntity events
+     * (there's 3 cause it makes things easier and lets the programmer choose what they need)
+     *
+     * @param entity the entity to eat
+     */
+    @Override
+    public void eatEntity(Mob entity) {
+        if (entity instanceof Ghast) {
+            final UUID uuid = entity.getUniqueId();
             ghasts.add(uuid);
-            addMobs(uuid);
+            addMob(uuid);
         }
     }
 
@@ -58,7 +61,7 @@ public class BlemishSpawnManager extends SpawnEater implements Listener {
     }
 
     @Override
-    public apple.voltskiya.custom_mobs.YmlSettings[] getSettings() {
+    public apple.voltskiya.custom_mobs.mobs.YmlSettings[] getSettings() {
         return YmlSettings.values();
     }
 
@@ -160,7 +163,7 @@ public class BlemishSpawnManager extends SpawnEater implements Listener {
         });
     }
 
-    private enum YmlSettings implements apple.voltskiya.custom_mobs.YmlSettings {
+    private enum YmlSettings implements apple.voltskiya.custom_mobs.mobs.YmlSettings {
         SUMMON_VEX("summonVexCommand", "{PersistenceRequired:1b,Health:2f,LifeTicks:10000,Tags:[\"lost_soul\",\"base.deathtime\"],CustomName:'{\"text\":\"Lost Soul\",\"color\":\"gray\"}',HandItems:[{id:'minecraft:air',Count:1b},{}],ArmorItems:[{},{},{},{id:\"minecraft:player_head\",Count:1b,tag:{SkullOwner:{Id:[I;1764524634,373116153,-1439012925,1162853076],Properties:{textures:[{Value:\"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzU3YjhhY2QxNDViZDNkZmIxZGI5NGJkYmVkNDU4ZmUxODQ2YTljODg0ODIyY2EzY2U4MWE0Y2Y4MCJ9fX0=\"}]}}}}],ArmorDropChances:[0.085F,0.085F,0.085F,-327.670F],ActiveEffects:[{Id:14b,Amplifier:1b,Duration:100000,ShowParticles:0b}],Attributes:[{Name:generic.max_health,Base:2},{Name:generic.attack_damage,Base:0}]}");
 
         private final String path;

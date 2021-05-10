@@ -19,10 +19,10 @@ import java.util.List;
 
 public class FireFangsSpell implements PathfinderGoalShootSpell.Spell {
     protected final List<FireFangLine> fangLines = new ArrayList<>();
-    protected final FireFangs.FangsType type;
+    protected final FireFangsManager.FangsType type;
     protected final EntityInsentient me;
 
-    public FireFangsSpell(FireFangsCaster me, FireFangs.FangsType type) {
+    public FireFangsSpell(FireFangsCaster me, FireFangsManager.FangsType type) {
         this.me = me.getEntity();
         Location mainLocation = this.me.getBukkitEntity().getLocation();
         final EntityLiving goalTarget = this.me.getGoalTarget();

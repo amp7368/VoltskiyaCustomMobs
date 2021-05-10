@@ -4,26 +4,38 @@ import apple.voltskiya.custom_mobs.leaps.PathfinderGoalLeap;
 import apple.voltskiya.custom_mobs.leaps.config.LeapDo;
 import apple.voltskiya.custom_mobs.leaps.config.LeapPostConfig;
 import apple.voltskiya.custom_mobs.leaps.config.LeapPreConfig;
+import apple.voltskiya.custom_mobs.sql.MobListSql;
 import net.minecraft.server.v1_16_R3.EntityInsentient;
 import net.minecraft.server.v1_16_R3.EntityLiving;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftLivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.util.Vector;
 
+import java.sql.SQLException;
+
 
 public class LeapSpecificMisc {
-    public static void eatSpawnEvent(CreatureSpawnEvent event, LeapPreConfig config) {
+    public static void eatSpawnEvent(CreatureSpawnEvent event, String name, LeapPreConfig config) {
         EntityLiving creature = ((CraftLivingEntity) event.getEntity()).getHandle();
         if (creature instanceof EntityInsentient) {
-            LeapPostConfig postConfig = new LeapPostConfig(
-                    (leapDo) -> creature.hurtTimestamp >= creature.ticksLived - 10,
-                    creature::isOnGround,
-                    LeapSpecificMisc::preLeap,
-                    LeapSpecificMisc::interruptedLeap,
-                    LeapSpecificMisc::endLeap
-            );
-            ((EntityInsentient) creature).goalSelector.a(0, new PathfinderGoalLeap((EntityInsentient) creature, config, postConfig));
+            eatEntity((EntityInsentient) creature, config);
+            try {
+                MobListSql.addMob(name, creature.getUniqueID());
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
         }
+    }
+
+    public static void eatEntity(EntityInsentient creature, LeapPreConfig config) {
+        LeapPostConfig postConfig = new LeapPostConfig(
+                (leapDo) -> creature.hurtTimestamp >= creature.ticksLived - 10,
+                creature::isOnGround,
+                LeapSpecificMisc::preLeap,
+                LeapSpecificMisc::interruptedLeap,
+                LeapSpecificMisc::endLeap
+        );
+        creature.goalSelector.a(0, new PathfinderGoalLeap(creature, config, postConfig));
     }
 
     private static void preLeap(EntityInsentient entity, LeapDo leapDo) {

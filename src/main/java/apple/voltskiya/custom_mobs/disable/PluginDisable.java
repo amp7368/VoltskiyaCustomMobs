@@ -1,5 +1,6 @@
-package apple.voltskiya.custom_mobs;
+package apple.voltskiya.custom_mobs.disable;
 
+import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import net.minecraft.server.v1_16_R3.EntityInsentient;
 import net.minecraft.server.v1_16_R3.PathfinderGoal;
 
@@ -24,11 +25,6 @@ public class PluginDisable extends VoltskiyaModule {
 
     @Override
     public void enable() {
-    }
-
-    @Override
-    boolean shouldEnable() {
-        return false;
     }
 
     @Override

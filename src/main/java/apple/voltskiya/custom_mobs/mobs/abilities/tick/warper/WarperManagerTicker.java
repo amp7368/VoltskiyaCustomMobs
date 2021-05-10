@@ -1,8 +1,9 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.tick.warper;
 
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
+import apple.voltskiya.custom_mobs.mobs.ConfigManager;
+import apple.voltskiya.custom_mobs.mobs.RegisteredEntityEater;
 import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
-import apple.voltskiya.custom_mobs.mobs.abilities.tick.SpawnEater;
 import apple.voltskiya.custom_mobs.ticking.HighFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.LowFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.NormalFrequencyTick;
@@ -12,14 +13,13 @@ import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class WarperManagerTicker extends SpawnEater {
+public class WarperManagerTicker extends ConfigManager implements RegisteredEntityEater {
     public int PARTICLES;
     public int WARP_RADIUS;
     public double WARP_CHANCE;
@@ -42,12 +42,10 @@ public class WarperManagerTicker extends SpawnEater {
     }
 
     @Override
-    public void eatEvent(CreatureSpawnEvent event) {
+    public void eatEntity(Entity warper) {
         // this is a warper
-        final Entity warper = event.getEntity();
         WarperManagerTicker.Closeness closeness = determineConcern(warper);
         closenessToWarperes.get(closeness).giveWarper(warper);
-        addMobs(warper.getUniqueId());
     }
 
     @Override
@@ -56,7 +54,7 @@ public class WarperManagerTicker extends SpawnEater {
     }
 
     @Override
-    public apple.voltskiya.custom_mobs.YmlSettings[] getSettings() {
+    public apple.voltskiya.custom_mobs.mobs.YmlSettings[] getSettings() {
         return YmlSettings.values();
     }
 
@@ -124,7 +122,7 @@ public class WarperManagerTicker extends SpawnEater {
         }
     }
 
-    private enum YmlSettings implements apple.voltskiya.custom_mobs.YmlSettings {
+    private enum YmlSettings implements apple.voltskiya.custom_mobs.mobs.YmlSettings {
         WARP_RADIUS("warpRadius", 10),
         WARP_CHANCE("warpChance", .04d),
         PARTICLES("particles", 40);

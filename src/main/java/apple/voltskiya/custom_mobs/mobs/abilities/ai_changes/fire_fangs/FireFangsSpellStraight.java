@@ -10,7 +10,7 @@ public class FireFangsSpellStraight extends FireFangsSpell {
     private int nextSpawnCountdown;
     private int count = 2;
 
-    public FireFangsSpellStraight(FireFangsCaster me, FireFangs.FangsType type) {
+    public FireFangsSpellStraight(FireFangsCaster me, FireFangsManager.FangsType type) {
         super(me, type);
         final FireFangLine firstFangLine = this.fangLines.get(0);
         if (firstFangLine != null) {

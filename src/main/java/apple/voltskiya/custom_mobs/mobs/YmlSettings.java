@@ -1,4 +1,4 @@
-package apple.voltskiya.custom_mobs;
+package apple.voltskiya.custom_mobs.mobs;
 
 public interface YmlSettings {
     String getPath();

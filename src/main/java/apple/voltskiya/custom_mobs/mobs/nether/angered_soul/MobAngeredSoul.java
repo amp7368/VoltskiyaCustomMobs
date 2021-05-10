@@ -1,6 +1,7 @@
 package apple.voltskiya.custom_mobs.mobs.nether.angered_soul;
 
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
+import apple.voltskiya.custom_mobs.mobs.RegisteredCustomMob;
 import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
 import apple.voltskiya.custom_mobs.mobs.target_selector.PathfinderGoalClosestPlayer;
 import apple.voltskiya.custom_mobs.pathfinders.PathfinderGoalApproachSlowly;
@@ -20,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
-public class MobAngeredSoul extends EntitySkeleton {
+public class MobAngeredSoul extends EntitySkeleton implements RegisteredCustomMob {
     public static final String REGISTERED_NAME = "angered_soul";
     private static final double SIGHT = 100;
     private static EntityTypes<MobAngeredSoul> entityTypes;

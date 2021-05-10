@@ -2,6 +2,7 @@ package apple.voltskiya.custom_mobs.mobs.nether.parasite;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
+import apple.voltskiya.custom_mobs.mobs.RegisteredCustomMob;
 import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
 import apple.voltskiya.custom_mobs.mobs.parts.MobPartChild;
 import apple.voltskiya.custom_mobs.mobs.parts.MobPartMother;
@@ -27,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
-public class MobParasite extends EntityZombie {
+public class MobParasite extends EntityZombie implements RegisteredCustomMob {
     public static final ModelConfigName REGISTERED_MODEL = ModelConfigName.PARASITE;
     public static final String REGISTERED_NAME = REGISTERED_MODEL.getFile();
     private static EntityTypes<MobParasite> entityTypes;

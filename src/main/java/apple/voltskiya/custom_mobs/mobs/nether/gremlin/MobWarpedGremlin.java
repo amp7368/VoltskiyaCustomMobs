@@ -1,6 +1,7 @@
 package apple.voltskiya.custom_mobs.mobs.nether.gremlin;
 
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
+import apple.voltskiya.custom_mobs.mobs.RegisteredCustomMob;
 import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
 import apple.voltskiya.custom_mobs.mobs.parts.MobPartChild;
 import apple.voltskiya.custom_mobs.mobs.parts.MobPartMother;
@@ -23,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
-public class MobWarpedGremlin extends EntityZombie {
+public class MobWarpedGremlin extends EntityZombie implements RegisteredCustomMob {
     public static final ModelConfigName REGISTERED_MODEL = ModelConfigName.WARPED_GREMLIN;
     public static final String REGISTERED_NAME = REGISTERED_MODEL.getFile();
     private static EntityTypes<MobWarpedGremlin> entityTypes;

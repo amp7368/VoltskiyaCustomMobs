@@ -1,7 +1,7 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.micro_misles;
 
-import apple.voltskiya.custom_mobs.ConfigManager;
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
+import apple.voltskiya.custom_mobs.mobs.ConfigManager;
 import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
 
 import java.io.IOException;
@@ -58,7 +58,7 @@ public class MicroMissileConfig extends ConfigManager {
     }
 
 
-    private enum YmlSettings implements apple.voltskiya.custom_mobs.YmlSettings {
+    private enum YmlSettings implements apple.voltskiya.custom_mobs.mobs.YmlSettings {
         DAMAGE_AMOUNT("damage_amount", 2.5d),
         MIN_TICKS_TO_LIVE("min_ticks_to_live", 10),
         ADDITIONAL_TICKS_TO_LIVE("additional_ticks_to_live", 40),
