@@ -35,13 +35,13 @@ public class LeapSpawnListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onLeapSpawn(CreatureSpawnEvent event) {
         for (String tag : event.getEntity().getScoreboardTags()) {
             LeapEater leapEater = spawnEaters.get(tag);
-            if (leapEater != null)
+            if (leapEater != null) {
                 leapEater.eatAndRegisterEvent(event);
-            else {
+            } else {
                 LeapPreConfig config = LeapConfigManager.getLeap(tag);
                 if (config != null) {
                     LeapSpecificMisc.eatSpawnEvent(event, tag, config);

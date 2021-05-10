@@ -29,14 +29,10 @@ import net.minecraft.server.v1_16_R3.DataConverterTypes;
 import net.minecraft.server.v1_16_R3.SharedConstants;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 public class PluginNmsMobs extends VoltskiyaModule {
     private static PluginNmsMobs instance;
-    private static final List<RegisteredCustomMob> registeredCustomMobs = new ArrayList<>();
-    private static final int i = 0;
 
     public static Map<? super Object, Type<?>> getMinecraftTypes() {
         // this version of minecraft (whatever it happens to be)

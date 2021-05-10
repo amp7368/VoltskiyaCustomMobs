@@ -60,7 +60,6 @@ public class MobRevenant extends EntitySkeleton implements RegisteredCustomMob {
         entity.addScoreboardTag(SpawnCustomMobListener.CUSTOM_SPAWN_COMPLETE_TAG);
         entity.addScoreboardTag(REGISTERED_NAME);
         world.getHandle().addEntity(entity);
-        entity.onEnable();
     }
 
 

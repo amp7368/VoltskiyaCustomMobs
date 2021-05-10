@@ -26,16 +26,15 @@ public class VerifyMobsSql {
     public static final Object syncDB = new Object();
 
 
-    /**
-     * do any setup and make sure the static part of this class is completed
-     */
-    public static void initialize() {
+    // do any setup and make sure the static part of this class is completed
+    static {
         synchronized (VerifyMobsSql.syncDB) {
             VoltskiyaModule voltskiyaModule = MobTickPlugin.get();
             try {
                 Class.forName("org.sqlite.JDBC");
                 // never close this because we're always using it
                 VerifyMobsSql.database = DriverManager.getConnection("jdbc:sqlite:" + voltskiyaModule.getDataFolder() + File.separator + MobNames.DATABASE_NAME);
+                VerifyMobsSql.database.setAutoCommit(true);
                 VerifyMobsSql.verifyTables();
                 voltskiyaModule.log(Level.INFO, "The sql database for mobs is connected");
             } catch (ClassNotFoundException | SQLException e) {
@@ -51,7 +50,7 @@ public class VerifyMobsSql {
             Statement statement = database.createStatement();
             statement.execute(String.format(CREATE_TABLE_FORMAT, MobNames.MOB_UID_TABLE, MOB_UID_CONTENT));
             statement.execute(String.format(CREATE_TABLE_FORMAT, MobNames.MOB_TYPE_TO_TYPE_UID_TABLE, MOB_TYPE_TO_TYPE_UID));
-             statement.close();
+            statement.close();
         }
     }
 

@@ -27,8 +27,8 @@ public class VerifyTurretsSql {
                     "    %s   NCHAR(36) NOT NULL,\n" +
                     "    %s              BIGINT,\n" +
                     "    %s           DOUBLE    NOT NULL,\n" +
-                    "    %s           VARCHAR(15)    NOT NULL, "+
-            "    %s           VARCHAR(15)    NOT NULL ",
+                    "    %s           VARCHAR(15)    NOT NULL, " +
+                    "    %s           VARCHAR(15)    NOT NULL ",
             DBNames.TurretNames.TURRET_UID,
             DBNames.TurretNames.WORLD_UID,
             DBNames.TurretNames.X,
@@ -107,7 +107,7 @@ public class VerifyTurretsSql {
     private static final String ENCHANTMENT_ENUM_CONTENT = String.format(
             "    %s   INTEGER NOT NULL PRIMARY KEY,\n" +
                     "    %s  VARCHAR(70) NOT NULL,\n" +
-            "    %s  VARCHAR(70) NOT NULL",
+                    "    %s  VARCHAR(70) NOT NULL",
             DBNames.ItemNames.ENCHANTMENT_UID,
             DBNames.ItemNames.ENCHANTMENT_NAMESPACE,
             DBNames.ItemNames.ENCHANTMENT_NAME
@@ -120,10 +120,8 @@ public class VerifyTurretsSql {
     public static long currentItemStackUid;
     public static long currentEnchantmentUid;
 
-    /**
-     * do any setup and make sure the static part of this class is completed
-     */
-    public static void initialize() {
+    //do any setup and make sure the static part of this class is completed
+    static {
         synchronized (syncDB) {
             VoltskiyaModule voltskiyaModule = TurretPlugin.get();
             try {

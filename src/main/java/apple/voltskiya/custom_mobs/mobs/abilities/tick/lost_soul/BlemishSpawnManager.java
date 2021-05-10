@@ -34,9 +34,9 @@ public class BlemishSpawnManager extends ConfigManager implements RegisteredEnti
 
     @Override
     @EventHandler
-    public synchronized void eatEvent(CreatureSpawnEvent event) {
+    public synchronized void eatAndRegisterEvent(CreatureSpawnEvent event) {
         if (event.getEntity().getScoreboardTags().contains(NAME))
-            eatAndRegisterEvent(event);
+            RegisteredEntityEater.super.eatAndRegisterEvent(event);
     }
 
     /**
