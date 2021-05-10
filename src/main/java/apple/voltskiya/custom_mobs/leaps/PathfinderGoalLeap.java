@@ -1,10 +1,10 @@
 package apple.voltskiya.custom_mobs.leaps;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import apple.voltskiya.custom_mobs.disable.PluginDisable;
 import apple.voltskiya.custom_mobs.leaps.config.LeapDo;
 import apple.voltskiya.custom_mobs.leaps.config.LeapPostConfig;
 import apple.voltskiya.custom_mobs.leaps.config.LeapPreConfig;
+import apple.voltskiya.custom_mobs.reload.PluginDisable;
 import apple.voltskiya.custom_mobs.util.constants.TagConstants;
 import net.minecraft.server.v1_16_R3.EntityInsentient;
 import net.minecraft.server.v1_16_R3.EntityLiving;

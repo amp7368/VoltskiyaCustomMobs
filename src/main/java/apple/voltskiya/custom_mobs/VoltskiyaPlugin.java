@@ -1,10 +1,11 @@
 package apple.voltskiya.custom_mobs;
 
 import apple.voltskiya.custom_mobs.custom_model.CustomModelPlugin;
-import apple.voltskiya.custom_mobs.disable.PluginDisable;
 import apple.voltskiya.custom_mobs.leaps.LeapPlugin;
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
 import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
+import apple.voltskiya.custom_mobs.reload.PluginDisable;
+import apple.voltskiya.custom_mobs.reload.PluginEnable;
 import apple.voltskiya.custom_mobs.ticking.Ticking;
 import apple.voltskiya.custom_mobs.turrets.TurretPlugin;
 import apple.voltskiya.custom_mobs.util.PluginUtils;
@@ -55,8 +56,9 @@ public class VoltskiyaPlugin extends JavaPlugin {
     @Override
     public void onDisable() {
         for (VoltskiyaModule module : modules) {
-            if (module.shouldEnable())
+            if (module.shouldEnable()) {
                 module.onDisable();
+            }
         }
     }
 

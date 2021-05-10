@@ -1,7 +1,6 @@
 package apple.voltskiya.custom_mobs.mobs.target_selector;
 
-import apple.voltskiya.custom_mobs.disable.PluginDisable;
-import apple.voltskiya.custom_mobs.mobs.RegisteredCustomMob;
+import apple.voltskiya.custom_mobs.reload.PluginDisable;
 import net.minecraft.server.v1_16_R3.EntityHuman;
 import net.minecraft.server.v1_16_R3.EntityInsentient;
 import net.minecraft.server.v1_16_R3.PathfinderGoal;
@@ -14,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.EnumSet;
 import java.util.Random;
 
-public class PathfinderGoalClosestPlayer extends PathfinderGoal implements RegisteredCustomMob {
+public class PathfinderGoalClosestPlayer extends PathfinderGoal {
     private final EntityInsentient me;
     private final double sight;
     private final boolean seeThroughBlocks;

@@ -29,14 +29,14 @@ import net.minecraft.server.v1_16_R3.DataConverterTypes;
 import net.minecraft.server.v1_16_R3.SharedConstants;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class PluginNmsMobs extends VoltskiyaModule {
     private static PluginNmsMobs instance;
-
-    public static PluginNmsMobs get() {
-        return instance;
-    }
+    private static final List<RegisteredCustomMob> registeredCustomMobs = new ArrayList<>();
+    private static final int i = 0;
 
     public static Map<? super Object, Type<?>> getMinecraftTypes() {
         // this version of minecraft (whatever it happens to be)
@@ -54,9 +54,33 @@ public class PluginNmsMobs extends VoltskiyaModule {
     }
 
     @Override
+    public void enable() {
+        new AledarNavigation();
+        new MobsSpawnCommand();
+        new SpawnCustomMobListener();
+    }
+
+
+    @Override
+    public String getName() {
+        return "Mobs";
+    }
+
+    public static PluginNmsMobs get() {
+        return instance;
+    }
+
+    public File getModelDataFolder() {
+        final File folder = new File(getDataFolder(), "models");
+        if (!folder.exists()) folder.mkdirs();
+        return folder;
+    }
+
+    @Override
     public void init() {
         instance = this;
         NmsModelConfig.initialize();
+
         MobZombieCow.initialize();
         MobWarpedGremlin.initialize();
         MobPartArmorStand.initialize();
@@ -73,23 +97,5 @@ public class PluginNmsMobs extends VoltskiyaModule {
         MobIllagerEvokerExaminer.initialize();
         MobRevenant.initialize();
         MobAngeredSoul.initialize();
-    }
-
-    @Override
-    public void enable() {
-        new AledarNavigation();
-        new MobsSpawnCommand();
-        new SpawnCustomMobListener();
-    }
-
-    @Override
-    public String getName() {
-        return "Mobs";
-    }
-
-    public File getModelDataFolder() {
-        final File folder = new File(getDataFolder(), "models");
-        if (!folder.exists()) folder.mkdirs();
-        return folder;
     }
 }

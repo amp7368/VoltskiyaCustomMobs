@@ -1,8 +1,14 @@
-package apple.voltskiya.custom_mobs.disable;
+package apple.voltskiya.custom_mobs.reload;
 
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
+import apple.voltskiya.custom_mobs.mobs.RegisteredCustomMob;
+import apple.voltskiya.custom_mobs.util.constants.TagConstants;
 import net.minecraft.server.v1_16_R3.EntityInsentient;
 import net.minecraft.server.v1_16_R3.PathfinderGoal;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
+import org.bukkit.entity.Entity;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -28,6 +34,11 @@ public class PluginDisable extends VoltskiyaModule {
     }
 
     @Override
+    public String getName() {
+        return "disable_shared";
+    }
+
+    @Override
     public void onDisable() {
         for (Map.Entry<EntityInsentient, PathfinderGoal> mob : mobs.entrySet()) {
             if (mob != null && mob.getKey().isAlive()) {
@@ -35,10 +46,12 @@ public class PluginDisable extends VoltskiyaModule {
                 mob.getKey().targetSelector.a(mob.getValue());
             }
         }
-    }
-
-    @Override
-    public String getName() {
-        return "disable_shared";
+        for (World world : Bukkit.getWorlds()) {
+            for (Entity entity : world.getEntities()) {
+                entity.removeScoreboardTag(TagConstants.isDoingAbility);
+                net.minecraft.server.v1_16_R3.Entity nms = ((CraftEntity) entity).getHandle();
+                if (nms instanceof RegisteredCustomMob) ((RegisteredCustomMob) nms).onDisable();
+            }
+        }
     }
 }

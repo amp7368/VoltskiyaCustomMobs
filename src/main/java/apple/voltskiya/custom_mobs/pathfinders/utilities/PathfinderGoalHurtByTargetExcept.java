@@ -1,6 +1,6 @@
 package apple.voltskiya.custom_mobs.pathfinders.utilities;
 
-import apple.voltskiya.custom_mobs.disable.PluginDisable;
+import apple.voltskiya.custom_mobs.reload.PluginDisable;
 import net.minecraft.server.v1_16_R3.EntityCreature;
 import net.minecraft.server.v1_16_R3.EntityInsentient;
 import net.minecraft.server.v1_16_R3.EntityLiving;

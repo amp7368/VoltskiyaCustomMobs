@@ -28,8 +28,11 @@ public class LeapSpawnListener implements Listener {
     }
 
     private void addEaters(LeapEater... eaters) {
-        for (LeapEater eater : eaters)
+        for (LeapEater eater : eaters) {
+            eater.registerInDB();
+            eater.eatMobs();
             spawnEaters.put(eater.getName(), eater);
+        }
     }
 
     @EventHandler

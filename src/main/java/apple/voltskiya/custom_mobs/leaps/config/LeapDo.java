@@ -6,6 +6,7 @@ import net.minecraft.server.v1_16_R3.EntityInsentient;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.plugin.IllegalPluginAccessException;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nullable;
@@ -107,7 +108,10 @@ public class LeapDo implements Runnable {
         // set the yVelocity to what it should
         yVelocity = yVelocityInitial + gravity * currentTime++;
         bukkitEntity.setVelocity(new Vector(xVelocity, yVelocity, zVelocity));
-        Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), this, 1);
+        try {
+            Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), this, 1);
+        } catch (IllegalPluginAccessException ignored) {
+        }
     }
 
     public boolean isLeaping() {

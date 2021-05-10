@@ -60,6 +60,7 @@ public class MobRevenant extends EntitySkeleton implements RegisteredCustomMob {
         entity.addScoreboardTag(SpawnCustomMobListener.CUSTOM_SPAWN_COMPLETE_TAG);
         entity.addScoreboardTag(REGISTERED_NAME);
         world.getHandle().addEntity(entity);
+        entity.onEnable();
     }
 
 
@@ -70,7 +71,7 @@ public class MobRevenant extends EntitySkeleton implements RegisteredCustomMob {
     }
 
     private void prepare(Location location, NBTTagCompound oldNbt) {
-        if (oldNbt != null){
+        if (oldNbt != null) {
             oldNbt.remove("UUID");
             this.load(oldNbt);
         }
@@ -96,16 +97,7 @@ public class MobRevenant extends EntitySkeleton implements RegisteredCustomMob {
     protected void initPathfinder() {
         final AttributeModifiable followRange = this.getAttributeInstance(GenericAttributes.FOLLOW_RANGE);
         if (followRange != null) followRange.setValue(50);
-        this.goalSelector.a(2, new PathfinderGoalRestrictSun(this));
-        this.goalSelector.a(3, new PathfinderGoalFleeSun(this, 1.0D));
-        this.goalSelector.a(3, new PathfinderGoalAvoidTarget<>(this, EntityWolf.class, 6.0F, 1.0D, 1.2D));
+        super.initPathfinder();
         this.goalSelector.a(4, new PathfinderGoalBowShootNoBow<>(this, 1.0D, 20, 15.0F));
-        this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 1.0D));
-        this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 8.0F));
-        this.goalSelector.a(6, new PathfinderGoalRandomLookaround(this));
-        this.targetSelector.a(1, new PathfinderGoalHurtByTarget(this));
-        this.targetSelector.a(2, new PathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true));
-        this.targetSelector.a(3, new PathfinderGoalNearestAttackableTarget<>(this, EntityIronGolem.class, true));
-        this.targetSelector.a(3, new PathfinderGoalNearestAttackableTarget<>(this, EntityTurtle.class, 10, true, false, EntityTurtle.bo));
     }
 }
