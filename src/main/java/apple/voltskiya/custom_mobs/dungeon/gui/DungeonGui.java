@@ -1,6 +1,7 @@
 package apple.voltskiya.custom_mobs.dungeon.gui;
 
 import apple.voltskiya.custom_mobs.dungeon.DungeonScanner;
+import apple.voltskiya.custom_mobs.dungeon.gui.mobs.DungeonPageMobConfigs;
 import apple.voltskiya.custom_mobs.gui.InventoryGui;
 import org.bukkit.entity.Player;
 

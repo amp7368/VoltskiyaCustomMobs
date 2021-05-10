@@ -23,4 +23,8 @@ public class DungeonMobConfig {
     public String getName() {
         return nameToRepresentMob;
     }
+
+    public List<DungeonMobInfo> getMobs() {
+        return mobs;
+    }
 }

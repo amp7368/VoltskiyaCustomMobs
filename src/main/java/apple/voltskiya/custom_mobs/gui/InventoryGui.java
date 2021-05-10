@@ -15,6 +15,7 @@ public abstract class InventoryGui implements InventoryHolder {
     protected List<InventoryGuiPage> pageMap = new ArrayList<>();
 
     protected int page = 0;
+    private InventoryGuiPage tempPage = null;
 
     protected void addPage(InventoryGuiPage... pageGuis) {
         for (InventoryGuiPage pageGui : pageGuis) {
@@ -25,24 +26,33 @@ public abstract class InventoryGui implements InventoryHolder {
 
     public void nextPage(int count) {
         List<HumanEntity> viewers = getInventory().getViewers();
-
         page += count;
         page = Math.max(0, page);
         page = Math.min(pageMap.size() - 1, page);
         update(viewers);
     }
 
-    private void update(@Nullable List<HumanEntity> viewers) {
-        for (HumanEntity viewer : new ArrayList<>(viewers == null ? getInventory().getViewers() : viewers)) {
-            final InventoryGuiPage inventoryGuiPage = pageMap.get(page);
-            inventoryGuiPage.update();
-            viewer.openInventory(inventoryGuiPage.getInventory());
-        }
+    public void setTempInventory(@Nullable InventoryGuiPage page) {
+        List<HumanEntity> viewers = this.getInventory().getViewers();
+        this.tempPage = page;
+        update(viewers);
     }
 
     @Override
     public @NotNull Inventory getInventory() {
-        return this.pageMap.get(page).getInventory();
+        return getPage().getInventory();
+    }
+
+    private void update(@Nullable List<HumanEntity> viewers) {
+        final InventoryGuiPage inventoryGuiPage = getPage();
+        inventoryGuiPage.update();
+        for (HumanEntity viewer : new ArrayList<>(viewers == null ? this.getInventory().getViewers() : viewers)) {
+            viewer.openInventory(inventoryGuiPage.getInventory());
+        }
+    }
+
+    private InventoryGuiPage getPage() {
+        return this.tempPage == null ? this.pageMap.get(page) : this.tempPage;
     }
 
     public void onGuiInventory(InventoryClickEvent event) {
@@ -67,7 +77,7 @@ public abstract class InventoryGui implements InventoryHolder {
         void fillInventory();
 
         default void update() {
-            fillInventory();
+            this.fillInventory();
         }
 
         void dealWithClick(InventoryClickEvent event);

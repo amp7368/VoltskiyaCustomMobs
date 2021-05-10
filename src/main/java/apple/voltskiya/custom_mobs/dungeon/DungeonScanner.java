@@ -52,7 +52,7 @@ public class DungeonScanner {
         }
         DungeonMobConfig mobConfig = new DungeonMobConfig(configName);
         for (Entity entity : entities) {
-            if (configEntity != entity) {
+            if (configEntity != entity && !(entity instanceof Player)) {
                 // add the rest into the config
                 mobConfig.add(new DungeonMobInfo(entity));
             }
