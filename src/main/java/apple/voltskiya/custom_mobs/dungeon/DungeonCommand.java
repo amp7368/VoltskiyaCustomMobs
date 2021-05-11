@@ -89,11 +89,11 @@ public class DungeonCommand extends BaseCommand {
     @Subcommand("scan")
     public class Scan extends BaseCommand {
         @Subcommand("dungeon")
-        @CommandCompletion("name")
+        @CommandCompletion("name scanBlocks|true|false scanMobs|true|false scanChests|true|false")
         public void scan(Player player, @Single String dungeonName, @Optional Boolean scanBlocks, @Optional Boolean scanMobs, @Optional Boolean scanChests) {
             @Nullable DungeonScanner scanner = playerDungeonScanners.get(player.getUniqueId());
-            if (scanner == null) {
-                player.sendMessage("Please load a dungeon scanner before attempting this");
+            if (scanner == null || scanner.getPos1() == null || scanner.getPos2() == null) {
+                player.sendMessage("Please load a dungeon scanner and set pos1 and pos2 before attempting this");
                 return;
             }
             scanner.scanDungeon(dungeonName, scanBlocks, scanMobs, scanChests);

@@ -104,11 +104,11 @@ public class DungeonScanner {
         this.currentScannedDungeon = new DungeonScanned(this, dungeonInstanceName);
         if (scanBlocks == null && scanMobs == null && scanChests == null)
             this.currentScannedDungeon.scanAll();
-        else if (scanBlocks == null)
+        else if (scanBlocks != null && scanBlocks)
             this.currentScannedDungeon.scanBlocks(true);
-        else if (scanMobs == null)
+        else if (scanMobs != null && scanMobs)
             this.currentScannedDungeon.scanMobs(true);
-        else if (scanChests == null)
+        else if (scanChests != null && scanChests)
             this.currentScannedDungeon.scanChests(true);
     }
 
@@ -208,5 +208,10 @@ public class DungeonScanner {
         public static final String DUNGEON_MOB_PRIMARY = "mobPrimary";
         public static final String DUNGEON_MOB_CONFIG = "mobConfig";
         public static final String MOB_CONFIG_UUID = "uuid";
+        public static final String DUNGEON_CHESTS = "chests";
+        public static final String DUNGEON_CHESTS_LOOTABLE = "lootable";
+        public static final String DUNGEON_CHESTS_BLOCK = "blockId";
+        public static final String DUNGEON_CHESTS_NBT = "nbt";
+        public static final String DUNGEON_CHESTS_TITLE = "title";
     }
 }

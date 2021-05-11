@@ -4,12 +4,22 @@ import apple.voltskiya.custom_mobs.dungeon.PluginDungeon;
 import apple.voltskiya.custom_mobs.dungeon.scanner.DungeonMobConfig;
 import apple.voltskiya.custom_mobs.dungeon.scanner.DungeonScanner;
 import co.aikar.commands.BukkitCommandCompletionContext;
+import com.destroystokyo.paper.loottable.LootableInventory;
 import com.google.gson.*;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.minecraft.server.v1_16_R3.BlockPosition;
+import net.minecraft.server.v1_16_R3.TileEntity;
 import org.bukkit.Location;
+import org.bukkit.Nameable;
+import org.bukkit.NamespacedKey;
 import org.bukkit.World;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.Container;
+import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.loot.LootTable;
+import org.bukkit.loot.Lootable;
 import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,6 +33,7 @@ import java.util.*;
 public class DungeonScanned {
     private final DungeonScanner dungeonScanner;
     private final String dungeonName;
+    private final List<DungeonChest> chests = new ArrayList<>();
     private final List<DungeonMobScanned> mobs = new ArrayList<>();
     private boolean wasLoaded = false;
 
@@ -44,6 +55,10 @@ public class DungeonScanned {
             JsonArray mobsJson = json.get(DungeonScanner.JsonKeys.DUNGEON_MOBS).getAsJsonArray();
             for (JsonElement mobJson : mobsJson) {
                 this.mobs.add(new DungeonMobScanned(dungeonScanner, mobJson.getAsJsonObject()));
+            }
+            JsonArray chestsJson = json.get(DungeonScanner.JsonKeys.DUNGEON_CHESTS).getAsJsonArray();
+            for (JsonElement chestJson : chestsJson) {
+                this.chests.add(DungeonChest.fromJson(chestJson.getAsJsonObject()));
             }
         }
     }
@@ -71,6 +86,54 @@ public class DungeonScanned {
     }
 
     public void scanChests(boolean shouldSave) {
+        chests.clear();
+        Location pos1 = this.dungeonScanner.getPos1();
+        Location pos2 = this.dungeonScanner.getPos2();
+        World world = pos1.getWorld();
+        int minX = pos1.getBlockX();
+        int minY = pos1.getBlockY();
+        int minZ = pos1.getBlockZ();
+        int maxX = pos2.getBlockX();
+        int maxY = pos2.getBlockY();
+        int maxZ = pos2.getBlockZ();
+        if (minX > maxX) {
+            int temp = maxX;
+            maxX = minX;
+            minX = temp;
+        }
+        if (minY > maxY) {
+            int temp = maxY;
+            maxY = minY;
+            minY = temp;
+        }
+        if (minZ > maxZ) {
+            int temp = maxZ;
+            maxZ = minZ;
+            minZ = temp;
+        }
+        for (int x = minX; x <= maxX; x++) {
+            for (int y = minY; y < maxY; y++) {
+                for (int z = minZ; z < maxZ; z++) {
+                    BlockState block = world.getBlockAt(x, y, z).getState();
+                    String name = block instanceof Nameable ? ((Nameable) block).getCustomName() : null;
+                    if (block instanceof LootableInventory && ((LootableInventory) block).hasLootTable()) {
+                        LootTable loottable = ((Lootable) block).getLootTable();
+                        if (loottable == null) {
+                            // idk what happened...
+                            continue;
+                        }
+                        NamespacedKey blockKey = block.getType().getKey();
+                        NamespacedKey lootTableKey = loottable.getKey();
+                        chests.add(new DungeonChestLootTable(blockKey, lootTableKey, block.getLocation(), name));
+                    } else if (block instanceof Container) {
+                        NamespacedKey blockKey = block.getType().getKey();
+                        @javax.annotation.Nullable TileEntity tileEntity = ((CraftWorld) block.getLocation().getWorld()).getHandle().getTileEntity(new BlockPosition(block.getX(), block.getY(), block.getZ()));
+                        if (tileEntity != null)
+                            chests.add(new DungeonChestPredetermined(blockKey, tileEntity, block.getLocation(), name));
+                    }
+                }
+            }
+        }
         if (shouldSave) try {
             save();
         } catch (IOException e) {
@@ -120,6 +183,9 @@ public class DungeonScanned {
         JsonArray jsonMobs = new JsonArray();
         for (DungeonMobScanned mob : mobs) jsonMobs.add(mob.toJson());
         json.add(DungeonScanner.JsonKeys.DUNGEON_MOBS, jsonMobs);
+        JsonArray jsonChests = new JsonArray();
+        for (DungeonChest chest : chests) jsonChests.add(chest.toJson());
+        json.add(DungeonScanner.JsonKeys.DUNGEON_CHESTS, jsonChests);
         return json;
     }
 
@@ -140,5 +206,9 @@ public class DungeonScanned {
 
     public List<DungeonMobScanned> getMobs() {
         return mobs;
+    }
+
+    public List<DungeonChest> getChests() {
+        return chests;
     }
 }

@@ -32,7 +32,7 @@ public abstract class InventoryGuiPageScrollable extends InventoryGuiPageSimple 
 
     public void setSlots() {
         for (int i = 9; i < size(); i++) {
-            if (i % 9 != 7)
+            if (i % 9 != 8)
                 setSlot(InventoryGuiSlotScrollable.get(), i);
         }
         setSlot(new InventoryGuiSlotGeneric((e) -> this.next(-getScrollIncrement()),
@@ -44,6 +44,7 @@ public abstract class InventoryGuiPageScrollable extends InventoryGuiPageSimple 
 
     public void next(int index) {
         currentIndex += index;
+        update();
     }
 
     protected abstract int getScrollIncrement();

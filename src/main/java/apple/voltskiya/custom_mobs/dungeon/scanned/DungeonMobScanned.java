@@ -17,7 +17,7 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
 public class DungeonMobScanned {
-    private final DungeonMobInfo mob;
+    private DungeonMobInfo mob;
     private Entity entity = null;
     private DungeonMobConfig config = null;
 
@@ -44,9 +44,12 @@ public class DungeonMobScanned {
     }
 
     public void rotate(int degrees) {
-        final Location location = entity.getLocation();
-        location.getDirection().rotateAroundY(Math.toRadians(degrees));
-        entity.teleport(location);
+        if (entity != null) {
+            final Location location = entity.getLocation();
+            location.getDirection().rotateAroundY(Math.toRadians(degrees));
+            entity.teleport(location);
+            mob = new DungeonMobInfo(entity);
+        }
     }
 
     public void pitchAdd(int degrees) {
