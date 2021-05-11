@@ -3,20 +3,27 @@ package apple.voltskiya.custom_mobs.dungeon.scanned;
 import apple.voltskiya.custom_mobs.dungeon.scanner.DungeonMobConfig;
 import apple.voltskiya.custom_mobs.dungeon.scanner.DungeonMobInfo;
 import apple.voltskiya.custom_mobs.dungeon.scanner.DungeonScanner;
+import apple.voltskiya.custom_mobs.util.VectorUtils;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
+import org.jetbrains.annotations.Nullable;
 
 public class DungeonMobScanned {
     private final DungeonMobInfo mob;
+    private Entity entity = null;
     private DungeonMobConfig config = null;
 
     public DungeonMobScanned(Entity entity) {
         this.mob = new DungeonMobInfo(entity);
+        this.entity = entity;
     }
 
     public DungeonMobScanned(DungeonScanner dungeonScanner, JsonObject fromJson) throws CommandSyntaxException {
@@ -36,8 +43,40 @@ public class DungeonMobScanned {
         return json;
     }
 
+    public void rotate(int degrees) {
+        final Location location = entity.getLocation();
+        location.getDirection().rotateAroundY(Math.toRadians(degrees));
+        entity.teleport(location);
+    }
+
+    public void pitchAdd(int degrees) {
+        final Location location = entity.getLocation();
+        location.setPitch(location.getPitch() + degrees);
+        entity.teleport(location);
+    }
+
     public ItemStack toItem() {
         if (config == null) return mob.toItem();
         return config.toItem();
+    }
+
+    public ItemStack toItem(Player player) {
+        double distance = distance(player);
+        if (config == null) return mob.toItem(distance);
+        return config.toItem(distance);
+    }
+
+    public double distance(Player player) {
+        final Vector l = getLocation();
+        return l == null ? Double.MAX_VALUE : (VectorUtils.magnitude(player.getLocation().toVector().subtract(l)));
+    }
+
+    @Nullable
+    public Vector getLocation() {
+        return mob.getLocation();
+    }
+
+    public String getName() {
+        return mob.getName();
     }
 }

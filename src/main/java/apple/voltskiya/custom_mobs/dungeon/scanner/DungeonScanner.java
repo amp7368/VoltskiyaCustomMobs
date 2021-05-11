@@ -207,5 +207,6 @@ public class DungeonScanner {
         public static final String SCANNER_NAME = "scanner_name";
         public static final String DUNGEON_MOB_PRIMARY = "mobPrimary";
         public static final String DUNGEON_MOB_CONFIG = "mobConfig";
+        public static final String MOB_CONFIG_UUID = "uuid";
     }
 }

@@ -9,6 +9,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -84,12 +85,14 @@ public class DungeonScanned {
         World world = pos1.getWorld();
         Collection<Entity> entities = world.getNearbyEntities(new BoundingBox(pos1.getX(), pos1.getY(), pos1.getZ(), pos2.getX(), pos2.getY(), pos2.getZ()));
         for (Entity entity : entities) {
-            @Nullable DungeonMobConfig mobConfig = dungeonScanner.getMobConfig(entity);
-            final DungeonMobScanned dungeonMobScanned = new DungeonMobScanned(entity);
-            if (mobConfig != null) {
-                dungeonMobScanned.setConfig(mobConfig);
+            if (!(entity instanceof Player)) {
+                @Nullable DungeonMobConfig mobConfig = dungeonScanner.getMobConfig(entity);
+                final DungeonMobScanned dungeonMobScanned = new DungeonMobScanned(entity);
+                if (mobConfig != null) {
+                    dungeonMobScanned.setConfig(mobConfig);
+                }
+                mobs.add(dungeonMobScanned);
             }
-            mobs.add(dungeonMobScanned);
         }
         if (shouldSave) try {
             save();

@@ -65,4 +65,13 @@ public class DungeonMobConfig {
                 this.getName(),
                 Collections.emptyList());
     }
+
+    public ItemStack toItem(double distance) {
+        return InventoryUtils.makeItem(
+                Material.ARMOR_STAND,
+                1,
+                this.getName(),
+                distance == Double.MAX_VALUE ? Collections.emptyList() :
+                        Collections.singletonList(String.format("%.2f blocks away", distance)));
+    }
 }

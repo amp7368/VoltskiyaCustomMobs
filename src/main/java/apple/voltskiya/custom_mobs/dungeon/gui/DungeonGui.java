@@ -22,4 +22,8 @@ public class DungeonGui extends InventoryGui {
     public DungeonScanner getDungeonScanner() {
         return dungeonScanner;
     }
+
+    public Player getPlayer() {
+        return player;
+    }
 }

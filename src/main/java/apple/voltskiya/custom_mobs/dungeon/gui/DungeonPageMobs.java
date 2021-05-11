@@ -1,15 +1,16 @@
 package apple.voltskiya.custom_mobs.dungeon.gui;
 
+import apple.voltskiya.custom_mobs.dungeon.gui.mobs.DungeonMobSlot;
 import apple.voltskiya.custom_mobs.dungeon.scanned.DungeonMobScanned;
 import apple.voltskiya.custom_mobs.dungeon.scanned.DungeonScanned;
 import apple.voltskiya.custom_mobs.gui.InventoryGuiPageScrollable;
 import apple.voltskiya.custom_mobs.gui.InventoryGuiSlotGeneric;
-import apple.voltskiya.custom_mobs.gui.InventoryGuiSlotScrollable;
 import apple.voltskiya.custom_mobs.util.minecraft.InventoryUtils;
 import org.bukkit.Material;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Comparator;
+import java.util.List;
 
 public class DungeonPageMobs extends InventoryGuiPageScrollable {
     private final DungeonGui dungeonGui;
@@ -24,8 +25,10 @@ public class DungeonPageMobs extends InventoryGuiPageScrollable {
     private void addMobs() {
         @Nullable DungeonScanned scanned = dungeonGui.getDungeonScanner().getDungeonInstance();
         if (scanned != null) {
-            for (DungeonMobScanned mob : scanned.getMobs()) {
-                add(new DungeonMobSlot(mob));
+            final List<DungeonMobScanned> mobs = scanned.getMobs();
+            mobs.sort(Comparator.comparingDouble(o -> o.distance(dungeonGui.getPlayer())));
+            for (DungeonMobScanned mob : mobs) {
+                add(new DungeonMobSlot(dungeonGui, mob));
             }
         }
     }
@@ -55,20 +58,4 @@ public class DungeonPageMobs extends InventoryGuiPageScrollable {
         return 54;
     }
 
-    private class DungeonMobSlot extends InventoryGuiSlotScrollable {
-        private final DungeonMobScanned mob;
-
-        public DungeonMobSlot(DungeonMobScanned mob) {
-            this.mob = mob;
-        }
-
-        @Override
-        public void dealWithClick(InventoryClickEvent event) {
-        }
-
-        @Override
-        public ItemStack getItem() {
-            return mob.toItem();
-        }
-    }
 }
