@@ -10,7 +10,6 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -91,58 +90,6 @@ public class DungeonCommand extends BaseCommand {
     @Subcommand("spawn")
     public class Spawn extends BaseCommand {
         @Subcommand("all")
-        @CommandCompletion("@dungeon-layouts|dungeonName")
-        public void all(CommandSender player, String name) {
-            Dungeon dungeon = new Dungeon(name);
-            if (dungeon.wasLoaded()) {
-                final SpawnDungeonOptions spawnDungeonOptions = new SpawnDungeonOptions();
-                spawnDungeonOptions.setSpawnAll();
-                dungeon.spawn(spawnDungeonOptions);
-            } else {
-                player.sendMessage(ChatColor.RED + "There is no dungeon '" + name + "'");
-            }
-        }
-
-        @Subcommand("blocks")
-        @CommandCompletion("@dungeon-layouts|dungeonName")
-        public void blocks(CommandSender player, String name) {
-            Dungeon dungeon = new Dungeon(name);
-            if (dungeon.wasLoaded()) {
-                final SpawnDungeonOptions spawnDungeonOptions = new SpawnDungeonOptions();
-                spawnDungeonOptions.setSpawnBlocks(true);
-                dungeon.spawn(spawnDungeonOptions);
-            } else {
-                player.sendMessage(ChatColor.RED + "There is no dungeon '" + name + "'");
-            }
-        }
-
-        @Subcommand("mobs")
-        @CommandCompletion("@dungeon-layouts|dungeonName")
-        public void mobs(CommandSender player, String name) {
-            Dungeon dungeon = new Dungeon(name);
-            if (dungeon.wasLoaded()) {
-                final SpawnDungeonOptions spawnDungeonOptions = new SpawnDungeonOptions();
-                spawnDungeonOptions.setSpawnMobs(true);
-                dungeon.spawn(spawnDungeonOptions);
-            } else {
-                player.sendMessage(ChatColor.RED + "There is no dungeon '" + name + "'");
-            }
-        }
-
-        @Subcommand("chest")
-        @CommandCompletion("@dungeon-layouts|dungeonName")
-        public void chest(CommandSender player, String name) {
-            Dungeon dungeon = new Dungeon(name);
-            if (dungeon.wasLoaded()) {
-                final SpawnDungeonOptions spawnDungeonOptions = new SpawnDungeonOptions();
-                spawnDungeonOptions.setSpawnChests(true);
-                dungeon.spawn(spawnDungeonOptions);
-            } else {
-                player.sendMessage(ChatColor.RED + "There is no dungeon '" + name + "'");
-            }
-        }
-
-        @Subcommand("all")
         public void all(Player player) {
             Dungeon dungeon = playerDungeons.get(player.getUniqueId());
             if (dungeon != null) {
@@ -184,6 +131,18 @@ public class DungeonCommand extends BaseCommand {
             if (dungeon != null) {
                 final SpawnDungeonOptions spawnDungeonOptions = new SpawnDungeonOptions();
                 spawnDungeonOptions.setSpawnChests(true);
+                dungeon.spawn(spawnDungeonOptions);
+            } else {
+                player.sendMessage("Please load a dungeon before attempting this");
+            }
+        }
+
+        @Subcommand("layout")
+        public void spawnLayout(Player player, @Optional String name) {
+            Dungeon dungeon = playerDungeons.get(player.getUniqueId());
+            if (dungeon != null) {
+                final SpawnDungeonOptions spawnDungeonOptions = new SpawnDungeonOptions();
+                spawnDungeonOptions.setSpawnLayout();
                 dungeon.spawn(spawnDungeonOptions);
             } else {
                 player.sendMessage("Please load a dungeon before attempting this");
@@ -261,7 +220,7 @@ public class DungeonCommand extends BaseCommand {
         @Subcommand("mob_config")
         public void mobConfig(Player player) {
             Dungeon dungeon = playerDungeons.get(player.getUniqueId());
-            if (dungeon == null || dungeon.getScanner() == null) {
+            if (dungeon == null) {
                 player.sendMessage("Please load a dungeon before attempting this");
                 return;
             }

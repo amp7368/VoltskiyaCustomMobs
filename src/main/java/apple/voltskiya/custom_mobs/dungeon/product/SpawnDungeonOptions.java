@@ -4,11 +4,13 @@ public class SpawnDungeonOptions {
     private boolean spawnMobs = false;
     private boolean spawnBlocks = false;
     private boolean spawnChests = false;
+    private boolean spawnLayout = false;
 
     public void setSpawnAll() {
         this.spawnMobs = true;
         this.spawnBlocks = true;
         this.spawnChests = true;
+        this.spawnLayout = false;
     }
 
     public boolean isSpawnMobs() {
@@ -33,5 +35,15 @@ public class SpawnDungeonOptions {
 
     public void setSpawnChests(boolean spawnChests) {
         this.spawnChests = spawnChests;
+    }
+
+    public void setSpawnLayout() {
+        this.spawnMobs = false;
+        this.spawnBlocks = false;
+        this.spawnChests = false;
+    }
+
+    public boolean isSpawnLayout() {
+        return spawnLayout;
     }
 }

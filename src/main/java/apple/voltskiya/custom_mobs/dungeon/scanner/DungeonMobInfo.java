@@ -26,15 +26,19 @@ public class DungeonMobInfo {
     private final Entity entity;
     public NBTTagCompound nbt;
     public EntityTypes<?> mobType;
-    private final String uuid;
-    private final Location location;
+    private String uuid;
+    private Location location;
 
     public DungeonMobInfo(Entity entity) {
+        this.entity = entity;
+        fromEntity(entity);
+    }
+
+    private void fromEntity(Entity entity) {
         nbt = new NBTTagCompound();
         ((CraftEntity) entity).getHandle().a_(nbt);
         nbt.remove("UUID");
         mobType = ((CraftEntity) entity).getHandle().getEntityType();
-        this.entity = entity;
         this.uuid = entity.getUniqueId().toString();
         this.location = entity.getLocation();
     }
@@ -81,5 +85,23 @@ public class DungeonMobInfo {
     // todo
     public double getProbability() {
         return 1;
+    }
+
+    public void rotate(int degrees) {
+        if (entity != null) {
+            final Location location = entity.getLocation();
+            location.getDirection().rotateAroundY(Math.toRadians(degrees));
+            entity.teleport(location);
+            fromEntity(entity);
+        }
+    }
+
+    public void pitchAdd(int degrees) {
+        if (entity != null) {
+            final Location location = entity.getLocation();
+            location.setPitch(location.getPitch() + degrees);
+            entity.teleport(location);
+            fromEntity(entity);
+        }
     }
 }

@@ -8,9 +8,7 @@ import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.server.v1_16_R3.MojangsonParser;
-import net.minecraft.server.v1_16_R3.NBTTagCompound;
-import net.minecraft.server.v1_16_R3.TileEntity;
+import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -28,7 +26,7 @@ public class DungeonChestScannedPredetermined implements DungeonChestScanned {
 
     public DungeonChestScannedPredetermined(NamespacedKey blockKey, TileEntity block, Location location, @Nullable String name) {
         this.blockKey = blockKey;
-        this.nbt = block.b();
+        this.nbt = block.save(new NBTTagCompound());
         this.location = location;
         this.name = name;
     }
@@ -40,6 +38,11 @@ public class DungeonChestScannedPredetermined implements DungeonChestScanned {
         final JsonElement nameJson = json.get(JsonKeys.DUNGEON_CHESTS_TITLE);
         this.name = nameJson == null || nameJson.isJsonNull() ? null : nameJson.getAsString();
         this.location = JsonUtils.locationFromJson(json.get("location"));
+    }
+
+    @Override
+    public void setBlockAt(World world, Location spawnLocation) {
+        world.setTileEntity(new BlockPosition(spawnLocation.getX(), spawnLocation.getY(), spawnLocation.getZ()), TileEntity.create(null, nbt));
     }
 
     @Override
@@ -71,4 +74,6 @@ public class DungeonChestScannedPredetermined implements DungeonChestScanned {
         }
         return InventoryUtils.makeItem(Material.CHEST, 1, "UNKNOWN", null);
     }
+
+
 }

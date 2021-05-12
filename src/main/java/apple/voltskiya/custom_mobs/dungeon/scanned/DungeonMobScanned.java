@@ -15,17 +15,14 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 public class DungeonMobScanned {
-    private DungeonMobInfo mob;
-    private Entity entity = null;
+    private final DungeonMobInfo mob;
     private DungeonMobConfig config = null;
 
     public DungeonMobScanned(@NotNull DungeonScanner scanner, Entity entity) {
         this.mob = new DungeonMobInfo(entity);
-        this.entity = entity;
         this.config = scanner.getMobConfig(entity);
     }
 
@@ -53,18 +50,11 @@ public class DungeonMobScanned {
     }
 
     public void rotate(int degrees) {
-        if (entity != null) {
-            final Location location = entity.getLocation();
-            location.getDirection().rotateAroundY(Math.toRadians(degrees));
-            entity.teleport(location);
-            mob = new DungeonMobInfo(entity);
-        }
+        mob.rotate(degrees);
     }
 
     public void pitchAdd(int degrees) {
-        final Location location = entity.getLocation();
-        location.setPitch(location.getPitch() + degrees);
-        entity.teleport(location);
+        mob.pitchAdd(degrees);
     }
 
     public ItemStack toItem() {
@@ -95,12 +85,7 @@ public class DungeonMobScanned {
         return config == null ? this.mob : config.getSpawnedMob();
     }
 
-    public Vector getOffset(DungeonScanned scanned) {
-        if (scanned == null) throw new IllegalStateException("There is no scanned dungeon somehow");
-        Location center = scanned.getCenter();
-        if (center == null) throw new IllegalStateException("There is no center to the scanned dungeon");
-        final Location mobLocation = mob.getLocation();
-        if (mobLocation == null) throw new IllegalStateException("There is no location in the scanned mob");
-        return mobLocation.toVector().subtract(center.toVector());
+    public DungeonMobInfo getMobPrimary() {
+        return mob;
     }
 }

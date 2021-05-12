@@ -61,17 +61,42 @@ public class DungeonLocation {
     }
 
     public void spawnAll(DungeonScanned layout, SpawnDungeonOptions spawnDungeonOptions) {
+
         if (spawnDungeonOptions.isSpawnMobs()) {
-            spawnMobs(layout);
+            spawnMobs(layout, spawnDungeonOptions.isSpawnLayout());
+        }
+        if (spawnDungeonOptions.isSpawnChests()) {
+            spawnChests(layout, spawnDungeonOptions.isSpawnLayout());
+        }
+
+    }
+
+    private void spawnMobs(DungeonScanned layout, boolean spawnLayout) {
+        List<DungeonMobScanned> mobs = layout.getMobs();
+        for (DungeonMobScanned mob : mobs) {
+            DungeonMobInfo spawnThis = spawnLayout ? mob.getMobPrimary() : mob.getMobSpawn();
+            Vector offset = getOffset(this.dungeon.getScanned().getCenter(), spawnThis.getLocation());
+            spawn(spawnThis, offset);
         }
     }
 
-    private void spawnMobs(DungeonScanned layout) {
-        List<DungeonMobScanned> mobs = layout.getMobs();
-        for (DungeonMobScanned mob : mobs) {
-            DungeonMobInfo spawnThis = mob.getMobSpawn();
-            Vector offset = mob.getOffset(this.dungeon.getScanned());
-            spawn(spawnThis, offset);
+    private void spawnChests(DungeonScanned layout, boolean spawnLayout) {
+        List<DungeonChestScanned> chests = layout.getChests();
+        for (DungeonChestScanned chest : chests) {
+            Vector offset = getOffset(layout.getCenter(), chest.getLocation());
+            spawn(chest, offset);
         }
+    }
+
+    public Vector getOffset(Location center, Location mobLocation) {
+        if (mobLocation == null || center == null)
+            throw new IllegalStateException("There is no location in the scanned mob or the center");
+        return mobLocation.toVector().subtract(center.toVector());
+    }
+
+    public void spawn(DungeonChestScanned chest, Vector offset) {
+        Location spawnLocation = dungeonLocation.clone().add(offset);
+        World world = ((CraftWorld) spawnLocation.getWorld()).getHandle();
+        chest.setBlockAt(world, spawnLocation);
     }
 }
