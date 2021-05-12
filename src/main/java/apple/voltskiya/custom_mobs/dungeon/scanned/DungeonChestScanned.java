@@ -35,7 +35,7 @@ public interface DungeonChestScanned {
 
     default List<String> getLore() {
         final Location location = getLocation();
-        if (location == null) return null;
+        if (location == null) return new ArrayList<>();
         return new ArrayList<>() {{
             add(String.format("[ %d , %d , %d]", location.getBlockX(), location.getBlockY(), location.getBlockZ()));
         }};

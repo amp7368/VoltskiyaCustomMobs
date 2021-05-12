@@ -27,8 +27,8 @@ public class DungeonMobConfig {
     }
 
     public DungeonMobConfig(JsonObject loadFrom) throws CommandSyntaxException {
-        nameToRepresentMob = loadFrom.get(DungeonScanner.JsonKeys.MOB_CONFIG_NAME).getAsString();
-        JsonArray mobsJson = loadFrom.get(DungeonScanner.JsonKeys.MOB_CONFIG_MOBS).getAsJsonArray();
+        nameToRepresentMob = loadFrom.get(JsonKeys.MOB_CONFIG_NAME).getAsString();
+        JsonArray mobsJson = loadFrom.get(JsonKeys.MOB_CONFIG_MOBS).getAsJsonArray();
         for (JsonElement element : mobsJson) {
             mobs.add(new DungeonMobInfo(element.getAsJsonObject()));
         }
@@ -48,12 +48,12 @@ public class DungeonMobConfig {
 
     public JsonElement toJson() {
         JsonObject json = new JsonObject();
-        json.add(DungeonScanner.JsonKeys.MOB_CONFIG_NAME, new JsonPrimitive(nameToRepresentMob));
+        json.add(JsonKeys.MOB_CONFIG_NAME, new JsonPrimitive(nameToRepresentMob));
         final JsonArray jsonMobs = new JsonArray();
         for (DungeonMobInfo mob : mobs) {
             jsonMobs.add(mob.toJson());
         }
-        json.add(DungeonScanner.JsonKeys.MOB_CONFIG_MOBS, jsonMobs);
+        json.add(JsonKeys.MOB_CONFIG_MOBS, jsonMobs);
 
         return json;
     }

@@ -2,6 +2,7 @@ package apple.voltskiya.custom_mobs.dungeon.gui;
 
 import apple.voltskiya.custom_mobs.dungeon.gui.mob_configs.DungeonMobConfigSlot;
 import apple.voltskiya.custom_mobs.dungeon.scanner.DungeonMobConfig;
+import apple.voltskiya.custom_mobs.dungeon.scanner.DungeonScanner;
 import apple.voltskiya.custom_mobs.gui.InventoryGuiPageScrollable;
 import apple.voltskiya.custom_mobs.gui.InventoryGuiSlotGeneric;
 import apple.voltskiya.custom_mobs.util.minecraft.InventoryUtils;
@@ -13,12 +14,18 @@ public class DungeonPageMobConfigs extends InventoryGuiPageScrollable {
     public DungeonPageMobConfigs(DungeonGui dungeonGui) {
         super(dungeonGui);
         this.dungeonGui = dungeonGui;
-        this.addMobs();
+        final DungeonScanner scanner = dungeonGui.getDungeon().getScanner();
+        if (scanner == null) {
+            setSlot(new InventoryGuiSlotGeneric((e1) -> {
+            }, InventoryUtils.makeItem(Material.RED_TERRACOTTA, 1, "The scanner is not set", null)), 4);
+        } else {
+            this.addMobs(scanner);
+        }
         this.setSlots();
     }
 
-    private void addMobs() {
-        for (DungeonMobConfig config : dungeonGui.getDungeonScanner().getMobConfigs())
+    private void addMobs(DungeonScanner scanner) {
+        for (DungeonMobConfig config : scanner.getMobConfigs())
             this.add(new DungeonMobConfigSlot(dungeonGui, config));
     }
 

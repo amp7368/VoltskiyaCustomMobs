@@ -7,7 +7,6 @@ import apple.voltskiya.custom_mobs.gui.InventoryGuiPageScrollable;
 import apple.voltskiya.custom_mobs.gui.InventoryGuiSlotGeneric;
 import apple.voltskiya.custom_mobs.util.minecraft.InventoryUtils;
 import org.bukkit.Material;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Comparator;
 import java.util.List;
@@ -18,18 +17,21 @@ public class DungeonPageChests extends InventoryGuiPageScrollable {
     public DungeonPageChests(DungeonGui dungeonGui) {
         super(dungeonGui);
         this.dungeonGui = dungeonGui;
-        addChests();
+        DungeonScanned scanned = dungeonGui.getDungeon().getScanned();
+        if (scanned == null) {
+            setSlot(new InventoryGuiSlotGeneric((e1) -> {
+            }, InventoryUtils.makeItem(Material.RED_TERRACOTTA, 1, "The dungeon layout is not set", null)), 4);
+        } else {
+            this.addChests(scanned);
+        }
         setSlots();
     }
 
-    private void addChests() {
-        @Nullable DungeonScanned scanned = dungeonGui.getDungeonScanner().getDungeonInstance();
-        if (scanned != null) {
-            final List<DungeonChestScanned> chests = scanned.getChests();
-            chests.sort(Comparator.comparingDouble(o -> o.distance(dungeonGui.getPlayer())));
-            for (DungeonChestScanned chest : chests) {
-                add(new DungeonChestSlot(dungeonGui, chest));
-            }
+    private void addChests(DungeonScanned scanned) {
+        final List<DungeonChestScanned> chests = scanned.getChests();
+        chests.sort(Comparator.comparingDouble(o -> o.distance(dungeonGui.getPlayer())));
+        for (DungeonChestScanned chest : chests) {
+            add(new DungeonChestSlot(dungeonGui, chest));
         }
     }
 

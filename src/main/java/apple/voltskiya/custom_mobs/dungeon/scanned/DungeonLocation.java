@@ -1,53 +1,40 @@
 package apple.voltskiya.custom_mobs.dungeon.scanned;
 
 import apple.voltskiya.custom_mobs.dungeon.PluginDungeon;
+import apple.voltskiya.custom_mobs.dungeon.product.Dungeon;
+import apple.voltskiya.custom_mobs.dungeon.product.SpawnDungeonOptions;
 import apple.voltskiya.custom_mobs.dungeon.scanner.DungeonMobInfo;
+import apple.voltskiya.custom_mobs.util.JsonUtils;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 import net.minecraft.server.v1_16_R3.Entity;
 import net.minecraft.server.v1_16_R3.EntityTypes;
 import net.minecraft.server.v1_16_R3.World;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import org.bukkit.util.Vector;
 
+import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.logging.Level;
 
 public class DungeonLocation {
+    private final Dungeon dungeon;
     private final Location dungeonLocation;
 
-    public DungeonLocation(Location dungeonLocation) {
+    public DungeonLocation(Dungeon dungeon, Location dungeonLocation) {
+        this.dungeon = dungeon;
         this.dungeonLocation = dungeonLocation;
     }
 
-    public DungeonLocation(JsonObject json) {
-        this.dungeonLocation = new Location(
-                Bukkit.getWorld(UUID.fromString(json.get("world").getAsString())),
-                json.get("x").getAsDouble(),
-                json.get("y").getAsDouble(),
-                json.get("z").getAsDouble()
-        ).setDirection(
-                new Vector(
-                        json.get("xF").getAsDouble(),
-                        json.get("yF").getAsDouble(),
-                        json.get("zF").getAsDouble()
-                )
-        );
+    public DungeonLocation(Dungeon dungeon, JsonObject json) {
+        this.dungeon = dungeon;
+        this.dungeonLocation = JsonUtils.locationFromJson(json.get("location"));
     }
 
     public JsonElement toJson() {
         final JsonObject json = new JsonObject();
-        json.add("world", new JsonPrimitive(this.dungeonLocation.getWorld().getUID().toString()));
-        json.add("x", new JsonPrimitive(this.dungeonLocation.getX()));
-        json.add("y", new JsonPrimitive(this.dungeonLocation.getY()));
-        json.add("z", new JsonPrimitive(this.dungeonLocation.getZ()));
-        json.add("xF", new JsonPrimitive(this.dungeonLocation.getDirection().getX()));
-        json.add("yF", new JsonPrimitive(this.dungeonLocation.getDirection().getY()));
-        json.add("zF", new JsonPrimitive(this.dungeonLocation.getDirection().getZ()));
+        json.add("location", JsonUtils.locationToJson(dungeonLocation));
         return json;
     }
 
@@ -70,6 +57,21 @@ public class DungeonLocation {
             world.addEntity(entity);
         } else {
             PluginDungeon.get().log(Level.WARNING, String.format("%s is not a valid mob and did not spawn at <%d, %d, %d>", mob.getName(), spawnLocation.getBlockX(), spawnLocation.getBlockY(), spawnLocation.getBlockZ()));
+        }
+    }
+
+    public void spawnAll(DungeonScanned layout, SpawnDungeonOptions spawnDungeonOptions) {
+        if (spawnDungeonOptions.isSpawnMobs()) {
+            spawnMobs(layout);
+        }
+    }
+
+    private void spawnMobs(DungeonScanned layout) {
+        List<DungeonMobScanned> mobs = layout.getMobs();
+        for (DungeonMobScanned mob : mobs) {
+            DungeonMobInfo spawnThis = mob.getMobSpawn();
+            Vector offset = mob.getOffset(this.dungeon.getScanned());
+            spawn(spawnThis, offset);
         }
     }
 }

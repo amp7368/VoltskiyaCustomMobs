@@ -1,6 +1,9 @@
 package apple.voltskiya.custom_mobs.dungeon;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
+import apple.voltskiya.custom_mobs.dungeon.product.Dungeon;
+import apple.voltskiya.custom_mobs.dungeon.product.ScanDungeonOptions;
+import apple.voltskiya.custom_mobs.dungeon.product.SpawnDungeonOptions;
 import apple.voltskiya.custom_mobs.dungeon.scanned.DungeonScanned;
 import apple.voltskiya.custom_mobs.dungeon.scanner.DungeonScanner;
 import co.aikar.commands.BaseCommand;
@@ -18,99 +21,172 @@ import java.util.UUID;
 @CommandAlias("dungeon")
 @CommandPermission("dungeon.create")
 public class DungeonCommand extends BaseCommand {
-    private final Map<UUID, DungeonScanner> playerDungeonScanners = new HashMap<>();
+    private final Map<UUID, Dungeon> playerDungeons = new HashMap<>();
 
     public DungeonCommand() {
         VoltskiyaPlugin.get().getCommandManager().registerCommand(this);
         VoltskiyaPlugin.get().getCommandManager().getCommandCompletions().registerCompletion("dungeon-scanners", DungeonScanner::getSchematics);
-        VoltskiyaPlugin.get().getCommandManager().getCommandCompletions().registerCompletion("dungeon-instances", DungeonScanned::getSchematics);
+        VoltskiyaPlugin.get().getCommandManager().getCommandCompletions().registerCompletion("dungeon-layouts", DungeonScanned::getSchematics);
+        VoltskiyaPlugin.get().getCommandManager().getCommandCompletions().registerCompletion("dungeon-dungeons", Dungeon::getSchematics);
+    }
+
+    @Subcommand("gui")
+    public void gui(Player player) {
+        @Nullable Dungeon dungeon = playerDungeons.get(player.getUniqueId());
+        if (dungeon == null) {
+            player.sendMessage("Please load a dungeon before attempting this");
+            return;
+        }
+        dungeon.gui(player);
+
     }
 
     @Subcommand("load")
     public class Load extends BaseCommand {
+        @Subcommand("dungeon")
+        @CommandCompletion("@dungeon-dungeons|name")
+        public void loadDungeon(Player player, @Single String dungeonName) {
+            Dungeon dungeon = new Dungeon(dungeonName);
+            playerDungeons.put(player.getUniqueId(), dungeon);
+            if (dungeon.wasLoaded()) {
+                player.sendMessage(ChatColor.AQUA + "Loaded dungeon " + dungeon.getName() + " from the database");
+            } else {
+                player.sendMessage(ChatColor.AQUA + "This dungeon did not previously exist. Load a different dungeon if you do not wish to create a new one");
+            }
+        }
+
         @Subcommand("scanner")
         @CommandCompletion("@dungeon-scanners|name")
-        public void loadScanner(Player player, @Single String dungeonScannerName) {
-            DungeonScanner scanner;
-            scanner = new DungeonScanner(player, dungeonScannerName);
-            playerDungeonScanners.put(player.getUniqueId(), scanner);
+        public void loadScanner(Player player, @Optional @Single String dungeonScannerName) {
+            Dungeon dungeon = playerDungeons.get(player.getUniqueId());
+            if (dungeon == null) {
+                player.sendMessage("Please load a dungeon before attempting this");
+                return;
+            }
+            DungeonScanner scanner = dungeon.loadScanner(dungeonScannerName);
             if (scanner.wasLoaded()) {
-                player.sendMessage(ChatColor.AQUA + "Loaded dungeon scanner " + dungeonScannerName + " from the database");
+                player.sendMessage(ChatColor.AQUA + "Loaded dungeon scanner " + scanner.getName() + " from the database");
             } else {
                 player.sendMessage(ChatColor.AQUA + "This dungeon scanner did not previously exist. Load a different scanner if you do not wish to create a new one");
             }
         }
 
-        @Subcommand("dungeon")
-        @CommandCompletion("@dungeon-instances|layoutName")
-        public void loadDungeon(Player player, @Single String dungeonInstanceName) {
-            @Nullable DungeonScanner scanner = playerDungeonScanners.get(player.getUniqueId());
-            if (scanner == null) {
-                player.sendMessage("Please load a dungeon scanner before attempting this");
+        @Subcommand("layout")
+        @CommandCompletion("@dungeon-layouts|layoutName")
+        public void loadLayout(Player player, @Optional @Single String dungeonInstanceName) {
+            Dungeon dungeon = playerDungeons.get(player.getUniqueId());
+            if (dungeon == null) {
+                player.sendMessage("Please load a dungeon before attempting this");
                 return;
             }
-            if (scanner.loadDungeonInstance(dungeonInstanceName).isWasLoaded()) {
-                player.sendMessage(ChatColor.AQUA + "Loaded dungeon layout " + dungeonInstanceName + " from the database");
+            DungeonScanned layout = dungeon.loadLayout(dungeonInstanceName);
+            if (layout.wasLoaded()) {
+                player.sendMessage(ChatColor.AQUA + "Loaded dungeon layout " + layout.getName() + " from the database");
             } else {
-                player.sendMessage("There is no dungeon layout with that name. If you wish to create a new one, scan one instead.");
+                player.sendMessage(ChatColor.AQUA + "This dungeon layout did not previously exist. Load a different layout if you do not wish to create a new one");
             }
         }
-    }
-
-
-    @Subcommand("gui")
-    public void gui(Player player) {
-        @Nullable DungeonScanner scanner = playerDungeonScanners.get(player.getUniqueId());
-        if (scanner == null) {
-            player.sendMessage("Please load a dungeon scanner before attempting this");
-            return;
-        }
-        scanner.gui(player);
     }
 
     @Subcommand("spawn")
     public class Spawn extends BaseCommand {
         @Subcommand("all")
-        @CommandCompletion("@dungeon-instances|dungeonName")
+        @CommandCompletion("@dungeon-layouts|dungeonName")
         public void all(CommandSender player, String name) {
-            DungeonScanned dungeon = new DungeonScanned(name);
-            if (dungeon.isWasLoaded()) {
-                dungeon.spawnAll();
+            Dungeon dungeon = new Dungeon(name);
+            if (dungeon.wasLoaded()) {
+                final SpawnDungeonOptions spawnDungeonOptions = new SpawnDungeonOptions();
+                spawnDungeonOptions.setSpawnAll();
+                dungeon.spawn(spawnDungeonOptions);
             } else {
                 player.sendMessage(ChatColor.RED + "There is no dungeon '" + name + "'");
             }
         }
 
         @Subcommand("blocks")
-        @CommandCompletion("@dungeon-instances|dungeonName")
+        @CommandCompletion("@dungeon-layouts|dungeonName")
         public void blocks(CommandSender player, String name) {
-            DungeonScanned dungeon = new DungeonScanned(name);
-            if (dungeon.isWasLoaded()) {
-                dungeon.spawnBlocks();
+            Dungeon dungeon = new Dungeon(name);
+            if (dungeon.wasLoaded()) {
+                final SpawnDungeonOptions spawnDungeonOptions = new SpawnDungeonOptions();
+                spawnDungeonOptions.setSpawnBlocks(true);
+                dungeon.spawn(spawnDungeonOptions);
             } else {
                 player.sendMessage(ChatColor.RED + "There is no dungeon '" + name + "'");
             }
         }
 
         @Subcommand("mobs")
-        @CommandCompletion("@dungeon-instances|dungeonName")
+        @CommandCompletion("@dungeon-layouts|dungeonName")
         public void mobs(CommandSender player, String name) {
-            DungeonScanned dungeon = new DungeonScanned(name);
-            if (dungeon.isWasLoaded()) {
-                dungeon.spawnMobs();
+            Dungeon dungeon = new Dungeon(name);
+            if (dungeon.wasLoaded()) {
+                final SpawnDungeonOptions spawnDungeonOptions = new SpawnDungeonOptions();
+                spawnDungeonOptions.setSpawnMobs(true);
+                dungeon.spawn(spawnDungeonOptions);
             } else {
                 player.sendMessage(ChatColor.RED + "There is no dungeon '" + name + "'");
             }
         }
 
         @Subcommand("chest")
-        @CommandCompletion("@dungeon-instances|dungeonName")
+        @CommandCompletion("@dungeon-layouts|dungeonName")
         public void chest(CommandSender player, String name) {
-            DungeonScanned dungeon = new DungeonScanned(name);
-            if (dungeon.isWasLoaded()) {
-                dungeon.spawnChests();
+            Dungeon dungeon = new Dungeon(name);
+            if (dungeon.wasLoaded()) {
+                final SpawnDungeonOptions spawnDungeonOptions = new SpawnDungeonOptions();
+                spawnDungeonOptions.setSpawnChests(true);
+                dungeon.spawn(spawnDungeonOptions);
             } else {
                 player.sendMessage(ChatColor.RED + "There is no dungeon '" + name + "'");
+            }
+        }
+
+        @Subcommand("all")
+        public void all(Player player) {
+            Dungeon dungeon = playerDungeons.get(player.getUniqueId());
+            if (dungeon != null) {
+                final SpawnDungeonOptions spawnDungeonOptions = new SpawnDungeonOptions();
+                spawnDungeonOptions.setSpawnAll();
+                dungeon.spawn(spawnDungeonOptions);
+            } else {
+                player.sendMessage("Please load a dungeon before attempting this");
+            }
+        }
+
+        @Subcommand("blocks")
+        public void blocks(Player player) {
+            Dungeon dungeon = playerDungeons.get(player.getUniqueId());
+            if (dungeon != null) {
+                final SpawnDungeonOptions spawnDungeonOptions = new SpawnDungeonOptions();
+                spawnDungeonOptions.setSpawnBlocks(true);
+                dungeon.spawn(spawnDungeonOptions);
+            } else {
+                player.sendMessage("Please load a dungeon before attempting this");
+            }
+        }
+
+        @Subcommand("mobs")
+        public void mobs(Player player) {
+            Dungeon dungeon = playerDungeons.get(player.getUniqueId());
+            if (dungeon != null) {
+                final SpawnDungeonOptions spawnDungeonOptions = new SpawnDungeonOptions();
+                spawnDungeonOptions.setSpawnMobs(true);
+                dungeon.spawn(spawnDungeonOptions);
+            } else {
+                player.sendMessage("Please load a dungeon before attempting this");
+            }
+        }
+
+        @Subcommand("chest")
+        public void chest(Player player) {
+            Dungeon dungeon = playerDungeons.get(player.getUniqueId());
+            if (dungeon != null) {
+                final SpawnDungeonOptions spawnDungeonOptions = new SpawnDungeonOptions();
+                spawnDungeonOptions.setSpawnChests(true);
+                dungeon.spawn(spawnDungeonOptions);
+            } else {
+                player.sendMessage("Please load a dungeon before attempting this");
             }
         }
     }
@@ -119,25 +195,25 @@ public class DungeonCommand extends BaseCommand {
     public class Set extends BaseCommand {
         @Subcommand("pos1")
         public void pos1(Player player) {
-            @Nullable DungeonScanner scanner = playerDungeonScanners.get(player.getUniqueId());
-            if (scanner == null) {
-                player.sendMessage("Please load a dungeon scanner before attempting this");
+            Dungeon dungeon = playerDungeons.get(player.getUniqueId());
+            if (dungeon == null) {
+                player.sendMessage("Please load a dungeon before attempting this");
                 return;
             }
             final Location location = player.getLocation();
-            scanner.pos1(location);
+            dungeon.getDungeonPlayerIO().pos1(location);
             player.sendMessage(ChatColor.AQUA + String.format("pos1 set to (%d, %d, %d)", location.getBlockX(), location.getBlockY(), location.getBlockZ()));
         }
 
         @Subcommand("pos2")
         public void pos2(Player player) {
-            @Nullable DungeonScanner scanner = playerDungeonScanners.get(player.getUniqueId());
-            if (scanner == null) {
-                player.sendMessage("Please load a dungeon scanner before attempting this");
+            Dungeon dungeon = playerDungeons.get(player.getUniqueId());
+            if (dungeon == null) {
+                player.sendMessage("Please load a dungeon before attempting this");
                 return;
             }
             final Location location = player.getLocation();
-            scanner.pos2(location);
+            dungeon.getDungeonPlayerIO().pos2(location);
             player.sendMessage(ChatColor.AQUA + String.format("pos2 set to (%d, %d, %d)", location.getBlockX(), location.getBlockY(), location.getBlockZ()));
         }
 
@@ -145,25 +221,20 @@ public class DungeonCommand extends BaseCommand {
         public class Center extends BaseCommand {
             @Subcommand("real")
             public void realCenter(Player player) {
-                @Nullable DungeonScanner scanner = playerDungeonScanners.get(player.getUniqueId());
-                if (scanner == null || scanner.getDungeonInstance() == null) {
-                    player.sendMessage("Please load a dungeon scanner and dungeon layout before attempting this");
-                    return;
-                }
-                final Location location = player.getLocation();
-                scanner.newDungeon(location);
-                player.sendMessage(ChatColor.AQUA + "Set " + scanner.getDungeonInstance().getName() + " as a new dungeon. Ready to spawn.");
+                Dungeon dungeon = playerDungeons.get(player.getUniqueId());
+                dungeon.setDungeonLocation(player.getLocation());
+                player.sendMessage(ChatColor.AQUA + "Set " + dungeon.getName() + "'s location'");
             }
 
             @Subcommand("layout")
             public void layoutCenter(Player player) {
-                @Nullable DungeonScanner scanner = playerDungeonScanners.get(player.getUniqueId());
-                if (scanner == null) {
-                    player.sendMessage("Please load a dungeon scanner before attempting this");
+                Dungeon dungeon = playerDungeons.get(player.getUniqueId());
+                if (dungeon == null || dungeon.getScanned() == null) {
+                    player.sendMessage("Please load a dungeon and dungeon layout before attempting this");
                     return;
                 }
-                final Location location = player.getLocation();
-                scanner.center(location);
+                dungeon.getScanned().setCenter(player.getLocation());
+                player.sendMessage(ChatColor.AQUA + "Set " + dungeon.getName() + "'s layout location'");
             }
         }
 
@@ -172,27 +243,33 @@ public class DungeonCommand extends BaseCommand {
     @Subcommand("scan")
     public class Scan extends BaseCommand {
         @Subcommand("dungeon")
-        @CommandCompletion("layoutName scanBlocks|true|false scanMobs|true|false scanChests|true|false")
-        public void scanDungeon(Player player, @Single String dungeonName, @Optional Boolean scanBlocks, @Optional Boolean scanMobs, @Optional Boolean scanChests) {
-            @Nullable DungeonScanner scanner = playerDungeonScanners.get(player.getUniqueId());
-            if (scanner == null || scanner.getPos1() == null || scanner.getPos2() == null || scanner.getCenter() == null) {
-                player.sendMessage("Please load a dungeon scanner and set pos1, pos2, and layoutCenter before attempting this");
+        @CommandCompletion("scanBlocks|true|false scanMobs|true|false scanChests|true|false")
+        public void scanDungeon(Player player, @Optional Boolean scanBlocks, @Optional Boolean scanMobs, @Optional Boolean scanChests) {
+            Dungeon dungeon = playerDungeons.get(player.getUniqueId());
+            if (dungeon == null || dungeon.getScanner() == null) {
+                player.sendMessage("Please load a dungeon and dungeon scanner before attempting this");
                 return;
             }
-            scanner.scanDungeon(dungeonName, scanBlocks, scanMobs, scanChests);
+            try {
+                dungeon.scanDungeon(new ScanDungeonOptions(scanBlocks, scanMobs, scanChests));
+                player.sendMessage(ChatColor.AQUA + "The dungeon has been scanned");
+            } catch (IllegalStateException e) {
+                player.sendMessage("Please load a dungeon scanner and set pos1, pos2 before attempting this");
+            }
         }
 
         @Subcommand("mob_config")
         public void mobConfig(Player player) {
-            @Nullable DungeonScanner scanner = playerDungeonScanners.get(player.getUniqueId());
-            if (scanner == null) {
-                player.sendMessage("Please load a dungeon scanner before attempting this");
+            Dungeon dungeon = playerDungeons.get(player.getUniqueId());
+            if (dungeon == null || dungeon.getScanner() == null) {
+                player.sendMessage("Please load a dungeon before attempting this");
                 return;
             }
             try {
-                scanner.scanMobConfig();
-            } catch (IllegalArgumentException | IllegalStateException e) {
-                player.sendMessage(ChatColor.RED + e.getMessage());
+                dungeon.scanMobConfig();
+                player.sendMessage(ChatColor.AQUA + "The mob config has been scanned");
+            } catch (IllegalStateException e) {
+                player.sendMessage("Please load a dungeon scanner and set pos1, pos2 before attempting this");
             }
         }
     }

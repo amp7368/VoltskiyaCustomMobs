@@ -1,5 +1,6 @@
 package apple.voltskiya.custom_mobs.dungeon.scanner;
 
+import apple.voltskiya.custom_mobs.util.JsonUtils;
 import apple.voltskiya.custom_mobs.util.minecraft.InventoryUtils;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -9,11 +10,11 @@ import net.minecraft.server.v1_16_R3.EntityTypes;
 import net.minecraft.server.v1_16_R3.MojangsonParser;
 import net.minecraft.server.v1_16_R3.NBTTagCompound;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.Vector;
 
 import java.util.Collections;
 import java.util.UUID;
@@ -26,7 +27,7 @@ public class DungeonMobInfo {
     public NBTTagCompound nbt;
     public EntityTypes<?> mobType;
     private final String uuid;
-    private final Vector location;
+    private final Location location;
 
     public DungeonMobInfo(Entity entity) {
         nbt = new NBTTagCompound();
@@ -35,19 +36,15 @@ public class DungeonMobInfo {
         mobType = ((CraftEntity) entity).getHandle().getEntityType();
         this.entity = entity;
         this.uuid = entity.getUniqueId().toString();
-        this.location = entity.getLocation().toVector();
+        this.location = entity.getLocation();
     }
 
     public DungeonMobInfo(JsonObject loadFrom) throws CommandSyntaxException {
-        this.nbt = MojangsonParser.parse(loadFrom.get(DungeonScanner.JsonKeys.MOB_CONFIG_NBT).getAsString());
+        this.nbt = MojangsonParser.parse(loadFrom.get(JsonKeys.MOB_CONFIG_NBT).getAsString());
         this.mobType = null;
-        this.uuid = loadFrom.get(DungeonScanner.JsonKeys.MOB_CONFIG_UUID).getAsString();
+        this.uuid = loadFrom.get(JsonKeys.MOB_CONFIG_UUID).getAsString();
         this.entity = Bukkit.getEntity(UUID.fromString(this.uuid));
-        this.location = new Vector(
-                loadFrom.get("x").getAsDouble(),
-                loadFrom.get("y").getAsDouble(),
-                loadFrom.get("z").getAsDouble()
-        );
+        this.location = JsonUtils.locationFromJson(loadFrom.get("location"));
     }
 
     public Material getSpawnEgg() {
@@ -61,11 +58,9 @@ public class DungeonMobInfo {
 
     public JsonElement toJson() {
         JsonObject json = new JsonObject();
-        json.add(DungeonScanner.JsonKeys.MOB_CONFIG_NBT, new JsonPrimitive(nbt.asString()));
-        json.add(DungeonScanner.JsonKeys.MOB_CONFIG_UUID, new JsonPrimitive(uuid));
-        json.add("x", new JsonPrimitive(location.getX()));
-        json.add("y", new JsonPrimitive(location.getY()));
-        json.add("z", new JsonPrimitive(location.getZ()));
+        json.add(JsonKeys.MOB_CONFIG_NBT, new JsonPrimitive(nbt.asString()));
+        json.add(JsonKeys.MOB_CONFIG_UUID, new JsonPrimitive(uuid));
+        json.add("location", JsonUtils.locationToJson(location));
         return json;
     }
 
@@ -73,7 +68,7 @@ public class DungeonMobInfo {
         return InventoryUtils.makeItem(this.getSpawnEgg(), 1, this.getName(), null);
     }
 
-    public Vector getLocation() {
+    public Location getLocation() {
         return location;
     }
 

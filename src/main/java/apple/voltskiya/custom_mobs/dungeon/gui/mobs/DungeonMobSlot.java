@@ -9,10 +9,10 @@ import apple.voltskiya.custom_mobs.gui.InventoryGuiSlotGeneric;
 import apple.voltskiya.custom_mobs.gui.InventoryGuiSlotScrollable;
 import apple.voltskiya.custom_mobs.util.VectorUtils;
 import apple.voltskiya.custom_mobs.util.minecraft.InventoryUtils;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -28,7 +28,7 @@ public class DungeonMobSlot extends InventoryGuiSlotScrollable {
     public DungeonMobSlot(DungeonGui dungeonGui, DungeonMobScanned mob) {
         this.dungeonGui = dungeonGui;
         this.mob = mob;
-        final DungeonScanned dungeonInstance = dungeonGui.getDungeonScanner().getDungeonInstance();
+        final DungeonScanned dungeonInstance = dungeonGui.getDungeon().getScanned();
         if (dungeonInstance == null) throw new IllegalStateException("The dungeon isn't real");
         this.dungeonInstance = dungeonInstance;
     }
@@ -111,12 +111,12 @@ public class DungeonMobSlot extends InventoryGuiSlotScrollable {
 
             @Override
             public ItemStack getItem() {
-                Vector xyz = mob.getLocation();
+                Location xyz = mob.getLocation();
                 if (xyz == null) {
                     return InventoryUtils.makeItem(Material.BLACK_STAINED_GLASS, 1, "Entity is not loaded anymore", null);
                 } else {
                     List<String> distance = Collections.singletonList(String.format("%.2f blocks away",
-                            (VectorUtils.magnitude(dungeonGui.getPlayer().getLocation().toVector().subtract(xyz)))
+                            (VectorUtils.magnitude(dungeonGui.getPlayer().getLocation().toVector().subtract(xyz.toVector())))
                     ));
                     return InventoryUtils.makeItem(Material.BLACK_STAINED_GLASS,
                             1,

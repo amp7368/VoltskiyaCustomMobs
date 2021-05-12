@@ -1,6 +1,7 @@
 package apple.voltskiya.custom_mobs.dungeon.scanned;
 
-import apple.voltskiya.custom_mobs.dungeon.scanner.DungeonScanner;
+import apple.voltskiya.custom_mobs.dungeon.scanner.JsonKeys;
+import apple.voltskiya.custom_mobs.util.JsonUtils;
 import apple.voltskiya.custom_mobs.util.minecraft.InventoryUtils;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
@@ -19,7 +20,7 @@ public class DungeonChestScannedLootTable implements DungeonChestScanned {
     private final NamespacedKey blockKey;
     private final NamespacedKey lootTableKey;
     private final @Nullable String name;
-    private Location location = null;
+    private final Location location;
 
     public DungeonChestScannedLootTable(NamespacedKey blockKey, NamespacedKey lootTableKey, Location location, @Nullable String name) {
         this.blockKey = blockKey;
@@ -29,21 +30,23 @@ public class DungeonChestScannedLootTable implements DungeonChestScanned {
     }
 
     public DungeonChestScannedLootTable(JsonObject json) {
-        final String[] lootTableKey = json.get(DungeonScanner.JsonKeys.DUNGEON_CHESTS_LOOTABLE).getAsString().split(":");
+        final String[] lootTableKey = json.get(JsonKeys.DUNGEON_CHESTS_LOOTABLE).getAsString().split(":");
         this.lootTableKey = new NamespacedKey(lootTableKey[0], lootTableKey[1]);
-        final String[] blockKey = json.get(DungeonScanner.JsonKeys.DUNGEON_CHESTS_BLOCK).getAsString().split(":");
+        final String[] blockKey = json.get(JsonKeys.DUNGEON_CHESTS_BLOCK).getAsString().split(":");
         this.blockKey = new NamespacedKey(blockKey[0], blockKey[1]);
-        final JsonElement nameJson = json.get(DungeonScanner.JsonKeys.DUNGEON_CHESTS_TITLE);
+        final JsonElement nameJson = json.get(JsonKeys.DUNGEON_CHESTS_TITLE);
         this.name = nameJson == null || nameJson.isJsonNull() ? null : nameJson.getAsString();
+        this.location = JsonUtils.locationFromJson(json.get("location"));
     }
 
     @Override
     public JsonElement toJson() {
         JsonObject json = new JsonObject();
-        json.add(DungeonScanner.JsonKeys.DUNGEON_CHESTS_LOOTABLE, new JsonPrimitive(lootTableKey.toString()));
-        json.add(DungeonScanner.JsonKeys.DUNGEON_CHESTS_BLOCK, new JsonPrimitive(blockKey.toString()));
+        json.add(JsonKeys.DUNGEON_CHESTS_LOOTABLE, new JsonPrimitive(lootTableKey.toString()));
+        json.add(JsonKeys.DUNGEON_CHESTS_BLOCK, new JsonPrimitive(blockKey.toString()));
         json.add("typeId", new JsonPrimitive(ChestTypes.LOOT_TABLE.getTypeName()));
-        json.add(DungeonScanner.JsonKeys.DUNGEON_CHESTS_TITLE, name == null ? JsonNull.INSTANCE : new JsonPrimitive(name));
+        json.add(JsonKeys.DUNGEON_CHESTS_TITLE, name == null ? JsonNull.INSTANCE : new JsonPrimitive(name));
+        json.add("location", JsonUtils.locationToJson(location));
         return json;
     }
 

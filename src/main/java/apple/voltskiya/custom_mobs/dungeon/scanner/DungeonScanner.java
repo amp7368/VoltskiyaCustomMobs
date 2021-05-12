@@ -1,7 +1,8 @@
 package apple.voltskiya.custom_mobs.dungeon.scanner;
 
 import apple.voltskiya.custom_mobs.dungeon.PluginDungeon;
-import apple.voltskiya.custom_mobs.dungeon.gui.DungeonGui;
+import apple.voltskiya.custom_mobs.dungeon.product.Dungeon;
+import apple.voltskiya.custom_mobs.dungeon.product.ScanDungeonOptions;
 import apple.voltskiya.custom_mobs.dungeon.scanned.DungeonScanned;
 import co.aikar.commands.BukkitCommandCompletionContext;
 import com.google.gson.Gson;
@@ -27,48 +28,19 @@ import java.util.*;
  * represents a way to scan an area to turn it into a dungeon
  */
 public class DungeonScanner {
-    private final Map<String, DungeonMobConfig> nameToMobConfig = new HashMap<>();
-    private Location pos1 = null;
-    private Location pos2 = null;
     private final String name;
+    private final Map<String, DungeonMobConfig> nameToMobConfig = new HashMap<>();
+    private final Dungeon dungeon;
     private boolean wasLoaded;
-    private DungeonScanned currentScannedDungeon = null;
-    private Location center;
 
-    public DungeonScanner(@Nullable Player player, String name) {
+    public DungeonScanner(Dungeon dungeon, String name) {
         this.name = name;
-        this.center = player == null ? null : player.getLocation();
+        this.dungeon = dungeon;
         try {
             fromJson(name);
         } catch (IOException | CommandSyntaxException e) {
             e.printStackTrace();
         }
-    }
-
-    public void gui(Player player) {
-        new DungeonGui(player, this);
-    }
-
-    public void pos1(Location location) {
-        this.pos1 = location;
-    }
-
-    public void pos2(Location location) {
-        this.pos2 = location;
-    }
-
-    public void center(Location center) {
-        this.center = center;
-        if (this.currentScannedDungeon != null) this.currentScannedDungeon.center(center);
-    }
-
-
-    public Location getPos1() {
-        return pos1;
-    }
-
-    public Location getPos2() {
-        return pos2;
     }
 
     private void fromJson(String name) throws IOException, CommandSyntaxException {
@@ -104,26 +76,22 @@ public class DungeonScanner {
         return Arrays.asList(files);
     }
 
-    public void scanDungeon(String dungeonInstanceName, Boolean scanBlocks, Boolean scanMobs, Boolean scanChests) {
-        this.currentScannedDungeon = new DungeonScanned(this, dungeonInstanceName);
-        if (scanBlocks == null && scanMobs == null && scanChests == null)
-            this.currentScannedDungeon.scanAll();
-        else if (scanBlocks != null && scanBlocks)
-            this.currentScannedDungeon.scanBlocks(true);
-        else if (scanMobs != null && scanMobs)
-            this.currentScannedDungeon.scanMobs(true);
-        else if (scanChests != null && scanChests)
-            this.currentScannedDungeon.scanChests(true);
-    }
-
-    public DungeonScanned loadDungeonInstance(String dungeonInstanceName) {
-        final DungeonScanned scannedDungeon = new DungeonScanned(this, dungeonInstanceName);
-        if (scannedDungeon.isWasLoaded())
-            this.currentScannedDungeon = scannedDungeon;
-        return scannedDungeon;
+    public DungeonScanned scanDungeon(String dungeonInstanceName, ScanDungeonOptions scanDungeonOptions) {
+        DungeonScanned currentScannedDungeon = new DungeonScanned(dungeon, dungeonInstanceName);
+        if (scanDungeonOptions.shouldScanAll())
+            currentScannedDungeon.scanAll();
+        else if (scanDungeonOptions.shouldScanBlocks())
+            currentScannedDungeon.scanBlocks(true);
+        else if (scanDungeonOptions.shouldScanMobs())
+            currentScannedDungeon.scanMobs(true);
+        else if (scanDungeonOptions.shouldScanChests())
+            currentScannedDungeon.scanChests(true);
+        return currentScannedDungeon;
     }
 
     public void scanMobConfig() {
+        Location pos1 = dungeon.getDungeonPlayerIO().getPos1();
+        Location pos2 = dungeon.getDungeonPlayerIO().getPos2();
         if (pos1 == null || pos2 == null) {
             throw new IllegalStateException("The positions have not been set yet");
         }
@@ -151,13 +119,13 @@ public class DungeonScanner {
         }
         nameToMobConfig.put(configName, mobConfig);
         try {
-            toJson();
+            save();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void toJson() throws IOException {
+    public void save() throws IOException {
         File scannerFile = getScannerFile(name + ".json");
         scannerFile.createNewFile();
         JsonObject json = new JsonObject();
@@ -191,50 +159,17 @@ public class DungeonScanner {
         return null;
     }
 
-    public String name() {
-        return name;
-    }
-
     public @Nullable DungeonMobConfig getMobConfig(String name) {
         return this.nameToMobConfig.get(name);
     }
 
-    @Nullable
-    public DungeonScanned getDungeonInstance() {
-        return currentScannedDungeon;
-    }
-
-    public void newDungeon(Location location) {
-        this.currentScannedDungeon.newDungeon(location);
-    }
-
-    public Location getCenter() {
-        return center;
-    }
 
     public String getName() {
         return name;
     }
 
 
-    public static class JsonKeys {
-        public static final String MOB_CONFIGS = "mobConfigs";
-        public static final String MOB_CONFIG_NAME = "name";
-        public static final String MOB_CONFIG_MOBS = "mobs";
-        public static final String MOB_CONFIG_NBT = "nbt";
-        public static final String DUNGEON_MOBS = "mobs";
-        public static final String DUNGEON_NAME = "dungeon_name";
-        public static final String SCANNER_NAME = "scanner_name";
-        public static final String DUNGEON_MOB_PRIMARY = "mobPrimary";
-        public static final String DUNGEON_MOB_CONFIG = "mobConfig";
-        public static final String MOB_CONFIG_UUID = "uuid";
-        public static final String DUNGEON_CHESTS = "chests";
-        public static final String DUNGEON_CHESTS_LOOTABLE = "lootable";
-        public static final String DUNGEON_CHESTS_BLOCK = "blockId";
-        public static final String DUNGEON_CHESTS_NBT = "nbt";
-        public static final String DUNGEON_CHESTS_TITLE = "title";
-        public static final String SCANNER_CENTER = "center";
-        public static final String DUNGEON_REALS = "realDungeons";
-        public static final String DUNGEON_REALS_NAME = "name";
+    public JsonElement toJson() {
+        return null;
     }
 }

@@ -40,7 +40,7 @@ public class DungeonPageSettings1 extends InventoryGuiPageSimple {
 
         @Override
         public ItemStack getItem() {
-            final Location pos1 = dungeonGui.getDungeonScanner().getPos1();
+            final Location pos1 = dungeonGui.getDungeon().getDungeonPlayerIO().getPos1();
             return InventoryUtils.makeItem(Material.WOODEN_PICKAXE,
                     1,
                     "Pos 1",
@@ -61,7 +61,7 @@ public class DungeonPageSettings1 extends InventoryGuiPageSimple {
 
         @Override
         public ItemStack getItem() {
-            final Location pos2 = dungeonGui.getDungeonScanner().getPos2();
+            final Location pos2 = dungeonGui.getDungeon().getDungeonPlayerIO().getPos2();
             return InventoryUtils.makeItem(Material.STONE_PICKAXE,
                     1,
                     "Pos 2",
