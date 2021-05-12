@@ -21,6 +21,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.loot.LootTable;
 import org.bukkit.loot.Lootable;
 import org.bukkit.util.BoundingBox;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,15 +32,18 @@ import java.io.IOException;
 import java.util.*;
 
 public class DungeonScanned {
-    private final DungeonScanner dungeonScanner;
+    private final List<DungeonChestScanned> chests = new ArrayList<>();
     private final String dungeonName;
-    private final List<DungeonChest> chests = new ArrayList<>();
+    private DungeonScanner dungeonScanner;
     private final List<DungeonMobScanned> mobs = new ArrayList<>();
+    private DungeonLocation realDungeon = null;
     private boolean wasLoaded = false;
+    private Location center;
 
     public DungeonScanned(DungeonScanner dungeonScanner, String dungeonName) {
         this.dungeonScanner = dungeonScanner;
         this.dungeonName = dungeonName;
+        this.center = dungeonScanner.getCenter();
         try {
             fromJson();
         } catch (IOException | CommandSyntaxException e) {
@@ -52,14 +56,32 @@ public class DungeonScanned {
         if (dungeonFile.exists()) {
             this.wasLoaded = true;
             JsonObject json = new Gson().fromJson(new FileReader(dungeonFile), JsonObject.class);
+            if (this.dungeonScanner == null)
+                this.dungeonScanner = new DungeonScanner(null, json.get(DungeonScanner.JsonKeys.SCANNER_NAME).getAsString());
             JsonArray mobsJson = json.get(DungeonScanner.JsonKeys.DUNGEON_MOBS).getAsJsonArray();
             for (JsonElement mobJson : mobsJson) {
                 this.mobs.add(new DungeonMobScanned(dungeonScanner, mobJson.getAsJsonObject()));
             }
             JsonArray chestsJson = json.get(DungeonScanner.JsonKeys.DUNGEON_CHESTS).getAsJsonArray();
             for (JsonElement chestJson : chestsJson) {
-                this.chests.add(DungeonChest.fromJson(chestJson.getAsJsonObject()));
+                this.chests.add(DungeonChestScanned.fromJson(chestJson.getAsJsonObject()));
             }
+            JsonObject realDungeonJson = json.get(DungeonScanner.JsonKeys.DUNGEON_REALS).getAsJsonObject();
+            this.realDungeon = realDungeonJson == null || realDungeonJson.isJsonNull() ? null : new DungeonLocation(realDungeonJson);
+
+            final JsonObject centerJson = json.get(DungeonScanner.JsonKeys.SCANNER_CENTER).getAsJsonObject();
+            this.center = new Location(
+                    null,
+                    centerJson.get("x").getAsDouble(),
+                    centerJson.get("y").getAsDouble(),
+                    centerJson.get("z").getAsDouble()
+            ).setDirection(
+                    new Vector(
+                            centerJson.get("xF").getAsDouble(),
+                            centerJson.get("yF").getAsDouble(),
+                            centerJson.get("zF").getAsDouble()
+                    )
+            );
         }
     }
 
@@ -74,6 +96,22 @@ public class DungeonScanned {
         return folder;
     }
 
+    public DungeonScanned(String dungeonName) {
+        this.dungeonScanner = null;
+        this.dungeonName = dungeonName;
+        try {
+            fromJson();
+        } catch (IOException | CommandSyntaxException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void spawnAll() {
+        this.spawnBlocks();
+        this.spawnChests();
+        this.spawnMobs();
+    }
+
     public void scanAll() {
         this.scanBlocks(false);
         this.scanMobs(false);
@@ -85,8 +123,57 @@ public class DungeonScanned {
         }
     }
 
+    public void spawnBlocks() {
+
+    }
+
+    public void scanMobs(boolean shouldSave) {
+        mobs.clear();
+        Location pos1 = this.dungeonScanner.getPos1();
+        Location pos2 = this.dungeonScanner.getPos2();
+        World world = pos1.getWorld();
+        Collection<Entity> entities = world.getNearbyEntities(new BoundingBox(pos1.getX(), pos1.getY(), pos1.getZ(), pos2.getX(), pos2.getY(), pos2.getZ()));
+        for (Entity entity : entities) {
+            if (!(entity instanceof Player)) {
+                @Nullable DungeonMobConfig mobConfig = dungeonScanner.getMobConfig(entity);
+                final DungeonMobScanned dungeonMobScanned = new DungeonMobScanned(entity);
+                if (mobConfig != null) {
+                    dungeonMobScanned.setConfig(mobConfig);
+                }
+                mobs.add(dungeonMobScanned);
+            }
+        }
+        if (shouldSave) try {
+            save();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void scanBlocks(boolean shouldSave) {
+        if (shouldSave) try {
+            save();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void spawnChests() {
+
+    }
+
+    public boolean isWasLoaded() {
+        return wasLoaded;
+    }
+
+    public void spawnMobs() {
+        for (DungeonMobScanned mob : this.mobs) {
+            mob.spawn(realDungeon, this.center);
+        }
+    }
+
     public void scanChests(boolean shouldSave) {
-        chests.clear();
+        this.chests.clear();
         Location pos1 = this.dungeonScanner.getPos1();
         Location pos2 = this.dungeonScanner.getPos2();
         World world = pos1.getWorld();
@@ -124,12 +211,12 @@ public class DungeonScanned {
                         }
                         NamespacedKey blockKey = block.getType().getKey();
                         NamespacedKey lootTableKey = loottable.getKey();
-                        chests.add(new DungeonChestLootTable(blockKey, lootTableKey, block.getLocation(), name));
+                        chests.add(new DungeonChestScannedLootTable(blockKey, lootTableKey, block.getLocation(), name));
                     } else if (block instanceof Container) {
                         NamespacedKey blockKey = block.getType().getKey();
                         @javax.annotation.Nullable TileEntity tileEntity = ((CraftWorld) block.getLocation().getWorld()).getHandle().getTileEntity(new BlockPosition(block.getX(), block.getY(), block.getZ()));
                         if (tileEntity != null)
-                            chests.add(new DungeonChestPredetermined(blockKey, tileEntity, block.getLocation(), name));
+                            chests.add(new DungeonChestScannedPredetermined(blockKey, tileEntity, block.getLocation(), name));
                     }
                 }
             }
@@ -141,51 +228,36 @@ public class DungeonScanned {
         }
     }
 
-    public void scanMobs(boolean shouldSave) {
-        mobs.clear();
-        Location pos1 = this.dungeonScanner.getPos1();
-        Location pos2 = this.dungeonScanner.getPos2();
-        World world = pos1.getWorld();
-        Collection<Entity> entities = world.getNearbyEntities(new BoundingBox(pos1.getX(), pos1.getY(), pos1.getZ(), pos2.getX(), pos2.getY(), pos2.getZ()));
-        for (Entity entity : entities) {
-            if (!(entity instanceof Player)) {
-                @Nullable DungeonMobConfig mobConfig = dungeonScanner.getMobConfig(entity);
-                final DungeonMobScanned dungeonMobScanned = new DungeonMobScanned(entity);
-                if (mobConfig != null) {
-                    dungeonMobScanned.setConfig(mobConfig);
-                }
-                mobs.add(dungeonMobScanned);
-            }
-        }
-        if (shouldSave) try {
+    public void newDungeon(Location newLocation) {
+        this.realDungeon = new DungeonLocation(newLocation);
+        try {
             save();
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public void scanBlocks(boolean shouldSave) {
-        if (shouldSave) try {
-            save();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public boolean isWasLoaded() {
-        return wasLoaded;
     }
 
     public JsonElement toJson() {
         JsonObject json = new JsonObject();
+        json.add(DungeonScanner.JsonKeys.SCANNER_NAME, new JsonPrimitive(dungeonScanner.getName()));
         json.add(DungeonScanner.JsonKeys.DUNGEON_NAME, new JsonPrimitive(dungeonName));
         json.add(DungeonScanner.JsonKeys.SCANNER_NAME, new JsonPrimitive(dungeonScanner.name()));
         JsonArray jsonMobs = new JsonArray();
         for (DungeonMobScanned mob : mobs) jsonMobs.add(mob.toJson());
         json.add(DungeonScanner.JsonKeys.DUNGEON_MOBS, jsonMobs);
         JsonArray jsonChests = new JsonArray();
-        for (DungeonChest chest : chests) jsonChests.add(chest.toJson());
+        for (DungeonChestScanned chest : chests) jsonChests.add(chest.toJson());
         json.add(DungeonScanner.JsonKeys.DUNGEON_CHESTS, jsonChests);
+        json.add(DungeonScanner.JsonKeys.DUNGEON_REALS, realDungeon == null ? JsonNull.INSTANCE : realDungeon.toJson());
+        final JsonObject centerJson = new JsonObject();
+        centerJson.add("x", new JsonPrimitive(this.center.getX()));
+        centerJson.add("y", new JsonPrimitive(this.center.getY()));
+        centerJson.add("z", new JsonPrimitive(this.center.getZ()));
+        centerJson.add("xF", new JsonPrimitive(this.center.getDirection().getX()));
+        centerJson.add("yF", new JsonPrimitive(this.center.getDirection().getY()));
+        centerJson.add("zF", new JsonPrimitive(this.center.getDirection().getZ()));
+        json.add(DungeonScanner.JsonKeys.SCANNER_CENTER, centerJson);
+
         return json;
     }
 
@@ -208,7 +280,20 @@ public class DungeonScanned {
         return mobs;
     }
 
-    public List<DungeonChest> getChests() {
+    public List<DungeonChestScanned> getChests() {
         return chests;
+    }
+
+    public String getName() {
+        return dungeonName;
+    }
+
+    public void center(Location center) {
+        this.center = center;
+        try {
+            save();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

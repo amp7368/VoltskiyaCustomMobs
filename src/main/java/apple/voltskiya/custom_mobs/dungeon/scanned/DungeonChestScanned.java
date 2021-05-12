@@ -12,8 +12,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public interface DungeonChest {
-    static DungeonChest fromJson(JsonObject json) throws CommandSyntaxException {
+public interface DungeonChestScanned {
+    static DungeonChestScanned fromJson(JsonObject json) throws CommandSyntaxException {
         String type = json.get("typeId").getAsString();
         for (ChestTypes realType : ChestTypes.values()) {
             if (realType.typeName.equals(type))
@@ -42,13 +42,13 @@ public interface DungeonChest {
     }
 
     enum ChestTypes {
-        LOOT_TABLE("lootTable", DungeonChestLootTable::new),
-        PREDETERMINED("predetermined", DungeonChestPredetermined::new);
+        LOOT_TABLE("lootTable", DungeonChestScannedLootTable::new),
+        PREDETERMINED("predetermined", DungeonChestScannedPredetermined::new);
 
         private final String typeName;
-        private final FunctionThrowing<JsonObject, DungeonChest> constructor;
+        private final FunctionThrowing<JsonObject, DungeonChestScanned> constructor;
 
-        ChestTypes(String typeName, FunctionThrowing<JsonObject, DungeonChest> constructor) {
+        ChestTypes(String typeName, FunctionThrowing<JsonObject, DungeonChestScanned> constructor) {
             this.constructor = constructor;
             this.typeName = typeName;
         }
@@ -57,7 +57,7 @@ public interface DungeonChest {
             return typeName;
         }
 
-        public DungeonChest fromJson(JsonObject json) throws CommandSyntaxException {
+        public DungeonChestScanned fromJson(JsonObject json) throws CommandSyntaxException {
             return constructor.apply(json);
         }
 

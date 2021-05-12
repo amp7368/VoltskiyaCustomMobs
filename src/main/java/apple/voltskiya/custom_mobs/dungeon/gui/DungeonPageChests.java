@@ -1,7 +1,7 @@
 package apple.voltskiya.custom_mobs.dungeon.gui;
 
 import apple.voltskiya.custom_mobs.dungeon.gui.chests.DungeonChestSlot;
-import apple.voltskiya.custom_mobs.dungeon.scanned.DungeonChest;
+import apple.voltskiya.custom_mobs.dungeon.scanned.DungeonChestScanned;
 import apple.voltskiya.custom_mobs.dungeon.scanned.DungeonScanned;
 import apple.voltskiya.custom_mobs.gui.InventoryGuiPageScrollable;
 import apple.voltskiya.custom_mobs.gui.InventoryGuiSlotGeneric;
@@ -25,9 +25,9 @@ public class DungeonPageChests extends InventoryGuiPageScrollable {
     private void addChests() {
         @Nullable DungeonScanned scanned = dungeonGui.getDungeonScanner().getDungeonInstance();
         if (scanned != null) {
-            final List<DungeonChest> chests = scanned.getChests();
+            final List<DungeonChestScanned> chests = scanned.getChests();
             chests.sort(Comparator.comparingDouble(o -> o.distance(dungeonGui.getPlayer())));
-            for (DungeonChest chest : chests) {
+            for (DungeonChestScanned chest : chests) {
                 add(new DungeonChestSlot(dungeonGui, chest));
             }
         }

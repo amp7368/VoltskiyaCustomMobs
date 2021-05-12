@@ -1,6 +1,5 @@
 package apple.voltskiya.custom_mobs.dungeon.scanner;
 
-import apple.voltskiya.custom_mobs.dungeon.DungeonChestConfig;
 import apple.voltskiya.custom_mobs.dungeon.PluginDungeon;
 import apple.voltskiya.custom_mobs.dungeon.gui.DungeonGui;
 import apple.voltskiya.custom_mobs.dungeon.scanned.DungeonScanned;
@@ -11,7 +10,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -30,20 +28,25 @@ import java.util.*;
  */
 public class DungeonScanner {
     private final Map<String, DungeonMobConfig> nameToMobConfig = new HashMap<>();
-    private final Map<Material, DungeonChestConfig> chestConfig = new HashMap<>();
     private Location pos1 = null;
     private Location pos2 = null;
     private final String name;
     private boolean wasLoaded;
     private DungeonScanned currentScannedDungeon = null;
+    private Location center;
 
-    public DungeonScanner(String name) {
+    public DungeonScanner(@Nullable Player player, String name) {
         this.name = name;
+        this.center = player == null ? null : player.getLocation();
         try {
             fromJson(name);
         } catch (IOException | CommandSyntaxException e) {
             e.printStackTrace();
         }
+    }
+
+    public void gui(Player player) {
+        new DungeonGui(player, this);
     }
 
     public void pos1(Location location) {
@@ -54,10 +57,11 @@ public class DungeonScanner {
         this.pos2 = location;
     }
 
-
-    public void gui(Player player) {
-        new DungeonGui(player, this);
+    public void center(Location center) {
+        this.center = center;
+        if (this.currentScannedDungeon != null) this.currentScannedDungeon.center(center);
     }
+
 
     public Location getPos1() {
         return pos1;
@@ -112,8 +116,11 @@ public class DungeonScanner {
             this.currentScannedDungeon.scanChests(true);
     }
 
-    public void loadDungeonInstance(String dungeonInstanceName) {
-        this.currentScannedDungeon = new DungeonScanned(this, dungeonInstanceName);
+    public DungeonScanned loadDungeonInstance(String dungeonInstanceName) {
+        final DungeonScanned scannedDungeon = new DungeonScanned(this, dungeonInstanceName);
+        if (scannedDungeon.isWasLoaded())
+            this.currentScannedDungeon = scannedDungeon;
+        return scannedDungeon;
     }
 
     public void scanMobConfig() {
@@ -197,6 +204,19 @@ public class DungeonScanner {
         return currentScannedDungeon;
     }
 
+    public void newDungeon(Location location) {
+        this.currentScannedDungeon.newDungeon(location);
+    }
+
+    public Location getCenter() {
+        return center;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+
     public static class JsonKeys {
         public static final String MOB_CONFIGS = "mobConfigs";
         public static final String MOB_CONFIG_NAME = "name";
@@ -213,5 +233,8 @@ public class DungeonScanner {
         public static final String DUNGEON_CHESTS_BLOCK = "blockId";
         public static final String DUNGEON_CHESTS_NBT = "nbt";
         public static final String DUNGEON_CHESTS_TITLE = "title";
+        public static final String SCANNER_CENTER = "center";
+        public static final String DUNGEON_REALS = "realDungeons";
+        public static final String DUNGEON_REALS_NAME = "name";
     }
 }

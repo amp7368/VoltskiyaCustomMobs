@@ -74,4 +74,17 @@ public class DungeonMobConfig {
                 distance == Double.MAX_VALUE ? Collections.emptyList() :
                         Collections.singletonList(String.format("%.2f blocks away", distance)));
     }
+
+    public DungeonMobInfo getSpawnedMob() {
+        double totalProbability = 0;
+        for (DungeonMobInfo mob : mobs) {
+            totalProbability += mob.getProbability();
+        }
+        double choice = Math.random() * totalProbability;
+        for (DungeonMobInfo mob : mobs) {
+            choice -= mob.getProbability();
+            if (choice <= 0) return mob;
+        }
+        return mobs.get(0);
+    }
 }

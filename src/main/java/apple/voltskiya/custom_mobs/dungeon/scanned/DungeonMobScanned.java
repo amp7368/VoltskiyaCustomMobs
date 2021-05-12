@@ -82,4 +82,9 @@ public class DungeonMobScanned {
     public String getName() {
         return mob.getName();
     }
+
+    public void spawn(DungeonLocation realDungeon, Location center) {
+        DungeonMobInfo mob = config == null ? this.mob : config.getSpawnedMob();
+        realDungeon.spawn(mob, mob.getLocation().subtract(center.toVector()));
+    }
 }

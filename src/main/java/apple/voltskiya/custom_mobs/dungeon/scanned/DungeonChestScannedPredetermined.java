@@ -6,6 +6,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.minecraft.server.v1_16_R3.MojangsonParser;
+import net.minecraft.server.v1_16_R3.NBTTagCompound;
+import net.minecraft.server.v1_16_R3.TileEntity;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -15,24 +19,23 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class DungeonChestLootTable implements DungeonChest {
-    private final NamespacedKey blockKey;
-    private final NamespacedKey lootTableKey;
+public class DungeonChestScannedPredetermined implements DungeonChestScanned {
+    private final NBTTagCompound nbt;
     private final @Nullable String name;
+    private final NamespacedKey blockKey;
     private Location location = null;
 
-    public DungeonChestLootTable(NamespacedKey blockKey, NamespacedKey lootTableKey, Location location, @Nullable String name) {
+    public DungeonChestScannedPredetermined(NamespacedKey blockKey, TileEntity block, Location location, @Nullable String name) {
         this.blockKey = blockKey;
-        this.lootTableKey = lootTableKey;
+        this.nbt = block.b();
         this.location = location;
         this.name = name;
     }
 
-    public DungeonChestLootTable(JsonObject json) {
-        final String[] lootTableKey = json.get(DungeonScanner.JsonKeys.DUNGEON_CHESTS_LOOTABLE).getAsString().split(":");
-        this.lootTableKey = new NamespacedKey(lootTableKey[0], lootTableKey[1]);
+    public DungeonChestScannedPredetermined(JsonObject json) throws CommandSyntaxException {
         final String[] blockKey = json.get(DungeonScanner.JsonKeys.DUNGEON_CHESTS_BLOCK).getAsString().split(":");
         this.blockKey = new NamespacedKey(blockKey[0], blockKey[1]);
+        this.nbt = MojangsonParser.parse(json.get(DungeonScanner.JsonKeys.DUNGEON_CHESTS_NBT).getAsString());
         final JsonElement nameJson = json.get(DungeonScanner.JsonKeys.DUNGEON_CHESTS_TITLE);
         this.name = nameJson == null || nameJson.isJsonNull() ? null : nameJson.getAsString();
     }
@@ -40,9 +43,10 @@ public class DungeonChestLootTable implements DungeonChest {
     @Override
     public JsonElement toJson() {
         JsonObject json = new JsonObject();
-        json.add(DungeonScanner.JsonKeys.DUNGEON_CHESTS_LOOTABLE, new JsonPrimitive(lootTableKey.toString()));
+        JsonPrimitive inventoryJson = new JsonPrimitive(nbt.asString());
         json.add(DungeonScanner.JsonKeys.DUNGEON_CHESTS_BLOCK, new JsonPrimitive(blockKey.toString()));
-        json.add("typeId", new JsonPrimitive(ChestTypes.LOOT_TABLE.getTypeName()));
+        json.add(DungeonScanner.JsonKeys.DUNGEON_CHESTS_NBT, inventoryJson);
+        json.add("typeId", new JsonPrimitive(ChestTypes.PREDETERMINED.getTypeName()));
         json.add(DungeonScanner.JsonKeys.DUNGEON_CHESTS_TITLE, name == null ? JsonNull.INSTANCE : new JsonPrimitive(name));
         return json;
     }
@@ -58,7 +62,7 @@ public class DungeonChestLootTable implements DungeonChest {
         Material blockMaterial = Material.matchMaterial(blockKey.toString());
         if (blockMaterial != null && blockMaterial.isItem()) {
             final List<String> lore = getLore();
-            lore.add("LootTable: " + lootTableKey.toString());
+            lore.add("Predetermined chest");
             lore.add(String.format("%.2f blocks away", distance(player)));
             return InventoryUtils.makeItem(blockMaterial, 1, name, lore);
         }
