@@ -104,4 +104,8 @@ public class DungeonMobInfo {
             fromEntity(entity);
         }
     }
+
+    public String getUUID() {
+        return uuid;
+    }
 }

@@ -12,6 +12,7 @@ import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -42,6 +43,11 @@ public class DungeonChestScannedPredetermined implements DungeonChestScanned {
 
     @Override
     public void setBlockAt(World world, Location spawnLocation) {
+        Block blockAtLocation = world.getWorld().getBlockAt(spawnLocation);
+        final Material blockType = Material.matchMaterial(blockKey.toString());
+        if (blockType == null)
+            throw new IllegalStateException(String.format("The block key at [%d, %d, %d] is not a material", location.getBlockX(), location.getBlockY(), location.getBlockZ()));
+        blockAtLocation.setType(blockType);
         world.setTileEntity(new BlockPosition(spawnLocation.getX(), spawnLocation.getY(), spawnLocation.getZ()), TileEntity.create(null, nbt));
     }
 

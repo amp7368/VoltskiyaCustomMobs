@@ -44,7 +44,7 @@ public abstract class InventoryGui implements InventoryHolder {
         return getPage().getInventory();
     }
 
-    private void update(@Nullable List<HumanEntity> viewers) {
+    protected void update(@Nullable List<HumanEntity> viewers) {
         final InventoryGuiPage inventoryGuiPage = getPage();
         inventoryGuiPage.update();
         for (HumanEntity viewer : new ArrayList<>(viewers == null ? this.getInventory().getViewers() : viewers)) {

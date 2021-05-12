@@ -91,7 +91,11 @@ public class DungeonMobSlot extends InventoryGuiSlotScrollable {
                 mob.pitchAdd(-1);
             }, InventoryUtils.makeItem(Material.ORANGE_DYE, 1, "Pitch add -1 Degree", null)
             ), 22);
-            this.setSlot(new MobLocation(), 18);
+            this.setSlot(new InventoryGuiSlotGeneric((e) -> {
+                mob.getPatrol(dungeonGui.getDungeon()).openGui(dungeonGui.getPlayer());
+            }, InventoryUtils.makeItem(Material.STICK, 1, "Set a Patrol route", null)
+            ), 18);
+            this.setSlot(new MobLocation(), 27);
         }
 
         @Override

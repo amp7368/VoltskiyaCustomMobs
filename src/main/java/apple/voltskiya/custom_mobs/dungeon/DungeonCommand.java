@@ -2,6 +2,7 @@ package apple.voltskiya.custom_mobs.dungeon;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.dungeon.product.Dungeon;
+import apple.voltskiya.custom_mobs.dungeon.product.DungeonActive;
 import apple.voltskiya.custom_mobs.dungeon.product.ScanDungeonOptions;
 import apple.voltskiya.custom_mobs.dungeon.product.SpawnDungeonOptions;
 import apple.voltskiya.custom_mobs.dungeon.scanned.DungeonScanned;
@@ -45,7 +46,7 @@ public class DungeonCommand extends BaseCommand {
         @Subcommand("dungeon")
         @CommandCompletion("@dungeon-dungeons|name")
         public void loadDungeon(Player player, @Single String dungeonName) {
-            Dungeon dungeon = new Dungeon(dungeonName);
+            Dungeon dungeon = DungeonActive.getDungeon(dungeonName);
             playerDungeons.put(player.getUniqueId(), dungeon);
             if (dungeon.wasLoaded()) {
                 player.sendMessage(ChatColor.AQUA + "Loaded dungeon " + dungeon.getName() + " from the database");

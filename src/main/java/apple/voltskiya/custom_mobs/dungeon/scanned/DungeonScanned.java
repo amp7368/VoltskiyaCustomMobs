@@ -1,6 +1,7 @@
 package apple.voltskiya.custom_mobs.dungeon.scanned;
 
 import apple.voltskiya.custom_mobs.dungeon.PluginDungeon;
+import apple.voltskiya.custom_mobs.dungeon.patrols.Patrol;
 import apple.voltskiya.custom_mobs.dungeon.product.Dungeon;
 import apple.voltskiya.custom_mobs.dungeon.scanner.DungeonScanner;
 import apple.voltskiya.custom_mobs.dungeon.scanner.JsonKeys;
@@ -33,13 +34,13 @@ import java.io.IOException;
 import java.util.*;
 
 public class DungeonScanned {
-    private final List<DungeonChestScanned> chests = new ArrayList<>();
     private final String layoutName;
+    private final List<DungeonChestScanned> chests = new ArrayList<>();
     private final List<DungeonMobScanned> mobs = new ArrayList<>();
-    private @NotNull
-    final Dungeon dungeon;
-    private boolean wasLoaded = false;
+    private final Map<String, Patrol> patrols = new HashMap<>();
+    private final @NotNull Dungeon dungeon;
     private @Nullable Location center;
+    private boolean wasLoaded = false;
 
     public DungeonScanned(@NotNull Dungeon dungeon, String layoutName) {
         this.dungeon = dungeon;
@@ -135,10 +136,6 @@ public class DungeonScanned {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public boolean isWasLoaded() {
-        return wasLoaded;
     }
 
     public void save() throws IOException {
@@ -266,5 +263,14 @@ public class DungeonScanned {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Nullable
+    public Patrol getPatrol(String patrolName) {
+        return patrols.get(patrolName);
+    }
+
+    public void addPatrol(Patrol patrol) {
+        this.patrols.put(patrol.getName(), patrol);
     }
 }

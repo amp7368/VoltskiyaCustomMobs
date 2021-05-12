@@ -1,6 +1,7 @@
 package apple.voltskiya.custom_mobs.dungeon;
 
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
+import apple.voltskiya.custom_mobs.dungeon.patrols.PatrolWandListener;
 
 public class PluginDungeon extends VoltskiyaModule {
     private static PluginDungeon instance;
@@ -17,6 +18,7 @@ public class PluginDungeon extends VoltskiyaModule {
     @Override
     public void enable() {
         new DungeonCommand();
+        new PatrolWandListener();
     }
 
     @Override

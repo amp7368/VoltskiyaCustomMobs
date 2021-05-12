@@ -42,21 +42,12 @@ public class DungeonLocation {
         return dungeonLocation;
     }
 
-    public void spawn(DungeonMobInfo mob, Vector offset) {
-        Optional<EntityTypes<?>> type = EntityTypes.a(mob.nbt);
-        Location spawnLocation = dungeonLocation.clone().add(offset);
-        World world = ((CraftWorld) spawnLocation.getWorld()).getHandle();
-        if (type.isPresent()) {
-            Entity entity = type.get().a(world);
-            if (entity == null) {
-                PluginDungeon.get().log(Level.WARNING, String.format("There was an error spawning %s at <%d, %d, %d>", mob.getName(), spawnLocation.getBlockX(), spawnLocation.getBlockY(), spawnLocation.getBlockZ()));
-                return;
-            }
-            entity.load(mob.nbt);
-            entity.setLocation(spawnLocation.getX(), spawnLocation.getY(), spawnLocation.getZ(), spawnLocation.getYaw(), spawnLocation.getPitch());
-            world.addEntity(entity);
-        } else {
-            PluginDungeon.get().log(Level.WARNING, String.format("%s is not a valid mob and did not spawn at <%d, %d, %d>", mob.getName(), spawnLocation.getBlockX(), spawnLocation.getBlockY(), spawnLocation.getBlockZ()));
+    private void spawnMobs(DungeonScanned layout, boolean spawnLayout) {
+        List<DungeonMobScanned> mobs = layout.getMobs();
+        for (DungeonMobScanned mob : mobs) {
+            DungeonMobInfo spawnThis = spawnLayout ? mob.getMobPrimary() : mob.getMobSpawn();
+            Vector offset = getOffset(this.dungeon.getScanned().getCenter(), mob.getLocation());
+            spawn(spawnThis, offset);
         }
     }
 
@@ -71,12 +62,22 @@ public class DungeonLocation {
 
     }
 
-    private void spawnMobs(DungeonScanned layout, boolean spawnLayout) {
-        List<DungeonMobScanned> mobs = layout.getMobs();
-        for (DungeonMobScanned mob : mobs) {
-            DungeonMobInfo spawnThis = spawnLayout ? mob.getMobPrimary() : mob.getMobSpawn();
-            Vector offset = getOffset(this.dungeon.getScanned().getCenter(), spawnThis.getLocation());
-            spawn(spawnThis, offset);
+    public void spawn(DungeonMobInfo mob, Vector offset) {
+        Optional<EntityTypes<?>> type = EntityTypes.a(mob.nbt);
+        Location spawnLocation = dungeonLocation.clone().add(offset);
+        spawnLocation.setDirection(mob.getLocation().getDirection());
+        World world = ((CraftWorld) spawnLocation.getWorld()).getHandle();
+        if (type.isPresent()) {
+            Entity entity = type.get().a(world);
+            if (entity == null) {
+                PluginDungeon.get().log(Level.WARNING, String.format("There was an error spawning %s at <%d, %d, %d>", mob.getName(), spawnLocation.getBlockX(), spawnLocation.getBlockY(), spawnLocation.getBlockZ()));
+                return;
+            }
+            entity.load(mob.nbt);
+            entity.setLocation(spawnLocation.getX(), spawnLocation.getY(), spawnLocation.getZ(), spawnLocation.getYaw(), spawnLocation.getPitch());
+            world.addEntity(entity);
+        } else {
+            PluginDungeon.get().log(Level.WARNING, String.format("%s is not a valid mob and did not spawn at <%d, %d, %d>", mob.getName(), spawnLocation.getBlockX(), spawnLocation.getBlockY(), spawnLocation.getBlockZ()));
         }
     }
 

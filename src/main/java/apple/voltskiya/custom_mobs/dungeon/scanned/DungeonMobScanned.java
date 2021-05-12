@@ -1,5 +1,6 @@
 package apple.voltskiya.custom_mobs.dungeon.scanned;
 
+import apple.voltskiya.custom_mobs.dungeon.patrols.Patrol;
 import apple.voltskiya.custom_mobs.dungeon.product.Dungeon;
 import apple.voltskiya.custom_mobs.dungeon.scanner.DungeonMobConfig;
 import apple.voltskiya.custom_mobs.dungeon.scanner.DungeonMobInfo;
@@ -20,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 public class DungeonMobScanned {
     private final DungeonMobInfo mob;
     private DungeonMobConfig config = null;
+    private Patrol patrol = null;
 
     public DungeonMobScanned(@NotNull DungeonScanner scanner, Entity entity) {
         this.mob = new DungeonMobInfo(entity);
@@ -87,5 +89,13 @@ public class DungeonMobScanned {
 
     public DungeonMobInfo getMobPrimary() {
         return mob;
+    }
+
+    public Patrol getPatrol(Dungeon dungeon) {
+        return patrol == null ? patrol = new Patrol(dungeon, this) : patrol;
+    }
+
+    public String getUUID() {
+        return mob.getUUID();
     }
 }
