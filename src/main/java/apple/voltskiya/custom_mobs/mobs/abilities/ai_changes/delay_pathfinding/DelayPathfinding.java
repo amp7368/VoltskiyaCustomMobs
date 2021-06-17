@@ -7,6 +7,7 @@ import apple.voltskiya.custom_mobs.mobs.RegisteredEntityEater;
 import apple.voltskiya.custom_mobs.mobs.YmlSettings;
 import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
 import apple.voltskiya.custom_mobs.pathfinders.goal_selector.UtilsPathfinderGoalSelector;
+import apple.voltskiya.custom_mobs.pathfinders.utilities.PathfinderGoalHurtByTargetOnDone;
 import apple.voltskiya.custom_mobs.pathfinders.utilities.PathfinderGoalNearestAttackableTargetCanSee;
 import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.Bukkit;
@@ -48,18 +49,21 @@ public class DelayPathfinding extends ConfigManager implements RegisteredEntityE
 
             @NotNull Collection<PathfinderGoalWrapped> removedPathfinders = UtilsPathfinderGoalSelector.remove(entity.targetSelector, PathfinderGoalNearestAttackableTarget.class, PathfinderGoalHurtByTarget.class);
             final PathfinderGoalNearestAttackableTargetCanSee<EntityHuman> canSee = new PathfinderGoalNearestAttackableTargetCanSee<>(entity, EntityHuman.class, true);
-            PathfinderGoalHurtByTarget onHurt = null;
-            if (entity instanceof EntityCreature)
-                onHurt = new PathfinderGoalHurtByTarget((EntityCreature) entity);
-            entity.targetSelector.a(0, canSee);
-            if (onHurt != null) entity.targetSelector.a(1, onHurt);
-            PathfinderGoalHurtByTarget finalOnHurt = onHurt;
-            canSee.addOnceOnDone(() -> {
+            PathfinderGoalHurtByTargetOnDone onHurt = null;
+            if (entity instanceof EntityCreature) {
+                onHurt = new PathfinderGoalHurtByTargetOnDone((EntityCreature) entity);
+            }
+            entity.targetSelector.a(1, canSee);
+            if (onHurt != null) entity.targetSelector.a(0, onHurt);
+            PathfinderGoalHurtByTargetOnDone finalOnHurt = onHurt;
+            final Runnable givePathfinding = () -> {
                 entity.targetSelector.a(canSee);
                 if (finalOnHurt != null) entity.targetSelector.a(finalOnHurt);
                 UtilsPathfinderGoalSelector.add(entity.targetSelector, removedPathfinders);
                 entity.goalSelector = oldGoalSelector;
-            });
+            };
+            canSee.addOnceOnDone(givePathfinding);
+            if (onHurt != null) onHurt.addOnceOnDone(givePathfinding);
             addMob(entity.getUniqueID());
         }, 0);
     }

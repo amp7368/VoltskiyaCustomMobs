@@ -50,12 +50,11 @@ public class Snowball implements Listener {
 
         public static final double HITBOX = .007;
         private final Location currentLocation;
-        private final Vector direction;
         private final World world;
         private final static Vector acceleration = new Vector(0, -0.02, 0);
+        private final Vector direction;
         private final static Random random = new Random();
         private final static double radius = 5d;
-        private final int count = 0;
 
         public SnowballThrow(Location currentLocation, Vector direction) {
             this.currentLocation = currentLocation;
@@ -115,29 +114,6 @@ public class Snowball implements Listener {
                 world.spawnParticle(Particle.REDSTONE, currentLocation, 0, x, y, z, new Particle.DustOptions(Color.fromRGB(0xFFFFFF), 1.4f));
             }
         }
-    }
-
-    private static Vector[] getCorners(BoundingBox other) {
-        Vector[] corners = new Vector[8];
-        double xMin = other.getMinX();
-        double yMin = other.getMinY();
-        double zMin = other.getMinZ();
-        double xMax = other.getMaxX();
-        double yMax = other.getMaxY();
-        double zMax = other.getMaxZ();
-
-        int i = 0;
-        for (double x = xMin; x <= xMax; x = xMax) {
-            for (double y = yMin; y <= yMax; y = yMax) {
-                for (double z = zMin; z <= zMax; z = zMax) {
-                    corners[i++] = new Vector(x, y, z);
-                    if (z == zMax) break;
-                }
-                if (y == yMax) break;
-            }
-            if (x == xMax) break;
-        }
-        return corners;
     }
 
 }

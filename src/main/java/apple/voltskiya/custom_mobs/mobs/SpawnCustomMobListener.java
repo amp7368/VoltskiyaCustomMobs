@@ -1,6 +1,7 @@
 package apple.voltskiya.custom_mobs.mobs;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
+import apple.voltskiya.custom_mobs.mobs.misc.MobHealthPack;
 import apple.voltskiya.custom_mobs.mobs.modified.illager.evoker.MobIllagerEvokerExaminer;
 import apple.voltskiya.custom_mobs.mobs.modified.illager.illusioner.MobIllagerIllusionerExaminer;
 import apple.voltskiya.custom_mobs.mobs.modified.illager.pillager.MobIllagerPillagerExaminer;
@@ -38,7 +39,8 @@ public class SpawnCustomMobListener implements Listener {
         spawnEaters.put(MobIllagerVindicatorExaminer.REGISTERED_NAME, MobIllagerVindicatorExaminer::spawnEat);
         spawnEaters.put(MobInfected.PARASITE_INFECTED_TAG,MobInfected::spawnEat);
         spawnEaters.put(MobRevenant.REGISTERED_NAME,MobRevenant::spawnEat);
-        spawnEaters.put(MobAngeredSoul.REGISTERED_NAME,MobAngeredSoul::spawnEat);
+        spawnEaters.put(MobAngeredSoul.REGISTERED_NAME, MobAngeredSoul::spawnEat);
+        spawnEaters.put(MobHealthPack.REGISTERED_NAME, MobHealthPack::spawnEat);
     }
 
     @EventHandler(ignoreCancelled = true)
