@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.function.Predicate;
 
 public class PathfinderGoalNearestAttackableTargetCanSee<T extends EntityLiving> extends PathfinderGoalNearestAttackableTarget<T> {
-    private static final double DEFAULT_RADIANS = Math.toRadians(45);
+    private static final double DEFAULT_RADIANS = Math.toRadians(65);
     private double fieldOfViewRadians = DEFAULT_RADIANS;
     private final Collection<Runnable> onDoneOnce = new ArrayList<>();
     private boolean doLineOfSightPredicate = true;

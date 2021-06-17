@@ -1,6 +1,7 @@
 package apple.voltskiya.custom_mobs.mobs;
 
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
+import apple.voltskiya.custom_mobs.mobs.misc.MobHealthPack;
 import apple.voltskiya.custom_mobs.mobs.modified.illager.evoker.MobIllagerEvokerExaminer;
 import apple.voltskiya.custom_mobs.mobs.modified.illager.illusioner.MobIllagerIllusionerExaminer;
 import apple.voltskiya.custom_mobs.mobs.modified.illager.pillager.MobIllagerPillagerExaminer;
@@ -93,5 +94,6 @@ public class PluginNmsMobs extends VoltskiyaModule {
         MobIllagerEvokerExaminer.initialize();
         MobRevenant.initialize();
         MobAngeredSoul.initialize();
+        MobHealthPack.initialize();
     }
 }

@@ -7,6 +7,7 @@ import apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.fire_fangs.FireFang
 import apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.flamethrower.FlameThrowerManager;
 import apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.micro_misles.MicroMissileConfig;
 import apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.micro_misles.MicroMissleShooter;
+import apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.shoot_ball.ShootBallManager;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.charger.ChargerManagerTicker;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.lost_soul.BlemishSpawnManager;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.lost_soul.LostSoulManagerTicker;
@@ -54,6 +55,7 @@ public class MobSpawnListener implements Listener {
             spawnModifier.put("fire_fangs", new FireFangsManager());
             spawnModifier.put("flamethrower", new FlameThrowerManager());
             spawnModifier.put("guard_stare", new DelayPathfinding());
+            spawnModifier.put("shoot_ball", new ShootBallManager());
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassCastException e) {

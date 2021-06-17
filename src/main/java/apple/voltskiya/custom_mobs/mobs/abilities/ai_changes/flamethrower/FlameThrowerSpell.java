@@ -34,7 +34,9 @@ public class FlameThrowerSpell implements PathfinderGoalShootSpell.Spell {
 
     public enum State {
         FIRE_GROW,
-        FIRE_PERSIST, COMPLETE, CHARGE_UP
+        FIRE_PERSIST,
+        COMPLETE,
+        CHARGE_UP
     }
 
 

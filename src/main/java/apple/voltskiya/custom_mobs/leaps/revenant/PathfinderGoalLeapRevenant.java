@@ -3,6 +3,7 @@ package apple.voltskiya.custom_mobs.leaps.revenant;
 import apple.voltskiya.custom_mobs.leaps.PathfinderGoalLeap;
 import apple.voltskiya.custom_mobs.leaps.config.LeapPostConfig;
 import apple.voltskiya.custom_mobs.leaps.config.LeapPreConfig;
+import apple.voltskiya.custom_mobs.util.constants.TagConstants;
 import apple.voltskiya.custom_mobs.util.data_structures.Triple;
 import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.Location;
@@ -38,16 +39,10 @@ public class PathfinderGoalLeapRevenant extends PathfinderGoalLeap {
         return this.random.nextInt(config.getCheckInterval()) == 0 &&
                 (this.currentLeap == null || !this.currentLeap.isLeaping()) &&
                 !this.postConfig.shouldStopCurrentLeap(null) &&
-                this.postConfig.isOnGround();
+                this.postConfig.isOnGround() &&
+                !this.me.getScoreboardTags().contains(TagConstants.isDoingAbility);
     }
 
-    /**
-     * @return round 2 of whether I want to run ?
-     */
-    @Override
-    public boolean b() {
-        return super.b();
-    }
 
     /**
      * @return a goal to jump to

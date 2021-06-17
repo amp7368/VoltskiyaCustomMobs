@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.function.BiConsumer;
 
-import static apple.voltskiya.custom_mobs.util.InventoryManagement.makeItem;
+import static apple.voltskiya.custom_mobs.util.minecraft.InventoryUtils.makeItem;
 
 public class TurretGui implements InventoryHolder {
     private final TurretMob turret;

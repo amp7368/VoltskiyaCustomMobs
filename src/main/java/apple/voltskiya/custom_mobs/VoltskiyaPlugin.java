@@ -1,6 +1,8 @@
 package apple.voltskiya.custom_mobs;
 
 import apple.voltskiya.custom_mobs.custom_model.CustomModelPlugin;
+import apple.voltskiya.custom_mobs.dungeon.PluginDungeon;
+import apple.voltskiya.custom_mobs.gui.InventoryGuiPlugin;
 import apple.voltskiya.custom_mobs.leaps.LeapPlugin;
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
 import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
@@ -72,6 +74,8 @@ public class VoltskiyaPlugin extends JavaPlugin {
                 new TurretPlugin(),
                 new CustomModelPlugin(),
                 new PluginNmsMobs(),
+                new PluginDungeon(),
+                new InventoryGuiPlugin(),
                 new PluginEnable()
         };
         for (VoltskiyaModule module : modules) {

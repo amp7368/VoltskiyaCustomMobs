@@ -48,7 +48,7 @@ public class MobAngeredSoul extends EntitySkeleton implements RegisteredCustomMo
         // build it
         EntityTypes.Builder<MobAngeredSoul> entitytypesBuilder = EntityTypes.Builder.a(MobAngeredSoul::new, EnumCreatureType.MONSTER);
         entityTypes = entitytypesBuilder.a(REGISTERED_NAME);
-        entityTypes = IRegistry.a(IRegistry.ENTITY_TYPE, IRegistry.ENTITY_TYPE.a(EntityTypes.SKELETON), REGISTERED_NAME, entityTypes); // this is good
+        entityTypes = IRegistry.a(IRegistry.ENTITY_TYPE, IRegistry.ENTITY_TYPE.a(EntityTypes.SKELETON), REGISTERED_NAME, entityTypes);
         // log it
         PluginNmsMobs.get().log(Level.INFO, "registered " + registeredNameId());
     }
