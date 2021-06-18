@@ -6,6 +6,7 @@ import apple.voltskiya.custom_mobs.mobs.ConfigManager;
 import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.DeathEater;
 import apple.voltskiya.custom_mobs.util.constants.TagConstants;
+import net.minecraft.server.v1_16_R3.EntityInsentient;
 import net.minecraft.server.v1_16_R3.NBTTagCompound;
 import net.minecraft.server.v1_16_R3.NBTTagInt;
 import net.minecraft.server.v1_16_R3.NBTTagString;
@@ -24,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ReviveDeadManager extends ConfigManager implements DeathEater {
 
@@ -103,9 +105,14 @@ public class ReviveDeadManager extends ConfigManager implements DeathEater {
         final World world = reviverLocation.getWorld();
         world.playSound(reviveMe.location, Sound.BLOCK_BEACON_DEACTIVATE, SoundCategory.HOSTILE, 35, .7f);
         final int time = ReviverManagerTicker.get().REVIVE_RITUAL_TIME + TIME_TO_RISE;
+        AtomicBoolean shouldContinue = new AtomicBoolean(true);
         for (int timeI = 0; timeI < time; timeI += 3) {
             Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
-                if (reviver.getHandle().ticksLived - reviver.getHandle().hurtTimestamp >= time) {
+                final EntityInsentient handle = reviver.getHandle();
+                // if the mob was just spawned or it was hurt a while ago
+                if (shouldContinue.get() && (handle.hurtTimestamp == 0 ||
+                        handle.hurtTimestamp + time <= handle.ticksLived
+                )) {
                     double xLoc = reviverLocation.getX();
                     double yLoc = reviverLocation.getY();
                     double zLoc = reviverLocation.getZ();
@@ -116,6 +123,7 @@ public class ReviveDeadManager extends ConfigManager implements DeathEater {
                         world.spawnParticle(Particle.REDSTONE, xLoc + xi, yLoc + yi, zLoc + zi, 1, new Particle.DustOptions(Color.RED, 1f));
                     }
                 } else {
+                    shouldContinue.set(false);
                     reviver.setAI(true);
                     reviver.removeScoreboardTag(TagConstants.isDoingAbility);
                     reviveMe.resetCooldown();
@@ -124,9 +132,9 @@ public class ReviveDeadManager extends ConfigManager implements DeathEater {
         }
         Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
             if (!reviver.isDead()) {
-                reviver.removeScoreboardTag(TagConstants.isDoingAbility);
-                reviver.setAI(true);
-                if (reviver.getHandle().ticksLived - reviver.getHandle().hurtTimestamp >= time) {
+                if (shouldContinue.get()) {
+                    reviver.setAI(true);
+                    reviver.removeScoreboardTag(TagConstants.isDoingAbility);
                     reviveProcess(reviveMe, reviver, reviverObject);
                 }
             }
