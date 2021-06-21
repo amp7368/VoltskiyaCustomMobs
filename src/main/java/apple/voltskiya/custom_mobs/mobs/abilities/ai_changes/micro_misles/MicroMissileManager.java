@@ -4,13 +4,13 @@ import apple.voltskiya.custom_mobs.mobs.abilities.tick.Tickable;
 import apple.voltskiya.custom_mobs.ticking.HighFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.TickGiverable;
 import apple.voltskiya.custom_mobs.util.minecraft.MaterialUtils;
-import net.minecraft.server.v1_16_R3.DamageSource;
+import net.minecraft.world.damagesource.DamageSource;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftLivingEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -139,8 +139,8 @@ public class MicroMissileManager implements Tickable {
             ticksLived++;
         }
 
-        private boolean damage(CraftLivingEntity nearby) {
-            return nearby.getHandle().damageEntity(DamageSource.explosion(null), (float) damage);
+        private void damage(CraftLivingEntity nearby) {
+            nearby.getHandle().damageEntity(DamageSource.explosion(null), (float) damage);
         }
 
         private void movementTick() {

@@ -1,7 +1,7 @@
 package apple.voltskiya.custom_mobs.mobs.parts;
 
 import apple.voltskiya.custom_mobs.util.EntityLocation;
-import net.minecraft.server.v1_16_R3.Entity;
+import net.minecraft.world.entity.Entity;
 import org.bukkit.Location;
 
 import java.util.ArrayList;

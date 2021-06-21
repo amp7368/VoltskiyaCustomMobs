@@ -1,6 +1,6 @@
 package apple.voltskiya.custom_mobs.leaps.config;
 
-import net.minecraft.server.v1_16_R3.EntityInsentient;
+import net.minecraft.world.entity.EntityInsentient;
 
 import javax.annotation.Nullable;
 import java.util.function.BiConsumer;

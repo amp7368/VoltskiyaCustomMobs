@@ -1,12 +1,13 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.shoot_ball;
 
+import apple.nms.decoding.entity.DecodeEntity;
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import apple.voltskiya.custom_mobs.mobs.ConfigManager;
 import apple.voltskiya.custom_mobs.mobs.RegisteredEntityEater;
 import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
 import apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.fire_fangs.FireFangsManager;
 import apple.voltskiya.custom_mobs.pathfinders.spell.PathfinderGoalShootSpell;
-import net.minecraft.server.v1_16_R3.EntityInsentient;
+import net.minecraft.world.entity.EntityInsentient;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -30,7 +31,7 @@ public class ShootBallManager extends ConfigManager implements RegisteredEntityE
         for (String tag : entity.getScoreboardTags()) {
             ShootersType type = tagToShootType.get(tag);
             if (type != null) {
-                entity.goalSelector.a(0, new PathfinderGoalShootSpell<>(new ShootBallCaster(entity), type));
+                DecodeEntity.getGoalSelector(entity).a(0, new PathfinderGoalShootSpell<>(new ShootBallCaster(entity), type));
             }
         }
     }
@@ -60,7 +61,7 @@ public class ShootBallManager extends ConfigManager implements RegisteredEntityE
     }
 
     public enum YmlSettings implements apple.voltskiya.custom_mobs.mobs.YmlSettings {
-        NORMAL_RANGE("normal.range", 15d),
+        NORMAL_RANGE("normal.range", 40d),
         NORMAL_STEP("normal.step", 1d),
         NORMAL_COOLDOWN("normal.cooldown", 300);
         private final String path;
@@ -121,7 +122,7 @@ public class ShootBallManager extends ConfigManager implements RegisteredEntityE
         }
 
         public double getShotSpeed() {
-            return .5;
+            return 3.4;
         }
 
         public int getShotsToTake() {

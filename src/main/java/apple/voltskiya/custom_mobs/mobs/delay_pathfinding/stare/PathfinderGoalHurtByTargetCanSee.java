@@ -1,8 +1,8 @@
 package apple.voltskiya.custom_mobs.mobs.delay_pathfinding.stare;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import net.minecraft.server.v1_16_R3.EntityCreature;
-import net.minecraft.server.v1_16_R3.PathfinderGoalHurtByTarget;
+import net.minecraft.world.entity.EntityCreature;
+import net.minecraft.world.entity.ai.goal.target.PathfinderGoalHurtByTarget;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.IllegalPluginAccessException;
 

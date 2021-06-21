@@ -1,5 +1,6 @@
 package apple.voltskiya.custom_mobs.leaps.revenant;
 
+import apple.nms.decoding.entity.DecodeEntity;
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import apple.voltskiya.custom_mobs.leaps.LeapEater;
 import apple.voltskiya.custom_mobs.leaps.LeapPlugin;
@@ -7,8 +8,8 @@ import apple.voltskiya.custom_mobs.leaps.config.LeapDo;
 import apple.voltskiya.custom_mobs.leaps.config.LeapPostConfig;
 import apple.voltskiya.custom_mobs.mobs.ConfigManager;
 import apple.voltskiya.custom_mobs.mobs.YmlSettings;
-import net.minecraft.server.v1_16_R3.EntityInsentient;
-import net.minecraft.server.v1_16_R3.EntityLiving;
+import net.minecraft.world.entity.EntityInsentient;
+import net.minecraft.world.entity.EntityLiving;
 import org.bukkit.util.Vector;
 
 public class LeapRevenant extends ConfigManager implements LeapEater {
@@ -21,11 +22,11 @@ public class LeapRevenant extends ConfigManager implements LeapEater {
                 LeapRevenant::interruptedLeap,
                 (entity) -> LeapRevenant.endLeap(entity, entity.getGoalTarget())
         );
-        creature.goalSelector.a(0, new PathfinderGoalLeapRevenant(creature, getConfig(), postConfig));
+        DecodeEntity.getGoalSelector(creature).a(0, new PathfinderGoalLeapRevenant(creature, getConfig(), postConfig));
     }
 
     private static boolean shouldStopLeap(EntityLiving creature) {
-        return creature.hurtTimestamp >= creature.ticksLived - 10;
+        return DecodeEntity.getHurtTimestamp(creature) >= DecodeEntity.getTicksLived(creature) - 10;
     }
 
     private static void preLeap(EntityInsentient entity, LeapDo leapDo) {

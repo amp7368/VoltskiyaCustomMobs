@@ -1,15 +1,16 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.micro_misles;
 
+import apple.nms.decoding.entity.DecodeEntity;
 import apple.voltskiya.custom_mobs.mobs.RegisteredEntityEater;
 import apple.voltskiya.custom_mobs.pathfinders.spell.PathfinderGoalShootMicroMissle;
-import net.minecraft.server.v1_16_R3.EntityInsentient;
+import net.minecraft.world.entity.EntityInsentient;
 
 public class MicroMissleShooter implements RegisteredEntityEater {
     private static final int COOLDOWN = 20 * 10;
 
     public void eatEntity(EntityInsentient mob) {
-        mob.goalSelector.a(0, new PathfinderGoalShootMicroMissle(mob, 2 * 20, 1, MissileType.LONER));
-        mob.goalSelector.a(1, new PathfinderGoalShootMicroMissle(mob, COOLDOWN, 5, MissileType.FLURRY));
+        DecodeEntity.getGoalSelector(mob).a(0, new PathfinderGoalShootMicroMissle(mob, 2 * 20, 1, MissileType.LONER));
+        DecodeEntity.getGoalSelector(mob).a(1, new PathfinderGoalShootMicroMissle(mob, COOLDOWN, 5, MissileType.FLURRY));
     }
 
     /**

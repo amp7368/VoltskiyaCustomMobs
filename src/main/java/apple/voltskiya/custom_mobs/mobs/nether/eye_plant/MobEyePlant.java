@@ -1,16 +1,35 @@
 package apple.voltskiya.custom_mobs.mobs.nether.eye_plant;
 
+import apple.nms.decoding.entity.DecodeEntity;
+import apple.nms.decoding.entity.DecodeEnumCreatureType;
+import apple.nms.decoding.iregistry.DecodeEntityTypes;
+import apple.nms.decoding.iregistry.DecodeIRegistry;
+import apple.nms.decoding.sound.DecodeSoundEffects;
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
 import apple.voltskiya.custom_mobs.mobs.RegisteredCustomMob;
 import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
 import apple.voltskiya.custom_mobs.mobs.parts.*;
 import apple.voltskiya.custom_mobs.mobs.utils.UtilsPacket;
 import com.mojang.datafixers.types.Type;
-import net.minecraft.server.v1_16_R3.*;
+import net.minecraft.core.IRegistry;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.sounds.SoundEffect;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.EnumMoveType;
+import net.minecraft.world.entity.ai.attributes.AttributeDefaults;
+import net.minecraft.world.entity.ai.attributes.AttributeMapBase;
+import net.minecraft.world.entity.ai.attributes.AttributeProvider;
+import net.minecraft.world.entity.ai.goal.PathfinderGoalLookAtPlayer;
+import net.minecraft.world.entity.monster.EntityZombie;
+import net.minecraft.world.entity.player.EntityHuman;
+import net.minecraft.world.level.World;
+import net.minecraft.world.phys.Vec3D;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftZombie;
+import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftZombie;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,16 +48,6 @@ public class MobEyePlant extends EntityZombie implements RegisteredCustomMob {
     private AttributeMapBase attributeMap = null;
 
     /**
-     * constructor to match the EntityTypes requirement
-     *
-     * @param world the world to spawn the entity in
-     */
-
-    public MobEyePlant(EntityTypes<MobEyePlant> entityTypes, World world) {
-        super(EntityTypes.ZOMBIE, world);
-    }
-
-    /**
      * registers the EyePlant as an entity
      */
     public static void initialize() {
@@ -47,13 +56,23 @@ public class MobEyePlant extends EntityZombie implements RegisteredCustomMob {
         types.put(registeredNameId(), zombieType);
 
         // build it
-        EntityTypes.Builder<MobEyePlant> entitytypesBuilder = EntityTypes.Builder.a(MobEyePlant::new, EnumCreatureType.MONSTER);
+        EntityTypes.Builder<MobEyePlant> entitytypesBuilder = EntityTypes.Builder.a(MobEyePlant::new, DecodeEnumCreatureType.MONSTER.encode());
         entityTypes = entitytypesBuilder.a(REGISTERED_NAME);
-        entityTypes = IRegistry.a(IRegistry.ENTITY_TYPE, IRegistry.ENTITY_TYPE.a(EntityTypes.ZOMBIE), REGISTERED_NAME, entityTypes); // this is good
+        entityTypes = IRegistry.a(DecodeIRegistry.getEntityType(), DecodeIRegistry.getEntityType().getId(DecodeEntityTypes.ZOMBIE), REGISTERED_NAME, entityTypes); // this is good
         // log it
         PluginNmsMobs.get().log(Level.INFO, "registered " + registeredNameId());
         final NmsModelConfig model = NmsModelConfig.parts(REGISTERED_MODEL);
         selfModel = model.mainPart();
+    }
+
+    /**
+     * constructor to match the EntityTypes requirement
+     *
+     * @param world the world to spawn the entity in
+     */
+
+    public MobEyePlant(EntityTypes<MobEyePlant> entityTypes, World world) {
+        super(DecodeEntityTypes.ZOMBIE, world);
     }
 
 
@@ -93,14 +112,14 @@ public class MobEyePlant extends EntityZombie implements RegisteredCustomMob {
             }
         }
         this.children = MobPartMother.getChildren(this.getUniqueID(), this, selfModel, REGISTERED_MODEL);
-        this.lookController = new MobParts.ControllerLookChildrenFollow(this, this.children);
+        this.bK = new MobParts.ControllerLookChildrenFollow(this, this.children);
     }
 
     @Override
     protected void initPathfinder() {
         // only look aat the player
-        if (this.children != null) this.lookController = new MobParts.ControllerLookChildrenFollow(this, this.children);
-        this.goalSelector.a(0, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 8.0F));
+        if (this.children != null) this.bK = new MobParts.ControllerLookChildrenFollow(this, this.children);
+        DecodeEntity.getGoalSelector(this).a(0, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 8.0F));
     }
 
     @Override
@@ -135,8 +154,18 @@ public class MobEyePlant extends EntityZombie implements RegisteredCustomMob {
         return "minecraft" + ":" + REGISTERED_NAME;
     }
 
-    public AttributeProvider getAttributeProvider() {
-        return AttributeDefaults.a(EntityTypes.ZOMBIE);
+    @Override
+    protected SoundEffect getSoundAmbient() {
+        if (this.getRandom().nextBoolean()) return null;
+        ambientParticles();
+        final double choice = this.getRandom().nextDouble();
+        if (choice < 1 / 3f) {
+            return DecodeSoundEffects.ENTITY_ENDERMAN_AMBIENT;
+        } else if (choice < 2 / 3f) {
+            return DecodeSoundEffects.BLOCK_ENDER_CHEST_CLOSE;
+        } else {
+            return DecodeSoundEffects.BLOCK_ENDER_CHEST_OPEN;
+        }
     }
 
     @Override
@@ -157,21 +186,6 @@ public class MobEyePlant extends EntityZombie implements RegisteredCustomMob {
         UtilsPacket.sendPacketsToNearbyPlayers(packetsToSend, this.getBukkitEntity().getLocation());
     }
 
-
-    @Override
-    protected SoundEffect getSoundAmbient() {
-        if (random.nextBoolean()) return null;
-        ambientParticles();
-        final double choice = random.nextDouble();
-        if (choice < 1 / 3f) {
-            return SoundEffects.ENTITY_ENDERMAN_AMBIENT;
-        } else if (choice < 2 / 3f) {
-            return SoundEffects.BLOCK_ENDER_CHEST_CLOSE;
-        } else {
-            return SoundEffects.BLOCK_ENDER_CHEST_OPEN;
-        }
-    }
-
     private void ambientParticles() {
         CraftEntity me = getBukkitEntity();
         for (int i = 0; i < 10; i++) {
@@ -179,11 +193,15 @@ public class MobEyePlant extends EntityZombie implements RegisteredCustomMob {
             double x = location.getX();
             double y = location.getY();
             double z = location.getZ();
-            double xi = random.nextDouble() - .5;
-            double yi = random.nextDouble() - .5;
-            double zi = random.nextDouble() - .5;
+            double xi = this.getRandom().nextDouble() - .5;
+            double yi = this.getRandom().nextDouble() - .5;
+            double zi = this.getRandom().nextDouble() - .5;
             me.getWorld().spawnParticle(org.bukkit.Particle.CRIT_MAGIC, x + xi, y + yi, z + zi, 1);
         }
+    }
+
+    public AttributeProvider getAttributeProvider() {
+        return AttributeDefaults.a(DecodeEntityTypes.ZOMBIE);
     }
 
     @Override
@@ -192,8 +210,8 @@ public class MobEyePlant extends EntityZombie implements RegisteredCustomMob {
     }
 
     @Override
-    public void die() {
-        super.die();
+    public void a(Entity.RemovalReason removalReason) {
+        super.a(removalReason);
         for (MobPartChild child : children) {
             child.die();
         }

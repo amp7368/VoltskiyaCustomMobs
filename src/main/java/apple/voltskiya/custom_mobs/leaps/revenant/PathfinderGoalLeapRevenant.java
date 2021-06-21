@@ -1,11 +1,16 @@
 package apple.voltskiya.custom_mobs.leaps.revenant;
 
+import apple.nms.decoding.pathfinder.DecodeMoveType;
 import apple.voltskiya.custom_mobs.leaps.PathfinderGoalLeap;
 import apple.voltskiya.custom_mobs.leaps.config.LeapPostConfig;
 import apple.voltskiya.custom_mobs.leaps.config.LeapPreConfig;
 import apple.voltskiya.custom_mobs.util.constants.TagConstants;
 import apple.voltskiya.custom_mobs.util.data_structures.Triple;
-import net.minecraft.server.v1_16_R3.*;
+import net.minecraft.core.BlockPosition;
+import net.minecraft.world.entity.EntityCreature;
+import net.minecraft.world.entity.EntityInsentient;
+import net.minecraft.world.entity.EntityLiving;
+import net.minecraft.world.entity.ai.util.RandomPositionGenerator;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.jetbrains.annotations.Nullable;
@@ -13,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Random;
 
 public class PathfinderGoalLeapRevenant extends PathfinderGoalLeap {
     private static final int OUTER_RADIUS = 20;
@@ -28,7 +34,7 @@ public class PathfinderGoalLeapRevenant extends PathfinderGoalLeap {
      */
     public PathfinderGoalLeapRevenant(EntityInsentient me, LeapPreConfig config, LeapPostConfig postConfig) {
         super(me, config, postConfig);
-        this.setMoveType(EnumSet.of(Type.JUMP, Type.MOVE));
+        this.setMoveType(EnumSet.of(DecodeMoveType.JUMP.encode(), DecodeMoveType.MOVE.encode()));
     }
 
     /**
@@ -54,18 +60,14 @@ public class PathfinderGoalLeapRevenant extends PathfinderGoalLeap {
         Location targetLocation;
         if (goalTarget == null) {
             if (this.me instanceof EntityCreature) {
-                Vec3D loc;
+                BlockPosition loc;
                 try {
-                    loc = RandomPositionGenerator.a((EntityCreature) this.me, (int) this.config.getDistanceMin(), (int) this.config.getDistanceMax());
+                    loc = RandomPositionGenerator.a(new Random(), (int) this.config.getDistanceMin(), (int) this.config.getDistanceMax());
                 } catch (IllegalArgumentException e) {
                     e.printStackTrace();
                     return null;
                 }
-                if (loc == null) {
-                    return null;
-                } else {
-                    targetLocation = new Location(this.me.getWorld().getWorld(), loc.getX(), loc.getY(), loc.getZ());
-                }
+                targetLocation = new Location(this.me.getWorld().getWorld(), loc.getX() + this.me.locX(), loc.getY() + this.me.locY(), loc.getZ() + this.me.locZ());
             } else {
                 return null;
             }

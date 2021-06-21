@@ -4,9 +4,9 @@ import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.pathfinders.spell.PathfinderGoalShootSpell;
 import apple.voltskiya.custom_mobs.util.VectorUtils;
 import apple.voltskiya.custom_mobs.util.projectile.ProjectileParticleMissle;
-import net.minecraft.server.v1_16_R3.EntityLiving;
+import net.minecraft.world.entity.EntityLiving;
 import org.bukkit.*;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
@@ -23,6 +23,7 @@ public class ShootBallSpell implements PathfinderGoalShootSpell.Spell {
     private final double shotSpeed;
     private EntityLiving goalTarget;
     private State state;
+    private Location predictedLocation;
 
     public ShootBallSpell(ShootBallCaster shootBallCaster, ShootBallManager.ShootersType shootersType) {
         this.shootBallCaster = shootBallCaster;
@@ -67,7 +68,7 @@ public class ShootBallSpell implements PathfinderGoalShootSpell.Spell {
             this.soundCountdown = Math.max(1, this.ticksToCharge / 8);
             goalTarget = shootBallCaster.getEntity().getGoalTarget();
             LivingEntity target;
-            if (goalTarget == null || goalTarget.dead) target = null;
+            if (goalTarget == null || goalTarget.getRemovalReason() != null) target = null;
             else {
                 if (goalTarget.getBukkitEntity() instanceof LivingEntity)
                     target = (LivingEntity) goalTarget.getBukkitEntity();
@@ -85,7 +86,7 @@ public class ShootBallSpell implements PathfinderGoalShootSpell.Spell {
             if (currentTick % TICK_PER_STEP == 0) {
                 // track the target
                 LivingEntity target;
-                if (goalTarget == null || goalTarget.dead) target = null;
+                if (goalTarget == null || goalTarget.getRemovalReason() != null) target = null;
                 else {
                     if (goalTarget.getBukkitEntity() instanceof LivingEntity)
                         target = (LivingEntity) goalTarget.getBukkitEntity();
@@ -110,10 +111,11 @@ public class ShootBallSpell implements PathfinderGoalShootSpell.Spell {
                     targetMovement = new Vector(0, 0, 0);
                 else
                     targetMovement = this.nowLocation.toVector().subtract(this.startLocation.toVector()).multiply(1d / this.currentTick);
-                Location predictedLocation = this.startLocation.clone().add(targetMovement.multiply(distanceToTarget / shotSpeed));
-                this.aimLaser(myLocation, predictedLocation, distanceToTarget);
+                predictedLocation = this.nowLocation.clone().add(targetMovement.multiply((distanceToTarget / shotSpeed * 20)));
+                predictedLocation.getWorld().spawnParticle(Particle.FLAME, predictedLocation, 0);
+                this.aimLaser(myLocation.clone(), predictedLocation.clone(), distanceToTarget);
             }
-            laserSound();
+            this.laserSound();
             // if we finished charging, stop charging
             if (this.currentTick >= this.ticksToCharge) {
                 this.dealWithResult();
@@ -132,7 +134,7 @@ public class ShootBallSpell implements PathfinderGoalShootSpell.Spell {
             final Vector difference = predictedLocation.toVector().subtract(myLocation.toVector());
             Vector directionVector = difference.normalize().multiply(LASER_STEP);
             for (double currentStep = 0; currentStep <= distance; currentStep += LASER_STEP) {
-                myLocation.getWorld().spawnParticle(Particle.FLAME, myLocation, 0);
+                myLocation.getWorld().spawnParticle(Particle.REDSTONE, myLocation, 0, new Particle.DustOptions(Color.fromRGB(115, 0, 0), 2));
                 myLocation.add(directionVector);
             }
         }
@@ -171,26 +173,16 @@ public class ShootBallSpell implements PathfinderGoalShootSpell.Spell {
                 CraftEntity me = shootBallCaster.getEntity().getBukkitEntity();
                 Location eyeLocation = me instanceof LivingEntity ? ((LivingEntity) me).getEyeLocation() : me.getLocation();
 
-                // get target location
-                LivingEntity target;
-                if (goalTarget == null || goalTarget.dead) target = null;
-                else {
-                    if (goalTarget.getBukkitEntity() instanceof LivingEntity)
-                        target = (LivingEntity) goalTarget.getBukkitEntity();
-                    else target = null;
-                }
-                Location targetLocation = target == null ? null : target.getEyeLocation();
-
-                if (targetLocation == null) {
+                if (predictedLocation == null) {
                     dealWithResult();
                     return;
                 }
-                Vector direction = targetLocation.toVector().subtract(eyeLocation.toVector());
+                Vector direction = predictedLocation.toVector().subtract(eyeLocation.toVector());
                 Location locationToShootFrom = eyeLocation.clone().add(direction.normalize());
                 shootSound(locationToShootFrom);
                 new ProjectileParticleMissle(
                         locationToShootFrom,
-                        targetLocation,
+                        predictedLocation,
                         direction,
                         Collections.singletonList(Particle.FLAME),
                         .13,

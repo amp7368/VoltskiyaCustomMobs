@@ -1,14 +1,15 @@
 package apple.voltskiya.custom_mobs.pathfinders.spell;
 
+import apple.nms.decoding.entity.DecodeEntity;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.util.DistanceUtils;
 import apple.voltskiya.custom_mobs.util.minecraft.MaterialUtils;
-import net.minecraft.server.v1_16_R3.EntityInsentient;
-import net.minecraft.server.v1_16_R3.PathfinderGoal;
+import net.minecraft.world.entity.EntityInsentient;
+import net.minecraft.world.entity.ai.goal.PathfinderGoal;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -39,7 +40,7 @@ public class PathfinderGoalCharge extends PathfinderGoal {
         this.me = me;
         this.target = target.clone();
         this.bothOn = bothOn;
-        this.giveUpTick = me.ticksLived + giveUpTick;
+        this.giveUpTick = DecodeEntity.getTicksLived(me) + giveUpTick;
         this.callBack = callBack;
         this.speed = speed;
         this.minSpeed = speed / 5000;
@@ -52,7 +53,7 @@ public class PathfinderGoalCharge extends PathfinderGoal {
     @Override
     public boolean a() {
         ChargeResult chargeResultTemp = null;
-        if (this.me.ticksLived > this.giveUpTick) {
+        if (DecodeEntity.getTicksLived(me) > this.giveUpTick) {
             chargeResultTemp = ChargeResult.HIT_NOTHING;
         } else {
             Location here = this.bukkitEntity.getLocation();
@@ -106,6 +107,27 @@ public class PathfinderGoalCharge extends PathfinderGoal {
     }
 
     /**
+     * on completion of goal, do what?
+     */
+    @Override
+    public void d() {
+        if (chargeResult == null) chargeResult = ChargeResult.HIT_NOTHING;
+        // quit going to the location
+        this.me.getNavigation().o();
+        if (!calledBack) {
+            try {
+                Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> callBack.accept(chargeResult));
+            } catch (IllegalPluginAccessException ignored) {
+            }
+            calledBack = true;
+        }
+        try {
+            Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> DecodeEntity.getGoalSelector(me).a(this));
+        } catch (IllegalPluginAccessException ignored) {
+        }
+    }
+
+    /**
      * run the pathfinding
      */
     @Override
@@ -123,31 +145,10 @@ public class PathfinderGoalCharge extends PathfinderGoal {
         if (!MaterialUtils.isWalkThroughable(here.getWorld().getBlockAt(here.add(direction)).getType())) {
             this.me.getControllerJump().jump();
         }
-        this.me.pitch = 0f;
-        this.me.yaw = here.getYaw();
+        this.me.setYRot(0f);
+        this.me.setXRot(here.getYaw());
         this.me.getNavigation().o();
         this.me.getControllerMove().a(me.locX() + direction.getX(), me.locY() + direction.getY(), me.locZ() + direction.getZ(), speed);
-    }
-
-    /**
-     * on completion of goal, do what?
-     */
-    @Override
-    public void d() {
-        if (chargeResult == null) chargeResult = ChargeResult.HIT_NOTHING;
-        // quit going to the location
-        this.me.getNavigation().o();
-        if (!calledBack) {
-            try {
-                Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> callBack.accept(chargeResult));
-            } catch (IllegalPluginAccessException ignored) {
-            }
-            calledBack = true;
-        }
-        try {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> me.goalSelector.a(this));
-        } catch (IllegalPluginAccessException ignored) {
-        }
     }
 
     public enum ChargeResult {

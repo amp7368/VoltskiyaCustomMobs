@@ -1,9 +1,9 @@
 package apple.voltskiya.custom_mobs.pathfinders;
 
 import apple.voltskiya.custom_mobs.reload.PluginDisable;
-import net.minecraft.server.v1_16_R3.EntityMonster;
-import net.minecraft.server.v1_16_R3.IRangedEntity;
-import net.minecraft.server.v1_16_R3.PathfinderGoalBowShoot;
+import net.minecraft.world.entity.ai.goal.PathfinderGoalBowShoot;
+import net.minecraft.world.entity.monster.EntityMonster;
+import net.minecraft.world.entity.monster.IRangedEntity;
 
 public class PathfinderGoalBowShootNoBow<T extends EntityMonster & IRangedEntity> extends PathfinderGoalBowShoot<T> {
     public PathfinderGoalBowShootNoBow(T var0, double var1, int var3, float var4) {

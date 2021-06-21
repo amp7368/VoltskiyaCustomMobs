@@ -1,19 +1,20 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.tick.revive;
 
+import apple.nms.decoding.entity.DecodeEntity;
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.mobs.ConfigManager;
 import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.DeathEater;
 import apple.voltskiya.custom_mobs.util.constants.TagConstants;
-import net.minecraft.server.v1_16_R3.EntityInsentient;
-import net.minecraft.server.v1_16_R3.NBTTagCompound;
-import net.minecraft.server.v1_16_R3.NBTTagInt;
-import net.minecraft.server.v1_16_R3.NBTTagString;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagInt;
+import net.minecraft.nbt.NBTTagString;
+import net.minecraft.world.entity.EntityInsentient;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftMob;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftMob;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -110,8 +111,9 @@ public class ReviveDeadManager extends ConfigManager implements DeathEater {
             Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
                 final EntityInsentient handle = reviver.getHandle();
                 // if the mob was just spawned or it was hurt a while ago
-                if (shouldContinue.get() && (handle.hurtTimestamp == 0 ||
-                        handle.hurtTimestamp + time <= handle.ticksLived
+
+                if (shouldContinue.get() && (DecodeEntity.getHurtTimestamp(handle) == 0 ||
+                        DecodeEntity.getHurtTimestamp(handle) + time <= DecodeEntity.getTicksLived(handle)
                 )) {
                     double xLoc = reviverLocation.getX();
                     double yLoc = reviverLocation.getY();
@@ -142,13 +144,13 @@ public class ReviveDeadManager extends ConfigManager implements DeathEater {
     }
 
     public synchronized void reviveProcess(RecordedMob reviveMe, CraftMob reviver, Reviver reviverObject) {
-        final net.minecraft.server.v1_16_R3.Entity original = ((CraftEntity) reviveMe.getEntity()).getHandle();
+        final net.minecraft.world.entity.Entity original = ((CraftEntity) reviveMe.getEntity()).getHandle();
         NBTTagCompound nbt = new NBTTagCompound();
         original.save(nbt);
         reviveMe.location.getWorld().spawnEntity(reviveMe.location, reviveMe.getEntity().getType(), CreatureSpawnEvent.SpawnReason.CUSTOM,
                 newMob -> {
                     reviverObject.addMob(newMob);
-                    final net.minecraft.server.v1_16_R3.Entity newMobHandle = ((CraftEntity) newMob).getHandle();
+                    final net.minecraft.world.entity.Entity newMobHandle = ((CraftEntity) newMob).getHandle();
                     nbt.set("UUID", NBTTagString.a(newMobHandle.getUniqueIDString()));
                     nbt.set("DeathTime", NBTTagInt.a(0));
                     newMobHandle.load(nbt);

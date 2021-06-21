@@ -102,6 +102,7 @@ public class TurretsSql {
             );
             List<TurretBuilder> turrets = new ArrayList<>();
             List<Long> turretsToRemove = new ArrayList<>();
+            System.out.println("start");
             while (response.next()) {
                 final long turretUid = response.getLong(TURRET_UID);
                 final UUID durabilityEntityUUID = UUID.fromString(response.getString(DURABILITY_ENTITY));

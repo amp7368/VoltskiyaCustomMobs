@@ -1,6 +1,7 @@
 package apple.voltskiya.custom_mobs.util.projectile;
 
 import apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.micro_misles.MicroMissileConfig;
+import apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.shoot_ball.ShootBallManager;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.util.Vector;
@@ -11,7 +12,7 @@ import java.util.function.Consumer;
 public class ProjectileParticleMissle extends ProjectileParticle {
     private static final int MIN_TICKS_TO_LIVE = 100;
     private static final int MAX_ADDITIONAL_TICKS_TO_LIVE = 30;
-    private static final double SHOT_SPEED = 1.2;
+    private static final double SHOT_SPEED = ShootBallManager.ShootersType.NORMAL.getShotSpeed();
     private final Location targetLocation;
     private final int tickToLiveTo = random.nextInt(MAX_ADDITIONAL_TICKS_TO_LIVE) + MIN_TICKS_TO_LIVE;
     private Vector acceleration = null;

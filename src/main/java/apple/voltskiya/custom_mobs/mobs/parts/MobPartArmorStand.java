@@ -1,5 +1,12 @@
 package apple.voltskiya.custom_mobs.mobs.parts;
 
+import apple.nms.decoding.entity.DecodeEntityArmorStand;
+import apple.nms.decoding.entity.DecodeEnumCreatureType;
+import apple.nms.decoding.entity.DecodeEnumMainHand;
+import apple.nms.decoding.entity.DecodeEnumMonsterType;
+import apple.nms.decoding.iregistry.DecodeDamageSource;
+import apple.nms.decoding.iregistry.DecodeEntityTypes;
+import apple.nms.decoding.iregistry.DecodeIRegistry;
 import apple.voltskiya.custom_mobs.custom_model.CustomModel;
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
 import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
@@ -7,9 +14,24 @@ import apple.voltskiya.custom_mobs.mobs.utils.NbtConstants;
 import apple.voltskiya.custom_mobs.util.EntityLocation;
 import apple.voltskiya.custom_mobs.util.VectorUtils;
 import com.mojang.datafixers.types.Type;
-import net.minecraft.server.v1_16_R3.*;
+import net.minecraft.core.IRegistry;
+import net.minecraft.core.Vector3f;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.PacketPlayOutEntityStatus;
+import net.minecraft.world.EnumHand;
+import net.minecraft.world.EnumInteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.ai.attributes.AttributeDefaults;
+import net.minecraft.world.entity.ai.attributes.AttributeMapBase;
+import net.minecraft.world.entity.ai.attributes.AttributeProvider;
+import net.minecraft.world.entity.decoration.EntityArmorStand;
+import net.minecraft.world.entity.player.EntityHuman;
+import net.minecraft.world.level.World;
+import net.minecraft.world.phys.Vec3D;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
 import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,14 +47,23 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild 
     private EntityLocation entityLocation;
     private AttributeMapBase attributeMap;
 
-    public MobPartArmorStand(EntityTypes<MobPartArmorStand> entityTypes, World world) {
-        super(EntityTypes.ARMOR_STAND, world);
-        this.die(); // just die on restarts because we'll be remade
+    public MobPartArmorStand(EntityTypes<MobPartArmorStand> entityTypes, World world, MobPartMother mother, NmsModelEntityConfig config) {
+        super(DecodeEntityTypes.ARMOR_STAND, world);
+        prepare(mother, config);
     }
 
-    public MobPartArmorStand(EntityTypes<MobPartArmorStand> entityTypes, World world, MobPartMother mother, NmsModelEntityConfig config) {
-        super(EntityTypes.ARMOR_STAND, world);
-        prepare(mother, config);
+    public static void initialize() {
+        Map<? super Object, Type<?>> types = PluginNmsMobs.getMinecraftTypes();
+        final Type<?> oldType = types.get("minecraft:armor_stand");
+        types.put(registeredNameId(), oldType);
+
+        // build it
+        EntityTypes.Builder<MobPartArmorStand> entitytypesBuilder = EntityTypes.Builder.a(MobPartArmorStand::new, DecodeEnumCreatureType.MONSTER.encode());
+        entityTypes = entitytypesBuilder.a(REGISTERED_NAME);
+        entityTypes = IRegistry.a(DecodeIRegistry.getEntityType(), DecodeIRegistry.getEntityType().getId(DecodeEntityTypes.ARMOR_STAND), REGISTERED_NAME, entityTypes); // this is good
+
+        // log it
+        PluginNmsMobs.get().log(Level.INFO, "registered " + registeredNameId());
     }
 
     public void prepare(MobPartMother mother, NmsModelEntityConfig config) {
@@ -56,18 +87,9 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild 
     }
 
 
-    public static void initialize() {
-        Map<? super Object, Type<?>> types = PluginNmsMobs.getMinecraftTypes();
-        final Type<?> oldType = types.get("minecraft:armor_stand");
-        types.put(registeredNameId(), oldType);
-
-        // build it
-        EntityTypes.Builder<MobPartArmorStand> entitytypesBuilder = EntityTypes.Builder.a(MobPartArmorStand::new, EnumCreatureType.MONSTER);
-        entityTypes = entitytypesBuilder.a(REGISTERED_NAME);
-        entityTypes = IRegistry.a(IRegistry.ENTITY_TYPE, IRegistry.ENTITY_TYPE.a(EntityTypes.ARMOR_STAND), REGISTERED_NAME, entityTypes); // this is good
-
-        // log it
-        PluginNmsMobs.get().log(Level.INFO, "registered " + registeredNameId());
+    public MobPartArmorStand(EntityTypes<MobPartArmorStand> entityTypes, World world) {
+        super(DecodeEntityTypes.ARMOR_STAND, world);
+        this.die(); // just die on restarts because we'll be remade
     }
 
     @NotNull
@@ -120,23 +142,39 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild 
     }
 
     /**
-     * @return EnumMonsterType.ARTHROPOD || EnumMonsterType.ILLAGER || ...
-     */
-    @Override
-    public EnumMonsterType getMonsterType() {
-        return EnumMonsterType.ILLAGER;
-    }
-
-    /**
      * @return the default attributeMap
      */
     private static AttributeProvider getAttributeProvider() {
-        return AttributeDefaults.a(EntityTypes.ARMOR_STAND);
+        return AttributeDefaults.a(DecodeEntityTypes.ARMOR_STAND);
+    }
+
+    /**
+     * This packet (PacketPlayOutRelEntityMove) that I'm using has documentation here: https://wiki.vg/Protocol
+     *
+     * @param isLookingRelevant whether i should turn based on looking direction as well
+     * @return the packet to update this model to the client
+     */
+    @Override
+    public Packet<?> moveFromMother(boolean isLookingRelevant) {
+        float yaw1;
+        if (isLookingRelevant) {
+            yaw1 = this.mainMob.entity.getXRot() + this.mainMob.entity.getHeadRotation();
+        } else {
+            yaw1 = this.mainMob.entity.getXRot();
+        }
+        Location newLocation = VectorUtils.rotate(this.entityLocation, yaw1, this.mainMob.location, false);
+        newLocation.add(this.mainMob.entity.locX(), this.mainMob.entity.locY(), this.mainMob.entity.locZ());
+
+        double nowX = newLocation.getX();
+        double nowY = newLocation.getY();
+        double nowZ = newLocation.getZ();
+        this.setLocation(nowX, nowY, nowZ, newLocation.getYaw(), newLocation.getPitch());
+        return new PacketPlayOutEntityStatus(this, (byte) 9);
     }
 
     @Override
-    public EnumMainHand getMainHand() {
-        return EnumMainHand.RIGHT;
+    public boolean damageEntity(DamageSource damagesource, float f) {
+        return damagesource != DecodeDamageSource.STUCK && this.mainMob.entity.damageEntity(damagesource, f); // send this to the main mob
     }
 
     @Override
@@ -151,34 +189,9 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild 
         // and it would just cause unnecessary lag
     }
 
-    /**
-     * This packet (PacketPlayOutRelEntityMove) that I'm using has documentation here: https://wiki.vg/Protocol
-     *
-     * @param isLookingRelevant whether i should turn based on looking direction as well
-     * @return the packet to update this model to the client
-     */
     @Override
-    public Packet<?> moveFromMother(boolean isLookingRelevant) {
-        float yaw1;
-        if (isLookingRelevant) {
-            yaw1 = this.mainMob.entity.yaw + this.mainMob.entity.getHeadRotation();
-        } else {
-            yaw1 = this.mainMob.entity.lastYaw;
-        }
-        Location newLocation = VectorUtils.rotate(this.entityLocation, yaw1, this.mainMob.location, false);
-        newLocation.add(this.mainMob.entity.locX(), this.mainMob.entity.locY(), this.mainMob.entity.locZ());
-
-        double nowX = newLocation.getX();
-        double nowY = newLocation.getY();
-        double nowZ = newLocation.getZ();
-        this.setLocation(nowX, nowY, nowZ, newLocation.getYaw(), newLocation.getPitch());
-        return new PacketPlayOutEntityStatus(this, (byte) 9);
-    }
-
-
-    @Override
-    public boolean damageEntity(DamageSource damagesource, float f) {
-        return damagesource != DamageSource.STUCK && this.mainMob.entity.damageEntity(damagesource, f); // send this to the main mob
+    public EnumMainHand getMainHand() {
+        return DecodeEnumMainHand.RIGHT.encode();
     }
 
     @Override
@@ -200,12 +213,20 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild 
         org.bukkit.World world = bukkitEntity.getWorld();
         for (int i = 0; i < particlesToSpawn; i++) {
             world.spawnParticle(org.bukkit.Particle.SMOKE_NORMAL,
-                    minX + random.nextDouble() * x,
-                    minY + random.nextDouble() * y,
-                    minZ + random.nextDouble() * z,
+                    minX + getRandom().nextDouble() * x,
+                    minY + getRandom().nextDouble() * y,
+                    minZ + getRandom().nextDouble() * z,
                     1
             );
         }
+    }
+
+    /**
+     * @return EnumMonsterType.ARTHROPOD || EnumMonsterType.ILLAGER || ...
+     */
+    @Override
+    public EnumMonsterType getMonsterType() {
+        return DecodeEnumMonsterType.ILLAGER.encode();
     }
 
     @Override
@@ -232,7 +253,7 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild 
      * @param f3 amount to add to headPose[-,-,f3]
      */
     public void rotateHead(float f1, float f2, float f3) {
-        Vector3f pose = this.headPose;
+        Vector3f pose = DecodeEntityArmorStand.getHeadPose(this);
         f1 += pose.getX();
         f2 += pose.getY();
         f3 += pose.getZ();

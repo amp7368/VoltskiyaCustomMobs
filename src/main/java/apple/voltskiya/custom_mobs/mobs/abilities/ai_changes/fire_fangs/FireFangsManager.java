@@ -1,11 +1,12 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.fire_fangs;
 
+import apple.nms.decoding.entity.DecodeEntity;
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import apple.voltskiya.custom_mobs.mobs.ConfigManager;
 import apple.voltskiya.custom_mobs.mobs.RegisteredEntityEater;
 import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
 import apple.voltskiya.custom_mobs.pathfinders.spell.PathfinderGoalShootSpell;
-import net.minecraft.server.v1_16_R3.EntityInsentient;
+import net.minecraft.world.entity.EntityInsentient;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -50,7 +51,7 @@ public class FireFangsManager extends ConfigManager implements RegisteredEntityE
         for (String tag : entity.getScoreboardTags()) {
             FangsType type = tagToFangType.get(tag);
             if (type != null) {
-                entity.goalSelector.a(0, new PathfinderGoalShootSpell<>(new FireFangsCaster(entity), type));
+                DecodeEntity.getGoalSelector(entity).a(0, new PathfinderGoalShootSpell<>(new FireFangsCaster(entity), type));
             }
         }
     }

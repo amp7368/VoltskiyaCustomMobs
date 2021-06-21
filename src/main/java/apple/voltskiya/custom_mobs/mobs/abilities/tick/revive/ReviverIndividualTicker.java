@@ -1,11 +1,12 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.tick.revive;
 
+import apple.nms.decoding.entity.DecodeEntity;
 import apple.voltskiya.custom_mobs.pathfinders.utilities.PathfinderGoalMoveToTarget;
 import apple.voltskiya.custom_mobs.sql.MobListSql;
 import apple.voltskiya.custom_mobs.util.constants.TagConstants;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftMob;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftMob;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.Nullable;
 
@@ -83,7 +84,7 @@ public class ReviverIndividualTicker {
             CraftMob reviver = ((CraftMob) entity);
             Location target = mobToRevive.getEntity().getLocation();
             reviver.addScoreboardTag(TagConstants.isDoingAbility);
-            reviver.getHandle().goalSelector.a(-1, new PathfinderGoalMoveToTarget(reviver.getHandle(), target, 1.6, GIVE_UP_MOVE_TICK, () -> {
+            DecodeEntity.getGoalSelector(reviver.getHandle()).a(-1, new PathfinderGoalMoveToTarget(reviver.getHandle(), target, 1.6, GIVE_UP_MOVE_TICK, () -> {
                 if (mobToRevive.isNearby(reviver.getLocation())) {
                     ReviveDeadManager.get().reviveStart(mobToRevive, reviver, reviverObject);
                 }

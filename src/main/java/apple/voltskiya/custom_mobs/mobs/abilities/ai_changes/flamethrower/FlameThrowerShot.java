@@ -1,12 +1,12 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.flamethrower;
 
 import apple.voltskiya.custom_mobs.util.VectorUtils;
-import net.minecraft.server.v1_16_R3.EntityInsentient;
+import net.minecraft.world.entity.EntityInsentient;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftMob;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftMob;
 import org.bukkit.util.Vector;
 
 import java.util.Random;

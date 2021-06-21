@@ -1,12 +1,14 @@
 package apple.voltskiya.custom_mobs.pathfinders.spell;
 
+import apple.nms.decoding.entity.DecodeEntity;
+import apple.nms.decoding.pathfinder.DecodeMoveType;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.micro_misles.MicroMissileManager;
 import apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.micro_misles.MicroMissleShooter;
 import apple.voltskiya.custom_mobs.reload.PluginDisable;
-import net.minecraft.server.v1_16_R3.EntityInsentient;
-import net.minecraft.server.v1_16_R3.EntityLiving;
-import net.minecraft.server.v1_16_R3.PathfinderGoal;
+import net.minecraft.world.entity.EntityInsentient;
+import net.minecraft.world.entity.EntityLiving;
+import net.minecraft.world.entity.ai.goal.PathfinderGoal;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -31,8 +33,8 @@ public class PathfinderGoalShootMicroMissle extends PathfinderGoal {
         this.cooldown = cooldown;
         this.count = count;
         this.missileType = missileType;
-        this.a(EnumSet.of(Type.TARGET));
-        PluginDisable.addMob(me,this);
+        this.a(EnumSet.of(DecodeMoveType.TARGET.encode()));
+        PluginDisable.addMob(me, this);
     }
 
     /**
@@ -40,14 +42,14 @@ public class PathfinderGoalShootMicroMissle extends PathfinderGoal {
      */
     @Override
     public boolean a() {
-        return random.nextFloat() < SHOOT_FREQUENCY && this.me.getGoalTarget() != null && this.me.ticksLived - this.lastShot >= cooldown;
+        return random.nextFloat() < SHOOT_FREQUENCY && this.me.getGoalTarget() != null && DecodeEntity.getTicksLived(me) - this.lastShot >= cooldown;
     }
 
     @Override
     public void c() {
         final Location targetLocation = getTargetLocation();
         if (targetLocation != null) {
-            this.lastShot = this.me.ticksLived;
+            this.lastShot = DecodeEntity.getTicksLived(me);
             if (missileType == MicroMissleShooter.MissileType.FLURRY) {
                 sounds();
                 try {

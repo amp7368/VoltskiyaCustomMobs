@@ -1,9 +1,10 @@
 package apple.voltskiya.custom_mobs.pathfinders.spell;
 
+import apple.nms.decoding.entity.DecodeEntity;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.util.DistanceUtils;
-import net.minecraft.server.v1_16_R3.EntityInsentient;
-import net.minecraft.server.v1_16_R3.PathfinderGoal;
+import net.minecraft.world.entity.EntityInsentient;
+import net.minecraft.world.entity.ai.goal.PathfinderGoal;
 import org.bukkit.Bukkit;
 
 public class PathfinderGoalShootSpell<Caster extends PathfinderGoalShootSpell.SpellCaster> extends PathfinderGoal {
@@ -25,7 +26,7 @@ public class PathfinderGoalShootSpell<Caster extends PathfinderGoalShootSpell.Sp
     @Override
     public boolean a() {
         return this.me.isAlive() &&
-                this.me.ticksLived - lastShot >= type.getCooldown() &&
+                DecodeEntity.getTicksLived(me) - lastShot >= type.getCooldown() &&
                 this.me.getGoalTarget() != null &&
                 type.inRange(DistanceUtils.distance(
                         this.me.getGoalTarget().getBukkitEntity().getLocation(),
@@ -49,7 +50,7 @@ public class PathfinderGoalShootSpell<Caster extends PathfinderGoalShootSpell.Sp
     @Override
     public void c() {
         Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), type.construct(spellCaster)::stateChoice);
-        this.lastShot = this.me.ticksLived;
+        this.lastShot = DecodeEntity.getTicksLived(me);
     }
 
     public interface SpellType<Caster extends SpellCaster> {

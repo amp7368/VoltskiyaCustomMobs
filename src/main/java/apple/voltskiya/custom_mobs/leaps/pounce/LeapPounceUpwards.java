@@ -5,7 +5,7 @@ import apple.voltskiya.custom_mobs.leaps.LeapEater;
 import apple.voltskiya.custom_mobs.leaps.LeapPlugin;
 import apple.voltskiya.custom_mobs.mobs.ConfigManager;
 import apple.voltskiya.custom_mobs.mobs.YmlSettings;
-import net.minecraft.server.v1_16_R3.EntityInsentient;
+import net.minecraft.world.entity.EntityInsentient;
 
 public class LeapPounceUpwards extends ConfigManager implements LeapEater {
 

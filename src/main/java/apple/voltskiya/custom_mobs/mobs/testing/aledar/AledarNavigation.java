@@ -5,13 +5,13 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandCompletion;
 import co.aikar.commands.annotation.Subcommand;
-import net.minecraft.server.v1_16_R3.EntityPillager;
+import net.minecraft.world.entity.monster.EntityPillager;
 import org.bukkit.Bukkit;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -68,7 +68,7 @@ public class AledarNavigation extends BaseCommand implements Listener {
                             if (blockClicked != null) {
                                 Collection<Entity> nearby = blockClicked.getLocation().getNearbyEntities(50, 50, 50);
                                 for (Entity e : nearby) {
-                                    final net.minecraft.server.v1_16_R3.Entity entity = ((CraftEntity) e).getHandle();
+                                    final net.minecraft.world.entity.Entity entity = ((CraftEntity) e).getHandle();
                                     if (entity.getEntityType() == MobAledar.mobAledarEntityType) {
                                         // this is aledar
                                         EntityPillager aledar = (EntityPillager) entity;

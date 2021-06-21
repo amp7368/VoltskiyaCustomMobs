@@ -1,18 +1,19 @@
 package apple.voltskiya.custom_mobs.dungeon.scanner;
 
+import apple.nms.decoding.entity.DecodeEntity;
 import apple.voltskiya.custom_mobs.util.JsonUtils;
 import apple.voltskiya.custom_mobs.util.minecraft.InventoryUtils;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.server.v1_16_R3.EntityTypes;
-import net.minecraft.server.v1_16_R3.MojangsonParser;
-import net.minecraft.server.v1_16_R3.NBTTagCompound;
+import net.minecraft.nbt.MojangsonParser;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.entity.EntityTypes;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 
@@ -36,7 +37,7 @@ public class DungeonMobInfo {
 
     private void fromEntity(Entity entity) {
         nbt = new NBTTagCompound();
-        ((CraftEntity) entity).getHandle().a_(nbt);
+        DecodeEntity.do_d(((CraftEntity) entity).getHandle(), nbt);
         nbt.remove("UUID");
         mobType = ((CraftEntity) entity).getHandle().getEntityType();
         this.uuid = entity.getUniqueId().toString();

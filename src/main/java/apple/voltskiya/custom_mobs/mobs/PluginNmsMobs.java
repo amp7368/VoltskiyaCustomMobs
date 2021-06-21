@@ -1,5 +1,6 @@
 package apple.voltskiya.custom_mobs.mobs;
 
+import apple.nms.decoding.iregistry.DecodeDataConverterTypes;
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import apple.voltskiya.custom_mobs.mobs.misc.MobHealthPack;
 import apple.voltskiya.custom_mobs.mobs.modified.illager.evoker.MobIllagerEvokerExaminer;
@@ -14,9 +15,6 @@ import apple.voltskiya.custom_mobs.mobs.nether.parasite.MobParasite;
 import apple.voltskiya.custom_mobs.mobs.nether.revenant.MobRevenant;
 import apple.voltskiya.custom_mobs.mobs.parts.MobPartArmorStand;
 import apple.voltskiya.custom_mobs.mobs.parts.NmsModelConfig;
-import apple.voltskiya.custom_mobs.mobs.testing.MobEndermanVex;
-import apple.voltskiya.custom_mobs.mobs.testing.MobPiglinVex;
-import apple.voltskiya.custom_mobs.mobs.testing.MobZombieCow;
 import apple.voltskiya.custom_mobs.mobs.testing.aledar.AledarNavigation;
 import apple.voltskiya.custom_mobs.mobs.testing.aledar.MobAledar;
 import apple.voltskiya.custom_mobs.mobs.testing.aledar.MobCart;
@@ -25,9 +23,8 @@ import com.mojang.datafixers.DataFixer;
 import com.mojang.datafixers.schemas.Schema;
 import com.mojang.datafixers.types.Type;
 import com.mojang.datafixers.types.templates.TaggedChoice;
-import net.minecraft.server.v1_16_R3.DataConverterRegistry;
-import net.minecraft.server.v1_16_R3.DataConverterTypes;
-import net.minecraft.server.v1_16_R3.SharedConstants;
+import net.minecraft.SharedConstants;
+import net.minecraft.util.datafix.DataConverterRegistry;
 
 import java.io.File;
 import java.util.Map;
@@ -42,7 +39,7 @@ public class PluginNmsMobs extends VoltskiyaModule {
         final DataFixer dataFixerToRegister = DataConverterRegistry.a();
 
         final Schema schemaForSomething = dataFixerToRegister.getSchema(keyForVersion);
-        final TaggedChoice.TaggedChoiceType<?> choiceType = schemaForSomething.findChoiceType(DataConverterTypes.ENTITY_TREE);
+        final TaggedChoice.TaggedChoiceType<?> choiceType = schemaForSomething.findChoiceType(DecodeDataConverterTypes.ENTITY_TREE);
 
 
         // copy the zombie type to the warped gremlin type
@@ -78,12 +75,9 @@ public class PluginNmsMobs extends VoltskiyaModule {
         instance = this;
         NmsModelConfig.initialize();
 
-        MobZombieCow.initialize();
         MobWarpedGremlin.initialize();
         MobPartArmorStand.initialize();
-        MobPiglinVex.initialize();
         MobAledar.initialize();
-        MobEndermanVex.initialize();
         MobEyePlant.initialize();
         MobParasite.initialize();
         MobCart.initialize();

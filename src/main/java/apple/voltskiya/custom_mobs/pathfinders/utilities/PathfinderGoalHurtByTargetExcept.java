@@ -1,10 +1,10 @@
 package apple.voltskiya.custom_mobs.pathfinders.utilities;
 
 import apple.voltskiya.custom_mobs.reload.PluginDisable;
-import net.minecraft.server.v1_16_R3.EntityCreature;
-import net.minecraft.server.v1_16_R3.EntityInsentient;
-import net.minecraft.server.v1_16_R3.EntityLiving;
-import net.minecraft.server.v1_16_R3.PathfinderGoalHurtByTarget;
+import net.minecraft.world.entity.EntityCreature;
+import net.minecraft.world.entity.EntityInsentient;
+import net.minecraft.world.entity.EntityLiving;
+import net.minecraft.world.entity.ai.goal.target.PathfinderGoalHurtByTarget;
 
 import java.util.function.Predicate;
 

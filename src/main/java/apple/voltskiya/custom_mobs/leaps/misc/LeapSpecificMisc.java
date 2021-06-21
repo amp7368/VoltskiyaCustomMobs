@@ -1,13 +1,14 @@
 package apple.voltskiya.custom_mobs.leaps.misc;
 
+import apple.nms.decoding.entity.DecodeEntity;
 import apple.voltskiya.custom_mobs.leaps.PathfinderGoalLeap;
 import apple.voltskiya.custom_mobs.leaps.config.LeapDo;
 import apple.voltskiya.custom_mobs.leaps.config.LeapPostConfig;
 import apple.voltskiya.custom_mobs.leaps.config.LeapPreConfig;
 import apple.voltskiya.custom_mobs.sql.MobListSql;
-import net.minecraft.server.v1_16_R3.EntityInsentient;
-import net.minecraft.server.v1_16_R3.EntityLiving;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftLivingEntity;
+import net.minecraft.world.entity.EntityInsentient;
+import net.minecraft.world.entity.EntityLiving;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftLivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.util.Vector;
 
@@ -29,13 +30,13 @@ public class LeapSpecificMisc {
 
     public static void eatEntity(EntityInsentient creature, LeapPreConfig config) {
         LeapPostConfig postConfig = new LeapPostConfig(
-                (leapDo) -> creature.hurtTimestamp >= creature.ticksLived - 10,
+                (leapDo) -> DecodeEntity.getHurtTimestamp(creature) >= DecodeEntity.getTicksLived(creature) - 10,
                 creature::isOnGround,
                 LeapSpecificMisc::preLeap,
                 LeapSpecificMisc::interruptedLeap,
                 LeapSpecificMisc::endLeap
         );
-        creature.goalSelector.a(0, new PathfinderGoalLeap(creature, config, postConfig));
+        DecodeEntity.getGoalSelector(creature).a(0, new PathfinderGoalLeap(creature, config, postConfig));
     }
 
     private static void preLeap(EntityInsentient entity, LeapDo leapDo) {

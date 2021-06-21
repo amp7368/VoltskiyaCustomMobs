@@ -1,13 +1,28 @@
 package apple.voltskiya.custom_mobs.mobs.modified.illager.evoker;
 
+import apple.nms.decoding.entity.DecodeEntity;
+import apple.nms.decoding.entity.DecodeEnumCreatureType;
+import apple.nms.decoding.iregistry.DecodeEntityTypes;
+import apple.nms.decoding.iregistry.DecodeIRegistry;
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
 import apple.voltskiya.custom_mobs.mobs.RegisteredCustomMob;
 import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
 import com.mojang.datafixers.types.Type;
-import net.minecraft.server.v1_16_R3.*;
+import net.minecraft.core.IRegistry;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.ai.goal.PathfinderGoalSelector;
+import net.minecraft.world.entity.ai.goal.target.PathfinderGoalHurtByTarget;
+import net.minecraft.world.entity.ai.goal.target.PathfinderGoalNearestAttackableTarget;
+import net.minecraft.world.entity.animal.EntityIronGolem;
+import net.minecraft.world.entity.monster.EntityEvoker;
+import net.minecraft.world.entity.npc.EntityVillagerAbstract;
+import net.minecraft.world.entity.player.EntityHuman;
+import net.minecraft.world.entity.raid.EntityRaider;
+import net.minecraft.world.level.World;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,10 +33,6 @@ public class MobIllagerEvokerExaminer extends EntityEvoker implements Registered
     public static final String REGISTERED_NAME = "mob.examiner.evoker";
     private static EntityTypes<MobIllagerEvokerExaminer> entityTypes;
 
-    public MobIllagerEvokerExaminer(EntityTypes<? extends EntityEvoker> entitytypes, World world) {
-        super(EntityTypes.EVOKER, world);
-    }
-
     /**
      * registers the IllagerExaminer as an entity
      */
@@ -31,12 +42,16 @@ public class MobIllagerEvokerExaminer extends EntityEvoker implements Registered
         types.put(registeredNameId(), oldType);
 
         // build it
-        EntityTypes.Builder<MobIllagerEvokerExaminer> entitytypesBuilder = EntityTypes.Builder.a(MobIllagerEvokerExaminer::new, EnumCreatureType.MONSTER);
+        EntityTypes.Builder<MobIllagerEvokerExaminer> entitytypesBuilder = EntityTypes.Builder.a(MobIllagerEvokerExaminer::new, DecodeEnumCreatureType.MONSTER.encode());
         entityTypes = entitytypesBuilder.a(REGISTERED_NAME);
-        entityTypes = IRegistry.a(IRegistry.ENTITY_TYPE, IRegistry.ENTITY_TYPE.a(EntityTypes.EVOKER), REGISTERED_NAME, entityTypes); // this is good
+        entityTypes = IRegistry.a(DecodeIRegistry.getEntityType(), DecodeIRegistry.getEntityType().getId(DecodeEntityTypes.EVOKER), REGISTERED_NAME, entityTypes); // this is good
 
         // log it
         PluginNmsMobs.get().log(Level.INFO, "registered " + registeredNameId());
+    }
+
+    public MobIllagerEvokerExaminer(EntityTypes<? extends EntityEvoker> entitytypes, World world) {
+        super(DecodeEntityTypes.EVOKER, world);
     }
 
     @NotNull
@@ -93,13 +108,13 @@ public class MobIllagerEvokerExaminer extends EntityEvoker implements Registered
         return data;
     }
 
-
     @Override
     protected void initPathfinder() {
         super.initPathfinder();
-        this.targetSelector = new PathfinderGoalSelector(world.getMethodProfilerSupplier());
-        this.targetSelector.a(1, (new PathfinderGoalHurtByTarget(this, EntityIronGolem.class, EntityRaider.class)).a(new Class[0]));
-        this.targetSelector.a(2, (new PathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)).a(300));
-        this.targetSelector.a(3, (new PathfinderGoalNearestAttackableTarget<>(this, EntityVillagerAbstract.class, false)).a(300));
+        DecodeEntity.setTargetSelector(this, new PathfinderGoalSelector(getWorld().getMethodProfilerSupplier()));
+        PathfinderGoalSelector targetSelector = DecodeEntity.getTargetSelector(this);
+        targetSelector.a(1, (new PathfinderGoalHurtByTarget(this, EntityIronGolem.class, EntityRaider.class)).a(new Class[0]));
+        targetSelector.a(2, (new PathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)).a(300));
+        targetSelector.a(3, (new PathfinderGoalNearestAttackableTarget<>(this, EntityVillagerAbstract.class, false)).a(300));
     }
 }

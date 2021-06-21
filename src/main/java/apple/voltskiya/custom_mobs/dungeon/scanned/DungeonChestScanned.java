@@ -4,7 +4,7 @@ import apple.voltskiya.custom_mobs.util.VectorUtils;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.server.v1_16_R3.World;
+import net.minecraft.world.level.World;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

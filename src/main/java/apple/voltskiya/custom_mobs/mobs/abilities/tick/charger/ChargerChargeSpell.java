@@ -1,15 +1,16 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.tick.charger;
 
+import apple.nms.decoding.entity.DecodeEntity;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.pathfinders.spell.PathfinderGoalCharge;
 import apple.voltskiya.custom_mobs.util.constants.TagConstants;
 import apple.voltskiya.custom_mobs.util.minecraft.MaterialUtils;
-import net.minecraft.server.v1_16_R3.EntityInsentient;
+import net.minecraft.world.entity.EntityInsentient;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftMob;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftMob;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.potion.PotionEffect;
@@ -20,7 +21,7 @@ import java.util.Collections;
 
 import static apple.voltskiya.custom_mobs.mobs.abilities.tick.charger.ChargerChargeHelper.*;
 
-public class ChargerChargeSpell{
+public class ChargerChargeSpell {
     protected final Charger charger;
     protected final Mob chargerMob;
     protected Location finalLocation;
@@ -94,7 +95,7 @@ public class ChargerChargeSpell{
             chargerMob.addPotionEffect(strength);
             chargeSound(chargerMob.getLocation());
             chargerMob.setAI(true);
-            chargerHandle.goalSelector.a(
+            DecodeEntity.getGoalSelector(chargerHandle).a(
                     -1, new PathfinderGoalCharge(
                             chargerHandle,
                             finalLocation,

@@ -1,14 +1,16 @@
 package apple.voltskiya.custom_mobs.leaps;
 
+import apple.nms.decoding.entity.DecodeEntity;
+import apple.nms.decoding.pathfinder.DecodeMoveType;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.leaps.config.LeapDo;
 import apple.voltskiya.custom_mobs.leaps.config.LeapPostConfig;
 import apple.voltskiya.custom_mobs.leaps.config.LeapPreConfig;
 import apple.voltskiya.custom_mobs.reload.PluginDisable;
 import apple.voltskiya.custom_mobs.util.constants.TagConstants;
-import net.minecraft.server.v1_16_R3.EntityInsentient;
-import net.minecraft.server.v1_16_R3.EntityLiving;
-import net.minecraft.server.v1_16_R3.PathfinderGoal;
+import net.minecraft.world.entity.EntityInsentient;
+import net.minecraft.world.entity.EntityLiving;
+import net.minecraft.world.entity.ai.goal.PathfinderGoal;
 import org.bukkit.Location;
 
 import javax.annotation.Nullable;
@@ -34,8 +36,8 @@ public class PathfinderGoalLeap extends PathfinderGoal {
         this.config = config;
         this.me = me;
         this.postConfig = postConfig;
-        this.setMoveType(EnumSet.of(Type.JUMP));
-        PluginDisable.addMob(me,this);
+        this.setMoveType(EnumSet.of(DecodeMoveType.JUMP.encode()));
+        PluginDisable.addMob(me, this);
     }
 
     /**
@@ -47,7 +49,7 @@ public class PathfinderGoalLeap extends PathfinderGoal {
             final Location themLocation = this.getGoalLocation();
             if (themLocation == null) return false;
             final Location meLocation = this.me.getBukkitEntity().getLocation();
-            return (this.timeOfLastJump == null || this.me.ticksLived >= timeOfLastJump + this.config.getCooldown()) &&
+            return (this.timeOfLastJump == null || DecodeEntity.getTicksLived(this.me) >= timeOfLastJump + this.config.getCooldown()) &&
                     (this.currentLeap == null || !this.currentLeap.isLeaping()) &&
                     this.config.isCorrectRange(meLocation, themLocation) &&
                     this.config.isValidPeak(meLocation, themLocation) &&
@@ -69,7 +71,6 @@ public class PathfinderGoalLeap extends PathfinderGoal {
     }
 
     /**
-     *
      * @return something
      */
     @Override
@@ -95,7 +96,7 @@ public class PathfinderGoalLeap extends PathfinderGoal {
                 this.currentLeap = new LeapDo(this.me, this::getGoalLocation, goalLocation, this.config, this.postConfig);
                 // do the jump
                 this.currentLeap.preLeap();
-                this.timeOfLastJump = this.me.ticksLived;
+                this.timeOfLastJump = DecodeEntity.getTicksLived(this.me);
             } catch (IllegalArgumentException ignored) {
             }
         }
