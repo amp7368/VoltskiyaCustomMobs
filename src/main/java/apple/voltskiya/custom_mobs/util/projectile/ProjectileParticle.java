@@ -89,14 +89,15 @@ public class ProjectileParticle implements Runnable {
     }
 
     protected boolean addDirectionStepped() {
-        Vector smallDirection = direction.normalize().multiply(.5);
         Vector bigDirection = direction.clone();
+        Vector smallDirection = direction.normalize().multiply(.5);
         double smallSize = VectorUtils.magnitude(smallDirection);
         boolean shouldContinue = true;
         while (VectorUtils.magnitude(bigDirection) > smallSize) {
             location.add(smallDirection);
             bigDirection.subtract(smallDirection);
             if (shouldContinue) shouldContinue = this.shouldContinue();
+            else break;
         }
         location.add(bigDirection);
         if (shouldContinue) shouldContinue = this.shouldContinue();

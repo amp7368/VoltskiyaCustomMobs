@@ -5,9 +5,12 @@ import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import apple.voltskiya.custom_mobs.mobs.ConfigManager;
 import apple.voltskiya.custom_mobs.mobs.RegisteredEntityEater;
 import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
-import apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.fire_fangs.FireFangsManager;
 import apple.voltskiya.custom_mobs.pathfinders.spell.PathfinderGoalShootSpell;
 import net.minecraft.world.entity.EntityInsentient;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
+import org.bukkit.entity.Mob;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -18,9 +21,12 @@ public class ShootBallManager extends ConfigManager implements RegisteredEntityE
     public Map<String, ShootersType> tagToShootType;
 
     public ShootBallManager() throws IOException {
-        ShootersType.NORMAL.range = (double) getValueOrInit(FireFangsManager.YmlSettings.NORMAL_RANGE.getPath());
-        ShootersType.NORMAL.step = (double) getValueOrInit(FireFangsManager.YmlSettings.NORMAL_STEP.getPath());
-        ShootersType.NORMAL.cooldown = (int) getValueOrInit(FireFangsManager.YmlSettings.NORMAL_COOLDOWN.getPath());
+        ShootersType.NORMAL.range = (double) getValueOrInit(YmlSettings.NORMAL_RANGE.getPath());
+        ShootersType.NORMAL.step = (double) getValueOrInit(YmlSettings.NORMAL_STEP.getPath());
+        ShootersType.NORMAL.cooldown = (int) getValueOrInit(YmlSettings.NORMAL_COOLDOWN.getPath());
+        ShootersType.OVERSEER.range = (double) getValueOrInit(YmlSettings.OVERSEER_RANGE.getPath());
+        ShootersType.OVERSEER.step = (double) getValueOrInit(YmlSettings.OVERSEER_STEP.getPath());
+        ShootersType.OVERSEER.cooldown = (int) getValueOrInit(YmlSettings.OVERSEER_COOLDOWN.getPath());
         tagToShootType = new HashMap<>() {{
             put("fireball_laser", ShootersType.NORMAL);
         }};
@@ -31,6 +37,14 @@ public class ShootBallManager extends ConfigManager implements RegisteredEntityE
         for (String tag : entity.getScoreboardTags()) {
             ShootersType type = tagToShootType.get(tag);
             if (type != null) {
+                if (entity.getScoreboardTags().contains("overseer_boss")) type = ShootersType.OVERSEER;
+                final CraftEntity bukkitEntity = entity.getBukkitEntity();
+                if (bukkitEntity instanceof Mob mob) {
+                    final AttributeInstance followRange = mob.getAttribute(Attribute.GENERIC_FOLLOW_RANGE);
+                    if (followRange != null) {
+                        followRange.setBaseValue(Math.max(followRange.getBaseValue(), type.getRange()));
+                    }
+                }
                 DecodeEntity.getGoalSelector(entity).a(0, new PathfinderGoalShootSpell<>(new ShootBallCaster(entity), type));
             }
         }
@@ -61,9 +75,12 @@ public class ShootBallManager extends ConfigManager implements RegisteredEntityE
     }
 
     public enum YmlSettings implements apple.voltskiya.custom_mobs.mobs.YmlSettings {
-        NORMAL_RANGE("normal.range", 40d),
+        NORMAL_RANGE("normal.range", 50d),
         NORMAL_STEP("normal.step", 1d),
-        NORMAL_COOLDOWN("normal.cooldown", 300);
+        NORMAL_COOLDOWN("normal.cooldown", 300),
+        OVERSEER_RANGE("overseer.range", 50d),
+        OVERSEER_STEP("overseer.step", 1d),
+        OVERSEER_COOLDOWN("overseer.cooldown", 600);
         private final String path;
         private final Object value;
 
@@ -83,7 +100,7 @@ public class ShootBallManager extends ConfigManager implements RegisteredEntityE
 
     public enum ShootersType implements PathfinderGoalShootSpell.SpellType<ShootBallCaster> {
         NORMAL(0, 0, 0, ShootBallSpell::new),
-        ;
+        OVERSEER(0, 0, 0, ShootBallSpell::new);
         private final BiFunction<ShootBallCaster, ShootersType, ShootBallSpell> runnableConstructor;
         private double range;
         private double step;
@@ -122,7 +139,7 @@ public class ShootBallManager extends ConfigManager implements RegisteredEntityE
         }
 
         public double getShotSpeed() {
-            return 3.4;
+            return 0.9;
         }
 
         public int getShotsToTake() {

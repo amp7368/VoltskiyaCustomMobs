@@ -111,7 +111,6 @@ public class ReviveDeadManager extends ConfigManager implements DeathEater {
             Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
                 final EntityInsentient handle = reviver.getHandle();
                 // if the mob was just spawned or it was hurt a while ago
-
                 if (shouldContinue.get() && (DecodeEntity.getHurtTimestamp(handle) == 0 ||
                         DecodeEntity.getHurtTimestamp(handle) + time <= DecodeEntity.getTicksLived(handle)
                 )) {

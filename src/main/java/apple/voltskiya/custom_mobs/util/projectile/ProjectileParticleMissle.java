@@ -1,6 +1,5 @@
 package apple.voltskiya.custom_mobs.util.projectile;
 
-import apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.micro_misles.MicroMissileConfig;
 import apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.shoot_ball.ShootBallManager;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -13,6 +12,8 @@ public class ProjectileParticleMissle extends ProjectileParticle {
     private static final int MIN_TICKS_TO_LIVE = 100;
     private static final int MAX_ADDITIONAL_TICKS_TO_LIVE = 30;
     private static final double SHOT_SPEED = ShootBallManager.ShootersType.NORMAL.getShotSpeed();
+    private static final int RANDOM_ACCELERATION_ANGLE = 20;
+    private static final double ACCELERATION_SPEED = .3;
     private final Location targetLocation;
     private final int tickToLiveTo = random.nextInt(MAX_ADDITIONAL_TICKS_TO_LIVE) + MIN_TICKS_TO_LIVE;
     private Vector acceleration = null;
@@ -26,10 +27,10 @@ public class ProjectileParticleMissle extends ProjectileParticle {
 
     private void randomizeAcceleration() {
         Vector goDirection = this.targetLocation.toVector().subtract(this.location.toVector());
-        goDirection.rotateAroundX(Math.toRadians(random.nextInt(MicroMissileConfig.RANDOM_ACCELERATION_ANGLE * 2) - MicroMissileConfig.RANDOM_ACCELERATION_ANGLE));
-        goDirection.rotateAroundZ(Math.toRadians(random.nextInt(MicroMissileConfig.RANDOM_ACCELERATION_ANGLE * 2) - MicroMissileConfig.RANDOM_ACCELERATION_ANGLE));
-        goDirection.rotateAroundY(Math.toRadians(random.nextInt(MicroMissileConfig.RANDOM_ACCELERATION_ANGLE * 2) - MicroMissileConfig.RANDOM_ACCELERATION_ANGLE));
-        this.acceleration = goDirection.normalize().multiply(MicroMissileConfig.ACCELERATION_SPEED);
+        goDirection.rotateAroundX(Math.toRadians(random.nextInt(RANDOM_ACCELERATION_ANGLE * 2) - RANDOM_ACCELERATION_ANGLE));
+        goDirection.rotateAroundZ(Math.toRadians(random.nextInt(RANDOM_ACCELERATION_ANGLE * 2) - RANDOM_ACCELERATION_ANGLE));
+        goDirection.rotateAroundY(Math.toRadians(random.nextInt(RANDOM_ACCELERATION_ANGLE * 2) - RANDOM_ACCELERATION_ANGLE));
+        this.acceleration = goDirection.normalize().multiply(ACCELERATION_SPEED);
     }
 
     @Override

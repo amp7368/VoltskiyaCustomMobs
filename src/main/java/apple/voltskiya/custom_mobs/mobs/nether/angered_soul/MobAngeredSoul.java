@@ -29,12 +29,14 @@ import net.minecraft.world.entity.monster.EntityMonster;
 import net.minecraft.world.entity.monster.EntitySkeleton;
 import net.minecraft.world.entity.player.EntityHuman;
 import net.minecraft.world.level.World;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftSkeleton;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -149,8 +151,14 @@ public class MobAngeredSoul extends EntitySkeleton implements RegisteredCustomMo
             if (nearby instanceof LivingEntity) {
                 final EntityLiving handle = ((CraftLivingEntity) nearby).getHandle();
                 if (handle != this)
-                    if (!handle.isBlocking())
-                        handle.damageEntity(DecodeDamageSource.OUT_OF_WORLD, 10f);
+                    if (!handle.isBlocking()) {
+                        if (nearby instanceof Player player) {
+                            if (player.getGameMode() == GameMode.SURVIVAL)
+                                handle.damageEntity(DecodeDamageSource.OUT_OF_WORLD, 10f);
+                        } else {
+                            handle.damageEntity(DecodeDamageSource.OUT_OF_WORLD, 10f);
+                        }
+                    }
             }
             final Location location = this.getBukkitEntity().getLocation();
             location.getWorld().spawnParticle(org.bukkit.Particle.EXPLOSION_LARGE, location, 1);

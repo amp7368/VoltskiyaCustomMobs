@@ -80,8 +80,7 @@ public class ReviverIndividualTicker {
 
     private synchronized void reviveGoal(Entity entity, Reviver reviverObject) {
         RecordedMob mobToRevive = ReviveDeadManager.get().reviveStart(entity.getLocation());
-        if (mobToRevive != null && entity instanceof CraftMob) {
-            CraftMob reviver = ((CraftMob) entity);
+        if (mobToRevive != null && entity instanceof CraftMob reviver) {
             Location target = mobToRevive.getEntity().getLocation();
             reviver.addScoreboardTag(TagConstants.isDoingAbility);
             DecodeEntity.getGoalSelector(reviver.getHandle()).a(-1, new PathfinderGoalMoveToTarget(reviver.getHandle(), target, 1.6, GIVE_UP_MOVE_TICK, () -> {
