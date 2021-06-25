@@ -8,7 +8,11 @@ import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.server.v1_16_R3.*;
+import net.minecraft.core.BlockPosition;
+import net.minecraft.nbt.MojangsonParser;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.level.World;
+import net.minecraft.world.level.block.entity.TileEntity;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -48,7 +52,7 @@ public class DungeonChestScannedPredetermined implements DungeonChestScanned {
         if (blockType == null)
             throw new IllegalStateException(String.format("The block key at [%d, %d, %d] is not a material", location.getBlockX(), location.getBlockY(), location.getBlockZ()));
         blockAtLocation.setType(blockType);
-        world.setTileEntity(new BlockPosition(spawnLocation.getX(), spawnLocation.getY(), spawnLocation.getZ()), TileEntity.create(null, nbt));
+        world.setTileEntity(TileEntity.create(new BlockPosition(spawnLocation.getX(), spawnLocation.getY(), spawnLocation.getZ()), null, nbt));
     }
 
     @Override

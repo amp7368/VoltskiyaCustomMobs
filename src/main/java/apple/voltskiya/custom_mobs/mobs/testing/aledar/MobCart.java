@@ -1,5 +1,8 @@
 package apple.voltskiya.custom_mobs.mobs.testing.aledar;
 
+import apple.nms.decoding.entity.DecodeEnumCreatureType;
+import apple.nms.decoding.iregistry.DecodeDataConverterTypes;
+import apple.nms.decoding.iregistry.DecodeEntityTypes;
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
 import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
 import apple.voltskiya.custom_mobs.mobs.parts.*;
@@ -10,10 +13,20 @@ import com.mojang.datafixers.DataFixer;
 import com.mojang.datafixers.schemas.Schema;
 import com.mojang.datafixers.types.Type;
 import com.mojang.datafixers.types.templates.TaggedChoice;
-import net.minecraft.server.v1_16_R3.*;
+import net.minecraft.SharedConstants;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.sounds.SoundEffect;
+import net.minecraft.util.datafix.DataConverterRegistry;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.EnumMoveType;
+import net.minecraft.world.entity.animal.horse.EntityHorse;
+import net.minecraft.world.level.World;
+import net.minecraft.world.phys.Vec3D;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
 import java.util.ArrayList;
@@ -30,15 +43,11 @@ public class MobCart extends EntityHorse {
     private EntityTypes<?> selfModelType;
     private final List<MobPartChild> children = new ArrayList<>();
 
-    public MobCart(EntityTypes<MobCart> var0, World world) {
-        super(EntityTypes.HORSE, world);
-    }
-
     /**
      * registers the WarpedGremlin as an entity
      */
     public static void initialize() {
-        EntityTypes.Builder<MobCart> entitytypesBuilder = EntityTypes.Builder.a(MobCart::new, EnumCreatureType.MONSTER);
+        EntityTypes.Builder<MobCart> entitytypesBuilder = EntityTypes.Builder.a(MobCart::new, DecodeEnumCreatureType.MONSTER.encode());
 
         // this version of minecraft (whatever it happens to be)
         final int keyForVersion = DataFixUtils.makeKey(SharedConstants.getGameVersion().getWorldVersion());
@@ -46,7 +55,7 @@ public class MobCart extends EntityHorse {
         final DataFixer dataFixerToRegister = DataConverterRegistry.a();
 
         final Schema schemaForSomething = dataFixerToRegister.getSchema(keyForVersion);
-        final TaggedChoice.TaggedChoiceType<?> choiceType = schemaForSomething.findChoiceType(DataConverterTypes.ENTITY_TREE);
+        final TaggedChoice.TaggedChoiceType<?> choiceType = schemaForSomething.findChoiceType(DecodeDataConverterTypes.ENTITY_TREE);
 
         // copy the zombie type to the warped gremlin type
         // todo understand this more
@@ -59,6 +68,10 @@ public class MobCart extends EntityHorse {
 
         // log it
         PluginNmsMobs.get().log(Level.INFO, "registered " + REGISTERED_NAME);
+    }
+
+    public MobCart(EntityTypes<MobCart> var0, World world) {
+        super(DecodeEntityTypes.HORSE, world);
     }
 
     /**
@@ -81,7 +94,6 @@ public class MobCart extends EntityHorse {
         event.setCancelled(true);
     }
 
-
     private void prepare(Location location, NBTTagCompound oldNbt) {
         final NmsModelConfig model = NmsModelConfig.parts(REGISTERED_MODEL);
         this.selfModel = model.mainPart();
@@ -93,7 +105,7 @@ public class MobCart extends EntityHorse {
         this.setTamed(true);
         this.setBaby(true);
         this.ageLocked = true;
-        this.saddle(SoundCategory.NEUTRAL);
+        this.saddle(null);
         this.setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
         final Optional<EntityTypes<?>> entityTypes = EntityTypes.a(this.selfModel.getEntity().type.getKey().getKey());
         if (entityTypes.isPresent()) {
@@ -112,7 +124,7 @@ public class MobCart extends EntityHorse {
                 children.add(MobParts.spawnMobPart(motherMe, part));
             }
         } else {
-            this.selfModelType = EntityTypes.AREA_EFFECT_CLOUD;
+            this.selfModelType = DecodeEntityTypes.AREA_EFFECT_CLOUD;
             this.die();
         }
     }
@@ -128,21 +140,21 @@ public class MobCart extends EntityHorse {
     }
 
     @Override
+    public void a(RemovalReason removalReason) {
+        super.a(removalReason);
+        for (MobPartChild child : children) {
+            child.die();
+        }
+    }
+
+    @Override
     public void move(EnumMoveType enummovetype, Vec3D vec3d) {
         super.move(enummovetype, vec3d);
         List<Packet<?>> packetsToSend = new ArrayList<>();
         for (MobPartChild child : children) {
             packetsToSend.add(child.moveFromMother(false));
         }
-        UtilsPacket.sendPacketsToNearbyPlayers(packetsToSend,this.getBukkitEntity().getLocation());
-    }
-
-    @Override
-    public void die() {
-        super.die();
-        for (MobPartChild child : children) {
-            child.die();
-        }
+        UtilsPacket.sendPacketsToNearbyPlayers(packetsToSend, this.getBukkitEntity().getLocation());
     }
 
 

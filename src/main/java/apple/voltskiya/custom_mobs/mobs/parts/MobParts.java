@@ -1,9 +1,9 @@
 package apple.voltskiya.custom_mobs.mobs.parts;
 
 import apple.voltskiya.custom_mobs.mobs.utils.UtilsPacket;
-import net.minecraft.server.v1_16_R3.ControllerLook;
-import net.minecraft.server.v1_16_R3.EntityInsentient;
-import net.minecraft.server.v1_16_R3.Packet;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.world.entity.EntityInsentient;
+import net.minecraft.world.entity.ai.control.ControllerLook;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.EntityType;
 

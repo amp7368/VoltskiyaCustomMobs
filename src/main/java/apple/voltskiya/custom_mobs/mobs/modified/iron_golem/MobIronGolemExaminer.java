@@ -1,14 +1,31 @@
 package apple.voltskiya.custom_mobs.mobs.modified.iron_golem;
 
+import apple.nms.decoding.entity.DecodeEntity;
+import apple.nms.decoding.entity.DecodeEnumCreatureType;
+import apple.nms.decoding.entity.DecodeEnumMonsterType;
+import apple.nms.decoding.iregistry.DecodeEntityTypes;
+import apple.nms.decoding.iregistry.DecodeIRegistry;
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
 import apple.voltskiya.custom_mobs.mobs.RegisteredCustomMob;
 import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
 import apple.voltskiya.custom_mobs.pathfinders.utilities.PathfinderGoalHurtByTargetExcept;
 import com.mojang.datafixers.types.Type;
-import net.minecraft.server.v1_16_R3.*;
+import net.minecraft.core.IRegistry;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.entity.EntityInsentient;
+import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.ai.goal.PathfinderGoalSelector;
+import net.minecraft.world.entity.ai.goal.target.PathfinderGoalDefendVillage;
+import net.minecraft.world.entity.ai.goal.target.PathfinderGoalNearestAttackableTarget;
+import net.minecraft.world.entity.ai.goal.target.PathfinderGoalUniversalAngerReset;
+import net.minecraft.world.entity.animal.EntityIronGolem;
+import net.minecraft.world.entity.monster.EntityCreeper;
+import net.minecraft.world.entity.monster.IMonster;
+import net.minecraft.world.entity.player.EntityHuman;
+import net.minecraft.world.level.World;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,10 +36,6 @@ public class MobIronGolemExaminer extends EntityIronGolem implements RegisteredC
     public static final String REGISTERED_NAME = "mob.examiner.iron_golem";
     private static EntityTypes<MobIronGolemExaminer> entityTypes;
 
-    public MobIronGolemExaminer(EntityTypes<? extends EntityIronGolem> entitytypes, World world) {
-        super(EntityTypes.IRON_GOLEM, world);
-    }
-
     /**
      * registers the IronGolemExaminer as an entity
      */
@@ -32,13 +45,17 @@ public class MobIronGolemExaminer extends EntityIronGolem implements RegisteredC
         types.put(registeredNameId(), oldType);
 
         // build it
-        EntityTypes.Builder<MobIronGolemExaminer> entitytypesBuilder = EntityTypes.Builder.a(MobIronGolemExaminer::new, EnumCreatureType.MONSTER);
+        EntityTypes.Builder<MobIronGolemExaminer> entitytypesBuilder = EntityTypes.Builder.a(MobIronGolemExaminer::new, DecodeEnumCreatureType.MONSTER.encode());
         entityTypes = entitytypesBuilder.a(REGISTERED_NAME);
-        entityTypes = IRegistry.a(IRegistry.ENTITY_TYPE, IRegistry.ENTITY_TYPE.a(EntityTypes.IRON_GOLEM), REGISTERED_NAME, entityTypes); // this is good
+        entityTypes = IRegistry.a(DecodeIRegistry.getEntityType(), DecodeIRegistry.getEntityType().getId(DecodeEntityTypes.IRON_GOLEM), REGISTERED_NAME, entityTypes); // this is good
 
         // log it
         PluginNmsMobs.get().log(Level.INFO, "registered " + registeredNameId());
 
+    }
+
+    public MobIronGolemExaminer(EntityTypes<? extends EntityIronGolem> entitytypes, World world) {
+        super(DecodeEntityTypes.IRON_GOLEM, world);
     }
 
     @NotNull
@@ -99,15 +116,16 @@ public class MobIronGolemExaminer extends EntityIronGolem implements RegisteredC
     protected void initPathfinder() {
         // copied from super.initPathfinder()
         super.initPathfinder();
-        this.targetSelector = new PathfinderGoalSelector(world.getMethodProfilerSupplier());
-        this.targetSelector.a(1, new PathfinderGoalDefendVillage(this));
+        DecodeEntity.setTargetSelector(this, new PathfinderGoalSelector(getWorld().getMethodProfilerSupplier()));
+        PathfinderGoalSelector targetSelector = DecodeEntity.getTargetSelector(this);
+        targetSelector.a(1, new PathfinderGoalDefendVillage(this));
         // modified to not attack illagers
-        this.targetSelector.a(2, new PathfinderGoalHurtByTargetExcept(this, (e) -> e.getMonsterType() != EnumMonsterType.ILLAGER));
-        this.targetSelector.a(3, new PathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, 10, true, false, this::a_));
+        targetSelector.a(2, new PathfinderGoalHurtByTargetExcept(this, (e) -> e.getMonsterType() != DecodeEnumMonsterType.ILLAGER.encode()));
+        targetSelector.a(3, new PathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, 10, true, false, this::a_));
         // modified to not attack illagers
-        this.targetSelector.a(3, new PathfinderGoalNearestAttackableTarget<>(this, EntityInsentient.class, 5, false, false,
-                (entityliving) -> entityliving instanceof IMonster && !(entityliving instanceof EntityCreeper) && entityliving.getMonsterType() != EnumMonsterType.ILLAGER)
+        targetSelector.a(3, new PathfinderGoalNearestAttackableTarget<>(this, EntityInsentient.class, 5, false, false,
+                (entityliving) -> entityliving instanceof IMonster && !(entityliving instanceof EntityCreeper) && entityliving.getMonsterType() != DecodeEnumMonsterType.ILLAGER.encode())
         );
-        this.targetSelector.a(4, new PathfinderGoalUniversalAngerReset<>(this, false));
+        targetSelector.a(4, new PathfinderGoalUniversalAngerReset<>(this, false));
     }
 }

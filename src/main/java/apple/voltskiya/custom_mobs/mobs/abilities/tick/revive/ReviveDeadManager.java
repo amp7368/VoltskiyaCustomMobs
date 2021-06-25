@@ -1,18 +1,20 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.tick.revive;
 
+import apple.nms.decoding.entity.DecodeEntity;
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.mobs.ConfigManager;
 import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.DeathEater;
 import apple.voltskiya.custom_mobs.util.constants.TagConstants;
-import net.minecraft.server.v1_16_R3.NBTTagCompound;
-import net.minecraft.server.v1_16_R3.NBTTagInt;
-import net.minecraft.server.v1_16_R3.NBTTagString;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagInt;
+import net.minecraft.nbt.NBTTagString;
+import net.minecraft.world.entity.EntityInsentient;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftMob;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftMob;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -24,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ReviveDeadManager extends ConfigManager implements DeathEater {
 
@@ -103,9 +106,14 @@ public class ReviveDeadManager extends ConfigManager implements DeathEater {
         final World world = reviverLocation.getWorld();
         world.playSound(reviveMe.location, Sound.BLOCK_BEACON_DEACTIVATE, SoundCategory.HOSTILE, 35, .7f);
         final int time = ReviverManagerTicker.get().REVIVE_RITUAL_TIME + TIME_TO_RISE;
+        AtomicBoolean shouldContinue = new AtomicBoolean(true);
         for (int timeI = 0; timeI < time; timeI += 3) {
             Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
-                if (reviver.getHandle().ticksLived - reviver.getHandle().hurtTimestamp >= time) {
+                final EntityInsentient handle = reviver.getHandle();
+                // if the mob was just spawned or it was hurt a while ago
+                if (shouldContinue.get() && (DecodeEntity.getHurtTimestamp(handle) == 0 ||
+                        DecodeEntity.getHurtTimestamp(handle) + time <= DecodeEntity.getTicksLived(handle)
+                )) {
                     double xLoc = reviverLocation.getX();
                     double yLoc = reviverLocation.getY();
                     double zLoc = reviverLocation.getZ();
@@ -116,6 +124,7 @@ public class ReviveDeadManager extends ConfigManager implements DeathEater {
                         world.spawnParticle(Particle.REDSTONE, xLoc + xi, yLoc + yi, zLoc + zi, 1, new Particle.DustOptions(Color.RED, 1f));
                     }
                 } else {
+                    shouldContinue.set(false);
                     reviver.setAI(true);
                     reviver.removeScoreboardTag(TagConstants.isDoingAbility);
                     reviveMe.resetCooldown();
@@ -124,9 +133,9 @@ public class ReviveDeadManager extends ConfigManager implements DeathEater {
         }
         Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
             if (!reviver.isDead()) {
-                reviver.removeScoreboardTag(TagConstants.isDoingAbility);
-                reviver.setAI(true);
-                if (reviver.getHandle().ticksLived - reviver.getHandle().hurtTimestamp >= time) {
+                if (shouldContinue.get()) {
+                    reviver.setAI(true);
+                    reviver.removeScoreboardTag(TagConstants.isDoingAbility);
                     reviveProcess(reviveMe, reviver, reviverObject);
                 }
             }
@@ -134,13 +143,13 @@ public class ReviveDeadManager extends ConfigManager implements DeathEater {
     }
 
     public synchronized void reviveProcess(RecordedMob reviveMe, CraftMob reviver, Reviver reviverObject) {
-        final net.minecraft.server.v1_16_R3.Entity original = ((CraftEntity) reviveMe.getEntity()).getHandle();
+        final net.minecraft.world.entity.Entity original = ((CraftEntity) reviveMe.getEntity()).getHandle();
         NBTTagCompound nbt = new NBTTagCompound();
         original.save(nbt);
         reviveMe.location.getWorld().spawnEntity(reviveMe.location, reviveMe.getEntity().getType(), CreatureSpawnEvent.SpawnReason.CUSTOM,
                 newMob -> {
                     reviverObject.addMob(newMob);
-                    final net.minecraft.server.v1_16_R3.Entity newMobHandle = ((CraftEntity) newMob).getHandle();
+                    final net.minecraft.world.entity.Entity newMobHandle = ((CraftEntity) newMob).getHandle();
                     nbt.set("UUID", NBTTagString.a(newMobHandle.getUniqueIDString()));
                     nbt.set("DeathTime", NBTTagInt.a(0));
                     newMobHandle.load(nbt);

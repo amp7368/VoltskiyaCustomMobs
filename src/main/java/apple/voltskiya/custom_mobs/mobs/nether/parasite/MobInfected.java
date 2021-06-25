@@ -1,13 +1,14 @@
 package apple.voltskiya.custom_mobs.mobs.nether.parasite;
 
+import apple.nms.decoding.entity.DecodeEntity;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import net.minecraft.server.v1_16_R3.EntityCreature;
-import net.minecraft.server.v1_16_R3.PathfinderGoalRandomStrollLand;
-import net.minecraft.server.v1_16_R3.PathfinderGoalSelector;
-import net.minecraft.server.v1_16_R3.Vec3D;
+import net.minecraft.world.entity.EntityCreature;
+import net.minecraft.world.entity.ai.goal.PathfinderGoalRandomStrollLand;
+import net.minecraft.world.entity.ai.goal.PathfinderGoalSelector;
+import net.minecraft.world.phys.Vec3D;
 import org.bukkit.*;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftCreature;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftCreature;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
 import java.util.Random;
@@ -81,13 +82,13 @@ public class MobInfected {
         return new Vec3D(random.nextDouble() - .5, random.nextDouble() - .5, random.nextDouble() - .5);
     }
 
-    private void rabidAI() {
-        this.entity.goalSelector = new PathfinderGoalSelector(entity.world.getMethodProfilerSupplier());
-        this.entity.targetSelector = new PathfinderGoalSelector(entity.world.getMethodProfilerSupplier());
-        this.entity.goalSelector.a(5, new PathfinderGoalRandomStrollLand(entity, 1.5D));
+    public static void spawnEat(CreatureSpawnEvent event) {
+        new MobInfected(((CraftCreature) event.getEntity()).getHandle());
     }
 
-    public static void spawnEat(CreatureSpawnEvent event) {
-        new MobInfected(((CraftCreature)event.getEntity()).getHandle());
+    private void rabidAI() {
+        DecodeEntity.setGoalSelector(this.entity, new PathfinderGoalSelector(entity.getWorld().getMethodProfilerSupplier()));
+        DecodeEntity.setTargetSelector(this.entity, new PathfinderGoalSelector(entity.getWorld().getMethodProfilerSupplier()));
+        DecodeEntity.getGoalSelector(this.entity).a(5, new PathfinderGoalRandomStrollLand(entity, 1.5D));
     }
 }

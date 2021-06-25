@@ -1,18 +1,42 @@
 package apple.voltskiya.custom_mobs.mobs.nether.angered_soul;
 
+import apple.nms.decoding.attribute.DecodeGenericAttributes;
+import apple.nms.decoding.entity.DecodeEntity;
+import apple.nms.decoding.entity.DecodeEnumCreatureType;
+import apple.nms.decoding.iregistry.DecodeDamageSource;
+import apple.nms.decoding.iregistry.DecodeEntityTypes;
+import apple.nms.decoding.iregistry.DecodeIRegistry;
+import apple.nms.decoding.pathfinder.DecodeControllerMoveFlying;
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
 import apple.voltskiya.custom_mobs.mobs.RegisteredCustomMob;
 import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
 import apple.voltskiya.custom_mobs.mobs.target_selector.PathfinderGoalClosestPlayer;
 import apple.voltskiya.custom_mobs.pathfinders.PathfinderGoalApproachSlowly;
 import com.mojang.datafixers.types.Type;
-import net.minecraft.server.v1_16_R3.*;
+import net.minecraft.core.IRegistry;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityInsentient;
+import net.minecraft.world.entity.EntityLiving;
+import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.ai.attributes.AttributeMapBase;
+import net.minecraft.world.entity.ai.attributes.AttributeProvider;
+import net.minecraft.world.entity.ai.goal.PathfinderGoalLookAtPlayer;
+import net.minecraft.world.entity.ai.goal.PathfinderGoalSelector;
+import net.minecraft.world.entity.ai.navigation.NavigationFlying;
+import net.minecraft.world.entity.monster.EntityMonster;
+import net.minecraft.world.entity.monster.EntitySkeleton;
+import net.minecraft.world.entity.player.EntityHuman;
+import net.minecraft.world.level.World;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftSkeleton;
+import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftSkeleton;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,16 +52,6 @@ public class MobAngeredSoul extends EntitySkeleton implements RegisteredCustomMo
     private AttributeMapBase attributeMap = null;
 
     /**
-     * constructor to match the EntityTypes requirement
-     *
-     * @param world the world to spawn the entity in
-     */
-
-    public MobAngeredSoul(EntityTypes<MobAngeredSoul> entityTypes, World world) {
-        super(EntityTypes.SKELETON, world);
-    }
-
-    /**
      * registers the EyePlant as an entity
      */
     public static void initialize() {
@@ -46,11 +60,21 @@ public class MobAngeredSoul extends EntitySkeleton implements RegisteredCustomMo
         types.put(registeredNameId(), oldType);
 
         // build it
-        EntityTypes.Builder<MobAngeredSoul> entitytypesBuilder = EntityTypes.Builder.a(MobAngeredSoul::new, EnumCreatureType.MONSTER);
+        EntityTypes.Builder<MobAngeredSoul> entitytypesBuilder = EntityTypes.Builder.a(MobAngeredSoul::new, DecodeEnumCreatureType.MONSTER.encode());
         entityTypes = entitytypesBuilder.a(REGISTERED_NAME);
-        entityTypes = IRegistry.a(IRegistry.ENTITY_TYPE, IRegistry.ENTITY_TYPE.a(EntityTypes.SKELETON), REGISTERED_NAME, entityTypes);
+        entityTypes = IRegistry.a(DecodeIRegistry.getEntityType(), DecodeIRegistry.getEntityType().getId(DecodeEntityTypes.SKELETON), REGISTERED_NAME, entityTypes);
         // log it
         PluginNmsMobs.get().log(Level.INFO, "registered " + registeredNameId());
+    }
+
+    /**
+     * constructor to match the EntityTypes requirement
+     *
+     * @param world the world to spawn the entity in
+     */
+
+    public MobAngeredSoul(EntityTypes<MobAngeredSoul> entityTypes, World world) {
+        super(DecodeEntityTypes.SKELETON, world);
     }
 
 
@@ -127,8 +151,14 @@ public class MobAngeredSoul extends EntitySkeleton implements RegisteredCustomMo
             if (nearby instanceof LivingEntity) {
                 final EntityLiving handle = ((CraftLivingEntity) nearby).getHandle();
                 if (handle != this)
-                    if (!handle.isBlocking())
-                        handle.damageEntity(DamageSource.OUT_OF_WORLD, 10f);
+                    if (!handle.isBlocking()) {
+                        if (nearby instanceof Player player) {
+                            if (player.getGameMode() == GameMode.SURVIVAL)
+                                handle.damageEntity(DecodeDamageSource.OUT_OF_WORLD, 10f);
+                        } else {
+                            handle.damageEntity(DecodeDamageSource.OUT_OF_WORLD, 10f);
+                        }
+                    }
             }
             final Location location = this.getBukkitEntity().getLocation();
             location.getWorld().spawnParticle(org.bukkit.Particle.EXPLOSION_LARGE, location, 1);
@@ -138,10 +168,10 @@ public class MobAngeredSoul extends EntitySkeleton implements RegisteredCustomMo
     }
 
     public AttributeProvider getAttributeProvider() {
-        return EntityMonster.eR()
-                .a(GenericAttributes.MOVEMENT_SPEED, 0.25D)
-                .a(GenericAttributes.FLYING_SPEED, .5d)
-                .a(GenericAttributes.FOLLOW_RANGE, 100)
+        return EntityMonster.fA()
+                .a(DecodeGenericAttributes.MOVEMENT_SPEED, 0.25D)
+                .a(DecodeGenericAttributes.FLYING_SPEED, .5d)
+                .a(DecodeGenericAttributes.FOLLOW_RANGE, 100)
                 .a();
     }
 
@@ -156,26 +186,28 @@ public class MobAngeredSoul extends EntitySkeleton implements RegisteredCustomMo
     }
 
     @Override
-    public void eL() {
-        // do no special pathfinding
-    }
-
-    @Override
     public boolean isInvulnerable(DamageSource damagesource) {
-        return damagesource == DamageSource.FALL || super.isInvulnerable(damagesource);
+        return damagesource == DecodeDamageSource.FALL || super.isInvulnerable(damagesource);
     }
 
     @Override
     protected void initPathfinder() {
-        this.navigation = new NavigationFlying(this, world);
-        this.moveController = new ControllerMoveGhost(this, 1d); // no gravity true
-        this.goalSelector.a(1, new PathfinderGoalApproachSlowly(this, 1, 10, new AngeredSoulScream(this)));
-        this.goalSelector.a(0, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 1));
-        this.targetSelector.a(1, new PathfinderGoalClosestPlayer(this, SIGHT, true));
+        //navigation
+        this.bN = new NavigationFlying(this, getWorld());
+        this.bL = new ControllerMoveGhost(this, 1d); // no gravity true
+        PathfinderGoalSelector goalSelector = DecodeEntity.getGoalSelector(this);
+        PathfinderGoalSelector targetSelector = DecodeEntity.getTargetSelector(this);
+        goalSelector.a(1, new PathfinderGoalApproachSlowly(this, 1, 10, new AngeredSoulScream(this)));
+        goalSelector.a(0, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 1));
+        targetSelector.a(1, new PathfinderGoalClosestPlayer(this, SIGHT, true));
     }
 
+    @Override
+    public void t() {
+        // do no special pathfinding
+    }
 
-    private static class ControllerMoveGhost extends ControllerMoveFlying {
+    private static class ControllerMoveGhost extends DecodeControllerMoveFlying {
         public ControllerMoveGhost(EntityInsentient me, double speed) {
             // me, speed, noGravity
             super(me, (int) speed, true);
@@ -185,11 +217,11 @@ public class MobAngeredSoul extends EntitySkeleton implements RegisteredCustomMo
         public void a() {
             super.a();
             // check we're moving instead of jumping or whatever
-            if (this.h == Operation.MOVE_TO) {
+            if (this.k == DecodeOperation.MOVE_TO.encode()) {
                 // set the y change to be a smooth ascent or descent
-                double var2 = this.c - this.a.locY();
+                double var2 = y() - d.locY();
                 // change y value to what it should be rather than oscillating with the target
-                this.a.u((float) var2);
+                DecodeEntity.setYMove(me(), (float) var2);
             }
         }
     }

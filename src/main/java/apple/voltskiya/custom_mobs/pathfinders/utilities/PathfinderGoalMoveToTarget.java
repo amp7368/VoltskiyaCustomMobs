@@ -1,9 +1,10 @@
 package apple.voltskiya.custom_mobs.pathfinders.utilities;
 
+import apple.nms.decoding.entity.DecodeEntity;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.util.DistanceUtils;
-import net.minecraft.server.v1_16_R3.EntityInsentient;
-import net.minecraft.server.v1_16_R3.PathfinderGoal;
+import net.minecraft.world.entity.EntityInsentient;
+import net.minecraft.world.entity.ai.goal.PathfinderGoal;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
@@ -18,7 +19,7 @@ public class PathfinderGoalMoveToTarget extends PathfinderGoal {
     public PathfinderGoalMoveToTarget(EntityInsentient me, Location target, double speed, int giveUpTick, Runnable callBack) {
         this.me = me;
         this.target = target;
-        this.giveUpTick = me.ticksLived + giveUpTick;
+        this.giveUpTick = DecodeEntity.getTicksLived(me) + giveUpTick;
         this.callBack = callBack;
         this.speed = speed;
     }
@@ -28,7 +29,7 @@ public class PathfinderGoalMoveToTarget extends PathfinderGoal {
      */
     @Override
     public boolean a() {
-        return this.me.ticksLived < giveUpTick && DistanceUtils.distance(this.me.getBukkitEntity().getLocation(), this.target) >= 0.5;
+        return DecodeEntity.getTicksLived(me) < giveUpTick && DistanceUtils.distance(this.me.getBukkitEntity().getLocation(), this.target) >= 0.5;
     }
 
     /**
@@ -74,7 +75,7 @@ public class PathfinderGoalMoveToTarget extends PathfinderGoal {
             Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), callBack);
             calledBack = true;
         }
-        Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> me.goalSelector.a(this));
+        Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> DecodeEntity.getGoalSelector(me).a(this));
     }
 
 }

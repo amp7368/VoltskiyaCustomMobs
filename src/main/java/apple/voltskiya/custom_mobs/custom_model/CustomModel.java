@@ -1,10 +1,10 @@
 package apple.voltskiya.custom_mobs.custom_model;
 
 import apple.voltskiya.custom_mobs.mobs.utils.NbtConstants;
-import net.minecraft.server.v1_16_R3.NBTBase;
-import net.minecraft.server.v1_16_R3.NBTTagCompound;
-import net.minecraft.server.v1_16_R3.NBTTagFloat;
-import net.minecraft.server.v1_16_R3.NBTTagList;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagFloat;
+import net.minecraft.nbt.NBTTagList;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 

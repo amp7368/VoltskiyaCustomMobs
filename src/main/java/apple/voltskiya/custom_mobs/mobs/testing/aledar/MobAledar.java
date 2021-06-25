@@ -1,9 +1,14 @@
 package apple.voltskiya.custom_mobs.mobs.testing.aledar;
 
+import apple.nms.decoding.entity.DecodeEntity;
+import apple.nms.decoding.entity.DecodeEnumCreatureType;
+import apple.nms.decoding.entity.DecodeEnumMainHand;
+import apple.nms.decoding.entity.DecodeEnumMonsterType;
+import apple.nms.decoding.iregistry.DecodeDataConverterTypes;
+import apple.nms.decoding.iregistry.DecodeEntityTypes;
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
 import apple.voltskiya.custom_mobs.mobs.RegisteredCustomMob;
 import apple.voltskiya.custom_mobs.mobs.parts.*;
-import apple.voltskiya.custom_mobs.mobs.utils.UtilsAttribute;
 import apple.voltskiya.custom_mobs.mobs.utils.UtilsPacket;
 import apple.voltskiya.custom_mobs.util.EntityLocation;
 import com.mojang.datafixers.DataFixUtils;
@@ -11,10 +16,21 @@ import com.mojang.datafixers.DataFixer;
 import com.mojang.datafixers.schemas.Schema;
 import com.mojang.datafixers.types.Type;
 import com.mojang.datafixers.types.templates.TaggedChoice;
-import net.minecraft.server.v1_16_R3.*;
+import net.minecraft.SharedConstants;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.util.datafix.DataConverterRegistry;
+import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.ai.attributes.AttributeProvider;
+import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.monster.*;
+import net.minecraft.world.entity.player.EntityHuman;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.World;
+import net.minecraft.world.phys.Vec3D;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPillager;
+import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPillager;
 
 import java.util.*;
 import java.util.logging.Level;
@@ -31,20 +47,10 @@ public class MobAledar extends EntityPillager implements RegisteredCustomMob {
     private final List<MobPartArmorStand> rightWheels = new ArrayList<>();
 
     /**
-     * constructor to match the EntityTypes requirement
-     *
-     * @param world the world to spawn the entity in
-     */
-    public MobAledar(EntityTypes<? extends EntityPillager> entitytypes, World world) {
-        super(EntityTypes.PILLAGER, world);
-        UtilsAttribute.fillAttributes(this.getAttributeMap(), getAttributeProvider());
-    }
-
-    /**
      * registers the Aledar as an entity
      */
     public static void initialize() {
-        EntityTypes.Builder<MobAledar> entitytypesBuilder = EntityTypes.Builder.a(MobAledar::new, EnumCreatureType.MONSTER);
+        EntityTypes.Builder<MobAledar> entitytypesBuilder = EntityTypes.Builder.a(MobAledar::new, DecodeEnumCreatureType.MONSTER.encode());
 
         // this version of minecraft (whatever it happens to be)
         final int keyForVersion = DataFixUtils.makeKey(SharedConstants.getGameVersion().getWorldVersion());
@@ -52,7 +58,7 @@ public class MobAledar extends EntityPillager implements RegisteredCustomMob {
         final DataFixer dataFixerToRegister = DataConverterRegistry.a();
 
         final Schema schemaForSomething = dataFixerToRegister.getSchema(keyForVersion);
-        final TaggedChoice.TaggedChoiceType<?> choiceType = schemaForSomething.findChoiceType(DataConverterTypes.ENTITY_TREE);
+        final TaggedChoice.TaggedChoiceType<?> choiceType = schemaForSomething.findChoiceType(DecodeDataConverterTypes.ENTITY_TREE);
 
         // copy the zombie type to the warped gremlin type
         Map<? super Object, Type<?>> types = (Map<? super Object, Type<?>>) choiceType.types();
@@ -64,6 +70,15 @@ public class MobAledar extends EntityPillager implements RegisteredCustomMob {
 
         // log it
         PluginNmsMobs.get().log(Level.INFO, "registered " + REGISTERED_NAME);
+    }
+
+    /**
+     * constructor to match the EntityTypes requirement
+     *
+     * @param world the world to spawn the entity in
+     */
+    public MobAledar(EntityTypes<? extends EntityPillager> entitytypes, World world) {
+        super(DecodeEntityTypes.PILLAGER, world);
     }
 
     /**
@@ -111,31 +126,11 @@ public class MobAledar extends EntityPillager implements RegisteredCustomMob {
         }
     }
 
-    @Override
-    protected void initPathfinder() {
-        // mostly a villager
-
-        this.goalSelector.a(0, new PathfinderGoalFloat(this));
-        this.goalSelector.a(1, new PathfinderGoalAvoidTarget<>(this, EntityZombie.class, 8.0F, 0.5D, 0.5D));
-        this.goalSelector.a(1, new PathfinderGoalAvoidTarget<>(this, EntityEvoker.class, 12.0F, 0.5D, 0.5D));
-        this.goalSelector.a(1, new PathfinderGoalAvoidTarget<>(this, EntityVindicator.class, 8.0F, 0.5D, 0.5D));
-        this.goalSelector.a(1, new PathfinderGoalAvoidTarget<>(this, EntityVex.class, 8.0F, 0.5D, 0.5D));
-        this.goalSelector.a(1, new PathfinderGoalAvoidTarget<>(this, EntityPillager.class, 15.0F, 0.5D, 0.5D));
-        this.goalSelector.a(1, new PathfinderGoalAvoidTarget<>(this, EntityIllagerIllusioner.class, 12.0F, 0.5D, 0.5D));
-        this.goalSelector.a(1, new PathfinderGoalAvoidTarget<>(this, EntityZoglin.class, 10.0F, 0.5D, 0.5D));
-        this.goalSelector.a(1, new PathfinderGoalPanic(this, 0.5D));
-        this.goalSelector.a(4, new PathfinderGoalMoveTowardsRestriction(this, 0.35D));
-        this.goalSelector.a(8, new PathfinderGoalRandomStrollLand(this, 0.35D));
-        this.goalSelector.a(9, new PathfinderGoalInteract(this, EntityHuman.class, 3.0F, 1.0F));
-        this.goalSelector.a(10, new PathfinderGoalLookAtPlayer(this, EntityInsentient.class, 8.0F));
-
-        // mostly a cow
-//        this.goalSelector.a(0, new PathfinderGoalFloat(this));
-//        this.goalSelector.a(1, new PathfinderGoalPanic(this, 2.0D));
-//        this.goalSelector.a(3, new PathfinderGoalTempt(this, 1.25D, RecipeItemStack.a(new IMaterial[]{Items.WHEAT}), false));
-//        this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 1.0D));
-//        this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 6.0F));
-//        this.goalSelector.a(7, new PathfinderGoalRandomLookaround(this));
+    /**
+     * @return the default attributeMap
+     */
+    private static AttributeProvider getAttributeProvider() {
+        return EntityMonster.fA().a();
     }
 
     @Override
@@ -146,12 +141,32 @@ public class MobAledar extends EntityPillager implements RegisteredCustomMob {
         this.setInvisible(invisible);
     }
 
-    /**
-     * @return EnumMonsterType.ARTHROPOD || EnumMonsterType.ILLAGER || ...
-     */
     @Override
-    public EnumMonsterType getMonsterType() {
-        return EnumMonsterType.ILLAGER;
+    protected void initPathfinder() {
+        // mostly a villager
+
+        PathfinderGoalSelector goalSelector = DecodeEntity.getGoalSelector(this);
+        goalSelector.a(0, new PathfinderGoalFloat(this));
+        goalSelector.a(1, new PathfinderGoalAvoidTarget<>(this, EntityZombie.class, 8.0F, 0.5D, 0.5D));
+        goalSelector.a(1, new PathfinderGoalAvoidTarget<>(this, EntityEvoker.class, 12.0F, 0.5D, 0.5D));
+        goalSelector.a(1, new PathfinderGoalAvoidTarget<>(this, EntityVindicator.class, 8.0F, 0.5D, 0.5D));
+        goalSelector.a(1, new PathfinderGoalAvoidTarget<>(this, EntityVex.class, 8.0F, 0.5D, 0.5D));
+        goalSelector.a(1, new PathfinderGoalAvoidTarget<>(this, EntityPillager.class, 15.0F, 0.5D, 0.5D));
+        goalSelector.a(1, new PathfinderGoalAvoidTarget<>(this, EntityIllagerIllusioner.class, 12.0F, 0.5D, 0.5D));
+        goalSelector.a(1, new PathfinderGoalAvoidTarget<>(this, EntityZoglin.class, 10.0F, 0.5D, 0.5D));
+        goalSelector.a(1, new PathfinderGoalPanic(this, 0.5D));
+        goalSelector.a(4, new PathfinderGoalMoveTowardsRestriction(this, 0.35D));
+        goalSelector.a(8, new PathfinderGoalRandomStrollLand(this, 0.35D));
+        goalSelector.a(9, new PathfinderGoalInteract(this, EntityHuman.class, 3.0F, 1.0F));
+        goalSelector.a(10, new PathfinderGoalLookAtPlayer(this, EntityInsentient.class, 8.0F));
+
+        // mostly a cow
+//        this.goalSelector.a(0, new PathfinderGoalFloat(this));
+//        this.goalSelector.a(1, new PathfinderGoalPanic(this, 2.0D));
+//        this.goalSelector.a(3, new PathfinderGoalTempt(this, 1.25D, RecipeItemStack.a(new IMaterial[]{Items.WHEAT}), false));
+//        this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 1.0D));
+//        this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 6.0F));
+//        this.goalSelector.a(7, new PathfinderGoalRandomLookaround(this));
     }
 
     @Override
@@ -187,24 +202,20 @@ public class MobAledar extends EntityPillager implements RegisteredCustomMob {
         super.move(enummovetype, vec3d);
     }
 
+    /**
+     * @return EnumMonsterType.ARTHROPOD || EnumMonsterType.ILLAGER || ...
+     */
     @Override
-    public void die() {
-        super.die();
+    public EnumMonsterType getMonsterType() {
+        return DecodeEnumMonsterType.ILLAGER.encode();
+    }
+
+    @Override
+    public void a(RemovalReason removalReason) {
+        super.a(removalReason);
         for (MobPartChild child : children) {
             child.die();
         }
-    }
-
-    /**
-     * @return the default attributeMap
-     */
-    private static AttributeProvider getAttributeProvider() {
-        return EntityLiving.cL()
-                .a(GenericAttributes.FOLLOW_RANGE, 35.0D)
-                .a(GenericAttributes.MOVEMENT_SPEED, 1.0D)// 0.23000000417232513D)
-                .a(GenericAttributes.ATTACK_DAMAGE, 0.0D)
-                .a(GenericAttributes.ARMOR, 2.0D)
-                .a();
     }
 
     @Override
@@ -228,6 +239,6 @@ public class MobAledar extends EntityPillager implements RegisteredCustomMob {
 
     @Override
     public EnumMainHand getMainHand() {
-        return EnumMainHand.RIGHT;
+        return DecodeEnumMainHand.RIGHT.encode();
     }
 }

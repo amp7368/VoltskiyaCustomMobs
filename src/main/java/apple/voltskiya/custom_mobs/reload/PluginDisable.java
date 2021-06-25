@@ -1,13 +1,14 @@
 package apple.voltskiya.custom_mobs.reload;
 
+import apple.nms.decoding.entity.DecodeEntity;
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import apple.voltskiya.custom_mobs.mobs.RegisteredCustomMob;
 import apple.voltskiya.custom_mobs.util.constants.TagConstants;
-import net.minecraft.server.v1_16_R3.EntityInsentient;
-import net.minecraft.server.v1_16_R3.PathfinderGoal;
+import net.minecraft.world.entity.EntityInsentient;
+import net.minecraft.world.entity.ai.goal.PathfinderGoal;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 
 import java.util.HashMap;
@@ -42,14 +43,14 @@ public class PluginDisable extends VoltskiyaModule {
     public void onDisable() {
         for (Map.Entry<EntityInsentient, PathfinderGoal> mob : mobs.entrySet()) {
             if (mob != null && mob.getKey().isAlive()) {
-                mob.getKey().goalSelector.a(mob.getValue());
-                mob.getKey().targetSelector.a(mob.getValue());
+                DecodeEntity.getGoalSelector(mob.getKey()).a(mob.getValue());
+                DecodeEntity.getTargetSelector(mob.getKey()).a(mob.getValue());
             }
         }
         for (World world : Bukkit.getWorlds()) {
             for (Entity entity : world.getEntities()) {
                 entity.removeScoreboardTag(TagConstants.isDoingAbility);
-                net.minecraft.server.v1_16_R3.Entity nms = ((CraftEntity) entity).getHandle();
+                net.minecraft.world.entity.Entity nms = ((CraftEntity) entity).getHandle();
                 if (nms instanceof RegisteredCustomMob) ((RegisteredCustomMob) nms).onDisable();
             }
         }

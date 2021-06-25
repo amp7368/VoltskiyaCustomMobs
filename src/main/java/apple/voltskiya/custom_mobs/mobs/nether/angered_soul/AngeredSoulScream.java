@@ -1,7 +1,7 @@
 package apple.voltskiya.custom_mobs.mobs.nether.angered_soul;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import net.minecraft.server.v1_16_R3.EntityLiving;
+import net.minecraft.world.entity.EntityLiving;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;

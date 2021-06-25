@@ -1,7 +1,7 @@
 package apple.voltskiya.custom_mobs.pathfinders.goal_selector;
 
-import net.minecraft.server.v1_16_R3.PathfinderGoalSelector;
-import net.minecraft.server.v1_16_R3.PathfinderGoalWrapped;
+import net.minecraft.world.entity.ai.goal.PathfinderGoalSelector;
+import net.minecraft.world.entity.ai.goal.PathfinderGoalWrapped;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;

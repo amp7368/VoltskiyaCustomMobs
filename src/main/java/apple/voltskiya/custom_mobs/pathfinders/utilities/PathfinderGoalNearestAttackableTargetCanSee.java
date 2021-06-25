@@ -1,10 +1,10 @@
 package apple.voltskiya.custom_mobs.pathfinders.utilities;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import net.minecraft.server.v1_16_R3.EntityInsentient;
-import net.minecraft.server.v1_16_R3.EntityLiving;
-import net.minecraft.server.v1_16_R3.PathfinderGoalNearestAttackableTarget;
-import net.minecraft.server.v1_16_R3.Vec3D;
+import net.minecraft.world.entity.EntityInsentient;
+import net.minecraft.world.entity.EntityLiving;
+import net.minecraft.world.entity.ai.goal.target.PathfinderGoalNearestAttackableTarget;
+import net.minecraft.world.phys.Vec3D;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.IllegalPluginAccessException;
 import org.bukkit.util.Vector;

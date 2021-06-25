@@ -2,9 +2,9 @@ package apple.voltskiya.custom_mobs.pathfinders.patrol;
 
 import apple.voltskiya.custom_mobs.dungeon.patrols.Patrol;
 import apple.voltskiya.custom_mobs.dungeon.patrols.PatrolStep;
-import net.minecraft.server.v1_16_R3.EntityInsentient;
-import net.minecraft.server.v1_16_R3.PathfinderGoal;
-import net.minecraft.server.v1_16_R3.PathfinderGoalSelector;
+import net.minecraft.world.entity.EntityInsentient;
+import net.minecraft.world.entity.ai.goal.PathfinderGoal;
+import net.minecraft.world.entity.ai.goal.PathfinderGoalSelector;
 
 public class PathfinderGoalPatrol extends PathfinderGoal {
     private final Patrol patrol;
@@ -57,8 +57,6 @@ public class PathfinderGoalPatrol extends PathfinderGoal {
     @Override
     public void d() {
         // quit going to the location
-        entity.goalSelector = oldGoalSelector;
-        entity.targetSelector = oldTargetSelector;
     }
 
     /**

@@ -1,8 +1,8 @@
 package apple.voltskiya.custom_mobs.mobs.parts;
 
 import apple.voltskiya.custom_mobs.mobs.RegisteredCustomMob;
-import net.minecraft.server.v1_16_R3.Entity;
-import net.minecraft.server.v1_16_R3.Packet;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.world.entity.Entity;
 
 public interface MobPartChild extends RegisteredCustomMob {
     Packet<?> moveFromMother(boolean isLookingRelevant);

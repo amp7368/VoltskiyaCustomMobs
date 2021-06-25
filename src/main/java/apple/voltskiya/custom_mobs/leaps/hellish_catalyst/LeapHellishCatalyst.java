@@ -1,10 +1,11 @@
 package apple.voltskiya.custom_mobs.leaps.hellish_catalyst;
 
+import apple.nms.decoding.entity.DecodeEntity;
 import apple.voltskiya.custom_mobs.leaps.LeapEater;
 import apple.voltskiya.custom_mobs.leaps.config.LeapDo;
 import apple.voltskiya.custom_mobs.leaps.config.LeapPostConfig;
-import net.minecraft.server.v1_16_R3.EntityInsentient;
-import net.minecraft.server.v1_16_R3.EntityLiving;
+import net.minecraft.world.entity.EntityInsentient;
+import net.minecraft.world.entity.EntityLiving;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nullable;
@@ -20,11 +21,11 @@ public class LeapHellishCatalyst implements LeapEater {
                 (entity) -> LeapHellishCatalyst.interruptedLeap(entity, lastTarget),
                 (entity) -> LeapHellishCatalyst.endLeap(entity, lastTarget)
         );
-        creature.goalSelector.a(0, new PathfinderGoalLeapCatalyst(creature, getConfig(), postConfig));
+        DecodeEntity.getGoalSelector(creature).a(0, new PathfinderGoalLeapCatalyst(creature, getConfig(), postConfig));
     }
 
     private static boolean shouldStopLeap(EntityLiving creature) {
-        return creature.hurtTimestamp >= creature.ticksLived - 10;
+        return DecodeEntity.getHurtTimestamp(creature) >= DecodeEntity.getTicksLived(creature) - 10;
     }
 
     private static void preLeap(EntityInsentient entity, LeapDo leapDo) {

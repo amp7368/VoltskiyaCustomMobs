@@ -1,14 +1,26 @@
 package apple.voltskiya.custom_mobs.mobs.misc;
 
+import apple.nms.decoding.attribute.DecodeGenericAttributes;
+import apple.nms.decoding.entity.DecodeEnumCreatureType;
+import apple.nms.decoding.iregistry.DecodeEntityTypes;
+import apple.nms.decoding.iregistry.DecodeIRegistry;
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
 import apple.voltskiya.custom_mobs.mobs.RegisteredCustomMob;
 import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
 import com.mojang.datafixers.types.Type;
-import net.minecraft.server.v1_16_R3.*;
+import net.minecraft.core.IRegistry;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.ai.attributes.AttributeModifiable;
+import net.minecraft.world.entity.monster.EntityZombie;
+import net.minecraft.world.entity.player.EntityHuman;
+import net.minecraft.world.level.World;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftZombie;
+import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftZombie;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,9 +42,9 @@ public class MobHealthPack extends EntityZombie implements RegisteredCustomMob {
         types.put(registeredNameId(), oldType);
 
         // build it
-        EntityTypes.Builder<MobHealthPack> entitytypesBuilder = EntityTypes.Builder.a(MobHealthPack::new, EnumCreatureType.MONSTER);
+        EntityTypes.Builder<MobHealthPack> entitytypesBuilder = EntityTypes.Builder.a(MobHealthPack::new, DecodeEnumCreatureType.MONSTER.encode());
         entityTypes = entitytypesBuilder.a(REGISTERED_NAME);
-        entityTypes = IRegistry.a(IRegistry.ENTITY_TYPE, IRegistry.ENTITY_TYPE.a(EntityTypes.ZOMBIE), REGISTERED_NAME, entityTypes);
+        entityTypes = IRegistry.a(DecodeIRegistry.getEntityType(), DecodeIRegistry.getEntityType().getId(DecodeEntityTypes.ZOMBIE), REGISTERED_NAME, entityTypes);
         // log it
         PluginNmsMobs.get().log(Level.INFO, "registered " + registeredNameId());
     }
@@ -50,7 +62,7 @@ public class MobHealthPack extends EntityZombie implements RegisteredCustomMob {
      */
 
     public MobHealthPack(EntityTypes<MobHealthPack> entityTypes, World world) {
-        super(EntityTypes.ZOMBIE, world);
+        super(DecodeEntityTypes.ZOMBIE, world);
     }
 
     public static void spawnEat(CreatureSpawnEvent event) {
@@ -90,7 +102,7 @@ public class MobHealthPack extends EntityZombie implements RegisteredCustomMob {
     }
 
     private void healPlayer(EntityHuman player) {
-        final AttributeModifiable health = getAttributeInstance(GenericAttributes.MAX_HEALTH);
+        final AttributeModifiable health = getAttributeInstance(DecodeGenericAttributes.MAX_HEALTH);
         player.heal((float) (health == null ? 1f : health.getValue()));
     }
 

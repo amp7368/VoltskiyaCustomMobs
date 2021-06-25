@@ -1,10 +1,10 @@
 package apple.voltskiya.custom_mobs.sql;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.server.v1_16_R3.MojangsonParser;
-import net.minecraft.server.v1_16_R3.NBTTagCompound;
+import net.minecraft.nbt.MojangsonParser;
+import net.minecraft.nbt.NBTTagCompound;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
@@ -21,7 +21,7 @@ public class DBItemStack {
 
     public ItemStack toItem() {
         try {
-            final ItemStack itemStack = CraftItemStack.asBukkitCopy(net.minecraft.server.v1_16_R3.ItemStack.a(MojangsonParser.parse(this.nbt)));
+            final ItemStack itemStack = CraftItemStack.asBukkitCopy(net.minecraft.world.item.ItemStack.a(MojangsonParser.parse(this.nbt)));
             itemStack.setAmount(count);
             itemStack.setType(type);
             return itemStack;
@@ -36,7 +36,7 @@ public class DBItemStack {
 
     public NBTTagCompound getEntityNbt() {
         try {
-            return net.minecraft.server.v1_16_R3.ItemStack.a(MojangsonParser.parse(this.nbt)).getTag();
+            return net.minecraft.world.item.ItemStack.a(MojangsonParser.parse(this.nbt)).getTag();
         } catch (CommandSyntaxException e) {
             return new NBTTagCompound();
         }

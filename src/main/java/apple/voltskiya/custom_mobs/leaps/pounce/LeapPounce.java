@@ -1,12 +1,19 @@
 package apple.voltskiya.custom_mobs.leaps.pounce;
 
+import apple.nms.decoding.attribute.DecodeAttributeModifier;
+import apple.nms.decoding.attribute.DecodeGenericAttributes;
+import apple.nms.decoding.entity.DecodeEntity;
+import apple.nms.decoding.pathfinder.DecodeMoveType;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.leaps.PathfinderGoalLeap;
 import apple.voltskiya.custom_mobs.leaps.config.LeapDo;
 import apple.voltskiya.custom_mobs.leaps.config.LeapPostConfig;
 import apple.voltskiya.custom_mobs.leaps.config.LeapPreConfig;
 import apple.voltskiya.custom_mobs.leaps.sounds.LeapSounds;
-import net.minecraft.server.v1_16_R3.*;
+import net.minecraft.world.entity.EntityInsentient;
+import net.minecraft.world.entity.EntityLiving;
+import net.minecraft.world.entity.ai.attributes.AttributeModifiable;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -19,9 +26,9 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.UUID;
 
-public class LeapPounce  {
+public class LeapPounce {
     private static final int CHARGE_UP_TIME = 30;
-    public static final AttributeModifier NO_MOVE_ATTRIBUTE = new AttributeModifier(UUID.randomUUID(), "no_move", -100, AttributeModifier.Operation.ADDITION);
+    public static final AttributeModifier NO_MOVE_ATTRIBUTE = new AttributeModifier(UUID.randomUUID(), "no_move", -100, DecodeAttributeModifier.Operation.ADDITION.encode());
     public static final int POUNCE_STUN_TIME = 60;
 
     public static void eatEntity(EntityLiving creature, LeapPreConfig config) {
@@ -36,10 +43,11 @@ public class LeapPounce  {
                     (entity) -> endLeap(entity, lastTarget)
             );
             final PathfinderGoalLeap pounce = new PathfinderGoalLeap((EntityInsentient) creature, config, postConfig);
-            pounce.setMoveType(EnumSet.of(PathfinderGoal.Type.TARGET, PathfinderGoal.Type.JUMP));
-            ((EntityInsentient) creature).goalSelector.a(0, pounce);
+            pounce.setMoveType(EnumSet.of(DecodeMoveType.TARGET.encode(), DecodeMoveType.JUMP.encode()));
+            DecodeEntity.getGoalSelector((EntityInsentient) creature).a(0, pounce);
         }
     }
+
     private static boolean shouldStopLeap(EntityLiving creature, @Nullable LeapDo leapDo) {
         if (leapDo != null && leapDo.isMidJump()) {
             List<Entity> nearby = creature.getBukkitEntity().getNearbyEntities(1.5, 2, 1.5);
@@ -49,7 +57,7 @@ public class LeapPounce  {
                 }
             }
         }
-        return creature.hurtTimestamp >= creature.ticksLived - 10;
+        return DecodeEntity.getHurtTimestamp(creature) >= DecodeEntity.getTicksLived(creature) - 10;
     }
 
     private static void pounceStun(Player bukkitEntity) {
@@ -57,7 +65,7 @@ public class LeapPounce  {
     }
 
     private static void preLeap(EntityInsentient entity, LeapDo leapDo, int timeLeft, int index) {
-        final AttributeModifiable speedAttribute = entity.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED);
+        final AttributeModifiable speedAttribute = entity.getAttributeInstance(DecodeGenericAttributes.MOVEMENT_SPEED);
         if (timeLeft == 0) {
             if (speedAttribute != null)
                 speedAttribute.removeModifier(NO_MOVE_ATTRIBUTE);

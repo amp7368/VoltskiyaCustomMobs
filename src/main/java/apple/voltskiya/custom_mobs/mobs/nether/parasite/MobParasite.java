@@ -1,5 +1,10 @@
 package apple.voltskiya.custom_mobs.mobs.nether.parasite;
 
+import apple.nms.decoding.entity.DecodeEntity;
+import apple.nms.decoding.entity.DecodeEnumCreatureType;
+import apple.nms.decoding.entity.DecodeEnumMonsterType;
+import apple.nms.decoding.iregistry.DecodeEntityTypes;
+import apple.nms.decoding.iregistry.DecodeIRegistry;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
 import apple.voltskiya.custom_mobs.mobs.RegisteredCustomMob;
@@ -12,12 +17,29 @@ import apple.voltskiya.custom_mobs.mobs.parts.NmsModelEntityConfig;
 import apple.voltskiya.custom_mobs.mobs.utils.UtilsPacket;
 import apple.voltskiya.custom_mobs.pathfinders.PathfinderGoalCraveBlock;
 import com.mojang.datafixers.types.Type;
-import net.minecraft.server.v1_16_R3.*;
+import net.minecraft.core.IRegistry;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.server.level.EntityPlayer;
+import net.minecraft.server.level.WorldServer;
+import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.ai.attributes.AttributeDefaults;
+import net.minecraft.world.entity.ai.attributes.AttributeMapBase;
+import net.minecraft.world.entity.ai.attributes.AttributeProvider;
+import net.minecraft.world.entity.ai.goal.PathfinderGoalFloat;
+import net.minecraft.world.entity.ai.goal.PathfinderGoalMeleeAttack;
+import net.minecraft.world.entity.ai.goal.PathfinderGoalRandomStrollLand;
+import net.minecraft.world.entity.ai.goal.PathfinderGoalSelector;
+import net.minecraft.world.entity.ai.goal.target.PathfinderGoalNearestAttackableTarget;
+import net.minecraft.world.entity.animal.EntityAnimal;
+import net.minecraft.world.entity.monster.EntityZombie;
+import net.minecraft.world.level.World;
+import net.minecraft.world.phys.Vec3D;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftZombie;
+import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftZombie;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,16 +59,6 @@ public class MobParasite extends EntityZombie implements RegisteredCustomMob {
     private AttributeMapBase attributeMap = null;
 
     /**
-     * constructor to match the EntityTypes requirement
-     *
-     * @param world the world to spawn the entity in
-     */
-
-    public MobParasite(EntityTypes<MobParasite> entityTypes, World world) {
-        super(EntityTypes.ZOMBIE, world);
-    }
-
-    /**
      * registers the NetherParasite as an entity
      */
     public static void initialize() {
@@ -55,15 +67,25 @@ public class MobParasite extends EntityZombie implements RegisteredCustomMob {
         types.put(registeredNameId(), zombieType);
 
         // build it
-        EntityTypes.Builder<MobParasite> entitytypesBuilder = EntityTypes.Builder.a(MobParasite::new, EnumCreatureType.MONSTER);
+        EntityTypes.Builder<MobParasite> entitytypesBuilder = EntityTypes.Builder.a(MobParasite::new, DecodeEnumCreatureType.MONSTER.encode());
         entityTypes = entitytypesBuilder.a(REGISTERED_NAME);
-        entityTypes = IRegistry.a(IRegistry.ENTITY_TYPE, IRegistry.ENTITY_TYPE.a(EntityTypes.ZOMBIE), REGISTERED_NAME, entityTypes); // this is good
+        entityTypes = IRegistry.a(DecodeIRegistry.getEntityType(), DecodeIRegistry.getEntityType().getId(DecodeEntityTypes.ZOMBIE), REGISTERED_NAME, entityTypes); // this is good
 
         // log it
         PluginNmsMobs.get().log(Level.INFO, "registered " + registeredNameId());
         final NmsModelConfig model = NmsModelConfig.parts(REGISTERED_MODEL);
         selfModel = model.mainPart();
 
+    }
+
+    /**
+     * constructor to match the EntityTypes requirement
+     *
+     * @param world the world to spawn the entity in
+     */
+
+    public MobParasite(EntityTypes<MobParasite> entityTypes, World world) {
+        super(DecodeEntityTypes.ZOMBIE, world);
     }
 
     @Override
@@ -142,11 +164,18 @@ public class MobParasite extends EntityZombie implements RegisteredCustomMob {
         return this.attributeMap == null ? this.attributeMap = new AttributeMapBase(getAttributeProvider()) : this.attributeMap;
     }
 
+    /**
+     * @return the default attributeMap
+     */
+    private static AttributeProvider getAttributeProvider() {
+        return AttributeDefaults.a(DecodeEntityTypes.ZOMBIE);
+    }
+
     @Override
     protected void initPathfinder() {
         Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
             // if this is the overworld, do the overworld AI, otherwise, get to the overworld
-            if (DimensionManager.OVERWORLD.a().equals((this.world.getDimensionKey().a()))) {
+            if (this.getWorld().getDimensionManager().isNatural()) {
                 this.initPathfinderOverworld();
             } else {
                 this.initPathfinderOtherWorld();
@@ -154,22 +183,16 @@ public class MobParasite extends EntityZombie implements RegisteredCustomMob {
         }, 5 * 10);
     }
 
-
-    private void initPathfinderOtherWorld() {
-        // new PathfinderGoalRandomStrollLand(entityToMove, speed, chanceToActivate)
-        this.goalSelector.a(0, new PathfinderGoalFloat(this));
-        this.goalSelector.a(1, new PathfinderGoalCraveBlock(this, Collections.singletonList(org.bukkit.Material.NETHER_PORTAL), 512, 20, 2, 1.0));
-        this.goalSelector.a(2, new PathfinderGoalRandomStrollLand(this, 1.0D, 0.003F));
-    }
-
     private void initPathfinderOverworld() {
         final int chanceToCheck = 20;
         int chanceToCheckPlayer = 60;
-        this.targetSelector.a(1, new PathfinderGoalNearestAttackableTarget<>(this, EntityAnimal.class, chanceToCheck, true, false, (entityLiving) -> !entityLiving.getScoreboardTags().contains(MobInfected.PARASITE_INFECTED_TAG)));
-        this.targetSelector.a(2, new PathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, chanceToCheckPlayer, true, false, null));
+        PathfinderGoalSelector targetSelector = DecodeEntity.getTargetSelector(this);
+        targetSelector.a(1, new PathfinderGoalNearestAttackableTarget<>(this, EntityAnimal.class, chanceToCheck, true, false, (entityLiving) -> !entityLiving.getScoreboardTags().contains(MobInfected.PARASITE_INFECTED_TAG)));
+        targetSelector.a(2, new PathfinderGoalNearestAttackableTarget<>(this, EntityPlayer.class, chanceToCheckPlayer, true, false, null));
         double speed = 1.2;
-        this.goalSelector.a(1, new PathfinderGoalMeleeAttack(this, speed, true));
-        this.goalSelector.a(2, new PathfinderGoalRandomStrollLand(this, 1.0D, 0.003F));
+        PathfinderGoalSelector goalSelector = DecodeEntity.getGoalSelector(this);
+        goalSelector.a(1, new PathfinderGoalMeleeAttack(this, speed, true));
+        goalSelector.a(2, new PathfinderGoalRandomStrollLand(this, 1.0D, 0.003F));
     }
 
     @Override
@@ -186,21 +209,20 @@ public class MobParasite extends EntityZombie implements RegisteredCustomMob {
         return false;
     }
 
+    private void initPathfinderOtherWorld() {
+        // new PathfinderGoalRandomStrollLand(entityToMove, speed, chanceToActivate)
+        PathfinderGoalSelector goalSelector = DecodeEntity.getGoalSelector(this);
+        goalSelector.a(0, new PathfinderGoalFloat(this));
+        goalSelector.a(1, new PathfinderGoalCraveBlock(this, Collections.singletonList(org.bukkit.Material.NETHER_PORTAL), 512, 20, 2, 1.0));
+        goalSelector.a(2, new PathfinderGoalRandomStrollLand(this, 1.0D, 0.003F));
+    }
 
     /**
      * @return EnumMonsterType.ARTHROPOD || EnumMonsterType.ILLAGER || ...
      */
     @Override
     public EnumMonsterType getMonsterType() {
-        return EnumMonsterType.ARTHROPOD;
-    }
-
-    @Override
-    public void die() {
-        super.die();
-        for (MobPartChild child : children) {
-            child.die();
-        }
+        return DecodeEnumMonsterType.ARTHROPOD.encode();
     }
 
     @Override
@@ -208,11 +230,12 @@ public class MobParasite extends EntityZombie implements RegisteredCustomMob {
 
     }
 
-    /**
-     * @return the default attributeMap
-     */
-    private static AttributeProvider getAttributeProvider() {
-        return AttributeDefaults.a(EntityTypes.ZOMBIE);
+    @Override
+    public void a(RemovalReason removalReason) {
+        super.a(removalReason);
+        for (MobPartChild child : children) {
+            child.die();
+        }
     }
 
 

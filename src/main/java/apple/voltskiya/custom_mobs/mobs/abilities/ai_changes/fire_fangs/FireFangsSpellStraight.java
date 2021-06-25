@@ -1,6 +1,6 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.fire_fangs;
 
-import net.minecraft.server.v1_16_R3.EntityLiving;
+import net.minecraft.world.entity.EntityLiving;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 

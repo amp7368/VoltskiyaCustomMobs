@@ -1,10 +1,11 @@
 package apple.voltskiya.custom_mobs.mobs.target_selector;
 
+import apple.nms.decoding.pathfinder.DecodeMoveType;
 import apple.voltskiya.custom_mobs.reload.PluginDisable;
-import net.minecraft.server.v1_16_R3.EntityHuman;
-import net.minecraft.server.v1_16_R3.EntityInsentient;
-import net.minecraft.server.v1_16_R3.PathfinderGoal;
-import net.minecraft.server.v1_16_R3.PathfinderTargetCondition;
+import net.minecraft.world.entity.EntityInsentient;
+import net.minecraft.world.entity.ai.goal.PathfinderGoal;
+import net.minecraft.world.entity.ai.targeting.PathfinderTargetCondition;
+import net.minecraft.world.entity.player.EntityHuman;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityTargetEvent;
@@ -26,15 +27,15 @@ public class PathfinderGoalClosestPlayer extends PathfinderGoal {
         this.me = me;
         this.sight = sight;
         this.seeThroughBlocks = seeThroughBlocks;
-        this.setMoveType(EnumSet.of(Type.TARGET));
+        this.setMoveType(EnumSet.of(DecodeMoveType.TARGET.encode()));
         PluginDisable.addMob(me, this);
     }
 
     @Override
     public boolean a() {
         if (!this.isRunning && this.me.getGoalTarget() == null && this.random.nextInt(this.checkInterval) == 0) {
-            @Nullable EntityHuman player = this.me.world.b(EntityHuman.class,
-                    new PathfinderTargetCondition().a(this.sight).a((e) -> e.getBukkitEntity() instanceof Player && ((Player) e.getBukkitEntity()).getGameMode() == GameMode.SURVIVAL),
+            @Nullable EntityHuman player = this.me.getWorld().a(EntityHuman.class,
+                    PathfinderTargetCondition.a().a(this.sight).a((e) -> e.getBukkitEntity() instanceof Player && ((Player) e.getBukkitEntity()).getGameMode() == GameMode.SURVIVAL),
                     this.me,
                     this.me.locX(),
                     this.me.locY(),

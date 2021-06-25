@@ -1,11 +1,12 @@
 package apple.voltskiya.custom_mobs.mobs.utils;
 
+import apple.nms.decoding.packet.DecodePlayerConnection;
 import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
-import net.minecraft.server.v1_16_R3.Packet;
-import net.minecraft.server.v1_16_R3.PacketListener;
+import net.minecraft.network.PacketListener;
+import net.minecraft.network.protocol.Packet;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
@@ -19,12 +20,12 @@ public class UtilsPacket {
         int previousPriority = Thread.currentThread().getPriority();
         Thread.currentThread().setPriority(Thread.MAX_PRIORITY); // try to send all these
         for (Player player : nearbyPlayers) {
-            ((CraftPlayer) player).getHandle().playerConnection.networkManager.stopReading();
+            DecodePlayerConnection.getNetworkManager(((CraftPlayer) player).getHandle()).stopReading();
             for (Packet<? extends PacketListener> p : packetsToSend) {
-                ((CraftPlayer) player).getHandle().playerConnection.networkManager.sendPacket(p);
+                DecodePlayerConnection.getNetworkManager(((CraftPlayer) player).getHandle()).sendPacket(p);
             }
-            ((CraftPlayer) player).getHandle().playerConnection.networkManager.channel.config().setAutoRead(true);
-            ((CraftPlayer) player).getHandle().playerConnection.networkManager.channel.flush();
+            DecodePlayerConnection.getChannel(((CraftPlayer) player).getHandle()).config().setAutoRead(true);
+            DecodePlayerConnection.getChannel(((CraftPlayer) player).getHandle()).flush();
         }
         Thread.currentThread().setPriority(previousPriority);
     }

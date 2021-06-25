@@ -1,8 +1,9 @@
 package apple.voltskiya.custom_mobs.pathfinders;
 
+import apple.nms.decoding.pathfinder.DecodeMoveType;
 import apple.voltskiya.custom_mobs.reload.PluginDisable;
-import net.minecraft.server.v1_16_R3.EntityInsentient;
-import net.minecraft.server.v1_16_R3.PathfinderGoal;
+import net.minecraft.world.entity.EntityInsentient;
+import net.minecraft.world.entity.ai.goal.PathfinderGoal;
 import org.bukkit.Material;
 import org.bukkit.util.Vector;
 
@@ -40,8 +41,8 @@ public class PathfinderGoalCraveBlock extends PathfinderGoal {
         this.rangeOfSight = rangeOfSight;
         this.checkInterval = checkInterval;
         this.speed = speed;
-        this.setMoveType(EnumSet.of(Type.MOVE));
-        PluginDisable.addMob(me,this);
+        this.setMoveType(EnumSet.of(DecodeMoveType.MOVE.encode()));
+        PluginDisable.addMob(me, this);
     }
 
     /**

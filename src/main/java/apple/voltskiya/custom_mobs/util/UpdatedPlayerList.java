@@ -52,17 +52,7 @@ public class UpdatedPlayerList implements Tickable {
     public static Player getCollision(BoundingBox other) {
         synchronized (PLAYER_SYNC) {
             for (Player p : players) {
-                if (p.getGameMode() == GameMode.SURVIVAL) {
-                    BoundingBox b = p.getBoundingBox();
-                    Vector[] corners = getCorners(other);
-                    for (Vector corner : corners) if (b.contains(corner)) return p;
-                    if (b.contains(other)) return p;
-                    b = other;
-                    other = p.getBoundingBox();
-                    corners = getCorners(p.getBoundingBox());
-                    for (Vector corner : corners) if (b.contains(corner)) return p;
-                    if (other.contains(b)) return p;
-                }
+                if (p.getGameMode() == GameMode.SURVIVAL && other.overlaps(p.getBoundingBox())) return p;
             }
             return null;
         }
