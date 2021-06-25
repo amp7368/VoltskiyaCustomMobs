@@ -1,8 +1,8 @@
 package apple.voltskiya.custom_mobs.gui;
 
-import apple.voltskiya.custom_mobs.util.minecraft.InventoryUtils;
 import org.bukkit.Material;
 import org.bukkit.inventory.InventoryHolder;
+import voltskiya.apple.utilities.util.minecraft.InventoryUtils;
 
 import java.util.ArrayList;
 import java.util.List;

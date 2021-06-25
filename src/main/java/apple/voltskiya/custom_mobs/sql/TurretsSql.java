@@ -1,16 +1,16 @@
 package apple.voltskiya.custom_mobs.sql;
 
-import apple.voltskiya.custom_mobs.turrets.TurretBuilder;
-import apple.voltskiya.custom_mobs.turrets.TurretMob;
-import apple.voltskiya.custom_mobs.turrets.TurretType;
-import apple.voltskiya.custom_mobs.turrets.gui.TurretTarget;
-import apple.voltskiya.custom_mobs.util.EntityLocation;
+import apple.voltskiya.custom_mobs.old_turrets.TurretBuilder;
+import apple.voltskiya.custom_mobs.old_turrets.TurretMob;
+import apple.voltskiya.custom_mobs.old_turrets.TurretType;
+import apple.voltskiya.custom_mobs.old_turrets.gui.TurretTarget;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import voltskiya.apple.utilities.util.EntityLocation;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

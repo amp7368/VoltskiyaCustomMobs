@@ -1,8 +1,6 @@
 package apple.voltskiya.custom_mobs.dungeon.scanned;
 
 import apple.voltskiya.custom_mobs.dungeon.scanner.JsonKeys;
-import apple.voltskiya.custom_mobs.util.JsonUtils;
-import apple.voltskiya.custom_mobs.util.minecraft.InventoryUtils;
 import com.destroystokyo.paper.loottable.LootableInventory;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
@@ -17,6 +15,8 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
+import voltskiya.apple.utilities.util.JsonUtils;
+import voltskiya.apple.utilities.util.minecraft.InventoryUtils;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package apple.voltskiya.custom_mobs.turrets.gui;
+package apple.voltskiya.custom_mobs.old_turrets.gui;
 
 import org.bukkit.Material;
 

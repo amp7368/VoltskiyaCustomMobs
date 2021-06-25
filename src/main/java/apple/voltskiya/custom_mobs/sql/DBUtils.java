@@ -1,6 +1,5 @@
 package apple.voltskiya.custom_mobs.sql;
 
-import apple.voltskiya.custom_mobs.util.data_structures.Pair;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
@@ -8,6 +7,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
+import voltskiya.apple.utilities.util.data_structures.Pair;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

@@ -2,8 +2,6 @@ package apple.voltskiya.custom_mobs.pathfinders.spell;
 
 import apple.nms.decoding.entity.DecodeEntity;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import apple.voltskiya.custom_mobs.util.DistanceUtils;
-import apple.voltskiya.custom_mobs.util.minecraft.MaterialUtils;
 import net.minecraft.world.entity.EntityInsentient;
 import net.minecraft.world.entity.ai.goal.PathfinderGoal;
 import org.bukkit.Bukkit;
@@ -15,6 +13,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.plugin.IllegalPluginAccessException;
 import org.bukkit.util.Vector;
+import voltskiya.apple.utilities.util.DistanceUtils;
+import voltskiya.apple.utilities.util.minecraft.MaterialUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;

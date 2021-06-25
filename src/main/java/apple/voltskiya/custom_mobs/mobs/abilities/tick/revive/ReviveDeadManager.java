@@ -6,7 +6,6 @@ import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.mobs.ConfigManager;
 import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.DeathEater;
-import apple.voltskiya.custom_mobs.util.constants.TagConstants;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.nbt.NBTTagString;
@@ -22,6 +21,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.loot.LootTables;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
+import voltskiya.apple.utilities.util.constants.TagConstants;
 
 import java.io.IOException;
 import java.util.ArrayList;

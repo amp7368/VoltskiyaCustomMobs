@@ -16,6 +16,7 @@ public class PluginUtils extends VoltskiyaModule {
 
     @Override
     public void enable() {
+        new UpdatedPlayerList();
     }
 
     @Override

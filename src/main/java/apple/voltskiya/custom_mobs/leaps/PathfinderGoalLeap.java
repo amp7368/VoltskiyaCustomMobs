@@ -7,11 +7,11 @@ import apple.voltskiya.custom_mobs.leaps.config.LeapDo;
 import apple.voltskiya.custom_mobs.leaps.config.LeapPostConfig;
 import apple.voltskiya.custom_mobs.leaps.config.LeapPreConfig;
 import apple.voltskiya.custom_mobs.reload.PluginDisable;
-import apple.voltskiya.custom_mobs.util.constants.TagConstants;
 import net.minecraft.world.entity.EntityInsentient;
 import net.minecraft.world.entity.EntityLiving;
 import net.minecraft.world.entity.ai.goal.PathfinderGoal;
 import org.bukkit.Location;
+import voltskiya.apple.utilities.util.constants.TagConstants;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;

@@ -4,7 +4,6 @@ import apple.voltskiya.custom_mobs.dungeon.PluginDungeon;
 import apple.voltskiya.custom_mobs.dungeon.product.Dungeon;
 import apple.voltskiya.custom_mobs.dungeon.product.SpawnDungeonOptions;
 import apple.voltskiya.custom_mobs.dungeon.scanner.DungeonMobInfo;
-import apple.voltskiya.custom_mobs.util.JsonUtils;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.world.entity.Entity;
@@ -13,6 +12,7 @@ import net.minecraft.world.level.World;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
 import org.bukkit.util.Vector;
+import voltskiya.apple.utilities.util.JsonUtils;
 
 import java.util.List;
 import java.util.Optional;

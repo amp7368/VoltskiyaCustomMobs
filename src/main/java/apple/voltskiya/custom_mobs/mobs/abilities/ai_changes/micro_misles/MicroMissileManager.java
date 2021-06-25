@@ -3,7 +3,6 @@ package apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.micro_misles;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.Tickable;
 import apple.voltskiya.custom_mobs.ticking.HighFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.TickGiverable;
-import apple.voltskiya.custom_mobs.util.minecraft.MaterialUtils;
 import net.minecraft.world.damagesource.DamageSource;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
@@ -16,6 +15,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
+import voltskiya.apple.utilities.util.minecraft.MaterialUtils;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;

@@ -2,10 +2,7 @@ package apple.voltskiya.custom_mobs.mobs.abilities.tick.orbital_strike.small;
 
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.Tickable;
 import apple.voltskiya.custom_mobs.sql.MobListSql;
-import apple.voltskiya.custom_mobs.util.DistanceUtils;
 import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
-import apple.voltskiya.custom_mobs.util.constants.TagConstants;
-import apple.voltskiya.custom_mobs.util.data_structures.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -13,6 +10,9 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
+import voltskiya.apple.utilities.util.DistanceUtils;
+import voltskiya.apple.utilities.util.constants.TagConstants;
+import voltskiya.apple.utilities.util.data_structures.Pair;
 
 import java.util.ArrayList;
 import java.util.Iterator;

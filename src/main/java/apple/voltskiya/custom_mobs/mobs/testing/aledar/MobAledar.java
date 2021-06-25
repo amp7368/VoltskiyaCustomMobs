@@ -10,7 +10,6 @@ import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
 import apple.voltskiya.custom_mobs.mobs.RegisteredCustomMob;
 import apple.voltskiya.custom_mobs.mobs.parts.*;
 import apple.voltskiya.custom_mobs.mobs.utils.UtilsPacket;
-import apple.voltskiya.custom_mobs.util.EntityLocation;
 import com.mojang.datafixers.DataFixUtils;
 import com.mojang.datafixers.DataFixer;
 import com.mojang.datafixers.schemas.Schema;
@@ -31,6 +30,7 @@ import net.minecraft.world.phys.Vec3D;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPillager;
+import voltskiya.apple.utilities.util.EntityLocation;
 
 import java.util.*;
 import java.util.logging.Level;

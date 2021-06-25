@@ -11,8 +11,6 @@ import apple.voltskiya.custom_mobs.custom_model.CustomModel;
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
 import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
 import apple.voltskiya.custom_mobs.mobs.utils.NbtConstants;
-import apple.voltskiya.custom_mobs.util.EntityLocation;
-import apple.voltskiya.custom_mobs.util.VectorUtils;
 import com.mojang.datafixers.types.Type;
 import net.minecraft.core.IRegistry;
 import net.minecraft.core.Vector3f;
@@ -34,6 +32,8 @@ import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
 import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.NotNull;
+import voltskiya.apple.utilities.util.EntityLocation;
+import voltskiya.apple.utilities.util.VectorUtils;
 
 import java.util.Map;
 import java.util.logging.Level;

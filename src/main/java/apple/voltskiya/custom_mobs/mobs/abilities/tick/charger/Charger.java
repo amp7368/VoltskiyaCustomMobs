@@ -1,11 +1,11 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.tick.charger;
 
 import apple.nms.decoding.entity.DecodeEntity;
-import apple.voltskiya.custom_mobs.util.constants.TagConstants;
 import net.minecraft.world.entity.EntityInsentient;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftMob;
 import org.bukkit.entity.Mob;
 import org.jetbrains.annotations.NotNull;
+import voltskiya.apple.utilities.util.constants.TagConstants;
 
 public class Charger {
     private final Mob charger;

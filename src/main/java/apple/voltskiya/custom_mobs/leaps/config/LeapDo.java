@@ -1,13 +1,13 @@
 package apple.voltskiya.custom_mobs.leaps.config;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import apple.voltskiya.custom_mobs.util.constants.TagConstants;
 import net.minecraft.world.entity.EntityInsentient;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.IllegalPluginAccessException;
 import org.bukkit.util.Vector;
+import voltskiya.apple.utilities.util.constants.TagConstants;
 
 import javax.annotation.Nullable;
 import java.util.function.Supplier;

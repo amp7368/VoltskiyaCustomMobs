@@ -1,16 +1,11 @@
-package apple.voltskiya.custom_mobs.turrets;
+package apple.voltskiya.custom_mobs.old_turrets;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
+import apple.voltskiya.custom_mobs.old_turrets.gui.TurretGuiManager;
+import apple.voltskiya.custom_mobs.old_turrets.gui.TurretTarget;
 import apple.voltskiya.custom_mobs.sql.DBItemStack;
 import apple.voltskiya.custom_mobs.sql.DBUtils;
 import apple.voltskiya.custom_mobs.sql.TurretsSql;
-import apple.voltskiya.custom_mobs.turrets.gui.TurretGuiManager;
-import apple.voltskiya.custom_mobs.turrets.gui.TurretTarget;
-import apple.voltskiya.custom_mobs.util.DistanceUtils;
-import apple.voltskiya.custom_mobs.util.EntityLocation;
-import apple.voltskiya.custom_mobs.util.VectorUtils;
-import apple.voltskiya.custom_mobs.util.minecraft.EnchantmentUtils;
-import apple.voltskiya.custom_mobs.util.minecraft.EntityUtils;
 import net.minecraft.nbt.NBTTagCompound;
 import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftArrow;
@@ -23,6 +18,11 @@ import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
+import voltskiya.apple.utilities.util.DistanceUtils;
+import voltskiya.apple.utilities.util.EntityLocation;
+import voltskiya.apple.utilities.util.VectorUtils;
+import voltskiya.apple.utilities.util.minecraft.EnchantmentUtils;
+import voltskiya.apple.utilities.util.minecraft.EntityUtils;
 
 import java.sql.SQLException;
 import java.util.ArrayList;

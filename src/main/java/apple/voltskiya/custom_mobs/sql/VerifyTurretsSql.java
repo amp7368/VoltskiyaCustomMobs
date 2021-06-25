@@ -1,7 +1,7 @@
 package apple.voltskiya.custom_mobs.sql;
 
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
-import apple.voltskiya.custom_mobs.turrets.TurretPlugin;
+import apple.voltskiya.custom_mobs.old_turrets.TurretPlugin;
 import org.bukkit.Material;
 
 import java.io.File;

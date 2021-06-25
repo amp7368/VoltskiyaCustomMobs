@@ -4,8 +4,6 @@ import apple.nms.decoding.pathfinder.DecodeMoveType;
 import apple.voltskiya.custom_mobs.leaps.PathfinderGoalLeap;
 import apple.voltskiya.custom_mobs.leaps.config.LeapPostConfig;
 import apple.voltskiya.custom_mobs.leaps.config.LeapPreConfig;
-import apple.voltskiya.custom_mobs.util.constants.TagConstants;
-import apple.voltskiya.custom_mobs.util.data_structures.Triple;
 import net.minecraft.core.BlockPosition;
 import net.minecraft.world.entity.EntityCreature;
 import net.minecraft.world.entity.EntityInsentient;
@@ -14,6 +12,8 @@ import net.minecraft.world.entity.ai.util.RandomPositionGenerator;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.jetbrains.annotations.Nullable;
+import voltskiya.apple.utilities.util.constants.TagConstants;
+import voltskiya.apple.utilities.util.data_structures.Triple;
 
 import java.util.ArrayList;
 import java.util.EnumSet;

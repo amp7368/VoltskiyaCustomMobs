@@ -1,6 +1,5 @@
 package apple.voltskiya.custom_mobs.dungeon.scanned;
 
-import apple.voltskiya.custom_mobs.util.VectorUtils;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -9,6 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
+import voltskiya.apple.utilities.util.VectorUtils;
 
 import java.util.ArrayList;
 import java.util.List;

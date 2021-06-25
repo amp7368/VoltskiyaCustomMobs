@@ -1,8 +1,7 @@
-package apple.voltskiya.custom_mobs.turrets.gui;
+package apple.voltskiya.custom_mobs.old_turrets.gui;
 
+import apple.voltskiya.custom_mobs.old_turrets.TurretMob;
 import apple.voltskiya.custom_mobs.sql.DBItemStack;
-import apple.voltskiya.custom_mobs.turrets.TurretMob;
-import apple.voltskiya.custom_mobs.util.minecraft.MaterialUtils;
 import net.minecraft.nbt.NBTTagCompound;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -14,11 +13,12 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import voltskiya.apple.utilities.util.minecraft.MaterialUtils;
 
 import java.util.*;
 import java.util.function.BiConsumer;
 
-import static apple.voltskiya.custom_mobs.util.minecraft.InventoryUtils.makeItem;
+import static voltskiya.apple.utilities.util.minecraft.InventoryUtils.makeItem;
 
 public class TurretGui implements InventoryHolder {
     private final TurretMob turret;

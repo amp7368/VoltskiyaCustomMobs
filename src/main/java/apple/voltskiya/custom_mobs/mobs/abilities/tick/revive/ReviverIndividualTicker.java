@@ -3,12 +3,12 @@ package apple.voltskiya.custom_mobs.mobs.abilities.tick.revive;
 import apple.nms.decoding.entity.DecodeEntity;
 import apple.voltskiya.custom_mobs.pathfinders.utilities.PathfinderGoalMoveToTarget;
 import apple.voltskiya.custom_mobs.sql.MobListSql;
-import apple.voltskiya.custom_mobs.util.constants.TagConstants;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftMob;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.Nullable;
+import voltskiya.apple.utilities.util.constants.TagConstants;
 
 import java.util.ArrayList;
 import java.util.Iterator;

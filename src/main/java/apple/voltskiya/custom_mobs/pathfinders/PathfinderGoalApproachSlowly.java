@@ -3,13 +3,13 @@ package apple.voltskiya.custom_mobs.pathfinders;
 import apple.nms.decoding.pathfinder.DecodeMoveType;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.reload.PluginDisable;
-import apple.voltskiya.custom_mobs.util.DistanceUtils;
 import net.minecraft.server.level.EntityPlayer;
 import net.minecraft.world.entity.EntityInsentient;
 import net.minecraft.world.entity.EntityLiving;
 import net.minecraft.world.entity.ai.goal.PathfinderGoal;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import voltskiya.apple.utilities.util.DistanceUtils;
 
 import java.util.EnumSet;
 import java.util.Random;

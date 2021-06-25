@@ -5,8 +5,8 @@ import apple.voltskiya.custom_mobs.dungeon.scanner.DungeonMobConfig;
 import apple.voltskiya.custom_mobs.dungeon.scanner.DungeonScanner;
 import apple.voltskiya.custom_mobs.gui.InventoryGuiPageScrollable;
 import apple.voltskiya.custom_mobs.gui.InventoryGuiSlotGeneric;
-import apple.voltskiya.custom_mobs.util.minecraft.InventoryUtils;
 import org.bukkit.Material;
+import voltskiya.apple.utilities.util.minecraft.InventoryUtils;
 
 public class DungeonPageMobConfigs extends InventoryGuiPageScrollable {
     private final DungeonGui dungeonGui;

@@ -3,11 +3,11 @@ package apple.voltskiya.custom_mobs.dungeon.gui;
 import apple.voltskiya.custom_mobs.gui.InventoryGui;
 import apple.voltskiya.custom_mobs.gui.InventoryGuiPageSimple;
 import apple.voltskiya.custom_mobs.gui.InventoryGuiSlotGeneric;
-import apple.voltskiya.custom_mobs.util.minecraft.InventoryUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
+import voltskiya.apple.utilities.util.minecraft.InventoryUtils;
 
 import java.util.Collections;
 

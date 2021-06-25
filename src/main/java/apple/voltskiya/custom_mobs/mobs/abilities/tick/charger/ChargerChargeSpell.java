@@ -3,8 +3,6 @@ package apple.voltskiya.custom_mobs.mobs.abilities.tick.charger;
 import apple.nms.decoding.entity.DecodeEntity;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.pathfinders.spell.PathfinderGoalCharge;
-import apple.voltskiya.custom_mobs.util.constants.TagConstants;
-import apple.voltskiya.custom_mobs.util.minecraft.MaterialUtils;
 import net.minecraft.world.entity.EntityInsentient;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -16,6 +14,8 @@ import org.bukkit.entity.Mob;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
+import voltskiya.apple.utilities.util.constants.TagConstants;
+import voltskiya.apple.utilities.util.minecraft.MaterialUtils;
 
 import java.util.Collections;
 

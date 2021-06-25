@@ -7,13 +7,13 @@ import apple.voltskiya.custom_mobs.gui.InventoryGui;
 import apple.voltskiya.custom_mobs.gui.InventoryGuiPageSimple;
 import apple.voltskiya.custom_mobs.gui.InventoryGuiSlotGeneric;
 import apple.voltskiya.custom_mobs.gui.InventoryGuiSlotScrollable;
-import apple.voltskiya.custom_mobs.util.VectorUtils;
-import apple.voltskiya.custom_mobs.util.minecraft.InventoryUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import voltskiya.apple.utilities.util.VectorUtils;
+import voltskiya.apple.utilities.util.minecraft.InventoryUtils;
 
 import java.io.IOException;
 import java.util.Collections;

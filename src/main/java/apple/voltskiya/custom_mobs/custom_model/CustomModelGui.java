@@ -1,8 +1,6 @@
 package apple.voltskiya.custom_mobs.custom_model;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import apple.voltskiya.custom_mobs.util.DistanceUtils;
-import apple.voltskiya.custom_mobs.util.minecraft.InventoryUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -16,6 +14,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import voltskiya.apple.utilities.util.DistanceUtils;
+import voltskiya.apple.utilities.util.minecraft.InventoryUtils;
 
 import java.util.*;
 import java.util.function.BiConsumer;

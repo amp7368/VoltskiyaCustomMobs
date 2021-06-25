@@ -1,7 +1,7 @@
-package apple.voltskiya.custom_mobs.turrets.gui;
+package apple.voltskiya.custom_mobs.old_turrets.gui;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import apple.voltskiya.custom_mobs.turrets.TurretMob;
+import apple.voltskiya.custom_mobs.old_turrets.TurretMob;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

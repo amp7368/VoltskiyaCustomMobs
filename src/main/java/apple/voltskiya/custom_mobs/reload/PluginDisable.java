@@ -3,13 +3,13 @@ package apple.voltskiya.custom_mobs.reload;
 import apple.nms.decoding.entity.DecodeEntity;
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import apple.voltskiya.custom_mobs.mobs.RegisteredCustomMob;
-import apple.voltskiya.custom_mobs.util.constants.TagConstants;
 import net.minecraft.world.entity.EntityInsentient;
 import net.minecraft.world.entity.ai.goal.PathfinderGoal;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
 import org.bukkit.entity.Entity;
+import voltskiya.apple.utilities.util.constants.TagConstants;
 
 import java.util.HashMap;
 import java.util.Iterator;

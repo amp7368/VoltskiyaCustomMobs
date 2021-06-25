@@ -1,8 +1,6 @@
-package apple.voltskiya.custom_mobs.util.projectile;
+package voltskiya.apple.utilities.util.projectile;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import apple.voltskiya.custom_mobs.util.VectorUtils;
-import apple.voltskiya.custom_mobs.util.minecraft.MaterialUtils;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -11,6 +9,8 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
+import voltskiya.apple.utilities.util.VectorUtils;
+import voltskiya.apple.utilities.util.minecraft.MaterialUtils;
 
 import java.util.List;
 import java.util.Random;

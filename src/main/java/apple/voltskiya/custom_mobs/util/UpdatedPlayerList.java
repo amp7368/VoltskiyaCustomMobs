@@ -10,6 +10,7 @@ import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import voltskiya.apple.utilities.util.DistanceUtils;
 
 import java.util.ArrayList;
 import java.util.List;

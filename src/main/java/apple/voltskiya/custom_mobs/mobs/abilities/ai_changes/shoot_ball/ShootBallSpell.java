@@ -2,8 +2,6 @@ package apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.shoot_ball;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.pathfinders.spell.PathfinderGoalShootSpell;
-import apple.voltskiya.custom_mobs.util.VectorUtils;
-import apple.voltskiya.custom_mobs.util.projectile.ProjectileParticleMissle;
 import net.minecraft.world.entity.EntityLiving;
 import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
@@ -13,6 +11,8 @@ import org.bukkit.entity.Mob;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
+import voltskiya.apple.utilities.util.VectorUtils;
+import voltskiya.apple.utilities.util.projectile.ProjectileParticleMissle;
 
 import java.util.*;
 

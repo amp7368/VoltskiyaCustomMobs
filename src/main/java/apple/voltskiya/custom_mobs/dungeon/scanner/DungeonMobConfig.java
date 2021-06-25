@@ -1,6 +1,5 @@
 package apple.voltskiya.custom_mobs.dungeon.scanner;
 
-import apple.voltskiya.custom_mobs.util.minecraft.InventoryUtils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -8,6 +7,7 @@ import com.google.gson.JsonPrimitive;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import voltskiya.apple.utilities.util.minecraft.InventoryUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;

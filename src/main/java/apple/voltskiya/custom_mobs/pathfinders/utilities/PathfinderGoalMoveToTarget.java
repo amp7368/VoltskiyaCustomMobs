@@ -2,11 +2,11 @@ package apple.voltskiya.custom_mobs.pathfinders.utilities;
 
 import apple.nms.decoding.entity.DecodeEntity;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import apple.voltskiya.custom_mobs.util.DistanceUtils;
 import net.minecraft.world.entity.EntityInsentient;
 import net.minecraft.world.entity.ai.goal.PathfinderGoal;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import voltskiya.apple.utilities.util.DistanceUtils;
 
 public class PathfinderGoalMoveToTarget extends PathfinderGoal {
     private final Location target;

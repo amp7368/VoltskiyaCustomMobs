@@ -2,13 +2,13 @@ package apple.voltskiya.custom_mobs.mobs.abilities.tick.charger;
 
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.Tickable;
 import apple.voltskiya.custom_mobs.ticking.TickGiverable;
-import apple.voltskiya.custom_mobs.util.DistanceUtils;
 import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import voltskiya.apple.utilities.util.DistanceUtils;
 
 import java.util.ArrayList;
 import java.util.Iterator;

@@ -1,8 +1,8 @@
-package apple.voltskiya.custom_mobs.turrets;
+package apple.voltskiya.custom_mobs.old_turrets;
 
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import apple.voltskiya.custom_mobs.turrets.gui.TurretGuiManager;
+import apple.voltskiya.custom_mobs.old_turrets.gui.TurretGuiManager;
 import org.bukkit.Bukkit;
 
 public class TurretPlugin extends VoltskiyaModule {

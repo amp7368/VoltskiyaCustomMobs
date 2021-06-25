@@ -5,8 +5,8 @@ import apple.voltskiya.custom_mobs.dungeon.scanned.DungeonChestScanned;
 import apple.voltskiya.custom_mobs.dungeon.scanned.DungeonScanned;
 import apple.voltskiya.custom_mobs.gui.InventoryGuiPageScrollable;
 import apple.voltskiya.custom_mobs.gui.InventoryGuiSlotGeneric;
-import apple.voltskiya.custom_mobs.util.minecraft.InventoryUtils;
 import org.bukkit.Material;
+import voltskiya.apple.utilities.util.minecraft.InventoryUtils;
 
 import java.util.Comparator;
 import java.util.List;

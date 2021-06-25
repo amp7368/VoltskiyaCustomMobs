@@ -6,13 +6,13 @@ import apple.voltskiya.custom_mobs.dungeon.patrols.PatrolWand;
 import apple.voltskiya.custom_mobs.gui.InventoryGui;
 import apple.voltskiya.custom_mobs.gui.InventoryGuiPageSimple;
 import apple.voltskiya.custom_mobs.gui.InventoryGuiSlotGeneric;
-import apple.voltskiya.custom_mobs.util.minecraft.InventoryUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
+import voltskiya.apple.utilities.util.minecraft.InventoryUtils;
 
 import java.util.Arrays;
 import java.util.Collections;

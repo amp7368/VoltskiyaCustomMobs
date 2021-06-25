@@ -2,8 +2,6 @@ package apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.fire_fangs;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.pathfinders.spell.PathfinderGoalShootSpell;
-import apple.voltskiya.custom_mobs.util.VectorUtils;
-import apple.voltskiya.custom_mobs.util.minecraft.MaterialUtils;
 import net.minecraft.world.entity.EntityInsentient;
 import net.minecraft.world.entity.EntityLiving;
 import org.bukkit.Bukkit;
@@ -13,6 +11,8 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.EvokerFangs;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.util.Vector;
+import voltskiya.apple.utilities.util.VectorUtils;
+import voltskiya.apple.utilities.util.minecraft.MaterialUtils;
 
 import java.util.ArrayList;
 import java.util.List;

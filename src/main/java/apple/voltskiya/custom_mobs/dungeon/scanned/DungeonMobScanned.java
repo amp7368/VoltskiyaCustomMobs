@@ -6,7 +6,6 @@ import apple.voltskiya.custom_mobs.dungeon.scanner.DungeonMobConfig;
 import apple.voltskiya.custom_mobs.dungeon.scanner.DungeonMobInfo;
 import apple.voltskiya.custom_mobs.dungeon.scanner.DungeonScanner;
 import apple.voltskiya.custom_mobs.dungeon.scanner.JsonKeys;
-import apple.voltskiya.custom_mobs.util.VectorUtils;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
@@ -17,6 +16,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import voltskiya.apple.utilities.util.VectorUtils;
 
 public class DungeonMobScanned {
     private final DungeonMobInfo mob;

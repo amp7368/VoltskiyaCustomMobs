@@ -1,4 +1,4 @@
-package apple.voltskiya.custom_mobs.turrets;
+package apple.voltskiya.custom_mobs.old_turrets;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.custom_model.CustomModel;

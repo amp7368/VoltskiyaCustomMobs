@@ -7,7 +7,6 @@ import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
 import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
 import apple.voltskiya.custom_mobs.mobs.parts.*;
 import apple.voltskiya.custom_mobs.mobs.utils.UtilsPacket;
-import apple.voltskiya.custom_mobs.util.EntityLocation;
 import com.mojang.datafixers.DataFixUtils;
 import com.mojang.datafixers.DataFixer;
 import com.mojang.datafixers.schemas.Schema;
@@ -28,6 +27,7 @@ import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import voltskiya.apple.utilities.util.EntityLocation;
 
 import java.util.ArrayList;
 import java.util.List;

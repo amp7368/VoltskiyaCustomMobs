@@ -1,4 +1,4 @@
-package apple.voltskiya.custom_mobs.util.projectile;
+package voltskiya.apple.utilities.util.projectile;
 
 import apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.shoot_ball.ShootBallManager;
 import org.bukkit.Location;

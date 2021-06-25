@@ -1,7 +1,6 @@
 package apple.voltskiya.custom_mobs.custom_model;
 
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
-import apple.voltskiya.custom_mobs.util.VectorUtils;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.nbt.MojangsonParser;
 import net.minecraft.nbt.NBTTagCompound;
@@ -14,6 +13,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import voltskiya.apple.utilities.util.VectorUtils;
 
 import java.io.File;
 import java.io.IOException;
