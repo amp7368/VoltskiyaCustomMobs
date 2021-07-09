@@ -8,7 +8,6 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandCompletion;
 import co.aikar.commands.annotation.Default;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -87,10 +86,7 @@ public class TurretCommand extends BaseCommand {
     }
 
     private void finishMob(TurretMob turretMob) {
-        new Thread(() -> {
-            TurretList.registerOrUpdate(turretMob);
-            Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), turretMob::resetRotate);
-        }).start();
+        TurretList.registerOrUpdate(turretMob);
     }
 
     private void spawnEntity(Location location, World world, CustomModel.CustomEntity entity, double facingX, double facingZ, AtomicInteger turretEntityCount, Consumer<Entity> addEntityToMob, TurretMob turretMob) {

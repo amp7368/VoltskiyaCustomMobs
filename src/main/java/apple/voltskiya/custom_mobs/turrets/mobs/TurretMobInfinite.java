@@ -10,6 +10,8 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 import voltskiya.apple.utilities.util.gui.InventoryGui;
 
+import static apple.voltskiya.custom_mobs.old_turrets.OldTurretMob.TURRET_TAG;
+
 public class TurretMobInfinite extends TurretMob {
     private TurretGuiInfinite turretGui = null;
     private TargetingMode targetingMode;
@@ -66,6 +68,7 @@ public class TurretMobInfinite extends TurretMob {
 
     @Override
     protected boolean shouldTarget(@Nullable Entity entity) {
+        if (entity != null && entity.getScoreboardTags().contains(TURRET_TAG)) return false;
         if (entity instanceof Player) {
             return targetingMode.targetsPlayers() && super.shouldTarget(entity);
         } else {

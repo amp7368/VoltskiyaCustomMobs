@@ -47,7 +47,7 @@ public abstract class TurretMob implements Runnable {
     protected LivingEntity target = null;
     protected int tickIndex = 0;
     protected Location center;
-    protected Vector facing;
+    protected Vector facing = new Vector(1, 0, 0); // can be set to nothing, but this is just a failsafe
     protected List<EntityLocation> entitiesLocations = new ArrayList<>();
     private int bowDurability;
     private Material bowMaterial = null;
@@ -139,8 +139,8 @@ public abstract class TurretMob implements Runnable {
     }
 
     protected void correctRefilledEntity() {
-        if (this.refilledEntity instanceof ArmorStand) {
-            final EntityEquipment equipment = ((ArmorStand) refilledEntity).getEquipment();
+        if (this.refilledEntity instanceof ArmorStand refilledEntity) {
+            final EntityEquipment equipment = refilledEntity.getEquipment();
             if (equipment != null) {
                 if (noBow() || arrowsEmpty()) {
                     final ItemStack torch = new ItemStack(Material.SOUL_TORCH);
@@ -423,15 +423,7 @@ public abstract class TurretMob implements Runnable {
         angle %= Math.PI * 2;
         while (angle < 0) angle += Math.PI * 2;
         if (angle < getMaxAngle() || Math.abs(Math.PI * 2 - angle) < getMaxAngle()) {
-            // rotate by "angleN" degrees
             for (EntityLocation entity : entitiesLocations) {
-                Location myFacing = new Location(null, 0, 0, 0);
-                myFacing.setDirection(new Vector(entity.xFacing, entity.yFacing, entity.zFacing));
-                float yaw1 = myFacing.getYaw();
-                myFacing.setDirection(newFacing);
-                float yaw2 = myFacing.getYaw();
-                myFacing.setYaw(yaw1 + yaw2);
-
                 VectorUtils.rotate(entity, newFacing, center, true);
             }
             this.facing = newFacing;

@@ -16,8 +16,9 @@ public class TurretList {
     private static final HashMap<String, TurretMob> turretMobs = new HashMap<>();
     private static Gson gson;
     private static File turretMobFolder;
+    private static final ArrayList<String> turretMobToRemove = new ArrayList<>();
 
-    private static void save(TurretMobSaveable mob) {
+    private synchronized static void save(TurretMobSaveable mob) {
         File file = new File(turretMobFolder, mob.getUUID() + ".json");
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
             gson.toJson(mob, writer);
@@ -26,7 +27,7 @@ public class TurretList {
         }
     }
 
-    public static void initialize() {
+    public synchronized static void initialize() {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(TurretMobSaveable.class, new TurretAdapter());
         gson = gsonBuilder.create();
@@ -55,29 +56,37 @@ public class TurretList {
     }
 
     public static void registerOrUpdate(TurretMob turretMob) {
-        turretMobs.put(turretMob.getUUID(), turretMob);
-        synchronized (TurretSaveDaemon.sync) {
-            TurretSaveDaemon.turretMobsToSave.add(turretMob);
+        synchronized (turretMobs) {
+            turretMobs.put(turretMob.getUUID(), turretMob);
+            synchronized (TurretSaveDaemon.sync) {
+                TurretSaveDaemon.turretMobsToSave.add(turretMob);
+            }
         }
     }
 
     public static boolean interact(Player player, Entity entity) {
-        for (TurretMob turretMob : turretMobs.values()) {
-            if (turretMob.interact(player, entity)) {
-                return true;
+        synchronized (turretMobs) {
+            for (TurretMob turretMob : turretMobs.values()) {
+                if (turretMob.interact(player, entity)) {
+                    return true;
+                }
             }
         }
         return false;
     }
 
     private static void tick() {
-        for (TurretMob turretMob : turretMobs.values()) {
-            turretMob.run();
+        synchronized (turretMobs) {
+            for (TurretMob turretMob : turretMobs.values()) {
+                turretMob.run();
+            }
         }
     }
 
     public static void remove(TurretMob turretMob) {
-        turretMobs.remove(turretMob.getUUID());
+        synchronized (turretMobToRemove) {
+            turretMobToRemove.add(turretMob.getUUID());
+        }
         File file = new File(turretMobFolder, turretMob.getUUID() + ".json");
         file.delete();
     }
@@ -127,6 +136,15 @@ public class TurretList {
             synchronized (sync) {
                 turretMobsTemp = new ArrayList<>(turretMobsToSave);
                 turretMobsToSave.clear();
+            }
+            synchronized (turretMobs) {
+                // this should only ever be held for very brief periods of time with
+                // no other synchronized blocks
+                synchronized (turretMobToRemove) {
+                    for (String removeMe : turretMobToRemove) {
+                        turretMobs.remove(removeMe);
+                    }
+                }
             }
             for (TurretMob turretMob : turretMobsTemp) {
                 save(turretMob.toSaveable());
