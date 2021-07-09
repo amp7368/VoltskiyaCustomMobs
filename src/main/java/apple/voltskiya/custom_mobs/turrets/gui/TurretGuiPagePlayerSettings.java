@@ -57,6 +57,10 @@ public class TurretGuiPagePlayerSettings extends InventoryGuiPageSimple {
             setSlot(new InventoryGuiSlotGeneric(e -> {
             }, InventoryUtils.makeItem(Material.BLACK_STAINED_GLASS_PANE, 1, "Arrow slot", null)), i + 9);
         }
+        setSlot(new InventoryGuiSlotGeneric(e -> {
+            turretMob.cycleMode();
+        }, InventoryUtils.makeItem(Material.RED_TERRACOTTA, 1, turretMob.getMode().pretty(), null)), 53);
+
     }
 
 

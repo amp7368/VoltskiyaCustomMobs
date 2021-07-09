@@ -88,8 +88,8 @@ public class TurretCommand extends BaseCommand {
 
     private void finishMob(TurretMob turretMob) {
         new Thread(() -> {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), turretMob::resetRotate);
             TurretList.registerOrUpdate(turretMob);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), turretMob::resetRotate);
         }).start();
     }
 
