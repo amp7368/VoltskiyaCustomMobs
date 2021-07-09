@@ -28,8 +28,8 @@ public class RecordedMob {
         return health;
     }
 
-    public boolean isNearby(Location loc) {
-        return location.getWorld().equals(loc.getWorld()) && location.distance(loc) <= ReviverManagerTicker.get().REVIVE_DISTANCE;
+    public boolean isNearby(Location loc, Reviver reviverObject) {
+        return location.getWorld().equals(loc.getWorld()) && location.distance(loc) <= reviverObject.getReviveDistance();
     }
 
     public boolean isReviveableNow() {

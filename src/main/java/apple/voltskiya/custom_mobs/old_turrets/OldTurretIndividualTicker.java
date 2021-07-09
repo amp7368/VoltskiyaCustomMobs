@@ -5,17 +5,17 @@ import apple.voltskiya.custom_mobs.ticking.TickGiverable;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class TurretIndividualTicker {
-    private final TurretManagerTicker.Closeness closeness;
+public class OldTurretIndividualTicker {
+    private final OldTurretManagerTicker.Closeness closeness;
     private long tickering;
-    private final ArrayList<TurretMob> turrets = new ArrayList<>();
+    private final ArrayList<OldTurretMob> turrets = new ArrayList<>();
     private boolean isTicking = false;
 
-    public TurretIndividualTicker(TurretManagerTicker.Closeness closeness) {
+    public OldTurretIndividualTicker(OldTurretManagerTicker.Closeness closeness) {
         this.closeness = closeness;
     }
 
-    public synchronized void giveTurret(TurretMob turret) {
+    public synchronized void giveTurret(OldTurretMob turret) {
         this.turrets.add(turret);
         if (!isTicking) {
             isTicking = true;
@@ -26,15 +26,15 @@ public class TurretIndividualTicker {
 
     private synchronized void tick() {
         boolean trim = false;
-        Iterator<TurretMob> turretIterator = turrets.iterator();
+        Iterator<OldTurretMob> turretIterator = turrets.iterator();
         while (turretIterator.hasNext()) {
-            TurretMob turret = turretIterator.next();
+            OldTurretMob turret = turretIterator.next();
             if (turret.isDead()) {
                 turrets.remove(turret);
                 return;
             }
             turret.tick();
-            if (TurretManagerTicker.get().amIGivingTurret(turret, closeness)) {
+            if (OldTurretManagerTicker.get().amIGivingTurret(turret, closeness)) {
                 turretIterator.remove();
                 trim = true;
             }

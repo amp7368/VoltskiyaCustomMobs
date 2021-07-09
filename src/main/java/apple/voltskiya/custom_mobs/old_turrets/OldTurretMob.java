@@ -1,8 +1,8 @@
 package apple.voltskiya.custom_mobs.old_turrets;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import apple.voltskiya.custom_mobs.old_turrets.gui.TurretGuiManager;
-import apple.voltskiya.custom_mobs.old_turrets.gui.TurretTarget;
+import apple.voltskiya.custom_mobs.old_turrets.gui.OldTurretGuiManager;
+import apple.voltskiya.custom_mobs.old_turrets.gui.OldTurretTarget;
 import apple.voltskiya.custom_mobs.sql.DBItemStack;
 import apple.voltskiya.custom_mobs.sql.DBUtils;
 import apple.voltskiya.custom_mobs.sql.TurretsSql;
@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class TurretMob implements Runnable {
+public class OldTurretMob implements Runnable {
     public static final String TURRET_TAG = "player.turret";
     private static final int MAX_SIGHT = 50;
     protected static final int MAX_HEALTH = 200;
@@ -59,21 +59,21 @@ public class TurretMob implements Runnable {
     private LivingEntity target = null;
     private final List<Vector> targetLastLocation = new ArrayList<>();
     private boolean isUpdatingDB = false;
-    private final TurretType turretType;
-    private TurretTarget.TurretTargetType targetType;
+    private final OldTurretType turretType;
+    private OldTurretTarget.TurretTargetType targetType;
     private int tickIndex = 0;
 
-    public TurretMob(UUID worldUid, double x, double y, double z,
-                     double facingX, double facingY, double facingZ,
-                     List<EntityLocation> turretEntities,
-                     Entity durabilityEntityReal,
-                     EntityLocation durabilityEntity, EntityLocation refilledEntity, EntityLocation bowEntity,
-                     double health,
-                     List<DBItemStack> arrows,
-                     ItemStack bow,
-                     long bowId,
-                     TurretType turretType,
-                     TurretTarget.TurretTargetType targetType
+    public OldTurretMob(UUID worldUid, double x, double y, double z,
+                        double facingX, double facingY, double facingZ,
+                        List<EntityLocation> turretEntities,
+                        Entity durabilityEntityReal,
+                        EntityLocation durabilityEntity, EntityLocation refilledEntity, EntityLocation bowEntity,
+                        double health,
+                        List<DBItemStack> arrows,
+                        ItemStack bow,
+                        long bowId,
+                        OldTurretType turretType,
+                        OldTurretTarget.TurretTargetType targetType
     ) {
         final World world = Bukkit.getWorld(worldUid);
         this.center = new Location(world, x, y, z);
@@ -95,17 +95,17 @@ public class TurretMob implements Runnable {
         this.turretType = turretType;
     }
 
-    public TurretMob(UUID worldUid, double x, double y, double z,
-                     double facingX, double facingY, double facingZ,
-                     List<EntityLocation> turretEntities,
-                     EntityLocation durabilityEntity, EntityLocation refilledEntity, EntityLocation bowEntity,
-                     double health,
-                     List<DBItemStack> arrows,
-                     ItemStack bow,
-                     long uid,
-                     long bowId,
-                     TurretType turretType,
-                     TurretTarget.TurretTargetType targetType
+    public OldTurretMob(UUID worldUid, double x, double y, double z,
+                        double facingX, double facingY, double facingZ,
+                        List<EntityLocation> turretEntities,
+                        EntityLocation durabilityEntity, EntityLocation refilledEntity, EntityLocation bowEntity,
+                        double health,
+                        List<DBItemStack> arrows,
+                        ItemStack bow,
+                        long uid,
+                        long bowId,
+                        OldTurretType turretType,
+                        OldTurretTarget.TurretTargetType targetType
     ) {
         final World world = Bukkit.getWorld(worldUid);
         this.center = new Location(world, x, y, z);
@@ -139,7 +139,7 @@ public class TurretMob implements Runnable {
         if (this.isOkayToStart()) {
             new Thread(this).start();
         }
-        TurretGuiManager.get().updateGui(getUniqueId());
+        OldTurretGuiManager.get().updateGui(getUniqueId());
         correctDurabilityEntity();
     }
 
@@ -189,7 +189,7 @@ public class TurretMob implements Runnable {
     }
 
     private void remove() {
-        TurretManagerTicker.get().removeTurret(this.uid, this.turretEntities);
+        OldTurretManagerTicker.get().removeTurret(this.uid, this.turretEntities);
         try {
             TurretsSql.removeTurret(uid);
         } catch (SQLException throwables) {
@@ -206,7 +206,7 @@ public class TurretMob implements Runnable {
         if (isDead() || this.durabilityEntityReal.isDead() || Bukkit.getEntity(durabilityEntity.uuid) == null) remove();
         if (target == null) {
             // if we shouldn't target, don't target
-            if (targetType == TurretTarget.TurretTargetType.NONE) return;
+            if (targetType == OldTurretTarget.TurretTargetType.NONE) return;
             for (Entity entity : this.durabilityEntityReal.getNearbyEntities(MAX_SIGHT, MAX_SIGHT, MAX_SIGHT)) {
                 if (shouldTarget(entity)) {
                     target = (LivingEntity) entity;
@@ -388,12 +388,12 @@ public class TurretMob implements Runnable {
             if (this.isOkayToStart()) {
                 new Thread(this).start();
             }
-            TurretGuiManager.get().updateGui(getUniqueId());
+            OldTurretGuiManager.get().updateGui(getUniqueId());
         }
     }
 
     private void tickBowDurability() {
-        if (turretType != TurretType.INFINITE) {
+        if (turretType != OldTurretType.INFINITE) {
             if (this.bow != null) {
                 ItemMeta itemMeta = this.bow.getItemMeta();
                 if (itemMeta instanceof Damageable) {
@@ -424,7 +424,7 @@ public class TurretMob implements Runnable {
         for (DBItemStack arrow : arrows) {
             final int count = arrow.count;
             if (arrow.type != Material.AIR && count > 0) {
-                if (turretType != TurretType.INFINITE) {
+                if (turretType != OldTurretType.INFINITE) {
                     if (count <= 1) {
                         arrow.type = Material.AIR;
                     } else {
@@ -433,7 +433,7 @@ public class TurretMob implements Runnable {
                     if (isOkayToStart()) {
                         new Thread(this).start();
                     }
-                    TurretGuiManager.get().updateGui(getUniqueId());
+                    OldTurretGuiManager.get().updateGui(getUniqueId());
                 }
                 return arrow;
             }
@@ -447,7 +447,7 @@ public class TurretMob implements Runnable {
         if (isOkayToStart()) {
             new Thread(this).start();
         }
-        TurretGuiManager.get().updateGui(getUniqueId());
+        OldTurretGuiManager.get().updateGui(getUniqueId());
     }
 
 
@@ -456,7 +456,7 @@ public class TurretMob implements Runnable {
         if (isOkayToStart()) {
             new Thread(this).start();
         }
-        TurretGuiManager.get().updateGui(getUniqueId());
+        OldTurretGuiManager.get().updateGui(getUniqueId());
     }
 
     public void rotateCenter(double degrees) {
@@ -466,7 +466,7 @@ public class TurretMob implements Runnable {
         if (isOkayToStart()) {
             new Thread(this).start();
         }
-        TurretGuiManager.get().updateGui(getUniqueId());
+        OldTurretGuiManager.get().updateGui(getUniqueId());
     }
 
     private boolean arrowsEmpty() {
@@ -513,7 +513,7 @@ public class TurretMob implements Runnable {
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof TurretMob && this.uid == ((TurretMob) obj).uid;
+        return obj instanceof OldTurretMob && this.uid == ((OldTurretMob) obj).uid;
     }
 
     /**
@@ -579,7 +579,7 @@ public class TurretMob implements Runnable {
         return (int) Math.ceil((MAX_HEALTH - health) / HEALTH_PER_REPAIR);
     }
 
-    public TurretType getTurretType() {
+    public OldTurretType getTurretType() {
         return turretType;
     }
 
@@ -602,11 +602,11 @@ public class TurretMob implements Runnable {
         }
     }
 
-    public TurretTarget.TurretTargetType getTargetType() {
+    public OldTurretTarget.TurretTargetType getTargetType() {
         return this.targetType;
     }
 
-    public void setTargetType(TurretTarget.TurretTargetType targetType) {
+    public void setTargetType(OldTurretTarget.TurretTargetType targetType) {
         this.targetType = targetType;
         if (isOkayToStart()) {
             new Thread(this).start();

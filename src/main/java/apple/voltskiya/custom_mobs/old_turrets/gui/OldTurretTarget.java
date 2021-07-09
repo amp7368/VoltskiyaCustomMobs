@@ -5,8 +5,9 @@ import org.bukkit.Material;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TurretTarget {
+public class OldTurretTarget {
     private static final List<TurretTargetType> targetMapping = new ArrayList<>();
+
     public enum TurretTargetType {
         NONE("No targeting", 0, Material.WHITE_STAINED_GLASS_PANE, false, false),
         MOBS("Only mobs", 1, Material.ZOMBIE_HEAD, false, true),

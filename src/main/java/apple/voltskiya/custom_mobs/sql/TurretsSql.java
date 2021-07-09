@@ -1,9 +1,9 @@
 package apple.voltskiya.custom_mobs.sql;
 
-import apple.voltskiya.custom_mobs.old_turrets.TurretBuilder;
-import apple.voltskiya.custom_mobs.old_turrets.TurretMob;
-import apple.voltskiya.custom_mobs.old_turrets.TurretType;
-import apple.voltskiya.custom_mobs.old_turrets.gui.TurretTarget;
+import apple.voltskiya.custom_mobs.old_turrets.OldTurretBuilder;
+import apple.voltskiya.custom_mobs.old_turrets.OldTurretMob;
+import apple.voltskiya.custom_mobs.old_turrets.OldTurretType;
+import apple.voltskiya.custom_mobs.old_turrets.gui.OldTurretTarget;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -20,7 +20,7 @@ import java.util.*;
 import static apple.voltskiya.custom_mobs.sql.DBNames.TurretNames.*;
 
 public class TurretsSql {
-    public static void registerOrUpdate(TurretMob turretMob) throws SQLException {
+    public static void registerOrUpdate(OldTurretMob turretMob) throws SQLException {
         long turretUid = turretMob.getUniqueId();
         if (turretUid == -1) turretUid = VerifyTurretsSql.currentTurretUid++;
         turretMob.setUniqueId(turretUid);
@@ -90,7 +90,7 @@ public class TurretsSql {
     }
 
 
-    public static List<TurretMob> getTurrets() throws SQLException {
+    public static List<OldTurretMob> getTurrets() throws SQLException {
         synchronized (VerifyTurretsSql.syncDB) {
             @NotNull Map<Long, List<EntityLocation>> entities = getEntities();
             @NotNull Map<Long, List<DBItemStack>> arrows = getArrows();
@@ -100,9 +100,8 @@ public class TurretsSql {
                             TURRETS_TABLE
                     )
             );
-            List<TurretBuilder> turrets = new ArrayList<>();
+            List<OldTurretBuilder> turrets = new ArrayList<>();
             List<Long> turretsToRemove = new ArrayList<>();
-            System.out.println("start");
             while (response.next()) {
                 final long turretUid = response.getLong(TURRET_UID);
                 final UUID durabilityEntityUUID = UUID.fromString(response.getString(DURABILITY_ENTITY));
@@ -118,7 +117,7 @@ public class TurretsSql {
                     continue;
                 }
                 turrets.add(
-                        new TurretBuilder(
+                        new OldTurretBuilder(
                                 UUID.fromString(response.getString(WORLD_UID)),
                                 response.getDouble(X),
                                 response.getDouble(Y),
@@ -134,15 +133,15 @@ public class TurretsSql {
                                 arrow,
                                 response.getLong(BOW),
                                 turretUid,
-                                TurretType.valueOf(response.getString(TURRET_TYPE)),
-                                TurretTarget.TurretTargetType.valueOf(response.getString(TURRET_TARGET_TYPE))
+                                OldTurretType.valueOf(response.getString(TURRET_TYPE)),
+                                OldTurretTarget.TurretTargetType.valueOf(response.getString(TURRET_TARGET_TYPE))
                         )
                 );
             }
             removeTurrets(turretsToRemove);
             statement.close();
-            List<TurretMob> turretMobs = new ArrayList<>();
-            for (TurretBuilder turretMob : turrets) turretMobs.add(turretMob.build());
+            List<OldTurretMob> turretMobs = new ArrayList<>();
+            for (OldTurretBuilder turretMob : turrets) turretMobs.add(turretMob.build());
             return turretMobs;
         }
     }

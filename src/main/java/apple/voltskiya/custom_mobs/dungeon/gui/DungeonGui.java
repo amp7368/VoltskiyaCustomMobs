@@ -1,8 +1,8 @@
 package apple.voltskiya.custom_mobs.dungeon.gui;
 
 import apple.voltskiya.custom_mobs.dungeon.product.Dungeon;
-import apple.voltskiya.custom_mobs.gui.InventoryGui;
 import org.bukkit.entity.Player;
+import voltskiya.apple.utilities.util.gui.InventoryGui;
 
 public class DungeonGui extends InventoryGui {
     private final Player player;

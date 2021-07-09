@@ -1,7 +1,7 @@
 package apple.voltskiya.custom_mobs.old_turrets.gui;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import apple.voltskiya.custom_mobs.old_turrets.TurretMob;
+import apple.voltskiya.custom_mobs.old_turrets.OldTurretMob;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -14,19 +14,23 @@ import org.bukkit.inventory.InventoryHolder;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TurretGuiManager implements Listener {
-    private static TurretGuiManager instance;
-    private final Map<Long, TurretGui> turretGuis = new HashMap<>();
+public class OldTurretGuiManager implements Listener {
+    private static OldTurretGuiManager instance;
+    private final Map<Long, OldTurretGui> turretGuis = new HashMap<>();
 
-    public TurretGuiManager() {
+    public OldTurretGuiManager() {
         instance = this;
         Bukkit.getPluginManager().registerEvents(this, VoltskiyaPlugin.get());
     }
 
-    public void open(Player player, TurretMob turret) {
-        TurretGui gui = turretGuis.get(turret.getUniqueId());
+    public static OldTurretGuiManager get() {
+        return instance;
+    }
+
+    public void open(Player player, OldTurretMob turret) {
+        OldTurretGui gui = turretGuis.get(turret.getUniqueId());
         if (gui == null) {
-            gui = new TurretGui(turret);
+            gui = new OldTurretGui(turret);
             synchronized (this) {
                 this.turretGuis.put(turret.getUniqueId(), gui);
             }
@@ -34,20 +38,16 @@ public class TurretGuiManager implements Listener {
         player.openInventory(gui.getInventory());
     }
 
-    public static TurretGuiManager get() {
-        return instance;
-    }
-
     @EventHandler(ignoreCancelled = true)
     public void onInventoryTurretGuiClick(InventoryClickEvent event) {
         final Inventory clickedInventory = event.getClickedInventory();
-        if ((clickedInventory != null && clickedInventory.getHolder() instanceof TurretGui)) {
+        if ((clickedInventory != null && clickedInventory.getHolder() instanceof OldTurretGui)) {
             // clicking from the turret
-            ((TurretGui) clickedInventory.getHolder()).toPlayerInventory(event);
+            ((OldTurretGui) clickedInventory.getHolder()).toPlayerInventory(event);
         } else {
             final InventoryHolder topInventory = event.getView().getTopInventory().getHolder();
-            if (topInventory instanceof TurretGui) {
-                ((TurretGui) topInventory).toTurretInventory(event);
+            if (topInventory instanceof OldTurretGui) {
+                ((OldTurretGui) topInventory).toTurretInventory(event);
             }
         }
     }
@@ -56,16 +56,16 @@ public class TurretGuiManager implements Listener {
     public void onInventoryClose(InventoryCloseEvent event) {
         Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
             final InventoryHolder holder = event.getInventory().getHolder();
-            if (holder instanceof TurretGui) {
+            if (holder instanceof OldTurretGui) {
                 synchronized (this) {
-                    this.turretGuis.remove(((TurretGui) holder).getUniqueId());
+                    this.turretGuis.remove(((OldTurretGui) holder).getUniqueId());
                 }
             }
         }, 1);
     }
 
     public void updateGui(long turretUid) {
-        TurretGui gui;
+        OldTurretGui gui;
         synchronized (this) {
             gui = turretGuis.get(turretUid);
         }

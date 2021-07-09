@@ -1,7 +1,7 @@
 package apple.voltskiya.custom_mobs.sql;
 
 import apple.voltskiya.custom_mobs.VoltskiyaModule;
-import apple.voltskiya.custom_mobs.old_turrets.TurretPlugin;
+import apple.voltskiya.custom_mobs.old_turrets.OldTurretPlugin;
 import org.bukkit.Material;
 
 import java.io.File;
@@ -123,7 +123,7 @@ public class VerifyTurretsSql {
     //do any setup and make sure the static part of this class is completed
     static {
         synchronized (syncDB) {
-            VoltskiyaModule voltskiyaModule = TurretPlugin.get();
+            VoltskiyaModule voltskiyaModule = OldTurretPlugin.get();
             try {
                 Class.forName("org.sqlite.JDBC");
                 // never close this because we're always using it

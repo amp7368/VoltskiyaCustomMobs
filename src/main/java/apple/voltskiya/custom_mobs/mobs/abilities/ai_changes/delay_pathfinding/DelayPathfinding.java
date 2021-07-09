@@ -67,7 +67,7 @@ public class DelayPathfinding extends ConfigManager implements RegisteredEntityE
                 DecodeEntity.getTargetSelector(entity).a(canSee);
                 if (finalOnHurt != null) DecodeEntity.getTargetSelector(entity).a(finalOnHurt);
                 UtilsPathfinderGoalSelector.add(DecodeEntity.getTargetSelector(entity), removedPathfinders);
-                DecodeEntity.setTargetSelector(entity, oldGoalSelector);
+                DecodeEntity.setGoalSelector(entity, oldGoalSelector);
             };
             canSee.addOnceOnDone(givePathfinding);
             if (onHurt != null) onHurt.addOnceOnDone(givePathfinding);

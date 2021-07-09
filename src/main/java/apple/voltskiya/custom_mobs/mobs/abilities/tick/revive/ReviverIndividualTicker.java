@@ -3,17 +3,16 @@ package apple.voltskiya.custom_mobs.mobs.abilities.tick.revive;
 import apple.nms.decoding.entity.DecodeEntity;
 import apple.voltskiya.custom_mobs.pathfinders.utilities.PathfinderGoalMoveToTarget;
 import apple.voltskiya.custom_mobs.sql.MobListSql;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftMob;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.Nullable;
+import voltskiya.apple.utilities.util.DistanceUtils;
 import voltskiya.apple.utilities.util.constants.TagConstants;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
-import java.util.UUID;
 
 public class ReviverIndividualTicker {
     public static final int GIVE_UP_MOVE_TICK = 200;
@@ -41,11 +40,10 @@ public class ReviverIndividualTicker {
         Iterator<Reviver> reviverIterator = revivers.iterator();
         while (reviverIterator.hasNext()) {
             Reviver reviverObject = reviverIterator.next();
-            UUID reviverUuid = reviverObject.getUniqueId();
-            @Nullable Entity reviver = Bukkit.getEntity(reviverUuid);
+            @Nullable Entity reviver = reviverObject.getEntity();
             if (reviver == null || reviver.isDead()) {
                 reviverObject.kill();
-                MobListSql.removeMob(reviverUuid);
+                MobListSql.removeMob(reviverObject.getUniqueId());
                 reviverIterator.remove();
                 trim = true;
                 continue;
@@ -79,12 +77,12 @@ public class ReviverIndividualTicker {
     }
 
     private synchronized void reviveGoal(Entity entity, Reviver reviverObject) {
-        RecordedMob mobToRevive = ReviveDeadManager.get().reviveStart(entity.getLocation());
+        RecordedMob mobToRevive = ReviveDeadManager.get().reviveStart(entity.getLocation(), reviverObject);
         if (mobToRevive != null && entity instanceof CraftMob reviver) {
             Location target = mobToRevive.getEntity().getLocation();
             reviver.addScoreboardTag(TagConstants.isDoingAbility);
             DecodeEntity.getGoalSelector(reviver.getHandle()).a(-1, new PathfinderGoalMoveToTarget(reviver.getHandle(), target, 1.6, GIVE_UP_MOVE_TICK, () -> {
-                if (mobToRevive.isNearby(reviver.getLocation())) {
+                if (DistanceUtils.distance(mobToRevive.location, reviver.getLocation()) <= 1) {
                     ReviveDeadManager.get().reviveStart(mobToRevive, reviver, reviverObject);
                 }
             }));

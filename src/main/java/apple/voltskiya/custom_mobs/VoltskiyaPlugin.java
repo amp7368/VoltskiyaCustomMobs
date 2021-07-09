@@ -2,14 +2,13 @@ package apple.voltskiya.custom_mobs;
 
 import apple.voltskiya.custom_mobs.custom_model.CustomModelPlugin;
 import apple.voltskiya.custom_mobs.dungeon.PluginDungeon;
-import apple.voltskiya.custom_mobs.gui.InventoryGuiPlugin;
 import apple.voltskiya.custom_mobs.leaps.LeapPlugin;
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
 import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
-import apple.voltskiya.custom_mobs.old_turrets.TurretPlugin;
 import apple.voltskiya.custom_mobs.reload.PluginDisable;
 import apple.voltskiya.custom_mobs.reload.PluginEnable;
 import apple.voltskiya.custom_mobs.ticking.Ticking;
+import apple.voltskiya.custom_mobs.turrets.TurretPlugin;
 import apple.voltskiya.custom_mobs.util.PluginUtils;
 import co.aikar.commands.PaperCommandManager;
 import net.luckperms.api.LuckPerms;
@@ -67,15 +66,14 @@ public class VoltskiyaPlugin extends JavaPlugin {
     private void manuallyLoadModules() {
         final VoltskiyaModule[] modules = new VoltskiyaModule[]{
                 new PluginDisable(),
-                new PluginUtils(),
                 new Ticking(), // this has to go first
+                new PluginUtils(),
                 new MobTickPlugin(),
                 new LeapPlugin(),
-                new TurretPlugin(),
                 new CustomModelPlugin(),
                 new PluginNmsMobs(),
                 new PluginDungeon(),
-                new InventoryGuiPlugin(),
+                new TurretPlugin(),
                 new PluginEnable()
         };
         for (VoltskiyaModule module : modules) {

@@ -22,13 +22,13 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@CommandAlias("turret")
+@CommandAlias("turretc")
 @CommandPermission("turret.create")
-public class TurretCommand extends BaseCommand {
+public class OldTurretCommand extends BaseCommand {
     private final File turretFile;
 
-    public TurretCommand() {
-        turretFile = new File(TurretPlugin.get().getDataFolder(), "turretModel.yml");
+    public OldTurretCommand() {
+        turretFile = new File(OldTurretPlugin.get().getDataFolder(), "turretModel.yml");
         if (!turretFile.exists()) {
             try {
                 turretFile.createNewFile();
@@ -40,18 +40,18 @@ public class TurretCommand extends BaseCommand {
 
     @Subcommand("finite")
     public void turretFinite(Player player) {
-        createTurretEntities(player.getLocation(), new TurretBuilder(player,TurretType.FINITE));
-        player.sendMessage(ChatColor.GREEN+"Turret Created");
+        createTurretEntities(player.getLocation(), new OldTurretBuilder(player, OldTurretType.FINITE));
+        player.sendMessage(ChatColor.GREEN + "Turret Created");
     }
     @Subcommand("infinite")
     public void turretInfinite(Player player) {
-        createTurretEntities(player.getLocation(), new TurretBuilder(player,TurretType.INFINITE));
-        player.sendMessage(ChatColor.GREEN+"Turret Created");
+        createTurretEntities(player.getLocation(), new OldTurretBuilder(player, OldTurretType.INFINITE));
+        player.sendMessage(ChatColor.GREEN + "Turret Created");
     }
 
     private final AtomicInteger turretCount = new AtomicInteger(0);
 
-    private void createTurretEntities(Location location, TurretBuilder turretMob) {
+    private void createTurretEntities(Location location, OldTurretBuilder turretMob) {
         World world = location.getWorld();
         CustomModel model = CustomModelPlugin.get().loadSchematic(turretFile);
         if (model == null) return;
@@ -156,12 +156,12 @@ public class TurretCommand extends BaseCommand {
                 } catch (InterruptedException ignored) {
                 }
             }
-            final TurretMob built;
+            final OldTurretMob built;
             try {
                 built = turretMob.build();
                 TurretsSql.registerOrUpdate(built);
                 Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), built::resetRotate);
-                TurretManagerTicker.get().addTurret(built);
+                OldTurretManagerTicker.get().addTurret(built);
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }

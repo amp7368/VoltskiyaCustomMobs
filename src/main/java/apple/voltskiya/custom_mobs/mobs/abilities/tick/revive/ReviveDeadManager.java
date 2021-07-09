@@ -81,9 +81,9 @@ public class ReviveDeadManager extends ConfigManager implements DeathEater {
     }
 
     @Nullable
-    public synchronized RecordedMob reviveStart(Location location) {
+    public synchronized RecordedMob reviveStart(Location location, Reviver reviverObject) {
         for (RecordedMob mob : dead) {
-            if (mob.isNearby(location) && mob.isReviveableNow()) {
+            if (mob.isNearby(location, reviverObject) && mob.isReviveableNow()) {
                 mob.setReviving();
                 return mob;
             }

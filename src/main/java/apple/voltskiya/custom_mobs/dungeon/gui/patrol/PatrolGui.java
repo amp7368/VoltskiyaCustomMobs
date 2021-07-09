@@ -1,8 +1,8 @@
 package apple.voltskiya.custom_mobs.dungeon.gui.patrol;
 
 import apple.voltskiya.custom_mobs.dungeon.patrols.Patrol;
-import apple.voltskiya.custom_mobs.gui.InventoryGui;
 import org.bukkit.entity.Player;
+import voltskiya.apple.utilities.util.gui.InventoryGui;
 
 public class PatrolGui extends InventoryGui {
     private final Player player;

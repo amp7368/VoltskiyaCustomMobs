@@ -2,9 +2,9 @@ package apple.voltskiya.custom_mobs.dungeon.gui.mob_configs;
 
 import apple.voltskiya.custom_mobs.dungeon.gui.DungeonGui;
 import apple.voltskiya.custom_mobs.dungeon.scanner.DungeonMobInfo;
-import apple.voltskiya.custom_mobs.gui.InventoryGuiSlotScrollable;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
+import voltskiya.apple.utilities.util.gui.InventoryGuiSlotScrollable;
 
 public class DungeonMobInfoSlot extends InventoryGuiSlotScrollable {
     private final DungeonGui dungeonGui;

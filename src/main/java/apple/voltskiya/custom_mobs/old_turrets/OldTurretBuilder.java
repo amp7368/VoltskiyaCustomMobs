@@ -1,6 +1,6 @@
 package apple.voltskiya.custom_mobs.old_turrets;
 
-import apple.voltskiya.custom_mobs.old_turrets.gui.TurretTarget;
+import apple.voltskiya.custom_mobs.old_turrets.gui.OldTurretTarget;
 import apple.voltskiya.custom_mobs.sql.DBItemStack;
 import apple.voltskiya.custom_mobs.sql.DBUtils;
 import org.bukkit.Bukkit;
@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class TurretBuilder {
+public class OldTurretBuilder {
     private final Location location;
     private final double health;
     private final List<DBItemStack> arrows;
@@ -29,34 +29,34 @@ public class TurretBuilder {
     private Entity durabilityEntityReal;
     private EntityLocation refilledEntity;
     private EntityLocation bowEntity;
-    private final TurretType turretType;
-    private final TurretTarget.TurretTargetType targetType;
+    private final OldTurretType turretType;
+    private final OldTurretTarget.TurretTargetType targetType;
 
     /**
      * create a new TurretMob and register it as a new turret
      *
      * @param player the player who spawned the turret
      */
-    public TurretBuilder(Player player, TurretType turretType) {
+    public OldTurretBuilder(Player player, OldTurretType turretType) {
         this.location = player.getLocation();
         this.arrows = new ArrayList<>();
-        this.health = TurretMob.MAX_HEALTH;
+        this.health = OldTurretMob.MAX_HEALTH;
         this.bowUid = -1;
         this.uid = -1;
         this.turretType = turretType;
-        this.targetType = TurretTarget.TurretTargetType.NONE;
+        this.targetType = OldTurretTarget.TurretTargetType.NONE;
     }
 
-    public TurretBuilder(UUID worldUid, double x, double y, double z,
-                         double facingX, double facingY, double facingZ,
-                         List<EntityLocation> turretEntities,
-                         EntityLocation durabilityEntity, EntityLocation refilledEntity, EntityLocation bowEntity,
-                         double health,
-                         List<DBItemStack> arrows,
-                         long bowUid,
-                         long uid,
-                         TurretType turretType,
-                         TurretTarget.TurretTargetType turretTargetType
+    public OldTurretBuilder(UUID worldUid, double x, double y, double z,
+                            double facingX, double facingY, double facingZ,
+                            List<EntityLocation> turretEntities,
+                            EntityLocation durabilityEntity, EntityLocation refilledEntity, EntityLocation bowEntity,
+                            double health,
+                            List<DBItemStack> arrows,
+                            long bowUid,
+                            long uid,
+                            OldTurretType turretType,
+                            OldTurretTarget.TurretTargetType turretTargetType
     ) {
         this.turretType = turretType;
         final World world = Bukkit.getWorld(worldUid);
@@ -76,7 +76,7 @@ public class TurretBuilder {
 
 
     public synchronized void addEntity(Entity e) {
-        e.addScoreboardTag(TurretMob.TURRET_TAG);
+        e.addScoreboardTag(OldTurretMob.TURRET_TAG);
         this.turretEntities.add(new EntityLocation(e,
                 -this.location.getX(), -this.location.getY(), -this.location.getZ()));
     }
@@ -100,7 +100,7 @@ public class TurretBuilder {
         addEntity(e);
     }
 
-    public TurretMob build() throws SQLException {
+    public OldTurretMob build() throws SQLException {
         UUID world = location.getWorld().getUID();
         double x = location.getX();
         double y = location.getY();
@@ -109,7 +109,7 @@ public class TurretBuilder {
         double facingY = location.getDirection().getY();
         double facingZ = location.getDirection().getZ();
         if (uid < 0) {
-            return new TurretMob(world, x, y, z,
+            return new OldTurretMob(world, x, y, z,
                     facingX,
                     facingY,
                     facingZ,
@@ -127,7 +127,7 @@ public class TurretBuilder {
             );
         } else {
             final ItemStack bow = DBUtils.getItemStack(bowUid);
-            return new TurretMob(world, x, y, z,
+            return new OldTurretMob(world, x, y, z,
                     facingX,
                     facingY,
                     facingZ,

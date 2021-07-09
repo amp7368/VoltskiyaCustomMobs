@@ -1,7 +1,7 @@
 package apple.voltskiya.custom_mobs.old_turrets;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import apple.voltskiya.custom_mobs.old_turrets.gui.TurretGuiManager;
+import apple.voltskiya.custom_mobs.old_turrets.gui.OldTurretGuiManager;
 import apple.voltskiya.custom_mobs.sql.TurretsSql;
 import apple.voltskiya.custom_mobs.ticking.LowFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.NormalFrequencyTick;
@@ -26,21 +26,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static apple.voltskiya.custom_mobs.old_turrets.TurretMob.TURRET_TAG;
+import static apple.voltskiya.custom_mobs.old_turrets.OldTurretMob.TURRET_TAG;
 
-public class TurretManagerTicker implements Listener {
-    private static TurretManagerTicker instance;
-    private final HashMap<Long, TurretMob> turrets = new HashMap<>();
+public class OldTurretManagerTicker implements Listener {
+    private static OldTurretManagerTicker instance;
+    private final HashMap<Long, OldTurretMob> turrets = new HashMap<>();
     private final HashMap<UUID, Long> entityToTurret = new HashMap<>();
-    private final Map<Closeness, TurretIndividualTicker> closenessToTurrets = new HashMap<>() {{
+    private final Map<Closeness, OldTurretIndividualTicker> closenessToTurrets = new HashMap<>() {{
         for (Closeness closeness : Closeness.values())
-            put(closeness, new TurretIndividualTicker(closeness));
+            put(closeness, new OldTurretIndividualTicker(closeness));
     }};
 
-    public TurretManagerTicker() {
+    public OldTurretManagerTicker() {
         instance = this;
         try {
-            for (TurretMob turretMob : TurretsSql.getTurrets()) {
+            for (OldTurretMob turretMob : TurretsSql.getTurrets()) {
                 addTurret(turretMob);
             }
         } catch (SQLException throwables) {
@@ -49,8 +49,11 @@ public class TurretManagerTicker implements Listener {
         Bukkit.getPluginManager().registerEvents(this, VoltskiyaPlugin.get());
     }
 
+    public static OldTurretManagerTicker get() {
+        return instance;
+    }
 
-    public synchronized void addTurret(TurretMob turretMob) {
+    public synchronized void addTurret(OldTurretMob turretMob) {
         final long uniqueId = turretMob.getUniqueId();
         this.turrets.putIfAbsent(uniqueId, turretMob);
         for (EntityLocation entity : turretMob.getTurretEntities()) {
@@ -65,7 +68,7 @@ public class TurretManagerTicker implements Listener {
         if (entity.getScoreboardTags().contains(TURRET_TAG)) {
             @Nullable Long uid = entityToTurret.get(entity.getUniqueId());
             if (uid != null) {
-                @Nullable TurretMob turret = turrets.get(uid);
+                @Nullable OldTurretMob turret = turrets.get(uid);
                 if (turret != null) {
                     turret.damage(event.getDamage());
                 }
@@ -79,20 +82,16 @@ public class TurretManagerTicker implements Listener {
         if (entity.getScoreboardTags().contains(TURRET_TAG)) {
             @Nullable Long uid = entityToTurret.get(entity.getUniqueId());
             if (uid != null) {
-                @Nullable TurretMob turret = turrets.get(uid);
+                @Nullable OldTurretMob turret = turrets.get(uid);
                 if (turret != null) {
-                    TurretGuiManager.get().open(event.getPlayer(), turret);
+                    OldTurretGuiManager.get().open(event.getPlayer(), turret);
                     event.setCancelled(true);
                 }
             }
         }
     }
 
-    public static TurretManagerTicker get() {
-        return instance;
-    }
-
-    public boolean amIGivingTurret(TurretMob turret, Closeness currentCloseness) {
+    public boolean amIGivingTurret(OldTurretMob turret, Closeness currentCloseness) {
         Closeness actualCloseness = determineConcern(turret);
         if (actualCloseness != currentCloseness) {
             closenessToTurrets.get(actualCloseness).giveTurret(turret);
@@ -102,7 +101,7 @@ public class TurretManagerTicker implements Listener {
     }
 
 
-    private Closeness determineConcern(TurretMob turret) {
+    private Closeness determineConcern(OldTurretMob turret) {
         Location turretLocation = turret.getCenter();
         @Nullable Player player = UpdatedPlayerList.getClosestPlayer(turretLocation);
         if (player == null)

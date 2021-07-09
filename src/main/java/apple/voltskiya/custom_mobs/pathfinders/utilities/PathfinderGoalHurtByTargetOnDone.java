@@ -30,7 +30,6 @@ public class PathfinderGoalHurtByTargetOnDone extends PathfinderGoalHurtByTarget
     public void d() {
         if (this.shouldDoOnDoneOnce) {
             this.shouldDoOnDoneOnce = false;
-            System.out.println("done");
             try {
                 for (Runnable done : this.onDoneOnce) {
                     Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), done);

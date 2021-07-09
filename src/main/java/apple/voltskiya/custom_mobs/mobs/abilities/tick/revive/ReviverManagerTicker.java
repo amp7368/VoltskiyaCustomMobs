@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ReviverManagerTicker extends ConfigManager implements RegisteredEntityEater {
-
     public int REVIVE_RITUAL_TIME;
     public double REVIVE_DISTANCE;
     public double REVIVE_CHANCE;
@@ -53,7 +52,7 @@ public class ReviverManagerTicker extends ConfigManager implements RegisteredEnt
     public void eatEntity(Entity reviver) {
         // this is a reviver
         Closeness closeness = determineConcern(reviver);
-        closenessToReviveres.get(closeness).giveReviver(new Reviver(reviver));
+        closenessToReviveres.get(closeness).giveReviver(new Reviver(reviver, REVIVE_DISTANCE));
     }
 
     @Override
@@ -129,9 +128,9 @@ public class ReviverManagerTicker extends ConfigManager implements RegisteredEnt
     }
 
     private enum YmlSettings implements apple.voltskiya.custom_mobs.mobs.YmlSettings {
-        REVIVE_CHANCE("reviveChance", 0.03),
-        REVIVE_DISTANCE("reviveDistance", 15),
-        REVIVE_RITUAL_TIME("reviveRitualTime", 13);
+        REVIVE_CHANCE("reviveChance", 0.125),
+        REVIVE_DISTANCE("reviveDistance", 50),
+        REVIVE_RITUAL_TIME("reviveRitualTime", 20);
 
         private final String path;
         private final Object value;

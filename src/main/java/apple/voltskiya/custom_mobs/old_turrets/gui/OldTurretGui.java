@@ -1,6 +1,6 @@
 package apple.voltskiya.custom_mobs.old_turrets.gui;
 
-import apple.voltskiya.custom_mobs.old_turrets.TurretMob;
+import apple.voltskiya.custom_mobs.old_turrets.OldTurretMob;
 import apple.voltskiya.custom_mobs.sql.DBItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import org.bukkit.Bukkit;
@@ -20,8 +20,8 @@ import java.util.function.BiConsumer;
 
 import static voltskiya.apple.utilities.util.minecraft.InventoryUtils.makeItem;
 
-public class TurretGui implements InventoryHolder {
-    private final TurretMob turret;
+public class OldTurretGui implements InventoryHolder {
+    private final OldTurretMob turret;
     @NotNull Inventory inventory;
     private final Map<Integer, InventoryAction> slotToAction = new HashMap<>() {{
         for (int i : FillInventory.getFiller()) put(i, InventoryAction.DONT_TOUCH);
@@ -44,7 +44,7 @@ public class TurretGui implements InventoryHolder {
         for (int i : FillInventory.getToggleTargetType()) put(i, InventoryAction.TOGGLE_TARGET);
     }};
 
-    public TurretGui(TurretMob turret) {
+    public OldTurretGui(OldTurretMob turret) {
         this.turret = turret;
         this.inventory = Bukkit.createInventory(this, 54);
 
@@ -81,15 +81,15 @@ public class TurretGui implements InventoryHolder {
                     Arrays.asList(String.valueOf((int) Math.ceil(turret.getHealth())), turret.getRepairCost() + " iron to repair")
             ));
         for (int i : FillInventory.getRepair1())
-            inventory.setItem(i, makeItem(Material.IRON_INGOT, 1, "Repair " + TurretMob.HEALTH_PER_REPAIR + " hp",
+            inventory.setItem(i, makeItem(Material.IRON_INGOT, 1, "Repair " + OldTurretMob.HEALTH_PER_REPAIR + " hp",
                     Collections.singletonList("Cost: 1 iron")
             ));
         for (int i : FillInventory.getRepairFull())
-            inventory.setItem(i, makeItem(Material.ANVIL, 1, "Repair " + TurretMob.HEALTH_PER_REPAIR + " hp",
+            inventory.setItem(i, makeItem(Material.ANVIL, 1, "Repair " + OldTurretMob.HEALTH_PER_REPAIR + " hp",
                     Collections.singletonList("Cost: " + turret.getRepairCost() + " iron")
             ));
         for (int i : FillInventory.getToggleTargetType()) {
-            final TurretTarget.TurretTargetType targetType = turret.getTargetType();
+            final OldTurretTarget.TurretTargetType targetType = turret.getTargetType();
             inventory.setItem(i, makeItem(targetType.material(), 1, targetType.display(),
                     targetType.lore()
             ));
@@ -266,9 +266,9 @@ public class TurretGui implements InventoryHolder {
             turretGui.toggleTarget(click);
         });
 
-        private final BiConsumer<InventoryClickEvent, TurretGui> dealWithToPlayer;
+        private final BiConsumer<InventoryClickEvent, OldTurretGui> dealWithToPlayer;
 
-        InventoryAction(BiConsumer<InventoryClickEvent, TurretGui> dealWithToPlayer) {
+        InventoryAction(BiConsumer<InventoryClickEvent, OldTurretGui> dealWithToPlayer) {
             this.dealWithToPlayer = dealWithToPlayer;
         }
     }

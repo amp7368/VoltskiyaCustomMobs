@@ -12,11 +12,13 @@ import java.util.UUID;
 
 class Reviver {
     private final UUID reviver;
+    private final double reviveDistance;
     private final List<UUID> linkedMobs = new ArrayList<>();
     private final Random random = new Random();
 
-    public Reviver(Entity reviver) {
+    public Reviver(Entity reviver, double reviveDistance) {
         this.reviver = reviver.getUniqueId();
+        this.reviveDistance = reviveDistance;
     }
 
     public UUID getUniqueId() {
@@ -51,7 +53,11 @@ class Reviver {
             double zi = random.nextDouble() - .5;
             location.getWorld().spawnParticle(Particle.SMOKE_LARGE, location, 1, xi, yi, zi, 1);
         }
-        location.getWorld().playSound(location, Sound.ITEM_TOTEM_USE, SoundCategory.HOSTILE,10,1.3f);
+        location.getWorld().playSound(location, Sound.ITEM_TOTEM_USE, SoundCategory.HOSTILE, 10, 1.3f);
         mob.remove();
+    }
+
+    public double getReviveDistance() {
+        return reviveDistance;
     }
 }

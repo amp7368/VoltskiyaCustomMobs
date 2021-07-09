@@ -7,11 +7,12 @@ import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 public class DBItemStack {
     public Material type;
     public int count;
-    public final String nbt;
+    public String nbt;
 
     public DBItemStack(Material type, int count, String nbt) {
         this.type = type;
@@ -19,14 +20,16 @@ public class DBItemStack {
         this.nbt = nbt;
     }
 
+    @Nullable
     public ItemStack toItem() {
         try {
+            if (type == null) return null;
             final ItemStack itemStack = CraftItemStack.asBukkitCopy(net.minecraft.world.item.ItemStack.a(MojangsonParser.parse(this.nbt)));
             itemStack.setAmount(count);
             itemStack.setType(type);
             return itemStack;
         } catch (CommandSyntaxException e) {
-            return new ItemStack(Material.AIR);
+            return null;
         }
     }
 
@@ -35,6 +38,7 @@ public class DBItemStack {
     }
 
     public NBTTagCompound getEntityNbt() {
+        if (this.nbt == null) return null;
         try {
             return net.minecraft.world.item.ItemStack.a(MojangsonParser.parse(this.nbt)).getTag();
         } catch (CommandSyntaxException e) {
@@ -43,19 +47,13 @@ public class DBItemStack {
     }
 
     public EntityType toEntityType() {
-        switch (type) {
-            case SPECTRAL_ARROW:
-                return EntityType.SPECTRAL_ARROW;
-            case ARROW:
-            case TIPPED_ARROW:
-                return EntityType.ARROW;
-            case EGG:
-                return EntityType.EGG;
-            case SNOWBALL:
-                return EntityType.SNOWBALL;
-            default:
-                return null;
-        }
+        return switch (type) {
+            case SPECTRAL_ARROW -> EntityType.SPECTRAL_ARROW;
+            case ARROW, TIPPED_ARROW -> EntityType.ARROW;
+            case EGG -> EntityType.EGG;
+            case SNOWBALL -> EntityType.SNOWBALL;
+            default -> null;
+        };
     }
 
     public boolean hasNbt() {

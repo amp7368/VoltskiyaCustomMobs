@@ -154,9 +154,9 @@ public class MobAngeredSoul extends EntitySkeleton implements RegisteredCustomMo
                     if (!handle.isBlocking()) {
                         if (nearby instanceof Player player) {
                             if (player.getGameMode() == GameMode.SURVIVAL)
-                                handle.damageEntity(DecodeDamageSource.OUT_OF_WORLD, 10f);
+                                handle.damageEntity(DecodeDamageSource.MAGIC, 10f);
                         } else {
-                            handle.damageEntity(DecodeDamageSource.OUT_OF_WORLD, 10f);
+                            handle.damageEntity(DecodeDamageSource.MAGIC, 10f);
                         }
                     }
             }

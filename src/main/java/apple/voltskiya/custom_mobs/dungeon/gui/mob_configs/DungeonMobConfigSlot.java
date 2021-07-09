@@ -3,13 +3,13 @@ package apple.voltskiya.custom_mobs.dungeon.gui.mob_configs;
 import apple.voltskiya.custom_mobs.dungeon.gui.DungeonGui;
 import apple.voltskiya.custom_mobs.dungeon.scanner.DungeonMobConfig;
 import apple.voltskiya.custom_mobs.dungeon.scanner.DungeonMobInfo;
-import apple.voltskiya.custom_mobs.gui.InventoryGui;
-import apple.voltskiya.custom_mobs.gui.InventoryGuiPageScrollable;
-import apple.voltskiya.custom_mobs.gui.InventoryGuiSlotGeneric;
-import apple.voltskiya.custom_mobs.gui.InventoryGuiSlotScrollable;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
+import voltskiya.apple.utilities.util.gui.InventoryGui;
+import voltskiya.apple.utilities.util.gui.InventoryGuiPageScrollable;
+import voltskiya.apple.utilities.util.gui.InventoryGuiSlotGeneric;
+import voltskiya.apple.utilities.util.gui.InventoryGuiSlotScrollable;
 import voltskiya.apple.utilities.util.minecraft.InventoryUtils;
 
 public class DungeonMobConfigSlot extends InventoryGuiSlotScrollable {
