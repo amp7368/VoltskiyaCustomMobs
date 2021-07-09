@@ -61,6 +61,8 @@ public class TurretGuiPagePlayerSettings extends InventoryGuiPageSimple {
             turretMob.cycleMode();
         }, InventoryUtils.makeItem(Material.RED_TERRACOTTA, 1, turretMob.getMode().pretty(), null)), 53);
 
+        setSlot(new InventoryGuiSlotGeneric(e -> {
+        }, InventoryUtils.makeItem(Material.GOLDEN_APPLE, 1, String.format("Health, %.1f", turretMob.getHealth()), null)), 8);
     }
 
 

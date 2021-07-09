@@ -5,8 +5,10 @@ import apple.voltskiya.custom_mobs.ticking.HighFrequencyTick;
 import apple.voltskiya.custom_mobs.turrets.mobs.TurretMob;
 import com.google.gson.*;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import java.io.*;
 import java.lang.reflect.Type;
@@ -91,10 +93,15 @@ public class TurretList {
         file.delete();
     }
 
-    public static void damage(double damage, Entity entity) {
+    public static void damage(double damage, Entity entity, EntityDamageByEntityEvent event) {
         for (TurretMob turretMob : turretMobs.values()) {
             if (turretMob.isMe(entity)) {
-                turretMob.damage(damage);
+                if (!entity.getScoreboardTags().contains(TurretMob.TURRET_TAG))
+                    turretMob.damage(damage);
+                event.setCancelled(true);
+                if (event.getDamager() instanceof AbstractArrow arrow) {
+                    arrow.remove();
+                }
                 return;
             }
         }

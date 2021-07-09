@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.UUID;
 
 public class OldTurretMob implements Runnable {
-    public static final String TURRET_TAG = "player.turret";
     private static final int MAX_SIGHT = 50;
     protected static final int MAX_HEALTH = 200;
     public static final double HEALTH_PER_REPAIR = 10;

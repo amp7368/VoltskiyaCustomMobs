@@ -10,8 +10,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 import voltskiya.apple.utilities.util.gui.InventoryGui;
 
-import static apple.voltskiya.custom_mobs.old_turrets.OldTurretMob.TURRET_TAG;
-
 public class TurretMobInfinite extends TurretMob {
     private TurretGuiInfinite turretGui = null;
     private TargetingMode targetingMode;

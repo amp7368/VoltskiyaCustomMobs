@@ -1,6 +1,5 @@
 package apple.voltskiya.custom_mobs.turrets.mobs;
 
-import apple.voltskiya.custom_mobs.old_turrets.OldTurretMob;
 import apple.voltskiya.custom_mobs.sql.DBItemStack;
 import apple.voltskiya.custom_mobs.turrets.TurretList;
 import apple.voltskiya.custom_mobs.turrets.TurretMobSaveable;
@@ -29,6 +28,7 @@ import java.util.*;
 
 public abstract class TurretMob implements Runnable {
     public static final int ARROW_SLOT = 3;
+    public static final String TURRET_TAG = "mob.turret";
     protected static final int MAX_HEALTH = 200;
     protected static final double VELOCITY = 7.0; // velocity of the arrow
     protected static final int MAX_TARGET_RECORDING = 5;
@@ -94,7 +94,7 @@ public abstract class TurretMob implements Runnable {
         this.entitiesUUIDs.add(spawned.getUniqueId());
         this.entitiesLocations.add(new EntityLocation(spawned,
                 -this.center.getX(), -this.center.getY(), -this.center.getZ()));
-        spawned.addScoreboardTag(OldTurretMob.TURRET_TAG);
+        spawned.addScoreboardTag(TURRET_TAG);
     }
 
     public void addBowEntity(Entity spawned) {
@@ -119,6 +119,7 @@ public abstract class TurretMob implements Runnable {
         } else {
             correctDurabilityEntity();
         }
+        updateGui();
     }
 
     private void correctDurabilityEntity() {
@@ -235,10 +236,11 @@ public abstract class TurretMob implements Runnable {
 
         if (distanceToTarget < getMaxSight() && distanceToTarget > getMinSight()) {
             Location spawnLocation = getCenter().clone();
+            Vector facing = this.facing.clone().setY(0);
             spawnLocation.add(facing);
             spawnLocation.add(facing);
             spawnLocation.add(facing);
-            spawnLocation.add(0, 2.5, 0);
+            spawnLocation.add(0, 1.7, 0);
             double v = velocity(distanceToTarget);
             double timeToTarget = distanceToTarget / v * .9;
             Vector movement = lastLocationSize <= 1 ?
@@ -296,6 +298,7 @@ public abstract class TurretMob implements Runnable {
                     arrow.setPierceLevel(getEnchantmentLevel(Enchantment.PIERCING));
                     arrow.addScoreboardTag("no_stick");
                     arrow.addScoreboardTag("no_invincibility_mobs");
+                    arrow.addScoreboardTag(TURRET_TAG);
                 });
             }
         }

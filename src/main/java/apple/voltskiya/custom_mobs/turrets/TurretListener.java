@@ -8,7 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 
-import static apple.voltskiya.custom_mobs.old_turrets.OldTurretMob.TURRET_TAG;
+import static apple.voltskiya.custom_mobs.turrets.mobs.TurretMob.TURRET_TAG;
 
 public class TurretListener implements Listener {
     public TurretListener() {
@@ -27,7 +27,7 @@ public class TurretListener implements Listener {
     public void onDamage(EntityDamageByEntityEvent event) {
         final Entity entity = event.getEntity();
         if (entity.getScoreboardTags().contains(TURRET_TAG)) {
-            TurretList.damage(event.getDamage(), entity);
+            TurretList.damage(event.getDamage(), entity, event);
         }
     }
 }
