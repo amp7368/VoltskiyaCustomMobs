@@ -82,6 +82,15 @@ public class TurretList {
         file.delete();
     }
 
+    public static void damage(double damage, Entity entity) {
+        for (TurretMob turretMob : turretMobs.values()) {
+            if (turretMob.isMe(entity)) {
+                turretMob.damage(damage);
+                return;
+            }
+        }
+    }
+
     public Collection<TurretMob> getAll() {
         return turretMobs.values();
     }

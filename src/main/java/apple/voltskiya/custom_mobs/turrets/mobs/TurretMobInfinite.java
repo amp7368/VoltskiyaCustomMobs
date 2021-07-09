@@ -1,38 +1,38 @@
 package apple.voltskiya.custom_mobs.turrets.mobs;
 
+import apple.voltskiya.custom_mobs.sql.DBItemStack;
 import apple.voltskiya.custom_mobs.turrets.TurretMobSaveable;
 import apple.voltskiya.custom_mobs.turrets.TurretType;
-import apple.voltskiya.custom_mobs.turrets.gui.TurretGuiPlayer;
+import apple.voltskiya.custom_mobs.turrets.gui.TurretGuiInfinite;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 import voltskiya.apple.utilities.util.gui.InventoryGui;
 
-import static apple.voltskiya.custom_mobs.old_turrets.OldTurretMob.TURRET_TAG;
-
-public class TurretMobPlayer extends TurretMob {
-    private TurretGuiPlayer turretGui = null;
+public class TurretMobInfinite extends TurretMob {
+    private TurretGuiInfinite turretGui = null;
     private TargetingMode targetingMode;
 
-    public TurretMobPlayer(Player player) {
-        super(TurretType.PLAYER.getUsername());
+    public TurretMobInfinite(Player player) {
+        super(TurretType.INFINITE.getUsername());
         targetingMode = TargetingMode.ALL;
     }
 
-    public TurretMobPlayer(TurretMobPlayerSaveable turretMobPlayerSaveable) {
-        super(TurretType.PLAYER.getUsername(), turretMobPlayerSaveable);
-        targetingMode = turretMobPlayerSaveable.getTargetingMode();
+    public TurretMobInfinite(TurretMobInfiniteSaveable turretMobInfiniteSaveable) {
+        super(TurretType.INFINITE.getUsername(), turretMobInfiniteSaveable);
+        targetingMode = turretMobInfiniteSaveable.getTargetingMode();
     }
 
     @Override
     public TurretMobSaveable toSaveable() {
-        return new TurretMobPlayerSaveable(this);
+        return new TurretMobInfiniteSaveable(this);
     }
 
     @Override
     protected InventoryGui getTurretGui(Player player) {
         if (turretGui == null)
-            turretGui = new TurretGuiPlayer(this);
+            turretGui = new TurretGuiInfinite(this);
         return turretGui;
     }
 
@@ -42,6 +42,17 @@ public class TurretMobPlayer extends TurretMob {
             if (turretGui.getInventory().getViewers().isEmpty()) turretGui = null;
             else turretGui.update();
         }
+    }
+
+    @Override
+    protected DBItemStack removeArrow() {
+        for (DBItemStack arrow : arrows) {
+            final int count = arrow.count;
+            if (arrow.type != null && arrow.type != Material.AIR && count > 0) {
+                return arrow;
+            }
+        }
+        return null;
     }
 
     public TargetingMode getMode() {
@@ -55,7 +66,6 @@ public class TurretMobPlayer extends TurretMob {
 
     @Override
     protected boolean shouldTarget(@Nullable Entity entity) {
-        if (entity != null && entity.getScoreboardTags().contains(TURRET_TAG)) return false;
         if (entity instanceof Player) {
             return targetingMode.targetsPlayers() && super.shouldTarget(entity);
         } else {
@@ -63,22 +73,23 @@ public class TurretMobPlayer extends TurretMob {
         }
     }
 
-    public static class TurretMobPlayerSaveable extends TurretMobSaveable {
+
+    public static class TurretMobInfiniteSaveable extends TurretMobSaveable {
         private String uuid;
         private TargetingMode targetingMode;
 
-        public TurretMobPlayerSaveable(TurretMobPlayer turretMobPlayer) {
-            super(turretMobPlayer);
-            this.uuid = turretMobPlayer.getUUID();
-            this.targetingMode = turretMobPlayer.getMode();
+        public TurretMobInfiniteSaveable(TurretMobInfinite turretMobInfinite) {
+            super(turretMobInfinite);
+            this.uuid = turretMobInfinite.getUUID();
+            this.targetingMode = turretMobInfinite.getMode();
         }
 
-        public TurretMobPlayerSaveable() {
+        public TurretMobInfiniteSaveable() {
         }
 
         @Override
         public TurretMob build() {
-            return new TurretMobPlayer(this);
+            return new TurretMobInfinite(this);
         }
 
         @Override

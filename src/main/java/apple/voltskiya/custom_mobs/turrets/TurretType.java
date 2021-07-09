@@ -1,6 +1,7 @@
 package apple.voltskiya.custom_mobs.turrets;
 
 import apple.voltskiya.custom_mobs.turrets.mobs.TurretMob;
+import apple.voltskiya.custom_mobs.turrets.mobs.TurretMobInfinite;
 import apple.voltskiya.custom_mobs.turrets.mobs.TurretMobPlayer;
 import co.aikar.commands.BukkitCommandCompletionContext;
 import org.bukkit.entity.Player;
@@ -11,14 +12,15 @@ import java.util.List;
 import java.util.function.Function;
 
 public enum TurretType {
-    PLAYER("player", TurretMobPlayer::new, TurretMobPlayer.TurretMobPlayerSaveable.class);
+    PLAYER("player", TurretMobPlayer::new, TurretMobPlayer.TurretMobPlayerSaveable.class),
+    INFINITE("infinite", TurretMobInfinite::new, TurretMobInfinite.TurretMobInfiniteSaveable.class);
 //    GM("gm", TurretGM::new)
 
     private final String username;
-    private final Function<Player, TurretMobPlayer> builder;
+    private final Function<Player, TurretMob> builder;
     private final Class<? extends TurretMobSaveable> type;
 
-    TurretType(String username, Function<Player, TurretMobPlayer> builder, Class<? extends TurretMobSaveable> type) {
+    TurretType(String username, Function<Player, TurretMob> builder, Class<? extends TurretMobSaveable> type) {
         this.username = username;
         this.builder = builder;
         this.type = type;

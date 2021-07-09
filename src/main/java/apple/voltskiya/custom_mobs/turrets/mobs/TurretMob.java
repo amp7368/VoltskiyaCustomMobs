@@ -116,8 +116,9 @@ public abstract class TurretMob implements Runnable {
         this.health -= damage;
         if (health <= 0) {
             remove();
+        } else {
+            correctDurabilityEntity();
         }
-        correctDurabilityEntity();
     }
 
     private void correctDurabilityEntity() {
@@ -137,7 +138,7 @@ public abstract class TurretMob implements Runnable {
         }
     }
 
-    private void correctRefilledEntity() {
+    protected void correctRefilledEntity() {
         if (this.refilledEntity instanceof ArmorStand) {
             final EntityEquipment equipment = ((ArmorStand) refilledEntity).getEquipment();
             if (equipment != null) {
@@ -336,7 +337,7 @@ public abstract class TurretMob implements Runnable {
     protected DBItemStack removeArrow() {
         for (DBItemStack arrow : arrows) {
             final int count = arrow.count;
-            if (arrow.type != Material.AIR && count > 0) {
+            if (arrow.type != null && arrow.type != Material.AIR && count > 0) {
                 if (count <= 1) {
                     arrow.type = Material.AIR;
                 } else {
@@ -543,11 +544,15 @@ public abstract class TurretMob implements Runnable {
     }
 
     public boolean interact(Player player, Entity entity) {
-        if (entitiesUUIDs.contains(entity.getUniqueId())) {
+        if (isMe(entity)) {
             player.openInventory(getTurretGui(player).getInventory());
             return true;
         }
         return false;
+    }
+
+    public boolean isMe(Entity entity) {
+        return entitiesUUIDs.contains(entity.getUniqueId());
     }
 
     protected abstract InventoryGui getTurretGui(Player player);
