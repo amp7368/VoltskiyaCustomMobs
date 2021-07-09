@@ -254,15 +254,14 @@ public class OldTurretMob implements Runnable {
     }
 
     private boolean shouldTarget(@Nullable Entity entity) {
-        if (entity instanceof LivingEntity) {
-            LivingEntity alive = (LivingEntity) entity;
+        if (entity instanceof LivingEntity alive) {
             double distance = DistanceUtils.distance(entity.getLocation(), center);
             if (!alive.isDead() && alive.hasLineOfSight(durabilityEntityReal) && distance < MAX_SIGHT) {
                 final Vector newFacing = entity.getLocation().subtract(center).toVector().setY(0).normalize();
                 if (entity instanceof Player) {
                     return this.targetType.isTargetsPlayers() && ((Player) entity).getGameMode() == GameMode.SURVIVAL && rotate(newFacing);
                 } else {
-                    return EntityUtils.isHostile(alive)&& this.targetType.isTargetsMobs() && rotate(newFacing);
+                    return EntityUtils.isHostile(alive) && this.targetType.isTargetsMobs() && rotate(newFacing);
                 }
             }
         }

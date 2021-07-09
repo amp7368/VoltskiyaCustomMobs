@@ -21,17 +21,18 @@ public class TurretGuipageInfiniteSettings extends InventoryGuiPageSimple {
     public TurretGuipageInfiniteSettings(TurretMobInfinite turretMob, InventoryHolder holder) {
         super(holder);
         this.turretMob = turretMob;
-        setSlots();
         setSlot(new InventoryGuiSlotGeneric(e -> {
                 }, InventoryUtils.makeItem(Material.BLACK_STAINED_GLASS_PANE, 1, "Bow slot", null)),
                 30, 31, 32, 39, 41, 48, 49, 50);
     }
 
-    private void setSlots() {
+    protected void setSlots() {
         Material bowMaterial = turretMob.getBowMaterial();
         if (bowMaterial != null) {
-            setSlot(new InventoryGuiSlotGeneric(e ->
-                    turretMob.setBow(null), InventoryUtils.makeItem(bowMaterial, 1, (String) null, null)), 40);
+            setSlot(new InventoryGuiSlotGeneric(e -> {
+                turretMob.setBow(null);
+                update();
+            }, InventoryUtils.makeItem(bowMaterial, 1, (String) null, null)), 40);
         } else {
             setSlot(InventoryGuiSlotDoNothing.get(), 40);
         }
@@ -41,7 +42,10 @@ public class TurretGuipageInfiniteSettings extends InventoryGuiPageSimple {
             int finalI = i;
             ItemStack item = arrows.get(i).toItem();
             if (item != null) {
-                setSlot(new InventoryGuiSlotGeneric(e -> turretMob.removeArrowAt(finalI), item), i);
+                setSlot(new InventoryGuiSlotGeneric(e -> {
+                    turretMob.removeArrowAt(finalI);
+                    update();
+                }, item), i);
             } else {
                 setSlot(InventoryGuiSlotDoNothing.get(), i);
             }

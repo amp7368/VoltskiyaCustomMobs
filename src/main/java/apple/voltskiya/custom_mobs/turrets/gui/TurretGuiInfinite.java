@@ -6,6 +6,7 @@ import voltskiya.apple.utilities.util.gui.InventoryGui;
 public class TurretGuiInfinite extends InventoryGui {
     public TurretGuiInfinite(TurretMobInfinite turretMobInfinite) {
         addPage(new TurretGuipageInfiniteSettings(turretMobInfinite, this));
+        update();
     }
 
     public void update() {

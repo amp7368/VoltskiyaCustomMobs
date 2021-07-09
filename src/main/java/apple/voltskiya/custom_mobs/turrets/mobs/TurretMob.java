@@ -295,7 +295,7 @@ public abstract class TurretMob implements Runnable {
                     arrow.setDamage(getDamage());
                     arrow.setKnockbackStrength(getKnockback());
                     arrow.setFireTicks(getFlame());
-                    arrow.setPierceLevel(getEnchantmentLevel(Enchantment.PIERCING));
+                    arrow.setPierceLevel(getPierceLevel());
                     arrow.addScoreboardTag("no_stick");
                     arrow.addScoreboardTag("no_invincibility_mobs");
                     arrow.addScoreboardTag(TURRET_TAG);
@@ -303,6 +303,7 @@ public abstract class TurretMob implements Runnable {
             }
         }
     }
+
 
     protected void tickBowDurability() {
         int unbreaking = getEnchantmentLevel(Enchantment.DURABILITY);
@@ -317,15 +318,19 @@ public abstract class TurretMob implements Runnable {
 
     }
 
-    private int getFlame() {
+    public int getPierceLevel() {
+        return getEnchantmentLevel(Enchantment.PIERCING);
+    }
+
+    public int getFlame() {
         return EnchantmentUtils.flame(getEnchantmentLevel(Enchantment.ARROW_FIRE));
     }
 
-    private int getKnockback() {
+    public int getKnockback() {
         return EnchantmentUtils.knockback(getEnchantmentLevel(Enchantment.ARROW_KNOCKBACK));
     }
 
-    private double getDamage() {
+    public double getDamage() {
         return EnchantmentUtils.damage(BASE_TURRET_DAMAGE, getEnchantmentLevel(Enchantment.ARROW_DAMAGE));
     }
 

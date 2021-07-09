@@ -4,6 +4,7 @@ import apple.voltskiya.custom_mobs.sql.DBItemStack;
 import apple.voltskiya.custom_mobs.turrets.TurretMobSaveable;
 import apple.voltskiya.custom_mobs.turrets.TurretType;
 import apple.voltskiya.custom_mobs.turrets.gui.TurretGuiInfinite;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -14,6 +15,16 @@ public class TurretMobInfinite extends TurretMob {
     private TurretGuiInfinite turretGui = null;
     private TargetingMode targetingMode;
 
+    public TurretMobInfinite(Player player, String typeId) {
+        super(typeId);
+        targetingMode = TargetingMode.ALL;
+    }
+
+    public TurretMobInfinite(TurretMobInfiniteSaveable turretMobInfiniteSaveable, String typeId) {
+        super(typeId, turretMobInfiniteSaveable);
+        targetingMode = turretMobInfiniteSaveable.getTargetingMode();
+    }
+
     public TurretMobInfinite(Player player) {
         super(TurretType.INFINITE.getUsername());
         targetingMode = TargetingMode.ALL;
@@ -23,6 +34,7 @@ public class TurretMobInfinite extends TurretMob {
         super(TurretType.INFINITE.getUsername(), turretMobInfiniteSaveable);
         targetingMode = turretMobInfiniteSaveable.getTargetingMode();
     }
+
 
     @Override
     public TurretMobSaveable toSaveable() {
@@ -67,8 +79,8 @@ public class TurretMobInfinite extends TurretMob {
     @Override
     protected boolean shouldTarget(@Nullable Entity entity) {
         if (entity != null && entity.getScoreboardTags().contains(TURRET_TAG)) return false;
-        if (entity instanceof Player) {
-            return targetingMode.targetsPlayers() && super.shouldTarget(entity);
+        if (entity instanceof Player player) {
+            return player.getGameMode() == GameMode.SURVIVAL && targetingMode.targetsPlayers() && super.shouldTarget(entity);
         } else {
             return targetingMode.targetsMobs() && super.shouldTarget(entity);
         }

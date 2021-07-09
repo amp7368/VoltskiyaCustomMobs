@@ -3,6 +3,7 @@ package apple.voltskiya.custom_mobs.turrets.mobs;
 import apple.voltskiya.custom_mobs.turrets.TurretMobSaveable;
 import apple.voltskiya.custom_mobs.turrets.TurretType;
 import apple.voltskiya.custom_mobs.turrets.gui.TurretGuiPlayer;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
@@ -54,8 +55,8 @@ public class TurretMobPlayer extends TurretMob {
     @Override
     protected boolean shouldTarget(@Nullable Entity entity) {
         if (entity != null && entity.getScoreboardTags().contains(TURRET_TAG)) return false;
-        if (entity instanceof Player) {
-            return targetingMode.targetsPlayers() && super.shouldTarget(entity);
+        if (entity instanceof Player player) {
+            return player.getGameMode() == GameMode.SURVIVAL && targetingMode.targetsPlayers() && super.shouldTarget(entity);
         } else {
             return targetingMode.targetsMobs() && super.shouldTarget(entity);
         }
