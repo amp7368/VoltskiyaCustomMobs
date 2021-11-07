@@ -1,19 +1,21 @@
 package apple.voltskiya.custom_mobs.mobs;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import apple.voltskiya.custom_mobs.mobs.misc.MobHealthPack;
 import apple.voltskiya.custom_mobs.mobs.modified.illager.evoker.MobIllagerEvokerExaminer;
 import apple.voltskiya.custom_mobs.mobs.modified.illager.illusioner.MobIllagerIllusionerExaminer;
 import apple.voltskiya.custom_mobs.mobs.modified.illager.pillager.MobIllagerPillagerExaminer;
 import apple.voltskiya.custom_mobs.mobs.modified.illager.vindicator.MobIllagerVindicatorExaminer;
 import apple.voltskiya.custom_mobs.mobs.modified.iron_golem.MobIronGolemExaminer;
-import apple.voltskiya.custom_mobs.mobs.nether.angered_soul.MobAngeredSoul;
-import apple.voltskiya.custom_mobs.mobs.nether.eye_plant.MobEyePlant;
-import apple.voltskiya.custom_mobs.mobs.nether.gremlin.MobWarpedGremlin;
-import apple.voltskiya.custom_mobs.mobs.nether.parasite.MobInfected;
-import apple.voltskiya.custom_mobs.mobs.nether.parasite.MobParasite;
-import apple.voltskiya.custom_mobs.mobs.nether.revenant.MobRevenant;
-import apple.voltskiya.custom_mobs.mobs.testing.aledar.MobCart;
+import apple.voltskiya.custom_mobs.mobs.nms.misc.MobHealthPack;
+import apple.voltskiya.custom_mobs.mobs.nms.misc.MobTestSkeleton;
+import apple.voltskiya.custom_mobs.mobs.nms.nether.angered_soul.MobAngeredSoul;
+import apple.voltskiya.custom_mobs.mobs.nms.nether.eye_plant.MobEyePlant;
+import apple.voltskiya.custom_mobs.mobs.nms.nether.gremlin.MobWarpedGremlin;
+import apple.voltskiya.custom_mobs.mobs.nms.nether.parasite.MobInfected;
+import apple.voltskiya.custom_mobs.mobs.nms.nether.parasite.MobParasite;
+import apple.voltskiya.custom_mobs.mobs.nms.nether.revenant.MobRevenant;
+import apple.voltskiya.custom_mobs.mobs.nms.overworld.apc33.MobAPC33;
+import apple.voltskiya.custom_mobs.trash.aledar.MobCart;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -37,10 +39,12 @@ public class SpawnCustomMobListener implements Listener {
         spawnEaters.put(MobIllagerPillagerExaminer.REGISTERED_NAME, MobIllagerPillagerExaminer::spawnEat);
         spawnEaters.put(MobIllagerEvokerExaminer.REGISTERED_NAME, MobIllagerEvokerExaminer::spawnEat);
         spawnEaters.put(MobIllagerVindicatorExaminer.REGISTERED_NAME, MobIllagerVindicatorExaminer::spawnEat);
-        spawnEaters.put(MobInfected.PARASITE_INFECTED_TAG,MobInfected::spawnEat);
-        spawnEaters.put(MobRevenant.REGISTERED_NAME,MobRevenant::spawnEat);
+        spawnEaters.put(MobInfected.PARASITE_INFECTED_TAG, MobInfected::spawnEat);
+        spawnEaters.put(MobRevenant.REGISTERED_NAME, MobRevenant::spawnEat);
         spawnEaters.put(MobAngeredSoul.REGISTERED_NAME, MobAngeredSoul::spawnEat);
         spawnEaters.put(MobHealthPack.REGISTERED_NAME, MobHealthPack::spawnEat);
+        spawnEaters.put(MobTestSkeleton.REGISTERED_NAME, MobTestSkeleton::spawnEat);
+        spawnEaters.put(MobAPC33.REGISTERED_NAME, MobAPC33::spawnEat);
     }
 
     @EventHandler(ignoreCancelled = true)

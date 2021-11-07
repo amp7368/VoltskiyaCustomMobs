@@ -1,6 +1,5 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.tick.warper;
 
-import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import apple.voltskiya.custom_mobs.mobs.ConfigManager;
 import apple.voltskiya.custom_mobs.mobs.RegisteredEntityEater;
 import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
@@ -13,6 +12,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
+import plugin.util.plugin.plugin.util.plugin.PluginManagedModule;
 import voltskiya.apple.utilities.util.DistanceUtils;
 
 import java.io.IOException;
@@ -66,7 +66,7 @@ public class WarperManagerTicker extends ConfigManager implements RegisteredEnti
     }
 
     @Override
-    protected VoltskiyaModule getPlugin() {
+    protected PluginManagedModule getPlugin() {
         return MobTickPlugin.get();
     }
 
@@ -82,7 +82,7 @@ public class WarperManagerTicker extends ConfigManager implements RegisteredEnti
     private WarperManagerTicker.Closeness determineConcern(Entity warper) {
         Location warperLocation = warper.getLocation();
 
-        @Nullable Player player = UpdatedPlayerList.getClosestPlayer(warperLocation);
+        @Nullable Player player = UpdatedPlayerList.getClosestPlayerPlayer(warperLocation);
         if (player == null)
             return WarperManagerTicker.Closeness.lowest();
         else

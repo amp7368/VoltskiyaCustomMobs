@@ -1,9 +1,9 @@
 package apple.voltskiya.custom_mobs.sql;
 
-import apple.voltskiya.custom_mobs.old_turrets.OldTurretBuilder;
-import apple.voltskiya.custom_mobs.old_turrets.OldTurretMob;
-import apple.voltskiya.custom_mobs.old_turrets.OldTurretType;
-import apple.voltskiya.custom_mobs.old_turrets.gui.OldTurretTarget;
+import apple.voltskiya.custom_mobs.trash.old_turrets.OldTurretBuilder;
+import apple.voltskiya.custom_mobs.trash.old_turrets.OldTurretMob;
+import apple.voltskiya.custom_mobs.trash.old_turrets.OldTurretType;
+import apple.voltskiya.custom_mobs.trash.old_turrets.gui.OldTurretTarget;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;

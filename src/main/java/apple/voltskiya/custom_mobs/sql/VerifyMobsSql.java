@@ -1,7 +1,7 @@
 package apple.voltskiya.custom_mobs.sql;
 
-import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
+import plugin.util.plugin.plugin.util.plugin.PluginManagedModule;
 
 import java.io.File;
 import java.sql.Connection;
@@ -29,17 +29,17 @@ public class VerifyMobsSql {
     // do any setup and make sure the static part of this class is completed
     static {
         synchronized (VerifyMobsSql.syncDB) {
-            VoltskiyaModule voltskiyaModule = MobTickPlugin.get();
+            PluginManagedModule PluginManagedModule = MobTickPlugin.get();
             try {
                 Class.forName("org.sqlite.JDBC");
                 // never close this because we're always using it
-                VerifyMobsSql.database = DriverManager.getConnection("jdbc:sqlite:" + voltskiyaModule.getDataFolder() + File.separator + MobNames.DATABASE_NAME);
+                VerifyMobsSql.database = DriverManager.getConnection("jdbc:sqlite:" + PluginManagedModule.getDataFolder() + File.separator + MobNames.DATABASE_NAME);
                 VerifyMobsSql.database.setAutoCommit(true);
                 VerifyMobsSql.verifyTables();
-                voltskiyaModule.log(Level.INFO, "The sql database for mobs is connected");
+                PluginManagedModule.log(Level.INFO, "The sql database for mobs is connected");
             } catch (ClassNotFoundException | SQLException e) {
                 e.printStackTrace();
-                voltskiyaModule.log(Level.SEVERE, "The sql database for mobs is not properly set up");
+                PluginManagedModule.log(Level.SEVERE, "The sql database for mobs is not properly set up");
                 VerifyMobsSql.database = null;
             }
         }

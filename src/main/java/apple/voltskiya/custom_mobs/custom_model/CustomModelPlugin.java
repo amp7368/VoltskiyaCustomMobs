@@ -1,6 +1,5 @@
 package apple.voltskiya.custom_mobs.custom_model;
 
-import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.nbt.MojangsonParser;
 import net.minecraft.nbt.NBTTagCompound;
@@ -13,13 +12,14 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import plugin.util.plugin.plugin.util.plugin.PluginManagedModule;
 import voltskiya.apple.utilities.util.VectorUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-public class CustomModelPlugin extends VoltskiyaModule {
+public class CustomModelPlugin extends PluginManagedModule {
     private static final String YML_FILENAME = "model.yml";
     private static CustomModelPlugin instance;
     private static final Set<String> normalData = new HashSet<>() {{

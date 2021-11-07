@@ -1,6 +1,5 @@
 package apple.voltskiya.custom_mobs.leaps.config;
 
-import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import apple.voltskiya.custom_mobs.leaps.LeapPlugin;
 import apple.voltskiya.custom_mobs.leaps.misc.LeapSpecificMisc;
 import apple.voltskiya.custom_mobs.mobs.ConfigManager;
@@ -12,6 +11,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftMob;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import plugin.util.plugin.plugin.util.plugin.PluginManagedModule;
 
 import java.io.File;
 import java.io.IOException;
@@ -85,7 +85,7 @@ public class LeapConfigManager extends ConfigManager {
     }
 
     @Override
-    protected VoltskiyaModule getPlugin() {
+    protected PluginManagedModule getPlugin() {
         return LeapPlugin.get();
     }
 

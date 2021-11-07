@@ -1,7 +1,6 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.delay_pathfinding;
 
 import apple.nms.decoding.entity.DecodeEntity;
-import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.mobs.ConfigManager;
 import apple.voltskiya.custom_mobs.mobs.RegisteredEntityEater;
@@ -19,6 +18,7 @@ import net.minecraft.world.entity.ai.goal.target.PathfinderGoalNearestAttackable
 import net.minecraft.world.entity.player.EntityHuman;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
+import plugin.util.plugin.plugin.util.plugin.PluginManagedModule;
 
 import java.util.Collection;
 
@@ -43,7 +43,7 @@ public class DelayPathfinding extends ConfigManager implements RegisteredEntityE
      * @return the module associated with this config
      */
     @Override
-    protected VoltskiyaModule getPlugin() {
+    protected PluginManagedModule getPlugin() {
         return MobTickPlugin.get();
     }
 

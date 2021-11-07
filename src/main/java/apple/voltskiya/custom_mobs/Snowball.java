@@ -11,14 +11,21 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
+import plugin.util.plugin.plugin.util.plugin.PluginManagedModule;
 
 import java.util.Random;
 
-public class Snowball implements Listener {
+public class Snowball extends PluginManagedModule implements Listener {
     private static final String SNOWBALL = "snowball";
 
-    public Snowball() {
+    @Override
+    public void enable() {
         Bukkit.getPluginManager().registerEvents(this, VoltskiyaPlugin.get());
+    }
+
+    @Override
+    public String getName() {
+        return "Snowball";
     }
 
     @EventHandler

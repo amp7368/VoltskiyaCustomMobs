@@ -1,6 +1,5 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.tick.charger;
 
-import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import apple.voltskiya.custom_mobs.mobs.ConfigManager;
 import apple.voltskiya.custom_mobs.mobs.RegisteredEntityEater;
 import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
@@ -13,6 +12,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
+import plugin.util.plugin.plugin.util.plugin.PluginManagedModule;
 import voltskiya.apple.utilities.util.DistanceUtils;
 
 import java.io.IOException;
@@ -95,7 +95,7 @@ public class ChargerManagerTicker extends ConfigManager implements RegisteredEnt
     }
 
     @Override
-    protected VoltskiyaModule getPlugin() {
+    protected PluginManagedModule getPlugin() {
         return MobTickPlugin.get();
     }
 
@@ -112,7 +112,7 @@ public class ChargerManagerTicker extends ConfigManager implements RegisteredEnt
     private Closeness determineConcern(Mob charger) {
         Location chargerLocation = charger.getLocation();
 
-        @Nullable Player player = UpdatedPlayerList.getClosestPlayer(chargerLocation);
+        @Nullable Player player = UpdatedPlayerList.getClosestPlayerPlayer(chargerLocation);
         if (player == null)
             return Closeness.lowest();
         else

@@ -1,12 +1,12 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.fire_fangs;
 
 import apple.nms.decoding.entity.DecodeEntity;
-import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import apple.voltskiya.custom_mobs.mobs.ConfigManager;
 import apple.voltskiya.custom_mobs.mobs.RegisteredEntityEater;
 import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
 import apple.voltskiya.custom_mobs.pathfinders.spell.PathfinderGoalShootSpell;
 import net.minecraft.world.entity.EntityInsentient;
+import plugin.util.plugin.plugin.util.plugin.PluginManagedModule;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -76,7 +76,7 @@ public class FireFangsManager extends ConfigManager implements RegisteredEntityE
      * @return the module associated with this config
      */
     @Override
-    protected VoltskiyaModule getPlugin() {
+    protected PluginManagedModule getPlugin() {
         return MobTickPlugin.get();
     }
 

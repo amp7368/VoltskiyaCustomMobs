@@ -1,8 +1,8 @@
 package apple.voltskiya.custom_mobs.sql;
 
-import apple.voltskiya.custom_mobs.VoltskiyaModule;
-import apple.voltskiya.custom_mobs.old_turrets.OldTurretPlugin;
+import apple.voltskiya.custom_mobs.trash.old_turrets.OldTurretPlugin;
 import org.bukkit.Material;
+import plugin.util.plugin.plugin.util.plugin.PluginManagedModule;
 
 import java.io.File;
 import java.sql.Connection;
@@ -123,16 +123,16 @@ public class VerifyTurretsSql {
     //do any setup and make sure the static part of this class is completed
     static {
         synchronized (syncDB) {
-            VoltskiyaModule voltskiyaModule = OldTurretPlugin.get();
+            PluginManagedModule PluginManagedModule = OldTurretPlugin.get();
             try {
                 Class.forName("org.sqlite.JDBC");
                 // never close this because we're always using it
-                database = DriverManager.getConnection("jdbc:sqlite:" + voltskiyaModule.getDataFolder() + File.separator + DBNames.TurretNames.DATABASE_NAME);
+                database = DriverManager.getConnection("jdbc:sqlite:" + PluginManagedModule.getDataFolder() + File.separator + DBNames.TurretNames.DATABASE_NAME);
                 verifyTables();
-                voltskiyaModule.log(Level.INFO, "The sql database for mobs is connected");
+                PluginManagedModule.log(Level.INFO, "The sql database for mobs is connected");
             } catch (ClassNotFoundException | SQLException e) {
                 e.printStackTrace();
-                voltskiyaModule.log(Level.SEVERE, "The sql database for mobs is not properly set up");
+                PluginManagedModule.log(Level.SEVERE, "The sql database for mobs is not properly set up");
                 database = null;
             }
         }

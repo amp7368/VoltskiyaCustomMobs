@@ -21,6 +21,7 @@ public class ChargerIndividualTicker implements Tickable {
     private boolean isTicking = false;
     private long myTickerUid = -1;
     private boolean isCharging = false;
+    private final Random random = new Random();
 
 
     public ChargerIndividualTicker(TickGiverable giver, ChargerManagerTicker.Closeness closeness) {
@@ -58,7 +59,7 @@ public class ChargerIndividualTicker implements Tickable {
     private synchronized boolean tickCharger(Charger charger) {
         if (!isCharging) return false;
         if (charger.isChargeable()) {
-            if (new Random().nextDouble() < charger.getType().getChargeChance() * giver.getTickSpeed()) {
+            if (random.nextDouble() < charger.getType().getChargeChance() * giver.getTickSpeed()) {
                 Location chargerLocation = charger.getEntity().getLocation();
                 Player playerToChargeAt = null;
                 double chargeError = Double.MAX_VALUE;
@@ -74,8 +75,8 @@ public class ChargerIndividualTicker implements Tickable {
                         if (changeMagnitude > charger.getType().getTooCloseToCharge()) {
                             // multiply the chargerFacing times the magnitude
                             // to see if the charge is reasonable
-                            @NotNull Vector chargerFacing = chargerLocation.getDirection();
-                            chargerFacing.multiply(changeMagnitude);
+                            @NotNull Vector chargerFacing = change.toVector().normalize();
+                            chargerFacing.multiply(changeMagnitude + 6);
                             Location result = chargerLocation.clone().add(chargerFacing);
                             double error = DistanceUtils.magnitude(result.subtract(playerLocation));
                             if (error < chargeError && error < charger.getType().getMarginOfError()) {
@@ -87,7 +88,7 @@ public class ChargerIndividualTicker implements Tickable {
                 }
 
                 if (playerToChargeAt != null) {
-                    Player player = UpdatedPlayerList.getClosestPlayer(playerToChargeAt.getLocation());
+                    Player player = UpdatedPlayerList.getClosestPlayerPlayer(playerToChargeAt.getLocation());
                     if (player != null && DistanceUtils.distance(player.getLocation(), playerToChargeAt.getLocation()) < 3) {
                         // say we charged
                         charger.chargeNow();

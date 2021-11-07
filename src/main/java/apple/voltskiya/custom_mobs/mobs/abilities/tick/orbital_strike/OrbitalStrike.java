@@ -166,7 +166,7 @@ public class OrbitalStrike {
     private void targetModify() {
         final Location oldLocation = new Location(targetWorld, xt, yt, zt);
         previousLocations.add(oldLocation);
-        Player closest = UpdatedPlayerList.getClosestPlayer(oldLocation);
+        Player closest = UpdatedPlayerList.getClosestPlayerPlayer(oldLocation);
         if (closest != null) {
             final Location closestLocation = closest.getLocation();
             double dx = closestLocation.getX() - xt;

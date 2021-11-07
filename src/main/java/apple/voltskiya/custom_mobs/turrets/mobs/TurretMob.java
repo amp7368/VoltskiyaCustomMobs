@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftArrow;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
@@ -200,7 +201,7 @@ public abstract class TurretMob implements Runnable {
     }
 
     public void run() {
-        if (this.durabilityEntity.isDead()) {
+        if (((CraftEntity) this.durabilityEntity).getHandle().getRemovalReason() == net.minecraft.world.entity.Entity.RemovalReason.a) {
             remove();
             return;
         }
@@ -227,6 +228,7 @@ public abstract class TurretMob implements Runnable {
     private void shoot(LivingEntity target) {
         if (arrowsEmpty() || noBow()) return;
         Location goal = target.getEyeLocation();
+        goal.add(0, -target.getHeight() / 2, 0);
         int lastLocationSize = this.targetLastLocation.size();
         while (lastLocationSize > MAX_TARGET_RECORDING) {
             this.targetLastLocation.remove(0);

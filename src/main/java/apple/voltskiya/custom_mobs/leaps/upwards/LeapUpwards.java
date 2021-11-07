@@ -1,7 +1,6 @@
 package apple.voltskiya.custom_mobs.leaps.upwards;
 
 import apple.nms.decoding.entity.DecodeEntity;
-import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.leaps.LeapEater;
 import apple.voltskiya.custom_mobs.leaps.LeapPlugin;
@@ -14,6 +13,7 @@ import net.minecraft.world.entity.EntityInsentient;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
+import plugin.util.plugin.plugin.util.plugin.PluginManagedModule;
 
 
 public class LeapUpwards extends ConfigManager implements LeapEater {
@@ -64,7 +64,7 @@ public class LeapUpwards extends ConfigManager implements LeapEater {
      * @return the module associated with this config
      */
     @Override
-    protected VoltskiyaModule getPlugin() {
+    protected PluginManagedModule getPlugin() {
         return LeapPlugin.get();
     }
 }

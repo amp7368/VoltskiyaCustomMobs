@@ -1,11 +1,16 @@
 package apple.voltskiya.custom_mobs.mobs.abilities;
 
-import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.micro_misles.MicroMissileManager;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.lost_soul.BlemishDeathListener;
+import plugin.util.plugin.plugin.util.plugin.PluginManagedModule;
+import voltskiya.apple.configs.plugin.manage.PluginManagedModuleConfig;
+import voltskiya.apple.configs.plugin.saveable.ConfigSaveableBuilder;
+
+import java.util.Collection;
+import java.util.Collections;
 
 
-public class MobTickPlugin extends VoltskiyaModule {
+public class MobTickPlugin extends PluginManagedModule implements PluginManagedModuleConfig {
     private static MobTickPlugin instance;
 
 
@@ -16,8 +21,8 @@ public class MobTickPlugin extends VoltskiyaModule {
 
     @Override
     public void enable() {
-        new MobDeathListener();
-        new MobSpawnListener();
+        new MobTickDeathListener();
+        new MobTickSpawnListener();
         new MicroMissileManager();
         new BlemishDeathListener();
     }
@@ -29,5 +34,10 @@ public class MobTickPlugin extends VoltskiyaModule {
     @Override
     public String getName() {
         return "MobTick";
+    }
+
+    @Override
+    public Collection<ConfigSaveableBuilder<?, ?, ?>> getConfigsToRegister() {
+        return Collections.emptyList();
     }
 }

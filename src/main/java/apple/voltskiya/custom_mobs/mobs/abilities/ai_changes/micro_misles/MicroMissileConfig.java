@@ -1,8 +1,8 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.micro_misles;
 
-import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import apple.voltskiya.custom_mobs.mobs.ConfigManager;
 import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
+import plugin.util.plugin.plugin.util.plugin.PluginManagedModule;
 
 import java.io.IOException;
 
@@ -53,7 +53,7 @@ public class MicroMissileConfig extends ConfigManager {
      * @return the module associated with this configthe module associated with this config
      */
     @Override
-    protected VoltskiyaModule getPlugin() {
+    protected PluginManagedModule getPlugin() {
         return MobTickPlugin.get();
     }
 

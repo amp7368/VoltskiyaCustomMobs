@@ -87,7 +87,7 @@ public class SmallOrbitalStrikeIndividualTicker implements Tickable {
         Location strikerLocation = striker.getLocation();
         @Nullable LivingEntity target = ((Mob) striker).getTarget();
         if (target == null) {
-            Player closest = UpdatedPlayerList.getClosestPlayer(striker.getLocation());
+            Player closest = UpdatedPlayerList.getClosestPlayerPlayer(striker.getLocation());
             if (closest != null) {
                 Location pLocation = closest.getLocation();
                 double d = DistanceUtils.distance(pLocation, strikerLocation);

@@ -1,10 +1,10 @@
 package apple.voltskiya.custom_mobs.mobs;
 
-import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import plugin.util.plugin.plugin.util.plugin.PluginManagedModule;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,7 +40,7 @@ public abstract class ConfigManager {
     /**
      * @return the module associated with this config
      */
-    protected abstract VoltskiyaModule getPlugin();
+    protected abstract PluginManagedModule getPlugin();
 
     /**
      * sets the value of a field if that field doesn't already have a value

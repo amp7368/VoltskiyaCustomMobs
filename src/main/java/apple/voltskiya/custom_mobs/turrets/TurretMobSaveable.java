@@ -5,15 +5,13 @@ import apple.voltskiya.custom_mobs.turrets.mobs.TurretMob;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
 import voltskiya.apple.utilities.util.EntityLocation;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public abstract class TurretMobSaveable {
     private DBLocation center;
@@ -25,7 +23,7 @@ public abstract class TurretMobSaveable {
     private List<DBItemStack> arrows;
     private Vector facing;
     private List<EntityLocation> entitiesLocations;
-    private HashMap<Enchantment, Integer> bowEnchantments;
+    private HashMap<String, Integer> bowEnchantments;
     private Material bowMaterial;
     private int bowDurability;
     private String typeId;
@@ -47,7 +45,10 @@ public abstract class TurretMobSaveable {
         this.facing = turretMob.getFacing();
         this.center = new DBLocation(turretMob.getCenter());
         this.entitiesLocations = turretMob.getEntitiesLocations();
-        this.bowEnchantments = turretMob.getEnchantmentLevels();
+        this.bowEnchantments = new HashMap<>();
+        for (Map.Entry<Enchantment, Integer> enchantment : turretMob.getEnchantmentLevels().entrySet()) {
+            this.bowEnchantments.put(enchantment.getKey().getKey().getKey(), enchantment.getValue());
+        }
         this.bowMaterial = turretMob.getBowMaterial();
         this.bowDurability = turretMob.getBowDurability();
         this.typeId = turretMob.getTypeId();
@@ -90,7 +91,11 @@ public abstract class TurretMobSaveable {
     }
 
     public HashMap<Enchantment, Integer> getBowEnchantments() {
-        return bowEnchantments;
+        HashMap<Enchantment, Integer> enchantments = new HashMap<>();
+        for (Map.Entry<String, Integer> entry : bowEnchantments.entrySet()) {
+            enchantments.put(Enchantment.getByKey(NamespacedKey.fromString(entry.getKey())), entry.getValue());
+        }
+        return enchantments;
     }
 
     public Material getBowMaterial() {

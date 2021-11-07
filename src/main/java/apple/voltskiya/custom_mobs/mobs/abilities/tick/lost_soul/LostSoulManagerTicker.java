@@ -1,6 +1,5 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.tick.lost_soul;
 
-import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import apple.voltskiya.custom_mobs.mobs.ConfigManager;
 import apple.voltskiya.custom_mobs.mobs.RegisteredEntityEater;
 import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
@@ -14,6 +13,7 @@ import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Vex;
 import org.jetbrains.annotations.Nullable;
+import plugin.util.plugin.plugin.util.plugin.PluginManagedModule;
 import voltskiya.apple.utilities.util.DistanceUtils;
 
 import java.io.IOException;
@@ -65,7 +65,7 @@ public class LostSoulManagerTicker extends ConfigManager implements RegisteredEn
     }
 
     @Override
-    protected VoltskiyaModule getPlugin() {
+    protected PluginManagedModule getPlugin() {
         return MobTickPlugin.get();
     }
 
@@ -82,7 +82,7 @@ public class LostSoulManagerTicker extends ConfigManager implements RegisteredEn
     private Closeness determineConcern(Vex vex) {
         Location vexLocation = vex.getLocation();
 
-        @Nullable Player player = UpdatedPlayerList.getClosestPlayer(vexLocation);
+        @Nullable Player player = UpdatedPlayerList.getClosestPlayerPlayer(vexLocation);
         if (player == null)
             return Closeness.lowest();
         else

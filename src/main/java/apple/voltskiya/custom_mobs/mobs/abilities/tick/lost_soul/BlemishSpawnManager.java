@@ -1,6 +1,5 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.tick.lost_soul;
 
-import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.mobs.ConfigManager;
 import apple.voltskiya.custom_mobs.mobs.RegisteredEntityEater;
@@ -15,6 +14,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import plugin.util.plugin.plugin.util.plugin.PluginManagedModule;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -35,7 +35,7 @@ public class BlemishSpawnManager extends ConfigManager implements RegisteredEnti
     @Override
     @EventHandler
     public synchronized void eatAndRegisterEvent(CreatureSpawnEvent event) {
-        if (event.getEntity().getScoreboardTags().contains(NAME))
+        if (event.getEntity().getScoreboardTags().contains(getName()))
             RegisteredEntityEater.super.eatAndRegisterEvent(event);
     }
 
@@ -57,7 +57,7 @@ public class BlemishSpawnManager extends ConfigManager implements RegisteredEnti
 
     @Override
     public synchronized String getName() {
-        return "blemish";
+        return NAME;
     }
 
     @Override
@@ -73,7 +73,7 @@ public class BlemishSpawnManager extends ConfigManager implements RegisteredEnti
     }
 
     @Override
-    protected VoltskiyaModule getPlugin() {
+    protected PluginManagedModule getPlugin() {
         return MobTickPlugin.get();
     }
 

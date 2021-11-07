@@ -1,7 +1,7 @@
 package apple.voltskiya.custom_mobs.pathfinders.patrol;
 
-import apple.voltskiya.custom_mobs.dungeon.patrols.Patrol;
-import apple.voltskiya.custom_mobs.dungeon.patrols.PatrolStep;
+import apple.voltskiya.custom_mobs.trash.dungeon.patrols.Patrol;
+import apple.voltskiya.custom_mobs.trash.dungeon.patrols.PatrolStep;
 import net.minecraft.world.entity.EntityInsentient;
 import net.minecraft.world.entity.ai.goal.PathfinderGoal;
 import net.minecraft.world.entity.ai.goal.PathfinderGoalSelector;

@@ -1,6 +1,6 @@
 package apple.voltskiya.custom_mobs.custom_model;
 
-import apple.voltskiya.custom_mobs.mobs.utils.NbtConstants;
+import apple.voltskiya.custom_mobs.mobs.nms.utils.NbtConstants;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagFloat;

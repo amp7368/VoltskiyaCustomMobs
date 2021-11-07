@@ -1,12 +1,12 @@
 package apple.voltskiya.custom_mobs.mobs;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import apple.voltskiya.custom_mobs.mobs.nether.eye_plant.MobEyePlant;
-import apple.voltskiya.custom_mobs.mobs.nether.gremlin.MobWarpedGremlin;
-import apple.voltskiya.custom_mobs.mobs.nether.parasite.MobParasite;
-import apple.voltskiya.custom_mobs.mobs.parts.NmsModelConfig;
-import apple.voltskiya.custom_mobs.mobs.testing.aledar.MobAledar;
-import apple.voltskiya.custom_mobs.mobs.testing.aledar.MobCart;
+import apple.voltskiya.custom_mobs.mobs.nms.nether.eye_plant.MobEyePlant;
+import apple.voltskiya.custom_mobs.mobs.nms.nether.gremlin.MobWarpedGremlin;
+import apple.voltskiya.custom_mobs.mobs.nms.nether.parasite.MobParasite;
+import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelConfig;
+import apple.voltskiya.custom_mobs.trash.aledar.MobAledar;
+import apple.voltskiya.custom_mobs.trash.aledar.MobCart;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.BukkitCommandCompletionContext;
 import co.aikar.commands.PaperCommandManager;

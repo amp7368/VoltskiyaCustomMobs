@@ -1,7 +1,6 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.shoot_ball;
 
 import apple.nms.decoding.entity.DecodeEntity;
-import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import apple.voltskiya.custom_mobs.mobs.ConfigManager;
 import apple.voltskiya.custom_mobs.mobs.RegisteredEntityEater;
 import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
@@ -11,6 +10,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
 import org.bukkit.entity.Mob;
+import plugin.util.plugin.plugin.util.plugin.PluginManagedModule;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -70,7 +70,7 @@ public class ShootBallManager extends ConfigManager implements RegisteredEntityE
      * @return the module associated with this config
      */
     @Override
-    protected VoltskiyaModule getPlugin() {
+    protected PluginManagedModule getPlugin() {
         return MobTickPlugin.get();
     }
 

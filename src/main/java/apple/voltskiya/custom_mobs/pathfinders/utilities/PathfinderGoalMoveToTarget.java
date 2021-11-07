@@ -20,8 +20,8 @@ public class PathfinderGoalMoveToTarget extends PathfinderGoal {
         this.me = me;
         this.target = target;
         this.giveUpTick = DecodeEntity.getTicksLived(me) + giveUpTick;
-        this.callBack = callBack;
         this.speed = speed;
+        this.callBack = callBack;
     }
 
     /**
@@ -29,7 +29,7 @@ public class PathfinderGoalMoveToTarget extends PathfinderGoal {
      */
     @Override
     public boolean a() {
-        return DecodeEntity.getTicksLived(me) < giveUpTick && DistanceUtils.distance(this.me.getBukkitEntity().getLocation(), this.target) >= 0.5;
+        return DecodeEntity.getTicksLived(me) < giveUpTick && DistanceUtils.distance(this.me.getBukkitEntity().getLocation(), this.target) >= 1.25;
     }
 
     /**

@@ -12,6 +12,7 @@ import apple.voltskiya.custom_mobs.pathfinders.utilities.PathfinderGoalHurtByTar
 import com.mojang.datafixers.types.Type;
 import net.minecraft.core.IRegistry;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityInsentient;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.ai.goal.PathfinderGoalSelector;
@@ -98,6 +99,15 @@ public class MobIronGolemExaminer extends EntityIronGolem implements RegisteredC
         this.setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
     }
 
+    @Override
+    public void die(DamageSource damagesource) {
+        try {
+            super.die(damagesource);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("hmmmm");
+        }
+    }
 
     @Override
     public void load(NBTTagCompound nbttagcompound) {

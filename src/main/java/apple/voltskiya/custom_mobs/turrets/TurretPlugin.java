@@ -1,8 +1,8 @@
 package apple.voltskiya.custom_mobs.turrets;
 
-import apple.voltskiya.custom_mobs.VoltskiyaModule;
+import plugin.util.plugin.plugin.util.plugin.PluginManagedModule;
 
-public class TurretPlugin extends VoltskiyaModule {
+public class TurretPlugin extends PluginManagedModule {
     private static TurretPlugin instance;
 
     public static TurretPlugin get() {

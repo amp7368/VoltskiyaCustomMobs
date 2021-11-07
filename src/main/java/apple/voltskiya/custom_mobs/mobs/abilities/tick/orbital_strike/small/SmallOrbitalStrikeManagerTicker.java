@@ -1,6 +1,5 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.tick.orbital_strike.small;
 
-import apple.voltskiya.custom_mobs.VoltskiyaModule;
 import apple.voltskiya.custom_mobs.mobs.ConfigManager;
 import apple.voltskiya.custom_mobs.mobs.RegisteredEntityEater;
 import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
@@ -13,6 +12,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
+import plugin.util.plugin.plugin.util.plugin.PluginManagedModule;
 import voltskiya.apple.utilities.util.DistanceUtils;
 
 import java.io.IOException;
@@ -87,7 +87,7 @@ public class SmallOrbitalStrikeManagerTicker extends ConfigManager implements Re
     }
 
     @Override
-    protected VoltskiyaModule getPlugin() {
+    protected PluginManagedModule getPlugin() {
         return MobTickPlugin.get();
     }
 
@@ -104,7 +104,7 @@ public class SmallOrbitalStrikeManagerTicker extends ConfigManager implements Re
         Location strikerLocation = striker.getLocation();
 
 
-        @Nullable Player player = UpdatedPlayerList.getClosestPlayer(strikerLocation);
+        @Nullable Player player = UpdatedPlayerList.getClosestPlayerPlayer(strikerLocation);
         if (player == null)
             return Closeness.lowest();
         else

@@ -18,8 +18,11 @@ repositories {
     flatDir {
         dirs 'lib'
     }
+    maven { url "https://repo.dmulloy2.net/repository/public/" }
+    maven {
+        url 'https://jitpack.io'
+    }
 }
-
 configurations.all {
     resolutionStrategy.cacheDynamicVersionsFor 1, 'seconds'
 }
@@ -28,21 +31,25 @@ configurations.all {
 }
 
 dependencies {
-    implementation('apple.nms.decoding:DecodingNms:1.1.BUILD-SNAPSHOT')
-    implementation('apple.voltskiya.utilities:VoltskiyaUtilities:1.1.BUILD-SNAPSHOT')
-    implementation 'org.jetbrains:annotations:20.1.0'
-    compileOnly 'io.papermc.paper:paper-api:1.17-R0.1-SNAPSHOT'
-    compileOnly 'org.spigotmc:spigot:1.17-R0.1-SNAPSHOT'
-    // The full Spigot server with no shadowing. Requires mavenLocal.
-    compileOnly 'co.aikar:acf-paper:0.5.0-SNAPSHOT'
-    compileOnly 'net.luckperms:api:5.0'
-    compileOnly 'net.luckperms:api:5.0'
-    compileOnly "org.xerial:sqlite-jdbc:3.32.3.2"
-    implementation 'org.reflections:reflections:0.9.11'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
-}
+    compileOnly 'apple.voltskiya.utilities:VoltskiyaUtilities:1.1.BUILD-SNAPSHOT'
+    compileOnly 'apple.voltskiya.configs:VoltskiyaConfigs:1.0.BUILD-SNAPSHOT'
+    compileOnly 'apple.nms.decoding:DecodingNms:1.1.BUILD-SNAPSHOT'
+    compileOnly 'apple.utilities:AppleUtilities:v1.1'
+    compileOnly 'com.github.amp7368.YmlConfigManager:ycm-jar:Ycm-v1.1'
+    compileOnly 'com.github.amp7368.PluginManagerCreator:pmc-jar:Pmc-v1.5'
 
+    compileOnly 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'
+    compileOnly 'org.spigotmc:spigot:1.17.1-R0.1-SNAPSHOT'
+
+    compileOnly group: "com.comphenix.protocol", name: "ProtocolLib", version: "4.7.0"
+
+    compileOnly 'co.aikar:acf-paper:0.5.0-SNAPSHOT'
+    compileOnly 'net.luckperms:api:5.3'
+    compileOnly 'org.xerial:sqlite-jdbc:3.36.0.2'
+    implementation 'org.jetbrains:annotations:22.0.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+}
 jar {
     destinationDirectory = new File('C:\\Users\\Aaron\\Desktop\\server\\plugins\\')
 }

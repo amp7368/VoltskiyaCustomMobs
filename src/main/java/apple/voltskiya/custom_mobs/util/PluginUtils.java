@@ -1,8 +1,8 @@
 package apple.voltskiya.custom_mobs.util;
 
-import apple.voltskiya.custom_mobs.VoltskiyaModule;
+import plugin.util.plugin.plugin.util.plugin.PluginManagedModule;
 
-public class PluginUtils extends VoltskiyaModule {
+public class PluginUtils extends PluginManagedModule {
     private static PluginUtils instance;
 
     public static PluginUtils get() {
