@@ -29,6 +29,6 @@ public class LeapPlugin extends PluginManagedModule {
 
     @Override
     public String getName() {
-        return "Leaping";
+        return "leaping";
     }
 }

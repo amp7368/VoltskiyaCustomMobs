@@ -23,6 +23,6 @@ public class TurretPlugin extends PluginManagedModule {
 
     @Override
     public String getName() {
-        return "Turrets";
+        return "turrets";
     }
 }

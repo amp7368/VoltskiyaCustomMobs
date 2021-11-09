@@ -30,7 +30,7 @@ import java.util.Map;
 public class MobTickSpawnListener implements Listener {
     private static final Map<String, RegisteredEntityEater> spawnEater = new HashMap<>();
     private static final Map<String, RegisteredEntityEater> spawnModifier = new HashMap<>();
-    private static final Map<String, MobEntityEater> spawnEaterVariants = new HashMap<String, MobEntityEater>();
+    private static final Map<String, MobEntityEater<?>> spawnEaterVariants = new HashMap<>();
 
     public MobTickSpawnListener() {
         Bukkit.getPluginManager().registerEvents(this, VoltskiyaPlugin.get());
@@ -39,13 +39,14 @@ public class MobTickSpawnListener implements Listener {
                     new LostSoulManagerTicker(),
                     new BlemishSpawnManager(),
                     new LargeOrbitalStrikeManagerTicker(),
-                    new SmallOrbitalStrikeManagerTicker(),
                     new WarperManagerTicker(),
                     new ChargerManagerTicker()
             );
             for (RegisteredEntityEater eater : entityEaters) {
                 spawnEater.put(eater.getName(), eater);
             }
+            spawnEater.put("orbital_striker_small", new SmallOrbitalStrikeManagerTicker());
+            spawnEater.put("orbital_striker_large", new LargeOrbitalStrikeManagerTicker());
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassCastException e) {

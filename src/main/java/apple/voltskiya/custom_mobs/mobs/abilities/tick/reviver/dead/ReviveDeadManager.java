@@ -7,6 +7,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import voltskiya.apple.utilities.util.DistanceUtils;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class ReviveDeadManager implements DeathEater {
@@ -27,8 +28,25 @@ public class ReviveDeadManager implements DeathEater {
                 }
             }
         }
-        System.out.println(closest);
         return closest;
+    }
+
+    public static List<DeadRecordedMob> removeMobsInRadius(int deadTooLong, Location location, double distance) {
+        List<DeadRecordedMob> mobs = new ArrayList<>();
+        synchronized (deadMobs) {
+            deadMobs.removeIf(DeadRecordedMob::isDeadTooLong);
+            for (Iterator<DeadRecordedMob> iterator = deadMobs.iterator(); iterator.hasNext(); ) {
+                DeadRecordedMob mob = iterator.next();
+                if (mob.isCooldownUp() && !mob.isDeadTooLong(deadTooLong)) {
+                    double d = DistanceUtils.distance(location, mob.getLocation());
+                    if (d < distance) {
+                        mobs.add(mob);
+                        iterator.remove();
+                    }
+                }
+            }
+        }
+        return mobs;
     }
 
     public static void addMob(DeadRecordedMob mob) {

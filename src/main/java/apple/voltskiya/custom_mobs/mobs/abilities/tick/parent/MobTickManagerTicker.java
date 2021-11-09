@@ -112,6 +112,7 @@ public abstract class MobTickManagerTicker<Config extends MobConfig>
                 for (Iterator<MobToTick<?>> iterator = mobsToTick.values().iterator(); iterator.hasNext(); ) {
                     MobToTick<?> mobToTick = iterator.next();
                     if (mobToTick.shouldRemove()) {
+                        mobToTick.killIfNotDead();
                         iterator.remove();
                         continue;
                     }

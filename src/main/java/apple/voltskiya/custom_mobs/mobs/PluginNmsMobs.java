@@ -62,7 +62,7 @@ public class PluginNmsMobs extends PluginManagedModule {
 
     @Override
     public String getName() {
-        return "Mobs";
+        return "mobs";
     }
 
     public static PluginNmsMobs get() {

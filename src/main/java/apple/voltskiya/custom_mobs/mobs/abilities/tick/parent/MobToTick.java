@@ -1,5 +1,6 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.tick.parent;
 
+import apple.nms.decoding.entity.DecodeEntity;
 import net.minecraft.world.entity.EntityInsentient;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -42,12 +43,12 @@ public abstract class MobToTick<Config extends MobConfig> {
         return bukkitEntity.getLocation();
     }
 
-    public World getWorld() {
-        return getLocation().getWorld();
+    public int getTicksLived() {
+        return bukkitEntity.getTicksLived();
     }
 
-    public void removeTicking() {
-        this.isDead = true;
+    public World getWorld() {
+        return getLocation().getWorld();
     }
 
     public boolean isNotDoingAction() {
@@ -56,6 +57,21 @@ public abstract class MobToTick<Config extends MobConfig> {
 
     public boolean isDoingAction() {
         return bukkitEntity.getScoreboardTags().contains(TagConstants.isDoingAbility);
+    }
+
+    public void setIsDoingAction(boolean isDoingAction) {
+        if (isDoingAction)
+            TagConstants.addIsDoingAbility(bukkitEntity);
+        else
+            TagConstants.removeIsDoingAbility(bukkitEntity);
+    }
+
+    public boolean wasHit(int inLast) {
+        EntityInsentient mob = getEntityInsentient();
+        int hurt = DecodeEntity.getHurtTimestamp(mob);
+        int ticksLived = DecodeEntity.getTicksLived(mob);
+
+        return hurt != 0 && hurt + inLast >= ticksLived && getBukkitMob().getLastDamage() != 0;
     }
 
     public boolean shouldRemove() {
@@ -67,4 +83,13 @@ public abstract class MobToTick<Config extends MobConfig> {
             tick(tickSpeed);
         }
     }
+
+    public void killIfNotDead() {
+        if (!this.isDead) {
+            this.isDead = true;
+            kill();
+        }
+    }
+
+    protected abstract void kill();
 }

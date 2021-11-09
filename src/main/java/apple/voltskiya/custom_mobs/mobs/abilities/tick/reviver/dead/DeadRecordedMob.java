@@ -12,7 +12,7 @@ public class DeadRecordedMob {
     private final Location location;
     private final EntityType entityType;
     private final long diedAtTime;
-    private long cooldownIsUpAt = System.currentTimeMillis() + 5000;
+    private long cooldownIsUpAt = System.currentTimeMillis() + 1000;
 
     public DeadRecordedMob(LivingEntity entity) {
         final net.minecraft.world.entity.Entity original = ((CraftEntity) entity).getHandle();

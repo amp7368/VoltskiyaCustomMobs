@@ -6,23 +6,15 @@ import apple.voltskiya.custom_mobs.mobs.abilities.tick.reviver.config.ReviverCon
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.reviver.dead.DeadRecordedMob;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.reviver.dead.ReviveDeadManager;
 import apple.voltskiya.custom_mobs.pathfinders.utilities.PathfinderGoalMoveToTarget;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.entity.EntityInsentient;
 import org.bukkit.*;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
-import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.loot.LootTables;
 import org.bukkit.util.Vector;
 import voltskiya.apple.utilities.util.DistanceUtils;
 import voltskiya.apple.utilities.util.constants.TagConstants;
 
 public class MobReviverBasic extends MobReviver<ReviverConfigBasic> {
-    private static final long TIME_TO_RISE = 50;
-    private static final double PARTICLE_RADIUS = .5;
 
     public MobReviverBasic(Entity reviver, ReviverConfigBasic config) {
         super(reviver, config);
@@ -106,70 +98,6 @@ public class MobReviverBasic extends MobReviver<ReviverConfigBasic> {
         } else {
             reviveMe.resetCooldown(config.deadCooldown);
             quitRevive();
-        }
-    }
-
-    private void doReviveSummon(DeadRecordedMob reviveMe) {
-        Location reviveMeLocation = reviveMe.getLocation();
-        reviveMeLocation.getWorld().spawnEntity(reviveMeLocation, reviveMe.getEntityType(), CreatureSpawnEvent.SpawnReason.CUSTOM,
-                newMob -> dealWithSummonedMob(reviveMe, newMob)
-        );
-    }
-
-    private void dealWithSummonedMob(DeadRecordedMob reviveMe, Entity newMob) {
-        Location reviveMeLocation = reviveMe.getLocation();
-        NBTTagCompound nbt = reviveMe.getNbt();
-        addLinkedMob(newMob);
-        final net.minecraft.world.entity.Entity newMobHandle = ((CraftEntity) newMob).getHandle();
-        nbt.remove("UUID");
-        nbt.remove("DeathTime");
-        newMobHandle.load(nbt);
-        LivingEntity newMobLiving = (LivingEntity) newMob;
-        double health = newMobLiving.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
-        newMobLiving.setHealth(health);
-        if (newMob.getScoreboardTags().contains("was_revived_1")) {
-            newMob.addScoreboardTag("was_revived_2");
-        } else {
-            newMob.addScoreboardTag("was_revived_1");
-        }
-        newMobLiving.setAI(false);
-        newMob.setInvulnerable(true);
-        reviveMeLocation.add(0, -3, 0);
-        reviveMeLocation.setPitch(-55);
-        newMob.teleport(reviveMeLocation);
-        double interval = 3d / TIME_TO_RISE;
-        for (int time = 0; time < TIME_TO_RISE; time++) {
-            if (time % 3 == 0)
-                Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
-                    getLocation().getWorld().playSound(getLocation(), Sound.BLOCK_GRAVEL_BREAK, 6, 0.75f);
-                }, time);
-            Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
-                Location newLocation = newMob.getLocation();
-                particles(newLocation);
-                newLocation.add(0, interval, 0);
-                newMob.teleport(newLocation);
-            }, time);
-        }
-        Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
-            newMobLiving.setAI(true);
-            newMob.setInvulnerable(false);
-            ((Mob) newMob).setLootTable(LootTables.EMPTY.getLootTable());
-            reviveMe.remove();
-        }, TIME_TO_RISE);
-    }
-
-
-    private void particles(Location location) {
-        double xi = location.getX();
-        double yi = location.getY();
-        double zi = location.getZ();
-        for (int i = 0; i < 10; i++) {
-            double theta = random.random().nextDouble() * 360;
-            double radius = random.random().nextDouble() * PARTICLE_RADIUS;
-            double x = Math.cos(Math.toRadians(theta)) * radius;
-            double z = Math.sin(Math.toRadians(theta)) * radius;
-            double y = random.random().nextDouble() * 2;
-            location.getWorld().spawnParticle(Particle.SPELL_WITCH, xi + x, yi + y, zi + z, 1);
         }
     }
 }

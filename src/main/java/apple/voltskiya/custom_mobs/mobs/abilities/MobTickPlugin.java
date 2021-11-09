@@ -5,12 +5,14 @@ import apple.voltskiya.custom_mobs.mobs.abilities.tick.lost_soul.BlemishDeathLis
 import plugin.util.plugin.plugin.util.plugin.PluginManagedModule;
 import voltskiya.apple.configs.plugin.manage.PluginManagedModuleConfig;
 import voltskiya.apple.configs.plugin.saveable.ConfigSaveableBuilder;
+import voltskiya.apple.utilities.util.action.PluginManagedRepeatingAction;
 
 import java.util.Collection;
 import java.util.Collections;
 
 
-public class MobTickPlugin extends PluginManagedModule implements PluginManagedModuleConfig {
+public class MobTickPlugin extends PluginManagedModule
+        implements PluginManagedModuleConfig, PluginManagedRepeatingAction {
     private static MobTickPlugin instance;
 
 
@@ -33,7 +35,7 @@ public class MobTickPlugin extends PluginManagedModule implements PluginManagedM
 
     @Override
     public String getName() {
-        return "MobTick";
+        return "mobtick";
     }
 
     @Override

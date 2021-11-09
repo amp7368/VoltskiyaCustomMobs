@@ -13,7 +13,7 @@ public class ReviverConfigBasic extends ReviverConfig {
     @YcmField
     public int deadCooldown = 1000 * 5;
     @YcmField
-    public int deadTooLong = 1000 * 60;
+    public int deadTooLong = 1000 * 60 * 10;
 
     @Override
     public String getTag() {
