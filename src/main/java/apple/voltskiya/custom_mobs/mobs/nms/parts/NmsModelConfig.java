@@ -1,5 +1,6 @@
 package apple.voltskiya.custom_mobs.mobs.nms.parts;
 
+import apple.utilities.util.FileFormatting;
 import apple.voltskiya.custom_mobs.custom_model.CustomModel;
 import apple.voltskiya.custom_mobs.custom_model.CustomModelPlugin;
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
@@ -20,10 +21,6 @@ public class NmsModelConfig {
     private final NmsModelEntityConfig mainConfig;
     private final List<NmsModelEntityConfig> partsConfig;
 
-    static {
-        if (!MODEL_FOLDER.exists()) MODEL_FOLDER.mkdirs();
-    }
-
     public NmsModelConfig(NmsModelEntityConfig main, ArrayList<NmsModelEntityConfig> partList) {
         this.mainConfig = main;
         this.partsConfig = partList;
@@ -32,7 +29,7 @@ public class NmsModelConfig {
     // initialize the parts
     public static void initialize() {
         for (ModelConfigName name : ModelConfigName.values()) {
-            NmsModelConfig model = registerModel(MODEL_FOLDER, name.getFile());
+            NmsModelConfig model = registerModel(name.getFile());
             if (model != null) {
                 ALL_PARTS.put(name, model);
             }
@@ -40,10 +37,10 @@ public class NmsModelConfig {
     }
 
     @Nullable
-    private static NmsModelConfig registerModel(File folder, String name) {
-        @Nullable CustomModel model = CustomModelPlugin.get().loadSchematic(new File(folder, name + ".yml"));
+    private static NmsModelConfig registerModel(File file) {
+        @Nullable CustomModel model = CustomModelPlugin.get().loadSchematic(file);
         if (model == null) {
-            PluginNmsMobs.get().log(Level.WARNING, name + " has no schematic");
+            PluginNmsMobs.get().log(Level.WARNING, file.getPath() + " has no schematic");
             return null;
         }
         final ArrayList<NmsModelEntityConfig> partList = new ArrayList<>();
@@ -55,7 +52,7 @@ public class NmsModelConfig {
             } else partList.add(piece);
         }
         if (main == null) {
-            PluginNmsMobs.get().log(Level.WARNING, name + " has an invalid schematic");
+            PluginNmsMobs.get().log(Level.WARNING, file.getPath() + " has an invalid schematic");
             return null;
         } else {
             partList.trimToSize();
@@ -65,11 +62,6 @@ public class NmsModelConfig {
 
     public static NmsModelConfig parts(ModelConfigName name) {
         return ALL_PARTS.get(name);
-    }
-
-    @Nullable
-    public static NmsModelConfig parts(String name) {
-        return registerModel(MODEL_FOLDER, name);
     }
 
     public NmsModelEntityConfig mainPart() {
@@ -88,16 +80,33 @@ public class NmsModelConfig {
         EYE_PLANT("eye_plant"),
         MISC_MODEL("misc_model"),
         PARASITE("nether_parasite"),
-        APC33("apc_33");
+        APC33_MOB("apc33_mob", "apc33"),
+        APC33_TREADS("apc33_treads", "apc33"),
+        APC33_GUN("apc33_gun", "apc33"),
+        APC33_CANNON("apc33_cannon", "apc33");
 
         private final String fileName;
+        private final String[] folder;
 
-        ModelConfigName(String fileName) {
+        ModelConfigName(String fileName, String... folder) {
             this.fileName = fileName;
+            this.folder = folder;
         }
 
-        public @NotNull String getFile() {
+        public @NotNull String getName() {
             return this.fileName;
+        }
+
+        public File getFile() {
+            return new File(getFolder(), FileFormatting.extensionYml(fileName));
+        }
+
+        public File getFolder() {
+            return FileFormatting.fileWithChildren(NmsModelConfig.MODEL_FOLDER, folder);
+        }
+
+        public String getTag() {
+            return getName();
         }
     }
 }

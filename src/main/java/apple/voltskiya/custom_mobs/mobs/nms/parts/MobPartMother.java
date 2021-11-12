@@ -1,5 +1,7 @@
 package apple.voltskiya.custom_mobs.mobs.nms.parts;
 
+import apple.voltskiya.custom_mobs.mobs.nms.parts.child.MobPartChild;
+import apple.voltskiya.custom_mobs.mobs.nms.parts.child.MobParts;
 import net.minecraft.world.entity.Entity;
 import org.bukkit.Location;
 import voltskiya.apple.utilities.util.EntityLocation;
@@ -33,7 +35,7 @@ public class MobPartMother {
                 selfModel.getEntity().facingY,
                 selfModel.getEntity().facingZ
         ); // for simpler rotations
-        MobPartMother motherMe = new MobPartMother(motherLocation, mainEntity, modelConfig.getFile());
+        MobPartMother motherMe = new MobPartMother(motherLocation, mainEntity, modelConfig.getTag());
         final NmsModelConfig model = NmsModelConfig.parts(modelConfig);
         for (NmsModelEntityConfig part : model.others()) {
             children.add(MobParts.spawnMobPart(motherMe, part));

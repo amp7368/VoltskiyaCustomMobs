@@ -6,8 +6,9 @@ import apple.nms.decoding.entity.DecodeEnumCreatureType;
 import apple.nms.decoding.iregistry.DecodeEntityTypes;
 import apple.nms.decoding.iregistry.DecodeIRegistry;
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
-import apple.voltskiya.custom_mobs.mobs.RegisteredCustomMob;
 import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.holder.NmsMobRegister;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.register.RegisteredCustomMob;
 import apple.voltskiya.custom_mobs.pathfinders.PathfinderGoalBowShootNoBow;
 import com.mojang.datafixers.types.Type;
 import net.minecraft.core.IRegistry;
@@ -35,7 +36,7 @@ public class MobRevenant extends EntitySkeleton implements RegisteredCustomMob {
     private AttributeMapBase attributeMap = null;
 
     public static void initialize() {
-        Map<? super Object, Type<?>> types = PluginNmsMobs.getMinecraftTypes();
+        Map<? super Object, Type<?>> types = NmsMobRegister.getMinecraftTypes();
         final Type<?> oldType = types.get("minecraft:skeleton");
         types.put(registeredNameId(), oldType);
 

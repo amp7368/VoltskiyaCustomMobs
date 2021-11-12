@@ -1,6 +1,6 @@
 package apple.voltskiya.custom_mobs.mobs.delay_pathfinding.patrol;
 
-import apple.voltskiya.custom_mobs.mobs.RegisteredEntityEater;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.register.RegisteredEntityEater;
 import net.minecraft.world.entity.EntityInsentient;
 
 public class PatrolManager implements RegisteredEntityEater {

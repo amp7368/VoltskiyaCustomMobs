@@ -1,8 +1,8 @@
 package apple.voltskiya.custom_mobs.mobs.delay_pathfinding;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import apple.voltskiya.custom_mobs.mobs.RegisteredEntityEater;
 import apple.voltskiya.custom_mobs.mobs.delay_pathfinding.patrol.PatrolManager;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.register.RegisteredEntityEater;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;

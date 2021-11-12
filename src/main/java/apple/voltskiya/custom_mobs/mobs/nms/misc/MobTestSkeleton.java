@@ -3,9 +3,9 @@ package apple.voltskiya.custom_mobs.mobs.nms.misc;
 import apple.nms.decoding.entity.DecodeEnumCreatureType;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
-import apple.voltskiya.custom_mobs.mobs.RegisteredCustomMob;
 import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
-import com.mojang.datafixers.types.Type;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.holder.NmsMobRegister;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.register.RegisteredCustomMob;
 import com.mojang.datafixers.types.constant.EmptyPartPassthrough;
 import net.minecraft.core.IRegistry;
 import net.minecraft.nbt.NBTTagCompound;
@@ -32,7 +32,6 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.util.Map;
 import java.util.logging.Level;
 
 public class MobTestSkeleton extends EntitySkeleton implements RegisteredCustomMob {
@@ -78,21 +77,20 @@ public class MobTestSkeleton extends EntitySkeleton implements RegisteredCustomM
     }
 
     public static void initialize() {
-        Map<? super Object, Type<?>> types = PluginNmsMobs.getMinecraftTypes();
-        types.put(registeredNameId(), new EmptyPartPassthrough());
+        // register the  datafixer
+        NmsMobRegister.getMinecraftTypes().put(registeredNameId(), new EmptyPartPassthrough());
 
         // build it
         EntityTypes.Builder<MobTestSkeleton> entitytypesBuilder = EntityTypes.Builder.a(MobTestSkeleton::new, DecodeEnumCreatureType.MONSTER.encode());
         entityTypes = IRegistry.a(IRegistry.Y, getRegisteredMinecraftKey(), entitytypesBuilder.a(registeredNameId()));
         System.out.println(entityTypes);
-
         // log it
         PluginNmsMobs.get().log(Level.INFO, "registered " + getRegisteredMinecraftKey());
     }
 
     @NotNull
     private static String registeredNameId() {
-        return getRegisteredNamespace().toString();
+        return REGISTERED_NAME;
     }
 
     @NotNull

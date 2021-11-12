@@ -1,7 +1,7 @@
 package apple.voltskiya.custom_mobs.reload;
 
 import apple.nms.decoding.entity.DecodeEntity;
-import apple.voltskiya.custom_mobs.mobs.RegisteredCustomMob;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.register.RegisteredCustomMob;
 import net.minecraft.world.entity.EntityInsentient;
 import net.minecraft.world.entity.ai.goal.PathfinderGoal;
 import org.bukkit.Bukkit;

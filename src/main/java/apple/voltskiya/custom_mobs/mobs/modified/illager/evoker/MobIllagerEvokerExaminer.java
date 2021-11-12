@@ -5,8 +5,9 @@ import apple.nms.decoding.entity.DecodeEnumCreatureType;
 import apple.nms.decoding.iregistry.DecodeEntityTypes;
 import apple.nms.decoding.iregistry.DecodeIRegistry;
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
-import apple.voltskiya.custom_mobs.mobs.RegisteredCustomMob;
 import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.holder.NmsMobRegister;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.register.RegisteredCustomMob;
 import com.mojang.datafixers.types.Type;
 import net.minecraft.core.IRegistry;
 import net.minecraft.nbt.NBTTagCompound;
@@ -37,7 +38,7 @@ public class MobIllagerEvokerExaminer extends EntityEvoker implements Registered
      * registers the IllagerExaminer as an entity
      */
     public static void initialize() {
-        Map<? super Object, Type<?>> types = PluginNmsMobs.getMinecraftTypes();
+        Map<? super Object, Type<?>> types = NmsMobRegister.getMinecraftTypes();
         final Type<?> oldType = types.get("minecraft:evoker");
         types.put(registeredNameId(), oldType);
 

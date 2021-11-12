@@ -2,8 +2,8 @@ package apple.voltskiya.custom_mobs.leaps.config;
 
 import apple.voltskiya.custom_mobs.leaps.LeapPlugin;
 import apple.voltskiya.custom_mobs.leaps.misc.LeapSpecificMisc;
-import apple.voltskiya.custom_mobs.mobs.ConfigManager;
-import apple.voltskiya.custom_mobs.mobs.YmlSettings;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.config.ConfigManager;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.config.YmlSettings;
 import apple.voltskiya.custom_mobs.sql.MobListSql;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;

@@ -1,6 +1,5 @@
 package apple.voltskiya.custom_mobs.mobs;
 
-import apple.nms.decoding.iregistry.DecodeDataConverterTypes;
 import apple.voltskiya.custom_mobs.mobs.modified.illager.evoker.MobIllagerEvokerExaminer;
 import apple.voltskiya.custom_mobs.mobs.modified.illager.illusioner.MobIllagerIllusionerExaminer;
 import apple.voltskiya.custom_mobs.mobs.modified.illager.pillager.MobIllagerPillagerExaminer;
@@ -13,56 +12,32 @@ import apple.voltskiya.custom_mobs.mobs.nms.nether.eye_plant.MobEyePlant;
 import apple.voltskiya.custom_mobs.mobs.nms.nether.gremlin.MobWarpedGremlin;
 import apple.voltskiya.custom_mobs.mobs.nms.nether.parasite.MobParasite;
 import apple.voltskiya.custom_mobs.mobs.nms.nether.revenant.MobRevenant;
-import apple.voltskiya.custom_mobs.mobs.nms.overworld.apc33.MobAPC33;
-import apple.voltskiya.custom_mobs.mobs.nms.parts.MobPartArmorStand;
 import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelConfig;
+import apple.voltskiya.custom_mobs.mobs.nms.parts.child.MobPartArmorStand;
 import apple.voltskiya.custom_mobs.trash.aledar.AledarNavigation;
 import apple.voltskiya.custom_mobs.trash.aledar.MobAledar;
 import apple.voltskiya.custom_mobs.trash.aledar.MobCart;
-import com.mojang.datafixers.DataFixUtils;
-import com.mojang.datafixers.DataFixer;
-import com.mojang.datafixers.schemas.Schema;
-import com.mojang.datafixers.types.Type;
-import com.mojang.datafixers.types.templates.TaggedChoice;
-import net.minecraft.SharedConstants;
-import net.minecraft.util.datafix.DataConverterRegistry;
 import plugin.util.plugin.plugin.util.plugin.PluginManagedModule;
+import voltskiya.apple.configs.plugin.manage.PluginManagedModuleConfig;
+import voltskiya.apple.configs.plugin.saveable.ConfigSaveableBuilder;
 
 import java.io.File;
-import java.util.Map;
+import java.util.Collection;
+import java.util.Collections;
 
-public class PluginNmsMobs extends PluginManagedModule {
+public class PluginNmsMobs extends PluginManagedModule implements PluginManagedModuleConfig {
     private static PluginNmsMobs instance;
-    private static final TaggedChoice.TaggedChoiceType<?> choiceType;
-
-    static {
-        // this version of minecraft (whatever it happens to be)
-        final int keyForVersion = DataFixUtils.makeKey(SharedConstants.getGameVersion().getWorldVersion(), 5);
-        // the thing to register stuff I think?
-        final DataFixer dataFixerToRegister = DataConverterRegistry.a();
-//        dataFixerToRegister.update(DecodeDataConverterTypes.ENTITY_TREE,new Dynamic)
-
-        final Schema schemaForSomething = dataFixerToRegister.getSchema(keyForVersion);
-//        schemaForSomething.register(schemaForSomething.findChoiceType(DecodeDataConverterTypes.ENTITY_TREE).types(),"",null);
-        choiceType = schemaForSomething.findChoiceType(DecodeDataConverterTypes.ENTITY_TREE);
-    }
-
-    public static Map<? super Object, Type<?>> getMinecraftTypes() {
-        return (Map<? super Object, Type<?>>) choiceType.types();
-    }
 
     @Override
     public void enable() {
         new AledarNavigation();
-        new MobsSpawnCommand();
         new SpawnCustomMobListener();
         new SkelePacketCommand();
     }
 
-
     @Override
     public String getName() {
-        return "mobs";
+        return "NmsMobs";
     }
 
     public static PluginNmsMobs get() {
@@ -95,6 +70,12 @@ public class PluginNmsMobs extends PluginManagedModule {
         MobAngeredSoul.initialize();
         MobHealthPack.initialize();
         MobTestSkeleton.initialize();
-        MobAPC33.initialize();
+
+        SpawnCustomMobListener.initialize();
+    }
+
+    @Override
+    public Collection<ConfigSaveableBuilder<?, ?, ?>> getConfigsToRegister() {
+        return Collections.emptyList();
     }
 }

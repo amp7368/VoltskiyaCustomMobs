@@ -1,4 +1,4 @@
-package voltskiya.apple.utilities.util.projectile;
+package apple.voltskiya.custom_mobs.util.projectile;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import org.apache.logging.log4j.util.TriConsumer;

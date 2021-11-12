@@ -1,7 +1,7 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.micro_misles;
 
 import apple.nms.decoding.entity.DecodeEntity;
-import apple.voltskiya.custom_mobs.mobs.RegisteredEntityEater;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.register.RegisteredEntityEater;
 import apple.voltskiya.custom_mobs.pathfinders.spell.PathfinderGoalShootMicroMissle;
 import net.minecraft.world.entity.EntityInsentient;
 

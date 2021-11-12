@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 
 public class CustomModel {
+    private static final String ROTATION_NBT = "Rotation";
+    private static final String UUID_NBT = "UUID";
     public List<CustomEntity> entities = new ArrayList<>();
 
     public void add(CustomEntity customEntity) {
@@ -45,8 +47,8 @@ public class CustomModel {
             this.x = x;
             this.y = y;
             this.z = z;
-            if (nbt.hasKey("Rotation")) {
-                NBTTagList rotation = nbt.getList("Rotation", NBTTagFloat.a.getTypeId()); //float list
+            if (nbt.hasKey(ROTATION_NBT)) {
+                NBTTagList rotation = nbt.getList(ROTATION_NBT, NBTTagFloat.a.getTypeId()); //float list
                 if (rotation.size() == 2) {
                     float yaw = Float.parseFloat(rotation.get(0).asString());
                     float pitch = Float.parseFloat(rotation.get(1).asString());
@@ -57,7 +59,7 @@ public class CustomModel {
                     this.facingX = l.getDirection().getX();
                     this.facingY = l.getDirection().getY();
                     this.facingZ = l.getDirection().getZ();
-                    nbt.remove("Rotation");
+                    nbt.remove(ROTATION_NBT);
                 } else {
                     this.facingX = facingX;
                     this.facingY = facingY;
@@ -70,7 +72,7 @@ public class CustomModel {
             }
             this.type = type;
             this.nbt = nbt;
-            this.nbt.remove("UUID");
+            this.nbt.remove(UUID_NBT);
             this.otherData = otherData;
         }
 

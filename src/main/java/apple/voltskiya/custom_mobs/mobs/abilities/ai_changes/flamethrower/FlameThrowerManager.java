@@ -1,9 +1,9 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.flamethrower;
 
 import apple.nms.decoding.entity.DecodeEntity;
-import apple.voltskiya.custom_mobs.mobs.ConfigManager;
-import apple.voltskiya.custom_mobs.mobs.RegisteredEntityEater;
 import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.config.ConfigManager;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.register.RegisteredEntityEater;
 import apple.voltskiya.custom_mobs.pathfinders.spell.PathfinderGoalShootSpell;
 import net.minecraft.world.entity.EntityInsentient;
 import plugin.util.plugin.plugin.util.plugin.PluginManagedModule;
@@ -62,7 +62,7 @@ public class FlameThrowerManager extends ConfigManager implements RegisteredEnti
     }
 
 
-    public enum YmlSettings implements apple.voltskiya.custom_mobs.mobs.YmlSettings {
+    public enum YmlSettings implements apple.voltskiya.custom_mobs.mobs.nms.parent.config.YmlSettings {
         NORMAL_RANGE("normal.range", 13d),
         NORMAL_COOLDOWN("normal.cooldown", 300),
         NORMAL_MIN_RANGE("normal.min_range", 4d);

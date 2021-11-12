@@ -1,7 +1,7 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.tick.parent;
 
-import apple.voltskiya.custom_mobs.mobs.RegisteredEntityEater;
 import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.register.RegisteredEntityEater;
 import apple.voltskiya.custom_mobs.ticking.HighFrequencyTick;
 import apple.voltskiya.custom_mobs.util.PlayerClose;
 import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
@@ -15,7 +15,7 @@ import voltskiya.apple.utilities.util.DistanceUtils;
 
 import java.util.*;
 
-public abstract class MobTickManagerTicker<Config extends MobConfig>
+public abstract class MobTickManagerTicker<Config extends MobTickerConfig>
         implements Runnable,
         RegisteredEntityEater {
     protected final Config config;

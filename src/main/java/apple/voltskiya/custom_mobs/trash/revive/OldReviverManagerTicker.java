@@ -1,9 +1,9 @@
 package apple.voltskiya.custom_mobs.trash.revive;
 
-import apple.voltskiya.custom_mobs.mobs.ConfigManager;
-import apple.voltskiya.custom_mobs.mobs.RegisteredEntityEater;
 import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.reviver.mob.MobReviver;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.config.ConfigManager;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.register.RegisteredEntityEater;
 import apple.voltskiya.custom_mobs.ticking.NormalFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.TickGiverable;
 import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
@@ -55,7 +55,7 @@ public class OldReviverManagerTicker extends ConfigManager implements Registered
     }
 
     @Override
-    public apple.voltskiya.custom_mobs.mobs.YmlSettings[] getSettings() {
+    public apple.voltskiya.custom_mobs.mobs.nms.parent.config.YmlSettings[] getSettings() {
         return YmlSettings.values();
     }
 
@@ -121,7 +121,7 @@ public class OldReviverManagerTicker extends ConfigManager implements Registered
         }
     }
 
-    private enum YmlSettings implements apple.voltskiya.custom_mobs.mobs.YmlSettings {
+    private enum YmlSettings implements apple.voltskiya.custom_mobs.mobs.nms.parent.config.YmlSettings {
         REVIVE_CHANCE("reviveChance", 0.125),
         REVIVE_DISTANCE("reviveDistance", 50),
         REVIVE_RITUAL_TIME("reviveRitualTime", 20);

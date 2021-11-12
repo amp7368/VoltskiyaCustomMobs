@@ -1,4 +1,4 @@
-package apple.voltskiya.custom_mobs.mobs;
+package apple.voltskiya.custom_mobs.mobs.nms.parent.register;
 
 import apple.voltskiya.custom_mobs.sql.MobListSql;
 import net.minecraft.world.entity.EntityInsentient;

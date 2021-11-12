@@ -1,4 +1,4 @@
-package apple.voltskiya.custom_mobs.mobs.nms.parts;
+package apple.voltskiya.custom_mobs.mobs.nms.parts.child;
 
 import apple.nms.decoding.entity.DecodeEntityArmorStand;
 import apple.nms.decoding.entity.DecodeEnumCreatureType;
@@ -10,6 +10,9 @@ import apple.nms.decoding.iregistry.DecodeIRegistry;
 import apple.voltskiya.custom_mobs.custom_model.CustomModel;
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
 import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.holder.NmsMobRegister;
+import apple.voltskiya.custom_mobs.mobs.nms.parts.MobPartMother;
+import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelEntityConfig;
 import apple.voltskiya.custom_mobs.mobs.nms.utils.NbtConstants;
 import com.mojang.datafixers.types.Type;
 import net.minecraft.core.IRegistry;
@@ -53,7 +56,7 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild 
     }
 
     public static void initialize() {
-        Map<? super Object, Type<?>> types = PluginNmsMobs.getMinecraftTypes();
+        Map<? super Object, Type<?>> types = NmsMobRegister.getMinecraftTypes();
         final Type<?> oldType = types.get("minecraft:armor_stand");
         types.put(registeredNameId(), oldType);
 
@@ -151,18 +154,23 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild 
     /**
      * This packet (PacketPlayOutRelEntityMove) that I'm using has documentation here: https://wiki.vg/Protocol
      *
-     * @param isLookingRelevant whether i should turn based on looking direction as well
+     * @param isParentLookingRelavant whether i should turn based on looking direction as well
      * @return the packet to update this model to the client
      */
     @Override
-    public Packet<?> moveFromMother(boolean isLookingRelevant) {
-        float yaw1;
-        if (isLookingRelevant) {
-            yaw1 = this.mainMob.entity.getBukkitYaw() + this.mainMob.entity.getHeadRotation();
+    public Packet<?> moveFromMother(boolean isParentLookingRelavant) {
+        float yaw;
+        if (isParentLookingRelavant) {
+            yaw = this.mainMob.entity.getBukkitYaw() + this.mainMob.entity.getHeadRotation();
         } else {
-            yaw1 = this.mainMob.entity.getBukkitYaw();
+            yaw = this.mainMob.entity.getBukkitYaw();
         }
-        Location newLocation = VectorUtils.rotate(this.entityLocation, yaw1, this.mainMob.location, false);
+        return moveFromMother(yaw);
+    }
+
+    @NotNull
+    public PacketPlayOutEntityStatus moveFromMother(float yaw) {
+        Location newLocation = VectorUtils.rotate(this.entityLocation, yaw, this.mainMob.location, false);
         newLocation.add(this.mainMob.entity.locX(), this.mainMob.entity.locY(), this.mainMob.entity.locZ());
 
         double nowX = newLocation.getX();

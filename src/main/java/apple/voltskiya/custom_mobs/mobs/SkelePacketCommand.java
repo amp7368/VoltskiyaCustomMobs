@@ -41,7 +41,6 @@ public class SkelePacketCommand extends BaseCommand {
                 ITagRegistry tagRegistry = playerHandle.getMinecraftServer().getTagRegistry();
                 map.putAll(tagRegistry.a(IRegistryCustom.Dimension.a()));
                 Tags.a idk = tagRegistry.a(IRegistry.Y.f()).a(IRegistry.Y);
-                System.out.println(idk);
                 map.put(IRegistry.Y.f(), idk);
                 PacketPlayOutTags packetToSend = new PacketPlayOutTags(map);
                 playerHandle.b.sendPacket(packetToSend);

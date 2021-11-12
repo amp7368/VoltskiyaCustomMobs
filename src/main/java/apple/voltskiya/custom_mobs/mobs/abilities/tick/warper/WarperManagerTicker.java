@@ -1,8 +1,8 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.tick.warper;
 
-import apple.voltskiya.custom_mobs.mobs.ConfigManager;
-import apple.voltskiya.custom_mobs.mobs.RegisteredEntityEater;
 import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.config.ConfigManager;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.register.RegisteredEntityEater;
 import apple.voltskiya.custom_mobs.ticking.HighFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.LowFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.NormalFrequencyTick;
@@ -54,7 +54,7 @@ public class WarperManagerTicker extends ConfigManager implements RegisteredEnti
     }
 
     @Override
-    public apple.voltskiya.custom_mobs.mobs.YmlSettings[] getSettings() {
+    public apple.voltskiya.custom_mobs.mobs.nms.parent.config.YmlSettings[] getSettings() {
         return YmlSettings.values();
     }
 
@@ -122,7 +122,7 @@ public class WarperManagerTicker extends ConfigManager implements RegisteredEnti
         }
     }
 
-    private enum YmlSettings implements apple.voltskiya.custom_mobs.mobs.YmlSettings {
+    private enum YmlSettings implements apple.voltskiya.custom_mobs.mobs.nms.parent.config.YmlSettings {
         WARP_RADIUS("warpRadius", 10),
         WARP_CHANCE("warpChance", .04d),
         PARTICLES("particles", 40);

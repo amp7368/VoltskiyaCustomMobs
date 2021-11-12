@@ -1,9 +1,9 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.tank.tracks;
 
-import apple.voltskiya.custom_mobs.mobs.ConfigManager;
-import apple.voltskiya.custom_mobs.mobs.RegisteredEntityEater;
-import apple.voltskiya.custom_mobs.mobs.YmlSettings;
 import apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.flamethrower.FlameThrowerManager;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.config.ConfigManager;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.config.YmlSettings;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.register.RegisteredEntityEater;
 import plugin.util.plugin.plugin.util.plugin.PluginManagedModule;
 
 import java.util.Map;

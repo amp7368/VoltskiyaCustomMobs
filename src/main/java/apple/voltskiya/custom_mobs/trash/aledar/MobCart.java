@@ -5,7 +5,11 @@ import apple.nms.decoding.iregistry.DecodeDataConverterTypes;
 import apple.nms.decoding.iregistry.DecodeEntityTypes;
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
 import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
-import apple.voltskiya.custom_mobs.mobs.nms.parts.*;
+import apple.voltskiya.custom_mobs.mobs.nms.parts.MobPartMother;
+import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelConfig;
+import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelEntityConfig;
+import apple.voltskiya.custom_mobs.mobs.nms.parts.child.MobPartChild;
+import apple.voltskiya.custom_mobs.mobs.nms.parts.child.MobParts;
 import apple.voltskiya.custom_mobs.mobs.nms.utils.UtilsPacket;
 import com.mojang.datafixers.DataFixUtils;
 import com.mojang.datafixers.DataFixer;
@@ -37,7 +41,7 @@ import java.util.logging.Level;
 
 public class MobCart extends EntityHorse {
     public static final NmsModelConfig.ModelConfigName REGISTERED_MODEL = NmsModelConfig.ModelConfigName.CART;
-    public static final String REGISTERED_NAME = REGISTERED_MODEL.getFile();
+    public static final String REGISTERED_NAME = REGISTERED_MODEL.getName();
     private static EntityTypes<MobCart> entityTypes;
     private NmsModelEntityConfig selfModel;
     private EntityTypes<?> selfModelType;

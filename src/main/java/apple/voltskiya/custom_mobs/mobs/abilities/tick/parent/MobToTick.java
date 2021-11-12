@@ -9,7 +9,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import voltskiya.apple.utilities.util.constants.TagConstants;
 
-public abstract class MobToTick<Config extends MobConfig> {
+public abstract class MobToTick<Config extends MobTickerConfig> {
     protected Entity bukkitEntity;
     protected net.minecraft.world.entity.Entity nmsEntity;
     protected Config config;

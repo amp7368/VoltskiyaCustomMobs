@@ -1,5 +1,7 @@
-package apple.voltskiya.custom_mobs.mobs.nms.parts;
+package apple.voltskiya.custom_mobs.mobs.nms.parts.child;
 
+import apple.voltskiya.custom_mobs.mobs.nms.parts.MobPartMother;
+import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelEntityConfig;
 import apple.voltskiya.custom_mobs.mobs.nms.utils.UtilsPacket;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.world.entity.EntityInsentient;

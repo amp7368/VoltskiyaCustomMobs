@@ -1,7 +1,6 @@
 package apple.voltskiya.custom_mobs.mobs.abilities;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import apple.voltskiya.custom_mobs.mobs.RegisteredEntityEater;
 import apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.delay_pathfinding.DelayPathfinding;
 import apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.fire_fangs.FireFangsManager;
 import apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.flamethrower.FlameThrowerManager;
@@ -16,6 +15,7 @@ import apple.voltskiya.custom_mobs.mobs.abilities.tick.orbital_strike.small.Smal
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.parent.MobEntityEater;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.reviver.ReviverManager;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.warper.WarperManagerTicker;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.register.RegisteredEntityEater;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

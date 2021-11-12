@@ -1,4 +1,4 @@
-package apple.voltskiya.custom_mobs.mobs.nms.parts;
+package apple.voltskiya.custom_mobs.mobs.nms.parts.child;
 
 import apple.nms.decoding.entity.DecodeEnumCreatureType;
 import apple.nms.decoding.iregistry.DecodeDamageSource;
@@ -7,6 +7,9 @@ import apple.nms.decoding.iregistry.DecodeIRegistry;
 import apple.voltskiya.custom_mobs.custom_model.CustomModel;
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
 import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.holder.NmsMobRegister;
+import apple.voltskiya.custom_mobs.mobs.nms.parts.MobPartMother;
+import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelEntityConfig;
 import apple.voltskiya.custom_mobs.mobs.nms.utils.NbtConstants;
 import com.mojang.datafixers.types.Type;
 import net.minecraft.core.IRegistry;
@@ -52,7 +55,7 @@ public class MobPartFallingBlock extends EntityFallingBlock implements MobPartCh
     }
 
     public static void initialize() {
-        Map<? super Object, Type<?>> types = PluginNmsMobs.getMinecraftTypes();
+        Map<? super Object, Type<?>> types = NmsMobRegister.getMinecraftTypes();
         final Type<?> oldType = types.get("minecraft:falling_block");
         types.put(registeredNameId(), oldType);
 

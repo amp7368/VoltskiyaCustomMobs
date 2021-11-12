@@ -4,13 +4,14 @@ import apple.nms.decoding.entity.DecodeEnumCreatureType;
 import apple.nms.decoding.iregistry.DecodeEntityTypes;
 import apple.nms.decoding.iregistry.DecodeIRegistry;
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
-import apple.voltskiya.custom_mobs.mobs.RegisteredCustomMob;
 import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
-import apple.voltskiya.custom_mobs.mobs.nms.parts.MobPartChild;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.holder.NmsMobRegister;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.register.RegisteredCustomMob;
 import apple.voltskiya.custom_mobs.mobs.nms.parts.MobPartMother;
 import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelConfig;
 import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelConfig.ModelConfigName;
 import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelEntityConfig;
+import apple.voltskiya.custom_mobs.mobs.nms.parts.child.MobPartChild;
 import apple.voltskiya.custom_mobs.mobs.nms.utils.UtilsPacket;
 import com.mojang.datafixers.types.Type;
 import net.minecraft.core.IRegistry;
@@ -41,7 +42,7 @@ import java.util.logging.Level;
 
 public class MobWarpedGremlin extends EntityZombie implements RegisteredCustomMob {
     public static final ModelConfigName REGISTERED_MODEL = ModelConfigName.WARPED_GREMLIN;
-    public static final String REGISTERED_NAME = REGISTERED_MODEL.getFile();
+    public static final String REGISTERED_NAME = REGISTERED_MODEL.getName();
     private static EntityTypes<MobWarpedGremlin> entityTypes;
     private static NmsModelEntityConfig selfModel;
     private List<MobPartChild> children = null;
@@ -51,7 +52,7 @@ public class MobWarpedGremlin extends EntityZombie implements RegisteredCustomMo
      * registers the WarpedGremlin as an entity
      */
     public static void initialize() {
-        Map<? super Object, Type<?>> types = PluginNmsMobs.getMinecraftTypes();
+        Map<? super Object, Type<?>> types = NmsMobRegister.getMinecraftTypes();
         final Type<?> zombieType = types.get("minecraft:zombie");
         types.put(registeredNameId(), zombieType);
 

@@ -1,8 +1,8 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.tick.lost_soul;
 
-import apple.voltskiya.custom_mobs.mobs.ConfigManager;
-import apple.voltskiya.custom_mobs.mobs.RegisteredEntityEater;
 import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.config.ConfigManager;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.register.RegisteredEntityEater;
 import apple.voltskiya.custom_mobs.ticking.HighFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.LowFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.NormalFrequencyTick;
@@ -55,7 +55,7 @@ public class LostSoulManagerTicker extends ConfigManager implements RegisteredEn
     }
 
     @Override
-    public apple.voltskiya.custom_mobs.mobs.YmlSettings[] getSettings() {
+    public apple.voltskiya.custom_mobs.mobs.nms.parent.config.YmlSettings[] getSettings() {
         return YmlSettings.values();
     }
 
@@ -122,7 +122,7 @@ public class LostSoulManagerTicker extends ConfigManager implements RegisteredEn
         }
     }
 
-    private enum YmlSettings implements apple.voltskiya.custom_mobs.mobs.YmlSettings {
+    private enum YmlSettings implements apple.voltskiya.custom_mobs.mobs.nms.parent.config.YmlSettings {
         DAMAGE_AMOUNT("damageAmount", 2d);
 
         private final String path;

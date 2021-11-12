@@ -1,8 +1,8 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.tick.orbital_strike.small;
 
-import apple.voltskiya.custom_mobs.mobs.ConfigManager;
-import apple.voltskiya.custom_mobs.mobs.RegisteredEntityEater;
 import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.config.ConfigManager;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.register.RegisteredEntityEater;
 import apple.voltskiya.custom_mobs.ticking.LowFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.NormalFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.TickGiverable;
@@ -75,7 +75,7 @@ public class SmallOrbitalStrikeManagerTicker extends ConfigManager implements Re
     }
 
     @Override
-    public apple.voltskiya.custom_mobs.mobs.YmlSettings[] getSettings() {
+    public apple.voltskiya.custom_mobs.mobs.nms.parent.config.YmlSettings[] getSettings() {
         return YmlSettings.values();
     }
 
@@ -144,7 +144,7 @@ public class SmallOrbitalStrikeManagerTicker extends ConfigManager implements Re
         }
     }
 
-    private enum YmlSettings implements apple.voltskiya.custom_mobs.mobs.YmlSettings {
+    private enum YmlSettings implements apple.voltskiya.custom_mobs.mobs.nms.parent.config.YmlSettings {
         STRIKE_CHANCE("chancePerTick", 0.003d),
         STRIKE_COOLDOWN("cooldown", 800),
         STRIKE_DISTANCE("targetingRange", 30),

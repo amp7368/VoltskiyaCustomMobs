@@ -8,8 +8,9 @@ import apple.nms.decoding.iregistry.DecodeEntityTypes;
 import apple.nms.decoding.iregistry.DecodeIRegistry;
 import apple.nms.decoding.pathfinder.DecodeControllerMoveFlying;
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
-import apple.voltskiya.custom_mobs.mobs.RegisteredCustomMob;
 import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.holder.NmsMobRegister;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.register.RegisteredCustomMob;
 import apple.voltskiya.custom_mobs.pathfinders.PathfinderGoalApproachSlowly;
 import apple.voltskiya.custom_mobs.pathfinders.target_selector.PathfinderGoalClosestPlayer;
 import com.mojang.datafixers.types.Type;
@@ -55,7 +56,7 @@ public class MobAngeredSoul extends EntitySkeleton implements RegisteredCustomMo
      * registers the EyePlant as an entity
      */
     public static void initialize() {
-        Map<? super Object, Type<?>> types = PluginNmsMobs.getMinecraftTypes();
+        Map<? super Object, Type<?>> types = NmsMobRegister.getMinecraftTypes();
         final Type<?> oldType = types.get("minecraft:skeleton");
         types.put(registeredNameId(), oldType);
 

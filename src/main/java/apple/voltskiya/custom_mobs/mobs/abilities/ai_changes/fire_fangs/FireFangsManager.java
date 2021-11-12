@@ -1,9 +1,9 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.fire_fangs;
 
 import apple.nms.decoding.entity.DecodeEntity;
-import apple.voltskiya.custom_mobs.mobs.ConfigManager;
-import apple.voltskiya.custom_mobs.mobs.RegisteredEntityEater;
 import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.config.ConfigManager;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.register.RegisteredEntityEater;
 import apple.voltskiya.custom_mobs.pathfinders.spell.PathfinderGoalShootSpell;
 import net.minecraft.world.entity.EntityInsentient;
 import plugin.util.plugin.plugin.util.plugin.PluginManagedModule;
@@ -80,7 +80,7 @@ public class FireFangsManager extends ConfigManager implements RegisteredEntityE
         return MobTickPlugin.get();
     }
 
-    public enum YmlSettings implements apple.voltskiya.custom_mobs.mobs.YmlSettings {
+    public enum YmlSettings implements apple.voltskiya.custom_mobs.mobs.nms.parent.config.YmlSettings {
         NORMAL_RANGE("normal.range", 15d),
         NORMAL_STEP("normal.step", 1d),
         NORMAL_COOLDOWN("normal.cooldown", 300),

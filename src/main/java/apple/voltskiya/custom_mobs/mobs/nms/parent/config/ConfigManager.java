@@ -1,4 +1,4 @@
-package apple.voltskiya.custom_mobs.mobs;
+package apple.voltskiya.custom_mobs.mobs.nms.parent.config;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;

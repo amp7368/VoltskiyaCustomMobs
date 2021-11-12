@@ -12,7 +12,7 @@ public interface ConfigHolderSupplier<Holder> {
         return new String[]{getParentName(), FileFormatting.extensionYml(getParentName())};
     }
 
-    Class<Holder> getConfigClass();
+    Class<? extends Holder> getConfigClass();
 
     PluginManagedModuleConfig getModule();
 

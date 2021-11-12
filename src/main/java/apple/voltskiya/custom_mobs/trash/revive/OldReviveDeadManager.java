@@ -1,10 +1,10 @@
 package apple.voltskiya.custom_mobs.trash.revive;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import apple.voltskiya.custom_mobs.mobs.ConfigManager;
 import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.DeathEater;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.reviver.mob.MobReviver;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.config.ConfigManager;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.nbt.NBTTagString;
@@ -63,7 +63,7 @@ public class OldReviveDeadManager extends ConfigManager implements DeathEater {
     }
 
     @Override
-    public apple.voltskiya.custom_mobs.mobs.YmlSettings[] getSettings() {
+    public apple.voltskiya.custom_mobs.mobs.nms.parent.config.YmlSettings[] getSettings() {
         return YmlSettings.values();
     }
 
@@ -155,7 +155,7 @@ public class OldReviveDeadManager extends ConfigManager implements DeathEater {
         }
     }
 
-    private enum YmlSettings implements apple.voltskiya.custom_mobs.mobs.YmlSettings {
+    private enum YmlSettings implements apple.voltskiya.custom_mobs.mobs.nms.parent.config.YmlSettings {
         MAX_DEAD_TIME("max_dead_time", 600),
         TIME_TO_RISE("time_to_rise", 50);
 

@@ -1,4 +1,4 @@
-package apple.voltskiya.custom_mobs.mobs;
+package apple.voltskiya.custom_mobs.mobs.nms.parent.register;
 
 /**
  * this is kinda pointless atm, but might be useful in the future maybe

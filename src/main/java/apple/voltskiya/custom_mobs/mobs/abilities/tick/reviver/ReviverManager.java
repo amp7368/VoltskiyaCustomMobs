@@ -1,10 +1,10 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.tick.reviver;
 
-import apple.voltskiya.custom_mobs.mobs.abilities.tick.parent.MobConfig;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.parent.MobEntityEater;
+import apple.voltskiya.custom_mobs.mobs.abilities.tick.parent.MobTickerConfig;
 
 public class ReviverManager extends MobEntityEater<ReviverConfigHolder> {
-    public <Config extends MobConfig> ReviverTicker<Config> createTicker(Config config) {
+    public <Config extends MobTickerConfig> ReviverTicker<Config> createTicker(Config config) {
         return new ReviverTicker<>(config);
     }
 

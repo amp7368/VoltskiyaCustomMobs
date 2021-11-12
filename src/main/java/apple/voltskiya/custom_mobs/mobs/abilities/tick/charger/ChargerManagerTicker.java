@@ -1,8 +1,8 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.tick.charger;
 
-import apple.voltskiya.custom_mobs.mobs.ConfigManager;
-import apple.voltskiya.custom_mobs.mobs.RegisteredEntityEater;
 import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.config.ConfigManager;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.register.RegisteredEntityEater;
 import apple.voltskiya.custom_mobs.ticking.HighFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.LowFrequencyTick;
 import apple.voltskiya.custom_mobs.ticking.NormalFrequencyTick;
@@ -84,7 +84,7 @@ public class ChargerManagerTicker extends ConfigManager implements RegisteredEnt
     }
 
     @Override
-    public apple.voltskiya.custom_mobs.mobs.YmlSettings[] getSettings() {
+    public apple.voltskiya.custom_mobs.mobs.nms.parent.config.YmlSettings[] getSettings() {
         return YmlSettings.values();
     }
 
@@ -152,7 +152,7 @@ public class ChargerManagerTicker extends ConfigManager implements RegisteredEnt
         }
     }
 
-    private enum YmlSettings implements apple.voltskiya.custom_mobs.mobs.YmlSettings {
+    private enum YmlSettings implements apple.voltskiya.custom_mobs.mobs.nms.parent.config.YmlSettings {
         NORMAL_OVERSHOOT_DISTANCE("normal.overshoot_distance", 10),
         NORMAL_OVERSHOOT_SPEED("normal.charge_speed", 2.0d),
         NORMAL_TOO_CLOSE_TO_CHARGE("normal.too_close_to_charge", 4d),

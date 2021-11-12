@@ -7,13 +7,14 @@ import apple.nms.decoding.iregistry.DecodeEntityTypes;
 import apple.nms.decoding.iregistry.DecodeIRegistry;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
-import apple.voltskiya.custom_mobs.mobs.RegisteredCustomMob;
 import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
-import apple.voltskiya.custom_mobs.mobs.nms.parts.MobPartChild;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.holder.NmsMobRegister;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.register.RegisteredCustomMob;
 import apple.voltskiya.custom_mobs.mobs.nms.parts.MobPartMother;
 import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelConfig;
 import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelConfig.ModelConfigName;
 import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelEntityConfig;
+import apple.voltskiya.custom_mobs.mobs.nms.parts.child.MobPartChild;
 import apple.voltskiya.custom_mobs.mobs.nms.utils.UtilsPacket;
 import apple.voltskiya.custom_mobs.pathfinders.PathfinderGoalCraveBlock;
 import com.mojang.datafixers.types.Type;
@@ -52,7 +53,7 @@ import java.util.logging.Level;
 
 public class MobParasite extends EntityZombie implements RegisteredCustomMob {
     public static final ModelConfigName REGISTERED_MODEL = ModelConfigName.PARASITE;
-    public static final String REGISTERED_NAME = REGISTERED_MODEL.getFile();
+    public static final String REGISTERED_NAME = REGISTERED_MODEL.getName();
     private static EntityTypes<MobParasite> entityTypes;
     private List<MobPartChild> children = null;
     private static NmsModelEntityConfig selfModel;
@@ -62,7 +63,7 @@ public class MobParasite extends EntityZombie implements RegisteredCustomMob {
      * registers the NetherParasite as an entity
      */
     public static void initialize() {
-        Map<? super Object, Type<?>> types = PluginNmsMobs.getMinecraftTypes();
+        Map<? super Object, Type<?>> types = NmsMobRegister.getMinecraftTypes();
         final Type<?> zombieType = types.get("minecraft:zombie");
         types.put(registeredNameId(), zombieType);
 

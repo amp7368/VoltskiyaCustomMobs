@@ -2,8 +2,8 @@ package apple.voltskiya.custom_mobs.leaps.pounce;
 
 import apple.voltskiya.custom_mobs.leaps.LeapEater;
 import apple.voltskiya.custom_mobs.leaps.LeapPlugin;
-import apple.voltskiya.custom_mobs.mobs.ConfigManager;
-import apple.voltskiya.custom_mobs.mobs.YmlSettings;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.config.ConfigManager;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.config.YmlSettings;
 import net.minecraft.world.entity.EntityInsentient;
 import plugin.util.plugin.plugin.util.plugin.PluginManagedModule;
 
