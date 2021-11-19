@@ -81,6 +81,7 @@ public class MobReviverPulse extends MobReviver<ReviverConfigPulse> {
     }
 
     private boolean doChargeUp(int currentTick, boolean isLastRun) {
+        if (isDead()) return false;
         if (wasHit(10)) {
             pulse.startAction(ANGER);
             return false;

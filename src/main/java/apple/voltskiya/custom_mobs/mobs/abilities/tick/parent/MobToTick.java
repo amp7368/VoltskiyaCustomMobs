@@ -90,7 +90,7 @@ public abstract class MobToTick<Config extends MobTickerConfig> {
 
     // custom information about the mob
     public boolean shouldRemove() {
-        return isDead || bukkitEntity.isDead();
+        return isDead();
     }
 
     public void tick_(int tickSpeed) {
@@ -104,6 +104,10 @@ public abstract class MobToTick<Config extends MobTickerConfig> {
             this.isDead = true;
             kill();
         }
+    }
+
+    protected boolean isDead() {
+        return isDead || bukkitEntity.isDead();
     }
 
     protected abstract void kill();

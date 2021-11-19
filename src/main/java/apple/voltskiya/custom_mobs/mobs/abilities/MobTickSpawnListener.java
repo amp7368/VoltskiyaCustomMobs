@@ -11,6 +11,7 @@ import apple.voltskiya.custom_mobs.mobs.abilities.tick.charger.ChargerManagerTic
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.fireball.FireballThrowManager;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.lost_soul.BlemishSpawnManager;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.lost_soul.LostSoulManagerTicker;
+import apple.voltskiya.custom_mobs.mobs.abilities.tick.mancubus.MancubusManager;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.orbital_strike.large.LargeOrbitalStrikeManagerTicker;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.orbital_strike.small.SmallOrbitalStrikeManagerTicker;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.parent.MobEntityEater;
@@ -84,7 +85,8 @@ public class MobTickSpawnListener implements Listener {
         }
         Collection<MobEntityEater<?>> entityEaters = List.of(
                 new ReviverManager(),
-                new FireballThrowManager()
+                new FireballThrowManager(),
+                new MancubusManager()
         );
         for (MobEntityEater<?> spawnEater : entityEaters) {
             for (String tag : spawnEater.getTags()) {
