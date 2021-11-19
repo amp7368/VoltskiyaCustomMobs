@@ -15,11 +15,11 @@ public abstract class MancubusConfig implements MobTickerConfig {
     @YcmField
     public int burstDelay3 = 10;
     @YcmField
-    public double minSight = 3;
+    public double minSight = 3d;
     @YcmField
     public double maxSight = 1000;
     @YcmField
-    public double shotSpeed = 1.5;
+    public double shotSpeed = 0.6;
     @YcmField
     public double burst1Angle1 = 0;
     @YcmField
