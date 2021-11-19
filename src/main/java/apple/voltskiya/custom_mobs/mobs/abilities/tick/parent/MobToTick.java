@@ -6,7 +6,9 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
+import org.jetbrains.annotations.Nullable;
 import voltskiya.apple.utilities.util.constants.TagConstants;
 
 public abstract class MobToTick<Config extends MobTickerConfig> {
@@ -23,6 +25,7 @@ public abstract class MobToTick<Config extends MobTickerConfig> {
 
     public abstract void tick(int tickSpeed);
 
+    // get entity
     public Entity getBukkitEntity() {
         return bukkitEntity;
     }
@@ -39,8 +42,13 @@ public abstract class MobToTick<Config extends MobTickerConfig> {
         return (Mob) bukkitEntity;
     }
 
+    // utility about mob
     public Location getLocation() {
         return bukkitEntity.getLocation();
+    }
+
+    public Location getEyeLocation() {
+        return getBukkitMob().getEyeLocation();
     }
 
     public int getTicksLived() {
@@ -51,6 +59,7 @@ public abstract class MobToTick<Config extends MobTickerConfig> {
         return getLocation().getWorld();
     }
 
+    // action
     public boolean isNotDoingAction() {
         return !isDoingAction();
     }
@@ -74,6 +83,12 @@ public abstract class MobToTick<Config extends MobTickerConfig> {
         return hurt != 0 && hurt + inLast >= ticksLived && getBukkitMob().getLastDamage() != 0;
     }
 
+    @Nullable
+    public LivingEntity getTarget() {
+        return getBukkitMob().getTarget();
+    }
+
+    // custom information about the mob
     public boolean shouldRemove() {
         return isDead || bukkitEntity.isDead();
     }

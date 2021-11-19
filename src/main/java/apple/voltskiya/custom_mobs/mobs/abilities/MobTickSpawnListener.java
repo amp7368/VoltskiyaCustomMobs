@@ -8,6 +8,7 @@ import apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.micro_misles.MicroM
 import apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.micro_misles.MicroMissleShooter;
 import apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.shoot_ball.ShootBallManager;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.charger.ChargerManagerTicker;
+import apple.voltskiya.custom_mobs.mobs.abilities.tick.fireball.FireballThrowManager;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.lost_soul.BlemishSpawnManager;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.lost_soul.LostSoulManagerTicker;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.orbital_strike.large.LargeOrbitalStrikeManagerTicker;
@@ -82,7 +83,8 @@ public class MobTickSpawnListener implements Listener {
             spawnEater.eatMobs();
         }
         Collection<MobEntityEater<?>> entityEaters = List.of(
-                new ReviverManager()
+                new ReviverManager(),
+                new FireballThrowManager()
         );
         for (MobEntityEater<?> spawnEater : entityEaters) {
             for (String tag : spawnEater.getTags()) {

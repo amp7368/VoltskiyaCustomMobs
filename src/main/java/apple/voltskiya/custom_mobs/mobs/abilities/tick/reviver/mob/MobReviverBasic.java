@@ -31,7 +31,7 @@ public class MobReviverBasic extends MobReviver<ReviverConfigBasic> {
         while (targetLocation.getBlock().getType().isAir() && targetLocation.getY() >= 0) {
             targetLocation.subtract(0, 1, 0);
         }
-        targetLocation = targetLocation.getBlock().getLocation().add(0.5, 0.5, 0.5);
+        targetLocation = targetLocation.getBlock().getLocation().add(0.5, 1, 0.5);
         TagConstants.addIsDoingAbility(getBukkitEntity());
         getBukkitEntity().addScoreboardTag(TagConstants.isDoingAbility);
         DecodeEntity.getGoalSelector(getEntityInsentient())
