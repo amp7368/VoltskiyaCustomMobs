@@ -1,6 +1,6 @@
 package apple.voltskiya.custom_mobs.mobs.nms.parent.holder;
 
-import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelConfig;
+import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelHandler;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.level.World;
@@ -15,7 +15,7 @@ public interface NmsMobConfig<TypeEntity extends Entity & NmsMob<TypeEntity, Con
     String getTag();
 
     @Nullable
-    NmsModelConfig.ModelConfigName getModelConfigName();
+    NmsModelHandler.ModelConfigName getModelConfigName();
 
     NmsMobConstructor<TypeEntity, Config> getEntityBuilder();
 

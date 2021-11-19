@@ -1,7 +1,8 @@
 package apple.voltskiya.custom_mobs.trash.old_turrets;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import apple.voltskiya.custom_mobs.custom_model.CustomModel;
+import apple.voltskiya.custom_mobs.custom_model.CustomModelData;
+import apple.voltskiya.custom_mobs.custom_model.CustomModelDataEntity;
 import apple.voltskiya.custom_mobs.custom_model.CustomModelPlugin;
 import apple.voltskiya.custom_mobs.sql.TurretsSql;
 import co.aikar.commands.BaseCommand;
@@ -53,9 +54,9 @@ public class OldTurretCommand extends BaseCommand {
 
     private void createTurretEntities(Location location, OldTurretBuilder turretMob) {
         World world = location.getWorld();
-        CustomModel model = CustomModelPlugin.get().loadSchematic(turretFile);
+        CustomModelData model = CustomModelPlugin.get().loadSchematic(turretFile);
         if (model == null) return;
-        for (CustomModel.CustomEntity entity : model.entities) {
+        for (CustomModelDataEntity entity : model.entities) {
             turretCount.incrementAndGet();
 
             double angle = Math.atan2(entity.facingZ, entity.facingX);

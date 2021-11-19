@@ -6,8 +6,9 @@ import apple.nms.decoding.iregistry.DecodeEntityTypes;
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
 import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
 import apple.voltskiya.custom_mobs.mobs.nms.parts.MobPartMother;
-import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelConfig;
+import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModel;
 import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelEntityConfig;
+import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelHandler;
 import apple.voltskiya.custom_mobs.mobs.nms.parts.child.MobPartChild;
 import apple.voltskiya.custom_mobs.mobs.nms.parts.child.MobParts;
 import apple.voltskiya.custom_mobs.mobs.nms.utils.UtilsPacket;
@@ -40,7 +41,7 @@ import java.util.Optional;
 import java.util.logging.Level;
 
 public class MobCart extends EntityHorse {
-    public static final NmsModelConfig.ModelConfigName REGISTERED_MODEL = NmsModelConfig.ModelConfigName.CART;
+    public static final NmsModelHandler.ModelConfigName REGISTERED_MODEL = NmsModelHandler.ModelConfigName.CART;
     public static final String REGISTERED_NAME = REGISTERED_MODEL.getName();
     private static EntityTypes<MobCart> entityTypes;
     private NmsModelEntityConfig selfModel;
@@ -99,9 +100,9 @@ public class MobCart extends EntityHorse {
     }
 
     private void prepare(Location location, NBTTagCompound oldNbt) {
-        final NmsModelConfig model = NmsModelConfig.parts(REGISTERED_MODEL);
+        final NmsModel model = NmsModelHandler.parts(REGISTERED_MODEL);
         this.selfModel = model.mainPart();
-        final NBTTagCompound newNbt = this.selfModel.getEntity().nbt;
+        final NBTTagCompound newNbt = this.selfModel.getData().nbt;
         final NBTTagCompound mergedNbt = oldNbt == null ? newNbt : oldNbt.a(newNbt);
         this.loadData(mergedNbt);
         this.setInvisible(true);
@@ -111,17 +112,17 @@ public class MobCart extends EntityHorse {
         this.ageLocked = true;
         this.saddle(null);
         this.setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
-        final Optional<EntityTypes<?>> entityTypes = EntityTypes.a(this.selfModel.getEntity().type.getKey().getKey());
+        final Optional<EntityTypes<?>> entityTypes = EntityTypes.a(this.selfModel.getData().type.getKey().getKey());
         if (entityTypes.isPresent()) {
             this.selfModelType = entityTypes.get();
             EntityLocation motherLocation = new EntityLocation(
                     this.getUniqueID(),
-                    selfModel.getEntity().x,
-                    selfModel.getEntity().y,
-                    selfModel.getEntity().z,
-                    selfModel.getEntity().facingX,
-                    selfModel.getEntity().facingY,
-                    selfModel.getEntity().facingZ
+                    selfModel.getData().x,
+                    selfModel.getData().y,
+                    selfModel.getData().z,
+                    selfModel.getData().facingX,
+                    selfModel.getData().facingY,
+                    selfModel.getData().facingZ
             ); // for simpler rotations
             MobPartMother motherMe = new MobPartMother(motherLocation, this, REGISTERED_NAME);
             for (NmsModelEntityConfig part : model.others()) {

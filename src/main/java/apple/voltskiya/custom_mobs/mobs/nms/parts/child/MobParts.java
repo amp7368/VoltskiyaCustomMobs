@@ -23,7 +23,7 @@ public class MobParts {
     }
 
     public static MobPartChild spawnMobPart(MobPartMother mother, NmsModelEntityConfig config) {
-        NamespacedKey realKey = config.getEntity().type.getKey();
+        NamespacedKey realKey = config.getData().type.getKey();
         MobPart mobPart = mobParts.get(realKey);
         if (mobPart != null) {
             return mobPart.spawnMobPart(mother, config);

@@ -4,7 +4,7 @@ import apple.nms.decoding.iregistry.DecodeEntityTypes;
 import apple.voltskiya.custom_mobs.mobs.nms.overworld.apc33.mob.MobAPC33LargeCannon;
 import apple.voltskiya.custom_mobs.mobs.nms.parent.holder.NmsMobConstructor;
 import apple.voltskiya.custom_mobs.mobs.nms.parent.holder.NmsMobRegister;
-import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelConfig;
+import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelHandler;
 import net.minecraft.world.entity.EntityTypes;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,8 +17,8 @@ public class MobAPC33ConfigLargeCannon extends MobAPC33Config<MobAPC33LargeCanno
     }
 
     @Override
-    public NmsModelConfig.@Nullable ModelConfigName getModelConfigName() {
-        return NmsModelConfig.ModelConfigName.APC33_CANNON;
+    public NmsModelHandler.@Nullable ModelConfigName getModelConfigName() {
+        return NmsModelHandler.ModelConfigName.APC33_CANNON;
     }
 
     @Override

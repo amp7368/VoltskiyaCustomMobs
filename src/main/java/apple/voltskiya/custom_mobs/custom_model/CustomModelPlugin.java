@@ -85,12 +85,12 @@ public class CustomModelPlugin extends PluginManagedModule {
     }
 
     @Nullable
-    public CustomModel loadSchematic(File file) {
+    public CustomModelData loadSchematic(File file) {
         if (!file.exists()) return null;
         YamlConfiguration yml = YamlConfiguration.loadConfiguration(file);
         ConfigurationSection config = yml.getConfigurationSection("models");
         if (config == null) return null;
-        CustomModel model = new CustomModel();
+        CustomModelData model = new CustomModelData();
         for (String key : config.getKeys(false)) {
             ConfigurationSection entity = config.getConfigurationSection(key);
             if (entity == null) continue;
@@ -114,14 +114,14 @@ public class CustomModelPlugin extends PluginManagedModule {
                     otherData.put(otherKey, entity.get(otherKey));
                 }
             }
-            model.add(new CustomModel.CustomEntity(key, x, y, z, facingX, facingY, facingZ, type, nbt, otherData));
+            model.add(new CustomModelDataEntity(key, x, y, z, facingX, facingY, facingZ, type, nbt, otherData));
         }
         return model;
     }
 
     public void adjustSchematicOffsetXYZ(double x, double y, double z) {
         File file = new File(this.getDataFolder(), YML_FILENAME);
-        @Nullable CustomModel schematic = loadSchematic(file);
+        @Nullable CustomModelData schematic = loadSchematic(file);
         if (schematic != null) {
             schematic.adjust(x, y, z);
         } else {
@@ -131,8 +131,8 @@ public class CustomModelPlugin extends PluginManagedModule {
         if (!yml.contains("models")) yml.createSection("models");
         @Nullable ConfigurationSection config = yml.getConfigurationSection("models");
         if (config == null) return;
-        List<CustomModel.CustomEntity> entities = schematic.entities;
-        for (CustomModel.CustomEntity entity : entities) {
+        List<CustomModelDataEntity> entities = schematic.entities;
+        for (CustomModelDataEntity entity : entities) {
             ConfigurationSection c = config.getConfigurationSection(entity.nameInYml);
             if (c != null) {
                 c.set("x", entity.x);
@@ -152,7 +152,7 @@ public class CustomModelPlugin extends PluginManagedModule {
 
     public void adjustSchematicRotateXYZ(double rotation, String fileName) throws IOException {
         rotation = Math.toRadians(rotation);
-        CustomModel model = loadSchematic(fileName);
+        CustomModelData model = loadSchematic(fileName);
         File file = new File(this.getDataFolder(), fileName);
         if (!file.exists() || model == null) {
             throw new IllegalArgumentException("The provided model file " + fileName + ".yml" + " does not exist");
@@ -161,9 +161,9 @@ public class CustomModelPlugin extends PluginManagedModule {
         if (!yml.contains("models")) yml.createSection("models");
         @Nullable ConfigurationSection config = yml.getConfigurationSection("models");
         if (config == null) return;
-        List<CustomModel.CustomEntity> entities = model.entities;
+        List<CustomModelDataEntity> entities = model.entities;
         // convert the center.getDirection() vector to <1,0,0> and with it, all of the entities
-        for (CustomModel.CustomEntity entity : entities) {
+        for (CustomModelDataEntity entity : entities) {
             double x = entity.x;
             double z = entity.z;
             double radius = Math.sqrt(z * z + x * x);
@@ -196,15 +196,15 @@ public class CustomModelPlugin extends PluginManagedModule {
         return "Custom Model";
     }
 
-    public CustomModel loadSchematic(String schematicFile) {
+    @Nullable
+    public CustomModelData loadSchematic(String schematicFile) {
         File file = new File(this.getDataFolder(), schematicFile);
-        @Nullable CustomModel schematic = loadSchematic(file);
-        return schematic;
+        return loadSchematic(file);
     }
 
     public void adjustSchematicRotateAll(double rotation, String fileName) throws IOException {
         rotation = Math.toRadians(rotation);
-        CustomModel model = loadSchematic(fileName);
+        CustomModelData model = loadSchematic(fileName);
         File file = new File(this.getDataFolder(), fileName);
         if (!file.exists() || model == null) {
             throw new IllegalArgumentException("The provided model file " + fileName + ".yml" + " does not exist");
@@ -213,8 +213,8 @@ public class CustomModelPlugin extends PluginManagedModule {
         if (!yml.contains("models")) yml.createSection("models");
         @Nullable ConfigurationSection config = yml.getConfigurationSection("models");
         if (config == null) return;
-        List<CustomModel.CustomEntity> entities = model.entities;
-        for (CustomModel.CustomEntity entity : entities) {
+        List<CustomModelDataEntity> entities = model.entities;
+        for (CustomModelDataEntity entity : entities) {
             double x = entity.x;
             double z = entity.z;
             double radius = Math.sqrt(z * z + x * x);

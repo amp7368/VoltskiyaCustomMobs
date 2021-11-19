@@ -10,8 +10,9 @@ import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
 import apple.voltskiya.custom_mobs.mobs.nms.parent.holder.NmsMobRegister;
 import apple.voltskiya.custom_mobs.mobs.nms.parent.register.RegisteredCustomMob;
 import apple.voltskiya.custom_mobs.mobs.nms.parts.MobPartMother;
-import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelConfig;
+import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModel;
 import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelEntityConfig;
+import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelHandler;
 import apple.voltskiya.custom_mobs.mobs.nms.parts.child.MobPartChild;
 import apple.voltskiya.custom_mobs.mobs.nms.parts.child.MobParts;
 import apple.voltskiya.custom_mobs.mobs.nms.utils.UtilsPacket;
@@ -45,7 +46,7 @@ import java.util.Map;
 import java.util.logging.Level;
 
 public class MobEyePlant extends EntityZombie implements RegisteredCustomMob {
-    public static final NmsModelConfig.ModelConfigName REGISTERED_MODEL = NmsModelConfig.ModelConfigName.EYE_PLANT;
+    public static final NmsModelHandler.ModelConfigName REGISTERED_MODEL = NmsModelHandler.ModelConfigName.EYE_PLANT;
     public static final String REGISTERED_NAME = REGISTERED_MODEL.getName();
     private static EntityTypes<MobEyePlant> entityTypes;
     private static NmsModelEntityConfig selfModel;
@@ -66,7 +67,7 @@ public class MobEyePlant extends EntityZombie implements RegisteredCustomMob {
         entityTypes = IRegistry.a(DecodeIRegistry.getEntityType(), DecodeIRegistry.getEntityType().getId(DecodeEntityTypes.ZOMBIE), REGISTERED_NAME, entityTypes); // this is good
         // log it
         PluginNmsMobs.get().log(Level.INFO, "registered " + registeredNameId());
-        final NmsModelConfig model = NmsModelConfig.parts(REGISTERED_MODEL);
+        final NmsModel model = NmsModelHandler.parts(REGISTERED_MODEL);
         selfModel = model.mainPart();
     }
 
@@ -104,7 +105,7 @@ public class MobEyePlant extends EntityZombie implements RegisteredCustomMob {
     }
 
     private void prepare(Location location, NBTTagCompound oldNbt) {
-        final NBTTagCompound newNbt = selfModel.getEntity().nbt;
+        final NBTTagCompound newNbt = selfModel.getData().nbt;
         final NBTTagCompound mergedNbt = oldNbt == null ? newNbt : oldNbt.a(newNbt);
         this.load(mergedNbt);
         this.setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());

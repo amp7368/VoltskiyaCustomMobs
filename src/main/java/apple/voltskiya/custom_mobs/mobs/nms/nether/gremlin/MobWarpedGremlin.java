@@ -8,9 +8,10 @@ import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
 import apple.voltskiya.custom_mobs.mobs.nms.parent.holder.NmsMobRegister;
 import apple.voltskiya.custom_mobs.mobs.nms.parent.register.RegisteredCustomMob;
 import apple.voltskiya.custom_mobs.mobs.nms.parts.MobPartMother;
-import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelConfig;
-import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelConfig.ModelConfigName;
+import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModel;
 import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelEntityConfig;
+import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelHandler;
+import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelHandler.ModelConfigName;
 import apple.voltskiya.custom_mobs.mobs.nms.parts.child.MobPartChild;
 import apple.voltskiya.custom_mobs.mobs.nms.utils.UtilsPacket;
 import com.mojang.datafixers.types.Type;
@@ -63,7 +64,7 @@ public class MobWarpedGremlin extends EntityZombie implements RegisteredCustomMo
 
         // log it
         PluginNmsMobs.get().log(Level.INFO, "registered " + registeredNameId());
-        final NmsModelConfig model = NmsModelConfig.parts(REGISTERED_MODEL);
+        final NmsModel model = NmsModelHandler.parts(REGISTERED_MODEL);
         selfModel = model.mainPart();
 
     }
@@ -107,7 +108,7 @@ public class MobWarpedGremlin extends EntityZombie implements RegisteredCustomMo
     }
 
     private void prepare(Location location, NBTTagCompound oldNbt) {
-        final NBTTagCompound newNbt = selfModel.getEntity().nbt;
+        final NBTTagCompound newNbt = selfModel.getData().nbt;
         final NBTTagCompound mergedNbt = oldNbt == null ? newNbt : oldNbt.a(newNbt);
         this.load(mergedNbt);
         this.setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());

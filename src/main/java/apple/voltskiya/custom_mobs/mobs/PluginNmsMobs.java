@@ -12,14 +12,14 @@ import apple.voltskiya.custom_mobs.mobs.nms.nether.eye_plant.MobEyePlant;
 import apple.voltskiya.custom_mobs.mobs.nms.nether.gremlin.MobWarpedGremlin;
 import apple.voltskiya.custom_mobs.mobs.nms.nether.parasite.MobParasite;
 import apple.voltskiya.custom_mobs.mobs.nms.nether.revenant.MobRevenant;
-import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelConfig;
+import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelHandler;
 import apple.voltskiya.custom_mobs.mobs.nms.parts.child.MobPartArmorStand;
 import apple.voltskiya.custom_mobs.trash.aledar.AledarNavigation;
 import apple.voltskiya.custom_mobs.trash.aledar.MobAledar;
 import apple.voltskiya.custom_mobs.trash.aledar.MobCart;
 import plugin.util.plugin.plugin.util.plugin.PluginManagedModule;
+import voltskiya.apple.configs.plugin.manage.ConfigBuilderHolder;
 import voltskiya.apple.configs.plugin.manage.PluginManagedModuleConfig;
-import voltskiya.apple.configs.plugin.saveable.ConfigSaveableBuilder;
 
 import java.io.File;
 import java.util.Collection;
@@ -53,7 +53,7 @@ public class PluginNmsMobs extends PluginManagedModule implements PluginManagedM
     @Override
     public void init() {
         instance = this;
-        NmsModelConfig.initialize();
+        new NmsModelHandler();
 
         MobWarpedGremlin.initialize();
         MobPartArmorStand.initialize();
@@ -75,7 +75,7 @@ public class PluginNmsMobs extends PluginManagedModule implements PluginManagedM
     }
 
     @Override
-    public Collection<ConfigSaveableBuilder<?, ?, ?>> getConfigsToRegister() {
+    public Collection<ConfigBuilderHolder<?>> getConfigsToRegister() {
         return Collections.emptyList();
     }
 }

@@ -24,19 +24,19 @@ public class MobPartMother {
     }
 
 
-    public static List<MobPartChild> getChildren(UUID uniqueId, Entity mainEntity, NmsModelEntityConfig selfModel, NmsModelConfig.ModelConfigName modelConfig) {
+    public static List<MobPartChild> getChildren(UUID uniqueId, Entity mainEntity, NmsModelEntityConfig selfModel, NmsModelHandler.ModelConfigName modelConfig) {
         List<MobPartChild> children = new ArrayList<>();
         EntityLocation motherLocation = new EntityLocation(
                 uniqueId,
-                selfModel.getEntity().x,
-                selfModel.getEntity().y,
-                selfModel.getEntity().z,
-                selfModel.getEntity().facingX,
-                selfModel.getEntity().facingY,
-                selfModel.getEntity().facingZ
+                selfModel.getData().x,
+                selfModel.getData().y,
+                selfModel.getData().z,
+                selfModel.getData().facingX,
+                selfModel.getData().facingY,
+                selfModel.getData().facingZ
         ); // for simpler rotations
         MobPartMother motherMe = new MobPartMother(motherLocation, mainEntity, modelConfig.getTag());
-        final NmsModelConfig model = NmsModelConfig.parts(modelConfig);
+        final NmsModel model = NmsModelHandler.parts(modelConfig);
         for (NmsModelEntityConfig part : model.others()) {
             children.add(MobParts.spawnMobPart(motherMe, part));
         }

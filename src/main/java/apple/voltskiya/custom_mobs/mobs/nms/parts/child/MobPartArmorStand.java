@@ -7,13 +7,12 @@ import apple.nms.decoding.entity.DecodeEnumMonsterType;
 import apple.nms.decoding.iregistry.DecodeDamageSource;
 import apple.nms.decoding.iregistry.DecodeEntityTypes;
 import apple.nms.decoding.iregistry.DecodeIRegistry;
-import apple.voltskiya.custom_mobs.custom_model.CustomModel;
+import apple.voltskiya.custom_mobs.custom_model.CustomModelDataEntity;
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
 import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
 import apple.voltskiya.custom_mobs.mobs.nms.parent.holder.NmsMobRegister;
 import apple.voltskiya.custom_mobs.mobs.nms.parts.MobPartMother;
 import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelEntityConfig;
-import apple.voltskiya.custom_mobs.mobs.nms.utils.NbtConstants;
 import com.mojang.datafixers.types.Type;
 import net.minecraft.core.IRegistry;
 import net.minecraft.core.Vector3f;
@@ -46,7 +45,6 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild 
     private static final double DEATH_PARTICLES_DENSITY = 0.001d;
     private static EntityTypes<MobPartArmorStand> entityTypes;
     private MobPartMother mainMob;
-    private NmsModelEntityConfig entityConfig;
     private EntityLocation entityLocation;
     private AttributeMapBase attributeMap;
 
@@ -71,8 +69,7 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild 
 
     public void prepare(MobPartMother mother, NmsModelEntityConfig config) {
         this.mainMob = mother;
-        this.entityConfig = config;
-        final CustomModel.CustomEntity entity = entityConfig.getEntity();
+        final CustomModelDataEntity entity = config.getData();
         this.entityLocation = new EntityLocation(
                 this.getUniqueID(),
                 entity.x,
@@ -116,8 +113,6 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild 
     @Override
     public void loadData(NBTTagCompound nbttagcompound) {
         super.loadData(nbttagcompound);
-        if (this.entityConfig == null)
-            this.entityConfig = new NmsModelEntityConfig(nbttagcompound.getCompound(NbtConstants.ENTITY_LOCATION_RELATIVE_CONFIG));
     }
 
 
@@ -131,12 +126,6 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild 
         NBTTagCompound data = super.save(nbttagcompound);
         data.setString("id", registeredNameId());
         return data;
-    }
-
-    @Override
-    public void saveData(NBTTagCompound nbttagcompound) {
-        super.saveData(nbttagcompound);
-        nbttagcompound.set(NbtConstants.ENTITY_LOCATION_RELATIVE_CONFIG, entityConfig.toNbt());
     }
 
     @Override

@@ -79,10 +79,10 @@ public class CustomModelIO extends BaseCommand implements Listener {
     public void spawn(Player player, @Single String fileName) {
         Location location = player.getLocation();
         World world = location.getWorld();
-        CustomModel model = CustomModelPlugin.get().loadSchematic(fileName + ".yml");
+        CustomModelData model = CustomModelPlugin.get().loadSchematic(fileName + ".yml");
         if (model != null) {
-            List<CustomModel.CustomEntity> entities = model.entities;
-            for (CustomModel.CustomEntity entity : entities) {
+            List<CustomModelDataEntity> entities = model.entities;
+            for (CustomModelDataEntity entity : entities) {
                 world.spawnEntity(location.clone().add(entity.x, entity.y, entity.z).setDirection(
                         new Vector(
                                 entity.facingX,

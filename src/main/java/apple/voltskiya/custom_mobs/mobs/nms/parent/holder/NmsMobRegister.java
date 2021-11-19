@@ -5,7 +5,8 @@ import apple.nms.decoding.iregistry.DecodeDataConverterTypes;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
 import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
-import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelConfig;
+import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModel;
+import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelHandler;
 import com.mojang.datafixers.DataFixUtils;
 import com.mojang.datafixers.DataFixer;
 import com.mojang.datafixers.schemas.Schema;
@@ -57,8 +58,8 @@ public class NmsMobRegister<
     private final Config config;
     private final boolean hasModel;
     private EntityTypes<TypeEntity> entityTypes;
-    private NmsModelConfig model;
-    private NmsModelConfig.ModelConfigName modelName;
+    private NmsModel model;
+    private NmsModelHandler.ModelConfigName modelName;
 
 
     public NmsMobRegister(Config config) {
@@ -123,8 +124,8 @@ public class NmsMobRegister<
         event.setCancelled(true);
     }
 
-    public void registerModel(NmsModelConfig.ModelConfigName modelName) {
-        this.model = NmsModelConfig.parts(modelName);
+    public void registerModel(NmsModelHandler.ModelConfigName modelName) {
+        this.model = NmsModelHandler.parts(modelName);
         this.modelName = modelName;
     }
 
@@ -154,11 +155,11 @@ public class NmsMobRegister<
         return AttributeDefaults.a(entityTypes);
     }
 
-    public NmsModelConfig getModel() {
+    public NmsModel getModel() {
         return this.model;
     }
 
-    public NmsModelConfig.ModelConfigName getModelName() {
+    public NmsModelHandler.ModelConfigName getModelName() {
         return this.modelName;
     }
 

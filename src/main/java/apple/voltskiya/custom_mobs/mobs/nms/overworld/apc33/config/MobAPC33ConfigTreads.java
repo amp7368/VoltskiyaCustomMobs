@@ -4,7 +4,7 @@ import apple.nms.decoding.iregistry.DecodeEntityTypes;
 import apple.voltskiya.custom_mobs.mobs.nms.overworld.apc33.mob.MobAPC33Treads;
 import apple.voltskiya.custom_mobs.mobs.nms.parent.holder.NmsMobConstructor;
 import apple.voltskiya.custom_mobs.mobs.nms.parent.holder.NmsMobRegister;
-import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelConfig;
+import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelHandler;
 import net.minecraft.world.entity.EntityTypes;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,8 +17,8 @@ public class MobAPC33ConfigTreads extends MobAPC33Config<MobAPC33Treads, MobAPC3
     }
 
     @Override
-    public NmsModelConfig.@Nullable ModelConfigName getModelConfigName() {
-        return NmsModelConfig.ModelConfigName.APC33_TREADS;
+    public NmsModelHandler.@Nullable ModelConfigName getModelConfigName() {
+        return NmsModelHandler.ModelConfigName.APC33_TREADS;
     }
 
     @Override

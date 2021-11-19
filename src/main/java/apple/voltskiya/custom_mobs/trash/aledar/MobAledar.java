@@ -9,8 +9,9 @@ import apple.nms.decoding.iregistry.DecodeEntityTypes;
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
 import apple.voltskiya.custom_mobs.mobs.nms.parent.register.RegisteredCustomMob;
 import apple.voltskiya.custom_mobs.mobs.nms.parts.MobPartMother;
-import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelConfig;
+import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModel;
 import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelEntityConfig;
+import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelHandler;
 import apple.voltskiya.custom_mobs.mobs.nms.parts.child.MobPartArmorStand;
 import apple.voltskiya.custom_mobs.mobs.nms.parts.child.MobPartChild;
 import apple.voltskiya.custom_mobs.mobs.nms.parts.child.MobParts;
@@ -41,7 +42,7 @@ import java.util.*;
 import java.util.logging.Level;
 
 public class MobAledar extends EntityPillager implements RegisteredCustomMob {
-    private static final NmsModelConfig.ModelConfigName REGISTERED_MODEL = NmsModelConfig.ModelConfigName.ALEDAR_CART;
+    private static final NmsModelHandler.ModelConfigName REGISTERED_MODEL = NmsModelHandler.ModelConfigName.ALEDAR_CART;
     private static final String REGISTERED_NAME = REGISTERED_MODEL.getName();
     public static final String IS_WHEEL_RIGHT_IDENTIFIER = "isRightWheel";
     public static final String IS_WHEEL_LEFT_IDENTIFIER = "isLeftWheel";
@@ -99,29 +100,29 @@ public class MobAledar extends EntityPillager implements RegisteredCustomMob {
     }
 
     private void prepare(Location location) {
-        final NmsModelConfig model = NmsModelConfig.parts(REGISTERED_MODEL);
+        final NmsModel model = NmsModelHandler.parts(REGISTERED_MODEL);
         NmsModelEntityConfig selfModel = model.mainPart();
-        this.loadData(selfModel.getEntity().nbt);
+        this.loadData(selfModel.getData().nbt);
         this.setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
-        final Optional<EntityTypes<?>> entityTypes = EntityTypes.a(selfModel.getEntity().type.getKey().getKey());
+        final Optional<EntityTypes<?>> entityTypes = EntityTypes.a(selfModel.getData().type.getKey().getKey());
         if (entityTypes.isPresent()) {
             EntityLocation motherLocation = new EntityLocation(
                     this.getUniqueID(),
-                    selfModel.getEntity().x,
-                    selfModel.getEntity().y,
-                    selfModel.getEntity().z,
-                    selfModel.getEntity().facingX,
-                    selfModel.getEntity().facingY,
-                    selfModel.getEntity().facingZ
+                    selfModel.getData().x,
+                    selfModel.getData().y,
+                    selfModel.getData().z,
+                    selfModel.getData().facingX,
+                    selfModel.getData().facingY,
+                    selfModel.getData().facingZ
             ); // for simpler rotations
             MobPartMother motherMe = new MobPartMother(motherLocation, this, REGISTERED_NAME);
             for (NmsModelEntityConfig part : model.others()) {
                 final MobPartChild partChild = MobParts.spawnMobPart(motherMe, part);
                 children.add(partChild);
-                if (((Boolean) part.getEntity().otherData.getOrDefault(IS_WHEEL_RIGHT_IDENTIFIER, false)) && partChild instanceof MobPartArmorStand) {
+                if (((Boolean) part.getData().otherData.getOrDefault(IS_WHEEL_RIGHT_IDENTIFIER, false)) && partChild instanceof MobPartArmorStand) {
                     rightWheels.add((MobPartArmorStand) partChild);
                 }
-                if (((Boolean) part.getEntity().otherData.getOrDefault(IS_WHEEL_LEFT_IDENTIFIER, false)) && partChild instanceof MobPartArmorStand) {
+                if (((Boolean) part.getData().otherData.getOrDefault(IS_WHEEL_LEFT_IDENTIFIER, false)) && partChild instanceof MobPartArmorStand) {
                     leftWheels.add((MobPartArmorStand) partChild);
                 }
             }

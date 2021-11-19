@@ -3,7 +3,7 @@ package apple.voltskiya.custom_mobs.trash.old_turrets;
 import apple.voltskiya.custom_mobs.sql.DBItemStack;
 import apple.voltskiya.custom_mobs.sql.DBUtils;
 import apple.voltskiya.custom_mobs.trash.old_turrets.gui.OldTurretTarget;
-import apple.voltskiya.custom_mobs.turrets.mobs.TurretMob;
+import apple.voltskiya.custom_mobs.trash.old_turrets2.mobs.Old2TurretMob;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -77,7 +77,7 @@ public class OldTurretBuilder {
 
 
     public synchronized void addEntity(Entity e) {
-        e.addScoreboardTag(TurretMob.TURRET_TAG);
+        e.addScoreboardTag(Old2TurretMob.TURRET_TAG);
         this.turretEntities.add(new EntityLocation(e,
                 -this.location.getX(), -this.location.getY(), -this.location.getZ()));
     }

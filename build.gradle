@@ -36,7 +36,7 @@ dependencies {
     compileOnly 'apple.nms.decoding:DecodingNms:1.1.BUILD-SNAPSHOT'
     compileOnly 'apple.utilities:AppleUtilities:v1.1'
     compileOnly 'com.github.amp7368.YmlConfigManager:ycm-jar:Ycm-v1.1'
-    compileOnly 'com.github.amp7368.PluginManagerCreator:pmc-jar:Pmc-v1.5'
+    compileOnly 'com.github.amp7368.PluginManagerCreator:pmc-jar:Pmc-v1.8'
 
     compileOnly 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'
     compileOnly 'org.spigotmc:spigot:1.17.1-R0.1-SNAPSHOT'

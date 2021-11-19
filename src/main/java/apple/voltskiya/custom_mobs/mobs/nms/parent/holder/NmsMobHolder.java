@@ -1,7 +1,8 @@
 package apple.voltskiya.custom_mobs.mobs.nms.parent.holder;
 
 import apple.voltskiya.custom_mobs.mobs.nms.parts.MobPartMother;
-import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelConfig;
+import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModel;
+import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelHandler;
 import apple.voltskiya.custom_mobs.mobs.nms.parts.child.MobPartChild;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.world.entity.Entity;
@@ -25,7 +26,7 @@ public class NmsMobHolder<
         this.mob = mob;
     }
 
-    public void addChildren(UUID uuid, NmsModelConfig model, NmsModelConfig.ModelConfigName modelName, Entity mainEntity) {
+    public void addChildren(UUID uuid, NmsModel model, NmsModelHandler.ModelConfigName modelName, Entity mainEntity) {
         killParts();
         this.children = MobPartMother.getChildren(uuid, mainEntity, model.mainPart(), modelName);
     }

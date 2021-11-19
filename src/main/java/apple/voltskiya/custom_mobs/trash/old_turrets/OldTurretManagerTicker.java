@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static apple.voltskiya.custom_mobs.turrets.mobs.TurretMob.TURRET_TAG;
+import static apple.voltskiya.custom_mobs.trash.old_turrets2.mobs.Old2TurretMob.TURRET_TAG;
 
 public class OldTurretManagerTicker implements Listener {
     private static OldTurretManagerTicker instance;

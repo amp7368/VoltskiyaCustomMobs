@@ -3,8 +3,8 @@ package apple.voltskiya.custom_mobs.mobs.abilities;
 import apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.micro_misles.MicroMissileManager;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.lost_soul.BlemishDeathListener;
 import plugin.util.plugin.plugin.util.plugin.PluginManagedModule;
+import voltskiya.apple.configs.plugin.manage.ConfigBuilderHolder;
 import voltskiya.apple.configs.plugin.manage.PluginManagedModuleConfig;
-import voltskiya.apple.configs.plugin.saveable.ConfigSaveableBuilder;
 import voltskiya.apple.utilities.util.action.PluginManagedRepeatingAction;
 
 import java.util.Collection;
@@ -39,7 +39,7 @@ public class MobTickPlugin extends PluginManagedModule
     }
 
     @Override
-    public Collection<ConfigSaveableBuilder<?, ?, ?>> getConfigsToRegister() {
+    public Collection<ConfigBuilderHolder<?>> getConfigsToRegister() {
         return Collections.emptyList();
     }
 }
