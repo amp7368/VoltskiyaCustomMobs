@@ -3,7 +3,7 @@ package apple.voltskiya.custom_mobs.mobs.nms.parent.register;
 import apple.voltskiya.custom_mobs.sql.MobListSql;
 import net.minecraft.world.entity.EntityInsentient;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftMob;
+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftMob;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;

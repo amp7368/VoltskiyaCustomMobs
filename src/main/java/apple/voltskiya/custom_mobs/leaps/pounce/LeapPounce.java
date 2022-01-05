@@ -1,7 +1,5 @@
 package apple.voltskiya.custom_mobs.leaps.pounce;
 
-import apple.nms.decoding.attribute.DecodeAttributeModifier;
-import apple.nms.decoding.attribute.DecodeGenericAttributes;
 import apple.nms.decoding.entity.DecodeEntity;
 import apple.nms.decoding.pathfinder.DecodeMoveType;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
@@ -12,9 +10,10 @@ import apple.voltskiya.custom_mobs.leaps.config.LeapPreConfig;
 import apple.voltskiya.custom_mobs.leaps.sounds.LeapSounds;
 import net.minecraft.world.entity.EntityInsentient;
 import net.minecraft.world.entity.EntityLiving;
-import net.minecraft.world.entity.ai.attributes.AttributeModifiable;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import org.bukkit.Bukkit;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -28,16 +27,16 @@ import java.util.UUID;
 
 public class LeapPounce {
     private static final int CHARGE_UP_TIME = 30;
-    public static final AttributeModifier NO_MOVE_ATTRIBUTE = new AttributeModifier(UUID.randomUUID(), "no_move", -100, DecodeAttributeModifier.Operation.ADDITION.encode());
+    public static final AttributeModifier NO_MOVE_ATTRIBUTE = new AttributeModifier(UUID.randomUUID(), "no_move", -100, AttributeModifier.Operation.ADD_SCALAR);
     public static final int POUNCE_STUN_TIME = 60;
 
     public static void eatEntity(EntityLiving creature, LeapPreConfig config) {
-        if (creature instanceof EntityInsentient) {
-            @Nullable EntityLiving lastTarget = ((EntityInsentient) creature).getGoalTarget();
+        if (creature instanceof EntityInsentient insentient) {
+            @Nullable EntityLiving lastTarget = DecodeEntity.getLastTarget(insentient);
 
             LeapPostConfig postConfig = new LeapPostConfig(
                     (leapDo) -> shouldStopLeap(creature, leapDo),
-                    creature::isOnGround,
+                    () -> DecodeEntity.isOnGround(insentient),
                     (entity, leapDo) -> preLeap(entity, leapDo, CHARGE_UP_TIME, 0),
                     (entity) -> interruptedLeap(entity, lastTarget),
                     (entity) -> endLeap(entity, lastTarget)
@@ -65,10 +64,11 @@ public class LeapPounce {
     }
 
     private static void preLeap(EntityInsentient entity, LeapDo leapDo, int timeLeft, int index) {
-        final AttributeModifiable speedAttribute = entity.getAttributeInstance(DecodeGenericAttributes.MOVEMENT_SPEED);
+        final AttributeInstance speedAttribute = entity.craftAttributes.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
         if (timeLeft == 0) {
-            if (speedAttribute != null)
+            if (speedAttribute != null) {
                 speedAttribute.removeModifier(NO_MOVE_ATTRIBUTE);
+            }
             if (!shouldStopLeap(entity, leapDo)) {
                 leapDo.recalculate();
                 leapDo.leap();
@@ -85,8 +85,10 @@ public class LeapPounce {
             return;
         }
         // as long as it doesn't already have the attribute
-        if (speedAttribute != null && !speedAttribute.a(NO_MOVE_ATTRIBUTE))
+        if (speedAttribute != null) {
+            speedAttribute.removeModifier(NO_MOVE_ATTRIBUTE);
             speedAttribute.addModifier(NO_MOVE_ATTRIBUTE);
+        }
         if (index % 3 == 0) {
             LeapSounds.CHARGE_UP_GROWL.accept(entity.getBukkitEntity().getLocation());
         }
@@ -96,11 +98,11 @@ public class LeapPounce {
 
     private static void endLeap(EntityInsentient entity, EntityLiving lastTarget) {
         entity.getBukkitEntity().setVelocity(new Vector(0, 0, 0));
-        entity.setGoalTarget(lastTarget);
+        DecodeEntity.setGoalTarget(entity, lastTarget);
     }
 
     private static void interruptedLeap(EntityInsentient entity, EntityLiving lastTarget) {
         entity.getBukkitEntity().setVelocity(new Vector(0, 0, 0));
-        entity.setGoalTarget(lastTarget);
+        DecodeEntity.setGoalTarget(entity, lastTarget);
     }
 }

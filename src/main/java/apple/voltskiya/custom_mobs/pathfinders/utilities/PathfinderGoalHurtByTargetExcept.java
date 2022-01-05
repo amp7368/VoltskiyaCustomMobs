@@ -1,5 +1,6 @@
 package apple.voltskiya.custom_mobs.pathfinders.utilities;
 
+import apple.voltskiya.custom_mobs.mobs.nms.parent.utility.NmsUtilityWrapper;
 import apple.voltskiya.custom_mobs.reload.PluginDisable;
 import net.minecraft.world.entity.EntityCreature;
 import net.minecraft.world.entity.EntityInsentient;
@@ -10,9 +11,11 @@ import java.util.function.Predicate;
 
 public class PathfinderGoalHurtByTargetExcept extends PathfinderGoalHurtByTarget {
     private final Predicate<EntityLiving> confirmTarget;
+    private final NmsUtilityWrapper<EntityCreature> wrapper;
 
     public PathfinderGoalHurtByTargetExcept(EntityCreature entitycreature, Predicate<EntityLiving> confirmTarget, Class<?>... aclass) {
         super(entitycreature, aclass);
+        this.wrapper = new NmsUtilityWrapper<>(entitycreature);
         this.confirmTarget = confirmTarget;
         PluginDisable.addMob(entitycreature, this);
     }
@@ -33,6 +36,6 @@ public class PathfinderGoalHurtByTargetExcept extends PathfinderGoalHurtByTarget
      */
     @Override
     public boolean b() {
-        return (confirmTarget.test(this.e.getLastDamager()));
+        return confirmTarget.test(this.wrapper.getLastDamager());
     }
 }

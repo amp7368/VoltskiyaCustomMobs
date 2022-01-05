@@ -11,17 +11,9 @@ import org.bukkit.util.Vector;
 import javax.annotation.Nullable;
 
 public class LeapHellishCatalyst implements LeapEater {
-    public void eatEntity(EntityInsentient creature) {
-        @Nullable EntityLiving lastTarget = creature.getGoalTarget();
-
-        LeapPostConfig postConfig = new LeapPostConfig(
-                (leapDo) -> shouldStopLeap(creature),
-                creature::isOnGround,
-                LeapHellishCatalyst::preLeap,
-                (entity) -> LeapHellishCatalyst.interruptedLeap(entity, lastTarget),
-                (entity) -> LeapHellishCatalyst.endLeap(entity, lastTarget)
-        );
-        DecodeEntity.getGoalSelector(creature).a(0, new PathfinderGoalLeapCatalyst(creature, getConfig(), postConfig));
+    private static void endLeap(EntityInsentient entity, EntityLiving lastTarget) {
+        entity.getBukkitEntity().setVelocity(new Vector(0, 0, 0));
+        DecodeEntity.setGoalTarget(entity, lastTarget);
     }
 
     private static boolean shouldStopLeap(EntityLiving creature) {
@@ -32,14 +24,21 @@ public class LeapHellishCatalyst implements LeapEater {
         leapDo.leap();
     }
 
-    private static void endLeap(EntityInsentient entity, EntityLiving lastTarget) {
-        entity.getBukkitEntity().setVelocity(new Vector(0, 0, 0));
-        entity.setGoalTarget(lastTarget);
-    }
-
     private static void interruptedLeap(EntityInsentient entity, EntityLiving lastTarget) {
         entity.getBukkitEntity().setVelocity(new Vector(0, 0, 0));
-        entity.setGoalTarget(lastTarget);
+        DecodeEntity.setGoalTarget(entity, lastTarget);
+    }
+
+    public void eatEntity(EntityInsentient creature) {
+        @Nullable EntityLiving lastTarget = DecodeEntity.getLastTarget(creature);
+        LeapPostConfig postConfig = new LeapPostConfig(
+                (leapDo) -> shouldStopLeap(creature),
+                () -> DecodeEntity.isOnGround(creature),
+                LeapHellishCatalyst::preLeap,
+                (entity) -> LeapHellishCatalyst.interruptedLeap(entity, lastTarget),
+                (entity) -> LeapHellishCatalyst.endLeap(entity, lastTarget)
+        );
+        DecodeEntity.getGoalSelector(creature).a(0, new PathfinderGoalLeapCatalyst(creature, getConfig(), postConfig));
     }
 
     /**

@@ -24,7 +24,7 @@ public class MobPartMother {
     }
 
 
-    public static List<MobPartChild> getChildren(UUID uniqueId, Entity mainEntity, NmsModelEntityConfig selfModel, NmsModelHandler.ModelConfigName modelConfig) {
+    public static List<MobPartChild> makeChildren(UUID uniqueId, Entity mainEntity, NmsModelEntityConfig selfModel, NmsModelHandler.ModelConfigName modelConfig) {
         List<MobPartChild> children = new ArrayList<>();
         EntityLocation motherLocation = new EntityLocation(
                 uniqueId,

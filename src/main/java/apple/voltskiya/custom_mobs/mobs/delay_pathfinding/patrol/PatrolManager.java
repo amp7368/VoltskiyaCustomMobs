@@ -19,7 +19,7 @@ public class PatrolManager implements RegisteredEntityEater {
      */
     @Override
     public void eatEntity(EntityInsentient entity) {
-        for (String tag : entity.getScoreboardTags()) {
+        for (String tag : entity.getBukkitEntity().getScoreboardTags()) {
             String[] tagSplit = tag.split("\\.");
             if (tagSplit[0].equals(PATROL_TAG) && tagSplit.length == 5) {
 //                Dungeon dungeon = DungeonActive.getDungeon(tagSplit[3]);

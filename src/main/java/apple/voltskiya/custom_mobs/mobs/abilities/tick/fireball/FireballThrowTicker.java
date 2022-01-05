@@ -9,12 +9,17 @@ public class FireballThrowTicker<Config extends MobTickerConfig> extends MobTick
     }
 
     @Override
+    public String getTag() {
+        return getName();
+    }
+
+    @Override
     public String getName() {
         return "fireball_throw";
     }
 
-    @Override
-    protected boolean isOnlyMobs() {
+
+    public boolean isOnlyMobs() {
         return true;
     }
 }

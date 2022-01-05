@@ -7,6 +7,7 @@ import apple.voltskiya.custom_mobs.leaps.hellish_catalyst.LeapHellishCatalyst;
 import apple.voltskiya.custom_mobs.leaps.misc.LeapSpecificMisc;
 import apple.voltskiya.custom_mobs.leaps.pounce.LeapPounceNormal;
 import apple.voltskiya.custom_mobs.leaps.pounce.LeapPounceUpwards;
+import apple.voltskiya.custom_mobs.leaps.reposition.LeapReposition;
 import apple.voltskiya.custom_mobs.leaps.revenant.LeapRevenant;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -24,7 +25,8 @@ public class LeapSpawnListener implements Listener {
         addEaters(new LeapHellishCatalyst(),
                 new LeapRevenant(),
                 new LeapPounceUpwards(),
-                new LeapPounceNormal());
+                new LeapPounceNormal(),
+                new LeapReposition());
     }
 
     private void addEaters(LeapEater... eaters) {

@@ -1,7 +1,9 @@
 package apple.voltskiya.custom_mobs.pathfinders.utilities;
 
 import apple.nms.decoding.entity.DecodeEntity;
+import apple.nms.decoding.entity.DecodeNavigation;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.utility.NmsUtilityWrapper;
 import net.minecraft.world.entity.EntityInsentient;
 import net.minecraft.world.entity.ai.goal.PathfinderGoal;
 import org.bukkit.Bukkit;
@@ -15,9 +17,11 @@ public class PathfinderGoalMoveToTarget extends PathfinderGoal {
     private final Runnable callBack;
     private final double speed;
     private boolean calledBack = false;
+    private final NmsUtilityWrapper<EntityInsentient> wrapper;
 
     public PathfinderGoalMoveToTarget(EntityInsentient me, Location target, double speed, int giveUpTick, Runnable callBack) {
         this.me = me;
+        this.wrapper = new NmsUtilityWrapper<>(this.me);
         this.target = target;
         this.giveUpTick = DecodeEntity.getTicksLived(me) + giveUpTick;
         this.speed = speed;
@@ -44,7 +48,7 @@ public class PathfinderGoalMoveToTarget extends PathfinderGoal {
      * @return something
      */
     @Override
-    public boolean C_() {
+    public boolean D_() {
         return true;
     }
 
@@ -61,7 +65,7 @@ public class PathfinderGoalMoveToTarget extends PathfinderGoal {
     @Override
     public void e() {
         // go to the location
-        this.me.getNavigation().a(this.target.getX(), this.target.getY(), this.target.getZ(), speed);
+        this.wrapper.getNavigation().a(this.target.getX(), this.target.getY(), this.target.getZ(), speed);
     }
 
     /**
@@ -70,7 +74,7 @@ public class PathfinderGoalMoveToTarget extends PathfinderGoal {
     @Override
     public void d() {
         // quit going to the location
-        this.me.getNavigation().o();
+        DecodeNavigation.cancelNavigation(this.wrapper.getNavigation());
         if (!calledBack) {
             Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), callBack);
             calledBack = true;

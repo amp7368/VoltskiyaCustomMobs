@@ -2,7 +2,7 @@ package apple.voltskiya.custom_mobs.mobs.abilities.tick.charger;
 
 import apple.nms.decoding.entity.DecodeEntity;
 import net.minecraft.world.entity.EntityInsentient;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftMob;
+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftMob;
 import org.bukkit.entity.Mob;
 import org.jetbrains.annotations.NotNull;
 import voltskiya.apple.utilities.util.constants.TagConstants;

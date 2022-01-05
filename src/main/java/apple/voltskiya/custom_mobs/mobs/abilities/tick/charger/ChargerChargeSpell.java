@@ -8,7 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftMob;
+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftMob;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.potion.PotionEffect;
@@ -51,18 +51,10 @@ public class ChargerChargeSpell {
 
     public void stateChoice() {
         switch (state) {
-            case CHARGE_UP:
-                new ChargeUp().run();
-                break;
-            case RUN:
-                new ChargeRun().run();
-                break;
-            case HIT_WALL:
-                new ChargeStun(this.charger.getType().getChargeStunTime()).run();
-                break;
-            case TIRED:
-                new ChargeStun(this.charger.getType().getChargeTiredTime()).run();
-                break;
+            case CHARGE_UP -> new ChargeUp().run();
+            case RUN -> new ChargeRun().run();
+            case HIT_WALL -> new ChargeStun(this.charger.getType().getChargeStunTime()).run();
+            case TIRED -> new ChargeStun(this.charger.getType().getChargeTiredTime()).run();
         }
     }
 
@@ -109,14 +101,14 @@ public class ChargerChargeSpell {
 
         public void dealWithResult(PathfinderGoalCharge.ChargeResult result) {
             switch (result) {
-                case HIT_WALL:
+                case HIT_WALL -> {
                     state = ChargingState.HIT_WALL;
                     stateChoice();
-                    break;
-                case HIT_NOTHING:
+                }
+                case HIT_NOTHING -> {
                     state = ChargingState.TIRED;
                     stateChoice();
-                    break;
+                }
             }
         }
     }

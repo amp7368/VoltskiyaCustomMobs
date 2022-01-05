@@ -1,25 +1,17 @@
 package apple.voltskiya.custom_mobs.mobs.nms.nether.eye_plant;
 
 import apple.nms.decoding.entity.DecodeEntity;
-import apple.nms.decoding.entity.DecodeEnumCreatureType;
 import apple.nms.decoding.iregistry.DecodeEntityTypes;
-import apple.nms.decoding.iregistry.DecodeIRegistry;
 import apple.nms.decoding.sound.DecodeSoundEffects;
-import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
-import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.holder.NmsMobRegister;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.holder.NmsMobEntitySupers;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.qol.NmsMobWrapperQOLModel;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.qol.NmsModelHolderQOL;
 import apple.voltskiya.custom_mobs.mobs.nms.parent.register.RegisteredCustomMob;
-import apple.voltskiya.custom_mobs.mobs.nms.parts.MobPartMother;
-import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModel;
-import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelEntityConfig;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.utility.NmsSpawnWrapperModel;
 import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelHandler;
-import apple.voltskiya.custom_mobs.mobs.nms.parts.child.MobPartChild;
 import apple.voltskiya.custom_mobs.mobs.nms.parts.child.MobParts;
-import apple.voltskiya.custom_mobs.mobs.nms.utils.UtilsPacket;
-import com.mojang.datafixers.types.Type;
-import net.minecraft.core.IRegistry;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.protocol.Packet;
+import net.minecraft.server.level.WorldServer;
 import net.minecraft.sounds.SoundEffect;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityTypes;
@@ -33,135 +25,74 @@ import net.minecraft.world.entity.player.EntityHuman;
 import net.minecraft.world.level.World;
 import net.minecraft.world.phys.Vec3D;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftZombie;
-import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftEntity;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
+import java.util.Objects;
 
-public class MobEyePlant extends EntityZombie implements RegisteredCustomMob {
-    public static final NmsModelHandler.ModelConfigName REGISTERED_MODEL = NmsModelHandler.ModelConfigName.EYE_PLANT;
-    public static final String REGISTERED_NAME = REGISTERED_MODEL.getName();
-    private static EntityTypes<MobEyePlant> entityTypes;
-    private static NmsModelEntityConfig selfModel;
-    private List<MobPartChild> children = null;
-    private AttributeMapBase attributeMap = null;
+public class MobEyePlant extends EntityZombie implements RegisteredCustomMob, NmsModelHolderQOL<MobEyePlant> {
+    private static NmsSpawnWrapperModel<MobEyePlant> spawner;
+    private final NmsMobWrapperQOLModel<MobEyePlant> selfWrapper = new NmsMobWrapperQOLModel<>(this);
 
-    /**
-     * registers the EyePlant as an entity
-     */
-    public static void initialize() {
-        Map<? super Object, Type<?>> types = NmsMobRegister.getMinecraftTypes();
-        final Type<?> zombieType = types.get("minecraft:zombie");
-        types.put(registeredNameId(), zombieType);
-
-        // build it
-        EntityTypes.Builder<MobEyePlant> entitytypesBuilder = EntityTypes.Builder.a(MobEyePlant::new, DecodeEnumCreatureType.MONSTER.encode());
-        entityTypes = entitytypesBuilder.a(REGISTERED_NAME);
-        entityTypes = IRegistry.a(DecodeIRegistry.getEntityType(), DecodeIRegistry.getEntityType().getId(DecodeEntityTypes.ZOMBIE), REGISTERED_NAME, entityTypes); // this is good
-        // log it
-        PluginNmsMobs.get().log(Level.INFO, "registered " + registeredNameId());
-        final NmsModel model = NmsModelHandler.parts(REGISTERED_MODEL);
-        selfModel = model.mainPart();
-    }
-
-    /**
-     * constructor to match the EntityTypes requirement
-     *
-     * @param world the world to spawn the entity in
-     */
-
-    public MobEyePlant(EntityTypes<MobEyePlant> entityTypes, World world) {
+    public MobEyePlant(EntityTypes<?> entitytypes, World world) {
         super(DecodeEntityTypes.ZOMBIE, world);
     }
 
-
-    /**
-     * spawns a WarpedGremlin
-     *
-     * @param location the org.bukkit location where the mob should be spawned
-     * @param oldNbt   the nbt of the previously spawned mob or null if no entity existed
-     */
-    public static void spawn(Location location, @Nullable NBTTagCompound oldNbt) {
-        CraftWorld world = (CraftWorld) location.getWorld();
-        final MobEyePlant eyePlant = new MobEyePlant(entityTypes, world.getHandle());
-        eyePlant.prepare(location, oldNbt);
-        eyePlant.addScoreboardTag(SpawnCustomMobListener.CUSTOM_SPAWN_COMPLETE_TAG);
-        eyePlant.addScoreboardTag(REGISTERED_NAME);
-        world.getHandle().addEntity(eyePlant);
-        eyePlant.addChildren();
+    public static NmsSpawnWrapperModel<MobEyePlant> spawner() {
+        return spawner = Objects.requireNonNullElseGet(spawner, MobEyePlant::makeSpawner);
     }
 
-    public static void spawnEat(CreatureSpawnEvent event) {
-        Location location = event.getEntity().getLocation();
-        spawn(location, ((CraftEntity) event.getEntity()).getHandle().save(new NBTTagCompound()));
-        event.setCancelled(true);
+    @NotNull
+    private static NmsSpawnWrapperModel<MobEyePlant> makeSpawner() {
+        NmsModelHandler.ModelConfigName model = NmsModelHandler.ModelConfigName.EYE_PLANT;
+        return new NmsSpawnWrapperModel<>(
+                model.getName(),
+                MobEyePlant::new,
+                DecodeEntityTypes.ZOMBIE,
+                model
+        );
     }
 
-    private void prepare(Location location, NBTTagCompound oldNbt) {
-        final NBTTagCompound newNbt = selfModel.getData().nbt;
-        final NBTTagCompound mergedNbt = oldNbt == null ? newNbt : oldNbt.a(newNbt);
-        this.load(mergedNbt);
-        this.setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
-    }
-
-    private void addChildren() {
-        if (this.children != null) {
-            for (MobPartChild child : children) {
-                child.die();
-            }
-        }
-        this.children = MobPartMother.getChildren(this.getUniqueID(), this, selfModel, REGISTERED_MODEL);
-        this.bL = new MobParts.ControllerLookChildrenFollow(this, this.children);
+    public NmsSpawnWrapperModel<MobEyePlant> getSpawner() {
+        return spawner;
     }
 
     @Override
-    protected void initPathfinder() {
-        // only look aat the player
-        if (this.children != null) this.bL = new MobParts.ControllerLookChildrenFollow(this, this.children);
+    public NmsMobEntitySupers makeEntitySupers() {
+        return new NmsMobEntitySupers(
+                super::b, // change world
+                super::a, // move
+                super::g, //load
+                super::f, //save
+                super::a // die
+        );
+    }
+
+    @Override
+    public NmsMobWrapperQOLModel<MobEyePlant> getSelfWrapper() {
+        return selfWrapper;
+    }
+
+    @Override
+    public MobEyePlant getSelfEntity() {
+        return this;
+    }
+
+
+    public void addChildrenPost() {
+        this.bN = new MobParts.ControllerLookChildrenFollow(this, selfWrapper.verifyChildren());
+    }
+
+    //init pathfinder
+    @Override
+    protected void u() {
+        // only look at the player
         DecodeEntity.getGoalSelector(this).a(0, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 8.0F));
     }
 
+    // getSoundAmbient
     @Override
-    public AttributeMapBase getAttributeMap() {
-        return this.attributeMap == null ? this.attributeMap = new AttributeMapBase(getAttributeProvider()) : this.attributeMap;
-    }
-
-    @Override
-    public boolean isFireProof() {
-        return true;
-    }
-
-    @Override
-    public void load(NBTTagCompound nbttagcompound) {
-        nbttagcompound.setString("id", registeredNameId());
-        super.load(nbttagcompound);
-        final boolean invisible = nbttagcompound.getBoolean("Invisible");
-        ((CraftZombie) this.getBukkitEntity()).setInvisible(invisible);
-    }
-
-    @Override
-    public NBTTagCompound save(NBTTagCompound nbttagcompound) {
-        NBTTagCompound data = super.save(nbttagcompound);
-        data.setBoolean("Invisible", this.isInvisible());
-        data.setString("id", registeredNameId());
-        return data;
-    }
-
-
-    @NotNull
-    private static String registeredNameId() {
-        return "minecraft" + ":" + REGISTERED_NAME;
-    }
-
-    @Override
-    protected SoundEffect getSoundAmbient() {
+    protected SoundEffect r() {
         if (this.getRandom().nextBoolean()) return null;
         ambientParticles();
         final double choice = this.getRandom().nextDouble();
@@ -174,31 +105,14 @@ public class MobEyePlant extends EntityZombie implements RegisteredCustomMob {
         }
     }
 
-    @Override
-    public void setOnFire(int i) {
-
-    }
-
-    @Override
-    public void move(EnumMoveType enummovetype, Vec3D vec3d) {
-        super.move(enummovetype, vec3d);
-        List<Packet<?>> packetsToSend = new ArrayList<>();
-        if (this.children == null) {
-            this.addChildren();
-        }
-        for (MobPartChild child : children) {
-            packetsToSend.add(child.moveFromMother(false));
-        }
-        UtilsPacket.sendPacketsToNearbyPlayers(packetsToSend, this.getBukkitEntity().getLocation());
-    }
 
     private void ambientParticles() {
         CraftEntity me = getBukkitEntity();
+        Location location = me.getLocation();
+        double x = location.getX();
+        double y = location.getY();
+        double z = location.getZ();
         for (int i = 0; i < 10; i++) {
-            Location location = me.getLocation();
-            double x = location.getX();
-            double y = location.getY();
-            double z = location.getZ();
             double xi = this.getRandom().nextDouble() - .5;
             double yi = this.getRandom().nextDouble() - .5;
             double zi = this.getRandom().nextDouble() - .5;
@@ -206,20 +120,43 @@ public class MobEyePlant extends EntityZombie implements RegisteredCustomMob {
         }
     }
 
+    @Override
     public AttributeProvider getAttributeProvider() {
         return AttributeDefaults.a(DecodeEntityTypes.ZOMBIE);
     }
 
     @Override
-    public EntityTypes<?> getEntityType() {
-        return entityTypes;
+    public EntityTypes<?> ad() {
+        return nmsgetEntityType();
+    }
+
+    @Override
+    public void a(EnumMoveType enummovetype, Vec3D vec3d) {
+        nmsmove(enummovetype, vec3d);
+    }
+
+    @Override
+    public AttributeMapBase ep() {
+        return nmsgetAttributeMap();
+    }
+
+    @Override
+    public Entity b(WorldServer worldserver) {
+        return nmsChangeWorlds(worldserver);
+    }
+
+    @Override
+    public void g(NBTTagCompound nbttagcompound) {
+        nmsload(nbttagcompound);
+    }
+
+    @Override
+    public NBTTagCompound f(NBTTagCompound nbttagcompound) {
+        return nmssave(nbttagcompound);
     }
 
     @Override
     public void a(Entity.RemovalReason removalReason) {
-        super.a(removalReason);
-        for (MobPartChild child : children) {
-            child.die();
-        }
+        nmsRemove(removalReason);
     }
 }

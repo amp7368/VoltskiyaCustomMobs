@@ -1,11 +1,12 @@
 package apple.voltskiya.custom_mobs.custom_model.spawning;
 
+import apple.nms.decoding.entity.DecodeEntity;
 import apple.voltskiya.custom_mobs.custom_model.CustomModelDataEntity;
 import apple.voltskiya.custom_mobs.custom_model.handling.CustomModelConfig;
 import apple.voltskiya.custom_mobs.custom_model.handling.CustomModelEntityConfig;
 import net.minecraft.nbt.NBTTagCompound;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -53,7 +54,7 @@ public abstract class CustomModelImpl<Config extends CustomModelEntityConfig, Im
 
     public Impl spawnEntity(Config entityModel, EntityType entityType, NBTTagCompound nbt, Location entityLocation) {
         @NotNull Entity spawned = entityLocation.getWorld().spawnEntity(entityLocation, entityType, CreatureSpawnEvent.SpawnReason.CUSTOM);
-        ((CraftEntity) spawned).getHandle().load(nbt);
+        DecodeEntity.load(((CraftEntity) spawned).getHandle(), nbt);
         spawned.teleport(entityLocation);
         return createNewImpl(entityModel, spawned);
     }
@@ -68,7 +69,9 @@ public abstract class CustomModelImpl<Config extends CustomModelEntityConfig, Im
 
     public void kill() {
         for (Impl entity : allEntities) {
-            entity.getEntity().remove();
+            Entity e = entity.getEntity();
+            if (e != null)
+                e.remove();
         }
     }
 

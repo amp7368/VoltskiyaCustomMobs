@@ -7,9 +7,9 @@ import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
 import apple.voltskiya.custom_mobs.mobs.delay_pathfinding.DelayPathfindingPlugin;
 import apple.voltskiya.custom_mobs.reload.PluginDisable;
 import apple.voltskiya.custom_mobs.reload.PluginEnable;
-import apple.voltskiya.custom_mobs.ticking.Ticking;
 import apple.voltskiya.custom_mobs.turret.PluginTurret;
 import apple.voltskiya.custom_mobs.util.PluginUtils;
+import apple.voltskiya.custom_mobs.util.ticking.Ticking;
 import plugin.util.plugin.plugin.util.plugin.PluginManaged;
 import plugin.util.plugin.plugin.util.plugin.PluginManagedModule;
 import voltskiya.apple.configs.plugin.manage.PluginManagedConfigRegister;
@@ -46,7 +46,8 @@ public class VoltskiyaPlugin extends PluginManaged implements PluginManagedConfi
                 new PluginNmsMobs(),
                 new PluginTurret(),
                 new PluginEnable(),
-                new DelayPathfindingPlugin()
+                new DelayPathfindingPlugin(),
+                new Snowball()
         );
     }
 }

@@ -14,15 +14,10 @@ import plugin.util.plugin.plugin.util.plugin.PluginManagedModule;
 
 public class LeapRevenant extends ConfigManager implements LeapEater {
 
-    public void eatEntity(EntityInsentient creature) {
-        LeapPostConfig postConfig = new LeapPostConfig(
-                (leapDo) -> shouldStopLeap(creature),
-                creature::isOnGround,
-                LeapRevenant::preLeap,
-                LeapRevenant::interruptedLeap,
-                (entity) -> LeapRevenant.endLeap(entity, entity.getGoalTarget())
-        );
-        DecodeEntity.getGoalSelector(creature).a(0, new PathfinderGoalLeapRevenant(creature, getConfig(), postConfig));
+    private static void endLeap(EntityInsentient entity, EntityLiving lastTarget) {
+        entity.getBukkitEntity().setVelocity(new Vector(0, 0, 0));
+        if (lastTarget != null)
+            DecodeEntity.setGoalTarget(entity, lastTarget);
     }
 
     private static boolean shouldStopLeap(EntityLiving creature) {
@@ -33,10 +28,15 @@ public class LeapRevenant extends ConfigManager implements LeapEater {
         leapDo.leap();
     }
 
-    private static void endLeap(EntityInsentient entity, EntityLiving lastTarget) {
-        entity.getBukkitEntity().setVelocity(new Vector(0, 0, 0));
-        if (lastTarget != null)
-            entity.setGoalTarget(lastTarget);
+    public void eatEntity(EntityInsentient creature) {
+        LeapPostConfig postConfig = new LeapPostConfig(
+                (leapDo) -> shouldStopLeap(creature),
+                () -> DecodeEntity.isOnGround(creature),
+                LeapRevenant::preLeap,
+                LeapRevenant::interruptedLeap,
+                (entity) -> LeapRevenant.endLeap(entity, DecodeEntity.getLastTarget(entity))
+        );
+        DecodeEntity.getGoalSelector(creature).a(0, new PathfinderGoalLeapRevenant(creature, getConfig(), postConfig));
     }
 
     private static void interruptedLeap(EntityInsentient entity) {

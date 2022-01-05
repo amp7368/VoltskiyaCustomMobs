@@ -8,7 +8,8 @@ import java.io.File;
 
 public enum TurretModelNames implements ModelName {
     GM("GM"),
-    PLAYER("Player");
+    PLAYER("Player"),
+    INFINITE("Infinite");
 
     private final File file;
 

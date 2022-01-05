@@ -21,7 +21,9 @@ public class TurretDatabase {
         GsonTypeAdapterUtils.registerLocationTypeAdapter(gsonBuilder,
                 new GsonTypeAdapterUtils.LocationTypeAdapterOptions(true, true, true));
         GsonTypeAdapterUtils.registerNBTTagTypeAdapter(gsonBuilder);
+
         gsonBuilder.registerTypeHierarchyAdapter(TurretMob.class, TurretTypeIdentifier.createTypeMapper().getGsonSerializing(gsonBuilder));
+        gsonBuilder.registerTypeHierarchyAdapter(TurretMob.class, TurretBowIdentifier.createTypeMapper().getGsonSerializing(gsonBuilder));
         Gson gson = gsonBuilder.create();
 
         AppleRequestLazyServiceSimpleVoid turretServiceIO = new AppleRequestLazyServiceSimpleVoid(20, 0, 100, 5000);

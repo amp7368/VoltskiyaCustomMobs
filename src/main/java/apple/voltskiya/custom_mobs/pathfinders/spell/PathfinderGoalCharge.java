@@ -1,13 +1,14 @@
 package apple.voltskiya.custom_mobs.pathfinders.spell;
 
 import apple.nms.decoding.entity.DecodeEntity;
+import apple.nms.decoding.entity.DecodeNavigation;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import net.minecraft.world.entity.EntityInsentient;
 import net.minecraft.world.entity.ai.goal.PathfinderGoal;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftEntity;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -95,7 +96,7 @@ public class PathfinderGoalCharge extends PathfinderGoal {
      * @return something
      */
     @Override
-    public boolean C_() {
+    public boolean D_() {
         return true;
     }
 
@@ -113,7 +114,7 @@ public class PathfinderGoalCharge extends PathfinderGoal {
     public void d() {
         if (chargeResult == null) chargeResult = ChargeResult.HIT_NOTHING;
         // quit going to the location
-        this.me.getNavigation().o();
+        DecodeNavigation.cancelNavigation(DecodeEntity.getNavigation(this.me));
         if (!calledBack) {
             try {
                 Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> callBack.accept(chargeResult));
@@ -143,12 +144,18 @@ public class PathfinderGoalCharge extends PathfinderGoal {
         Vector direction = this.target.clone().subtract(here).toVector().setY(0).normalize().multiply(0.9);
         here.setDirection(direction);
         if (!MaterialUtils.isWalkThroughable(here.getWorld().getBlockAt(here.add(direction)).getType())) {
-            this.me.getControllerJump().jump();
+            DecodeNavigation.jump(DecodeEntity.getControllerJump(this.me));
         }
-        this.me.setYRot(0f);
-        this.me.setXRot(here.getYaw());
-        this.me.getNavigation().o();
-        this.me.getControllerMove().a(me.locX() + direction.getX(), me.locY() + direction.getY(), me.locZ() + direction.getZ(), speed);
+        Location newLoc = this.me.getBukkitEntity().getLocation();
+        newLoc.setPitch(0f);
+        newLoc.setYaw(here.getYaw());
+        this.me.getBukkitEntity().teleport(newLoc);
+        DecodeNavigation.cancelNavigation(DecodeEntity.getNavigation(this.me));
+        DecodeEntity.getControllerMove(this.me).a(
+                newLoc.getX() + direction.getX(),
+                newLoc.getY() + direction.getY(),
+                newLoc.getZ() + direction.getZ(),
+                speed);
     }
 
     public enum ChargeResult {

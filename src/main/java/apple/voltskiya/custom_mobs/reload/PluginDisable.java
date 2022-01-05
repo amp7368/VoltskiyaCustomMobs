@@ -6,13 +6,12 @@ import net.minecraft.world.entity.EntityInsentient;
 import net.minecraft.world.entity.ai.goal.PathfinderGoal;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import plugin.util.plugin.plugin.util.plugin.PluginManagedModule;
 import voltskiya.apple.utilities.util.constants.TagConstants;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 public class PluginDisable extends PluginManagedModule {
@@ -22,11 +21,7 @@ public class PluginDisable extends PluginManagedModule {
     public static synchronized void addMob(EntityInsentient mob, PathfinderGoal pathfinder) {
         mobs.put(mob, pathfinder);
         if (i++ % 100 == 0) {
-            Iterator<Map.Entry<EntityInsentient, PathfinderGoal>> iterator = mobs.entrySet().iterator();
-            if (iterator.hasNext()) {
-                if (!iterator.next().getKey().isAlive())
-                    iterator.remove();
-            }
+            mobs.entrySet().removeIf(pair -> pair.getKey().getBukkitEntity().isDead());
         }
     }
 
@@ -42,7 +37,7 @@ public class PluginDisable extends PluginManagedModule {
     @Override
     public void onDisable() {
         for (Map.Entry<EntityInsentient, PathfinderGoal> mob : mobs.entrySet()) {
-            if (mob != null && mob.getKey().isAlive()) {
+            if (mob != null && !mob.getKey().getBukkitEntity().isDead()) {
                 DecodeEntity.getGoalSelector(mob.getKey()).a(mob.getValue());
                 DecodeEntity.getTargetSelector(mob.getKey()).a(mob.getValue());
             }

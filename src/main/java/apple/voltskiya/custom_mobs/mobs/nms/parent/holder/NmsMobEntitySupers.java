@@ -17,7 +17,7 @@ public record NmsMobEntitySupers(
         Function<NBTTagCompound, NBTTagCompound> save,
         Consumer<Entity.RemovalReason> remove
 ) {
-    public Entity b(WorldServer worldserver) {
+    public Entity changeWorlds(WorldServer worldserver) {
         return changeWorlds.apply(worldserver);
     }
 
@@ -33,7 +33,7 @@ public record NmsMobEntitySupers(
         return save.apply(nbttagcompound);
     }
 
-    public void a(Entity.RemovalReason removalReason) {
+    public void remove(Entity.RemovalReason removalReason) {
         remove.accept(removalReason);
     }
 }

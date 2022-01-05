@@ -2,7 +2,7 @@ package apple.voltskiya.custom_mobs.util;
 
 import apple.utilities.util.ObjectUtilsFormatting;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.Tickable;
-import apple.voltskiya.custom_mobs.ticking.HighFrequencyTick;
+import apple.voltskiya.custom_mobs.util.ticking.HighFrequencyTick;
 import com.google.common.collect.ImmutableList;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;

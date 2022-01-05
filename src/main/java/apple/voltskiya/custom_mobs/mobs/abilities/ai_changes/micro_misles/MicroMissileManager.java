@@ -1,15 +1,14 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.micro_misles;
 
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.Tickable;
-import apple.voltskiya.custom_mobs.ticking.HighFrequencyTick;
-import apple.voltskiya.custom_mobs.ticking.TickGiverable;
-import net.minecraft.world.damagesource.DamageSource;
+import apple.voltskiya.custom_mobs.util.ticking.HighFrequencyTick;
+import apple.voltskiya.custom_mobs.util.ticking.TickGiverable;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftLivingEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -140,7 +139,7 @@ public class MicroMissileManager implements Tickable {
         }
 
         private void damage(CraftLivingEntity nearby) {
-            nearby.getHandle().damageEntity(DamageSource.explosion(null), (float) damage);
+            nearby.damage(damage);
         }
 
         private void movementTick() {

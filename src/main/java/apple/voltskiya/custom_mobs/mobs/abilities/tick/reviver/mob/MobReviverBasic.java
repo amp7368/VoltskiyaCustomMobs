@@ -6,47 +6,69 @@ import apple.voltskiya.custom_mobs.mobs.abilities.tick.reviver.config.ReviverCon
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.reviver.dead.DeadRecordedMob;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.reviver.dead.ReviveDeadManager;
 import apple.voltskiya.custom_mobs.pathfinders.utilities.PathfinderGoalMoveToTarget;
-import net.minecraft.world.entity.EntityInsentient;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.util.Vector;
 import voltskiya.apple.utilities.util.DistanceUtils;
-import voltskiya.apple.utilities.util.constants.TagConstants;
+import voltskiya.apple.utilities.util.action.*;
 
 public class MobReviverBasic extends MobReviver<ReviverConfigBasic> {
+    public static final int SUMMON_TICKING_INTERVAL = 3;
+    private static final String DO_INIT = "init";
+    private static final String DO_SUMMON1 = "summon1";
+    private static final String DO_START = "start";
+    private static final String DO_START_RITUAL = "start_ritual";
+    private final RepeatingActionManager action;
+    private DeadRecordedMob reviveMe;
 
     public MobReviverBasic(Entity reviver, ReviverConfigBasic config) {
         super(reviver, config);
+        action = new RepeatingActionManager(VoltskiyaPlugin.get())
+                .registerInit(this::initSummon)
+                .registerAction(new OneOffAction(DO_SUMMON1, this::summon1))
+                .registerAction(new OneOffAction(DO_START, this::summonStart))
+                .registerAction(new RepeatableActionImpl(DO_START_RITUAL, this::doReviveRitual, config.reviveRitualTime, SUMMON_TICKING_INTERVAL))
+                .registerFinally(this::quitRevive);
     }
 
-    @Override
-    protected void doAbility() {
-        DeadRecordedMob mobToRevive = ReviveDeadManager.getNearestMob(config.deadTooLong, getLocation());
-        if (mobToRevive == null ||
-                DistanceUtils.distance(mobToRevive.getLocation(), getLocation()) > config.searchRadius) {
+    private void initSummon() {
+        setIsDoingAction(true);
+    }
+
+    private void summon1() {
+        reviveMe = ReviveDeadManager.getNearestMob(config.deadTooLong, getLocation());
+        if (reviveMe == null) {
             return;
         }
-        Location targetLocation = mobToRevive.getLocation();
+        ReviveDeadManager.removeMob(reviveMe);
+        double distance = DistanceUtils.distance(reviveMe.getLocation(), getLocation());
+        if (distance > config.searchRadius) {
+            return;
+        }
+        Location targetLocation = reviveMe.getLocation();
         while (targetLocation.getBlock().getType().isAir() && targetLocation.getY() >= 0) {
             targetLocation.subtract(0, 1, 0);
         }
         targetLocation = targetLocation.getBlock().getLocation().add(0.5, 1, 0.5);
-        TagConstants.addIsDoingAbility(getBukkitEntity());
-        getBukkitEntity().addScoreboardTag(TagConstants.isDoingAbility);
+        this.reviveMe.setLocation(targetLocation);
         DecodeEntity.getGoalSelector(getEntityInsentient())
                 .a(-1, new PathfinderGoalMoveToTarget(getEntityInsentient(),
                         targetLocation,
                         1.6,
                         config.giveUpTick,
-                        () -> reviveStart(mobToRevive)));
+                        () -> action.startActionAndStart(DO_START)));
     }
 
-    private void reviveStart(DeadRecordedMob reviveMe) {
-        if (DistanceUtils.distance(reviveMe.getLocation(), getLocation()) > 2) {
+    @Override
+    protected void doAbility() {
+        action.startActionAndStart(DO_SUMMON1);
+    }
+
+    private void summonStart() {
+        if (reviveMe == null || DistanceUtils.distance(reviveMe.getLocation(), getLocation()) > 2) {
             // say we failed
             ReviveDeadManager.addMob(reviveMe);
-            quitRevive();
             return;
         }
         Mob reviver = getBukkitMob();
@@ -63,41 +85,35 @@ public class MobReviverBasic extends MobReviver<ReviverConfigBasic> {
 
         final World world = reviverLocation.getWorld();
         world.playSound(reviveMe.getLocation(), Sound.BLOCK_BEACON_DEACTIVATE, SoundCategory.HOSTILE, 35, .7f);
-        Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> doReviveRitual(reviveMe, config.reviveRitualTime), 0);
+        action.startAction(DO_START_RITUAL);
     }
 
     private void quitRevive() {
-        Mob reviver = getBukkitMob();
-        reviver.setAI(true);
-        reviver.removeScoreboardTag(TagConstants.isDoingAbility);
+        getBukkitMob().setAI(true);
+        setIsDoingAction(false);
     }
 
-    private void doReviveRitual(DeadRecordedMob reviveMe, int time) {
-        if (time < 0) {
-            quitRevive();
-            doReviveSummon(reviveMe);
-            return;
-        }
-        final EntityInsentient handle = this.getEntityInsentient();
+    private ActionReturn doReviveRitual(ActionMeta meta) {
         // if the mob was just spawned or it was hurt a while ago
-        if ((DecodeEntity.getHurtTimestamp(handle) == 0 ||
-                DecodeEntity.getHurtTimestamp(handle) + time <= DecodeEntity.getTicksLived(handle)
-        ) && !getBukkitEntity().isDead()) {
-            Location reviverLocation = getLocation();
-            World world = getWorld();
-            double xLoc = reviverLocation.getX();
-            double yLoc = reviverLocation.getY();
-            double zLoc = reviverLocation.getZ();
-            for (int i = 0; i < 15; i++) {
-                double xi = random.random().nextDouble() - .5;
-                double yi = random.random().nextDouble() * 2;
-                double zi = random.random().nextDouble() - .5;
-                world.spawnParticle(Particle.REDSTONE, xLoc + xi, yLoc + yi, zLoc + zi, 1, new Particle.DustOptions(Color.RED, 1f));
-            }
-            VoltskiyaPlugin.get().scheduleSyncDelayedTask(() -> doReviveRitual(reviveMe, time - 3), 3);
-        } else {
+        if (wasHit(meta.currentTick()) || isDead()) {
             reviveMe.resetCooldown(config.deadCooldown);
-            quitRevive();
+            return ActionReturn.stop();
         }
+        if (meta.isLastRun()) {
+            doReviveSummon(reviveMe);
+            return ActionReturn.stop();
+        }
+        Location reviverLocation = getLocation();
+        World world = getWorld();
+        double xLoc = reviverLocation.getX();
+        double yLoc = reviverLocation.getY();
+        double zLoc = reviverLocation.getZ();
+        for (int i = 0; i < 15; i++) {
+            double xi = random.random().nextDouble() - .5;
+            double yi = random.random().nextDouble() * 2;
+            double zi = random.random().nextDouble() - .5;
+            world.spawnParticle(Particle.REDSTONE, xLoc + xi, yLoc + yi, zLoc + zi, 1, new Particle.DustOptions(Color.RED, 1f));
+        }
+        return ActionReturn.go();
     }
 }

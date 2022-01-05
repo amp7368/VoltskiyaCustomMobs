@@ -13,10 +13,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.Nullable;
 import voltskiya.apple.utilities.util.DistanceUtils;
-import voltskiya.apple.utilities.util.action.ActionToRun;
-import voltskiya.apple.utilities.util.action.OneOffAction;
-import voltskiya.apple.utilities.util.action.RepeatableActionImpl;
-import voltskiya.apple.utilities.util.action.RepeatingActionManager;
+import voltskiya.apple.utilities.util.action.*;
 import voltskiya.apple.utilities.util.particle.ParticleCircle;
 
 import java.util.List;
@@ -80,21 +77,21 @@ public class MobReviverPulse extends MobReviver<ReviverConfigPulse> {
         getWorld().playSound(getLocation(), Sound.ENTITY_POLAR_BEAR_WARNING, SoundCategory.HOSTILE, 2, 0.5f);
     }
 
-    private boolean doChargeUp(int currentTick, boolean isLastRun) {
-        if (isDead()) return false;
+    private ActionReturn doChargeUp(ActionMeta meta) {
+        if (isDead()) return ActionReturn.stop();
         if (wasHit(10)) {
             pulse.startAction(ANGER);
-            return false;
+            return ActionReturn.stop();
         }
-        if (currentTick == 1) {
+        if (meta.currentTick() == 1) {
             getWorld().playSound(getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, SoundCategory.HOSTILE, 2, 0.1f);
         }
         ParticleCircle particleCircle = new ParticleCircle(getLocation());
         Location[] locations = particleCircle.innerToOuter(1.2, .75, 0, 1);
         particleCircle.particles(locations, Particle.SOUL_FIRE_FLAME);
 
-        if (isLastRun) pulse.startAction(DO_PULSE);
-        return true;
+        if (meta.isLastRun()) pulse.startAction(DO_PULSE);
+        return ActionReturn.go();
     }
 
 
@@ -106,25 +103,25 @@ public class MobReviverPulse extends MobReviver<ReviverConfigPulse> {
         private final ParticleCircle circle = new ParticleCircle(getLocation());
 
         @Override
-        public boolean run(int currentTick, boolean isLastTick) {
+        public ActionReturn run(ActionMeta meta) {
             circle.setCenter(getLocation());
             double density;
             Particle particle;
             density = 2.5;
-            if (isLastTick) {
+            if (meta.isLastRun()) {
                 density *= 1;
                 particle = Particle.SOUL_FIRE_FLAME;
             } else {
                 particle = Particle.CRIT_MAGIC;
             }
-            double nowRadius = Math.max(((currentTick - 1) % config.ticksForPulse) / (double) config.ticksForPulse * config.pulseRadius, 0.5);
+            double nowRadius = Math.max(((meta.currentTick() - 1) % config.ticksForPulse) / (double) config.ticksForPulse * config.pulseRadius, 0.5);
             List<DeadRecordedMob> deadInReach = ReviveDeadManager.removeMobsInRadius(config.deadTooLong, getLocation(), nowRadius);
             for (DeadRecordedMob dead : deadInReach) {
                 doReviveSummon(dead);
             }
             circle.particles(circle.innerToOuter(density, nowRadius, Math.max(0, nowRadius - 2), .5), particle);
             circle.particles(circle.hollow(density, nowRadius, .75), particle);
-            return true;
+            return ActionReturn.go();
         }
     }
 }

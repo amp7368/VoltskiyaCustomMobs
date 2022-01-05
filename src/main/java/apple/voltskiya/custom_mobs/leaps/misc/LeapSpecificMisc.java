@@ -8,7 +8,7 @@ import apple.voltskiya.custom_mobs.leaps.config.LeapPreConfig;
 import apple.voltskiya.custom_mobs.sql.MobListSql;
 import net.minecraft.world.entity.EntityInsentient;
 import net.minecraft.world.entity.EntityLiving;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftLivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.util.Vector;
 
@@ -21,7 +21,7 @@ public class LeapSpecificMisc {
         if (creature instanceof EntityInsentient) {
             eatEntity((EntityInsentient) creature, config);
             try {
-                MobListSql.addMob(name, creature.getUniqueID());
+                MobListSql.addMob(name, creature.getBukkitEntity().getUniqueId());
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
@@ -31,7 +31,7 @@ public class LeapSpecificMisc {
     public static void eatEntity(EntityInsentient creature, LeapPreConfig config) {
         LeapPostConfig postConfig = new LeapPostConfig(
                 (leapDo) -> DecodeEntity.getHurtTimestamp(creature) >= DecodeEntity.getTicksLived(creature) - 10,
-                creature::isOnGround,
+                () -> DecodeEntity.isOnGround(creature),
                 LeapSpecificMisc::preLeap,
                 LeapSpecificMisc::interruptedLeap,
                 LeapSpecificMisc::endLeap

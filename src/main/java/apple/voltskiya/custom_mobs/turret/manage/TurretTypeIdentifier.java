@@ -3,12 +3,14 @@ package apple.voltskiya.custom_mobs.turret.manage;
 import apple.utilities.json.gson.GsonTypeAdapterMapper;
 import apple.utilities.json.gson.GsonTypeAdapterSerialization;
 import apple.voltskiya.custom_mobs.turret.gm.TurretMobGm;
+import apple.voltskiya.custom_mobs.turret.infinite.TurretMobInfinite;
 import apple.voltskiya.custom_mobs.turret.parent.TurretMob;
 import apple.voltskiya.custom_mobs.turret.player.TurretMobPlayer;
 
 public enum TurretTypeIdentifier implements GsonTypeAdapterSerialization<TurretMob> {
     GM("typeTurretGM", TurretMobGm.class, "spawn_turret_gm"),
-    PLAYER("typeTurretPlayer", TurretMobPlayer.class, "spawn_turret_player");
+    PLAYER("typeTurretPlayer", TurretMobPlayer.class, "spawn_turret_player"),
+    INFINITE("typeTurretInfinite", TurretMobInfinite.class, "spawn_turret_infinite");
 
     private final String typeId;
     private final Class<? extends TurretMob<?>> typeClass;

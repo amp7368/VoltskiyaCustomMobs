@@ -1,5 +1,6 @@
 package apple.voltskiya.custom_mobs.mobs.nms.nether.angered_soul;
 
+import apple.nms.decoding.entity.DecodeEntity;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import net.minecraft.world.entity.EntityLiving;
 import org.bukkit.Bukkit;
@@ -29,7 +30,7 @@ public class AngeredSoulScream implements Runnable {
     public void run() {
         if (this.ran) return;
         this.ran = true;
-        @Nullable EntityLiving targetEntity = this.me.getGoalTarget();
+        @Nullable EntityLiving targetEntity = DecodeEntity.getLastTarget(this.me);
         final Location myLocation = this.me.getBukkitEntity().getLocation();
         this.velocity = (targetEntity == null) ?
                 myLocation.getDirection() :
@@ -42,7 +43,7 @@ public class AngeredSoulScream implements Runnable {
     }
 
     private void postRun() {
-        @Nullable EntityLiving targetEntity = this.me.getGoalTarget();
+        @Nullable EntityLiving targetEntity = DecodeEntity.getLastTarget(this.me);
         final Location myLocation = this.me.getBukkitEntity().getLocation();
         this.velocity = (targetEntity == null) ?
                 myLocation.getDirection() :
@@ -57,7 +58,7 @@ public class AngeredSoulScream implements Runnable {
     }
 
     private void velocity() {
-        if (this.me.isAlive()) {
+        if (!this.me.getBukkitEntity().isDead()) {
             if (velocityTick++ == 60) {
                 this.me.explode();
             }
@@ -67,7 +68,7 @@ public class AngeredSoulScream implements Runnable {
     }
 
     private void sound() {
-        if (this.me.isAlive()) {
+        if (!this.me.getBukkitEntity().isDead()) {
             switch (soundTick++) {
                 case 0:
                     sound(1.5f);

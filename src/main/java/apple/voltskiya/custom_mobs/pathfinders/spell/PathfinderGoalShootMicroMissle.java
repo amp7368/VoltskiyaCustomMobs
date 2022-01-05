@@ -13,6 +13,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.plugin.IllegalPluginAccessException;
 
 import javax.annotation.Nullable;
@@ -42,7 +43,10 @@ public class PathfinderGoalShootMicroMissle extends PathfinderGoal {
      */
     @Override
     public boolean a() {
-        return random.nextFloat() < SHOOT_FREQUENCY && this.me.getGoalTarget() != null && DecodeEntity.getTicksLived(me) - this.lastShot >= cooldown;
+        boolean successChanced = random.nextFloat() < SHOOT_FREQUENCY;
+        boolean hasTarget = DecodeEntity.getLastTarget(this.me) != null;
+        boolean recentlyHit = DecodeEntity.getTicksLived(me) - this.lastShot >= cooldown;
+        return successChanced && hasTarget && recentlyHit;
     }
 
     @Override
@@ -50,18 +54,19 @@ public class PathfinderGoalShootMicroMissle extends PathfinderGoal {
         final Location targetLocation = getTargetLocation();
         if (targetLocation != null) {
             this.lastShot = DecodeEntity.getTicksLived(me);
+            Location shootFromLocation = ((LivingEntity) this.me.getBukkitEntity()).getEyeLocation();
             if (missileType == MicroMissleShooter.MissileType.FLURRY) {
                 sounds();
                 try {
                     Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
-                        MicroMissileManager.shoot(this.me.getBukkitEntity().getLocation().add(0, this.me.getHeadHeight(), 0), targetLocation, count, missileType);
+                        MicroMissileManager.shoot(shootFromLocation, targetLocation, count, missileType);
                     }, 24);
                 } catch (IllegalPluginAccessException ignored) {
                     // doesn't matter if the action is interuppted
                 }
             } else {
                 singleSound();
-                MicroMissileManager.shoot(this.me.getBukkitEntity().getLocation().add(0, this.me.getHeadHeight(), 0), targetLocation, count, missileType);
+                MicroMissileManager.shoot(shootFromLocation, targetLocation, count, missileType);
             }
         }
     }
@@ -94,7 +99,8 @@ public class PathfinderGoalShootMicroMissle extends PathfinderGoal {
 
     @Nullable
     private Location getTargetLocation() {
-        final EntityLiving goalTarget = this.me.getGoalTarget();
-        return goalTarget == null ? null : goalTarget.getBukkitEntity().getLocation().add(0, goalTarget.getHeadHeight(), 0);
+        final EntityLiving goalTarget = DecodeEntity.getLastTarget(this.me);
+        if (goalTarget == null) return null;
+        return ((LivingEntity) goalTarget.getBukkitEntity()).getEyeLocation();
     }
 }

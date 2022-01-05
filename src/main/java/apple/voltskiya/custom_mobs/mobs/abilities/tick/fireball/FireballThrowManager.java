@@ -17,6 +17,6 @@ public class FireballThrowManager extends MobEntityEater<FireballThrowConfigHold
 
     @Override
     public <Config extends MobTickerConfig> MobTickManagerTicker<Config> createTicker(Config config) {
-        return new FireballThrowTicker(config);
+        return new FireballThrowTicker<>(config);
     }
 }

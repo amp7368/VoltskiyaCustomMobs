@@ -3,11 +3,11 @@ package apple.voltskiya.custom_mobs.mobs.abilities.tick.charger;
 import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
 import apple.voltskiya.custom_mobs.mobs.nms.parent.config.ConfigManager;
 import apple.voltskiya.custom_mobs.mobs.nms.parent.register.RegisteredEntityEater;
-import apple.voltskiya.custom_mobs.ticking.HighFrequencyTick;
-import apple.voltskiya.custom_mobs.ticking.LowFrequencyTick;
-import apple.voltskiya.custom_mobs.ticking.NormalFrequencyTick;
-import apple.voltskiya.custom_mobs.ticking.TickGiverable;
 import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
+import apple.voltskiya.custom_mobs.util.ticking.HighFrequencyTick;
+import apple.voltskiya.custom_mobs.util.ticking.LowFrequencyTick;
+import apple.voltskiya.custom_mobs.util.ticking.NormalFrequencyTick;
+import apple.voltskiya.custom_mobs.util.ticking.TickGiverable;
 import org.bukkit.Location;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
@@ -61,7 +61,11 @@ public class ChargerManagerTicker extends ConfigManager implements RegisteredEnt
 
     public void eatEntity(Mob charger) {
         Closeness closeness = determineConcern(charger);
+        for (String s : charger.getScoreboardTags()) {
+            System.out.printf("'%s'%n", s);
+        }
         for (ChargerType type : ChargerType.values()) {
+            System.out.println(type.getTag());
             if (charger.getScoreboardTags().contains(type.getTag())) {
                 closenessToChargeres.get(closeness).giveCharger(new Charger(charger, type));
             }
@@ -120,7 +124,7 @@ public class ChargerManagerTicker extends ConfigManager implements RegisteredEnt
     }
 
     enum Closeness {
-        HIGH_CLOSE(40, HighFrequencyTick.get()),
+        HIGH_CLOSE(60, HighFrequencyTick.get()),
         NORMAL_CLOSE(80, NormalFrequencyTick.get()),
         LOW_CLOSE(150, LowFrequencyTick.get());
 

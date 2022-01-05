@@ -2,69 +2,81 @@ package apple.voltskiya.custom_mobs.mobs.nms.parent.holder;
 
 
 import apple.voltskiya.custom_mobs.mobs.nms.parent.register.RegisteredCustomMob;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.utility.NmsUtility;
+import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModel;
 import apple.voltskiya.custom_mobs.mobs.nms.parts.child.MobPartChild;
 import apple.voltskiya.custom_mobs.mobs.nms.utils.UtilsPacket;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.server.level.WorldServer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityTypes;
-import net.minecraft.world.entity.EnumMoveType;
 import net.minecraft.world.entity.ai.attributes.AttributeMapBase;
-import net.minecraft.world.phys.Vec3D;
-import org.bukkit.Location;
+import net.minecraft.world.entity.ai.attributes.AttributeProvider;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
 public interface NmsMob<
-        TypeEntity extends Entity & NmsMob<TypeEntity, Config>,
-        Config extends NmsMobConfig<TypeEntity, Config>> extends RegisteredCustomMob {
+        SelfEntity extends Entity & NmsMob<SelfEntity, Config>,
+        Config extends NmsMobConfig<SelfEntity, Config>
+        > extends RegisteredCustomMob, NmsUtility<SelfEntity> {
 
-    default NmsMobHolder<TypeEntity, Config> verifyMobHolder() {
-        NmsMobHolder<TypeEntity, Config> mobManager = getMobManager();
+    default NmsMobWrappedConfigable<SelfEntity, Config> verifyMobWrapper() {
+        NmsMobWrappedConfigable<SelfEntity, Config> mobManager = getMobManager();
         if (mobManager == null) {
-            mobManager = new NmsMobHolder<>(getRegister(), getEntity());
+            mobManager = new NmsMobWrappedConfigable<>(getRegister(), getSelfEntity());
             setMobManager(mobManager);
         }
         return mobManager;
     }
 
-    NmsMobHolder<TypeEntity, Config> getMobManager();
+    NmsMobWrappedConfigable<SelfEntity, Config> getMobManager();
 
-    void setMobManager(NmsMobHolder<TypeEntity, Config> mobManager);
+    void setMobManager(NmsMobWrappedConfigable<SelfEntity, Config> mobManager);
 
-    NmsMobEntitySupers getEntitySupers();
+    NmsMobRegisterConfigable<SelfEntity, Config> getRegister();
 
-    NmsMobRegister<TypeEntity, Config> getRegister();
+    @Override
+    default String getSaveId() {
+        return getRegister().getTag();
+    }
 
-    TypeEntity getEntity();
+    @Override
+    default AttributeProvider getAttributeProvider() {
+        return getRegister().getAttributeProvider();
+    }
+
 
     default Config getConfig() {
         return getMobManager().getConfig();
     }
 
-    default boolean hasModel() {
-        return verifyMobHolder().hasModel();
-    }
-
-    default void prepareNms(Location location, NBTTagCompound oldNbt) {
-        if (oldNbt != null) {
-            oldNbt.remove("UUID");
-            this.load(oldNbt);
-        }
-        Entity entity = getEntity();
-        entity.setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
-    }
-
-    default void prepare() {
+    @Override
+    @Nullable
+    default NmsModel getSelfModel() {
+        return getRegister().getModel();
     }
 
     default void addChildren() {
+        NmsModel model = getRegister().getModel();
+        if (model != null) {
+            NmsMobRegisterConfigable<SelfEntity, Config> register = getRegister();
+            Entity entity = getSelfEntity();
+            verifyMobWrapper().addChildren(entity.getBukkitEntity().getUniqueId(), model, register.getModelName(), entity);
+        }
+    }
+
+    @Override
+    default void removePostHook() {
+        if (hasModel())
+            verifyMobWrapper().killParts();
+        NmsUtility.super.removePostHook();
+    }
+
+    default void movePostHook() {
         if (hasModel()) {
-            NmsMobRegister<TypeEntity, Config> register = getRegister();
-            Entity entity = getEntity();
-            verifyMobHolder().addChildren(entity.getUniqueID(), register.getModel(), register.getModelName(), entity);
+            if (verifyMobWrapper().getChildren() == null) addChildren();
+            List<Packet<?>> packetsToSend = verifyMobWrapper().move(true);
+            UtilsPacket.sendPacketsToNearbyPlayers(packetsToSend, this.getSelfEntity().getBukkitEntity().getLocation());
         }
     }
 
@@ -73,79 +85,22 @@ public interface NmsMob<
     }
 
     default AttributeMapBase nmsgetAttributeMap() {
-        return verifyMobHolder().getAttributeMap();
+        return verifyMobWrapper().getAttributeMap();
     }
 
-    default void nmsmove(EnumMoveType enummovetype, Vec3D vec3d) {
-        getEntitySupers().move(enummovetype, vec3d);
-        if (hasModel()) {
-            if (verifyMobHolder().getChildren() == null) addChildren();
-            List<Packet<?>> packetsToSend = verifyMobHolder().move(true);
-            UtilsPacket.sendPacketsToNearbyPlayers(packetsToSend, this.getEntity().getBukkitEntity().getLocation());
-        }
+    @Override
+    default NmsMobEntitySupers getEntitySupers() {
+        return getMobManager().getEntitySupers();
     }
 
-    /**
-     * change worlds
-     */
-    @Nullable
-    default Entity nmsb(WorldServer worldserver) {
-        final Entity result = getEntitySupers().b(worldserver);
+    @Override
+    default void changeWorldsPostHook(Entity result) {
+        NmsUtility.super.changeWorldsPostHook(result);
         if (hasModel() && result instanceof NmsMob<?, ?> nmsMob) {
-            for (MobPartChild child : verifyMobHolder().getChildren()) {
+            for (MobPartChild child : verifyMobWrapper().getChildren()) {
                 child.die();
             }
             nmsMob.addChildren();
         }
-        return result;
     }
-
-
-    default void nmsload(NBTTagCompound nbttagcompound) {
-        nbttagcompound.setString("id", getRegister().registeredNameId());
-        getEntitySupers().load(nbttagcompound);
-    }
-
-
-    default NBTTagCompound nmssave(NBTTagCompound nbttagcompound) {
-        NBTTagCompound data = getEntitySupers().save(nbttagcompound);
-        data.setString("id", getRegister().registeredNameId());
-        return data;
-    }
-
-
-    default void nmsa(Entity.RemovalReason removalReason) {
-        getEntitySupers().a(removalReason);
-        if (hasModel())
-            verifyMobHolder().killParts();
-    }
-
-    default EntityTypes<?> getEntityType() {
-        return nmsgetEntityType();
-    }
-
-    default AttributeMapBase getAttributeMap() {
-        return nmsgetAttributeMap();
-    }
-
-    default void move(EnumMoveType enummovetype, Vec3D vec3d) {
-        nmsmove(enummovetype, vec3d);
-    }
-
-    default Entity b(WorldServer worldserver) {
-        return nmsb(worldserver);
-    }
-
-    default void load(NBTTagCompound nbttagcompound) {
-        nmsload(nbttagcompound);
-    }
-
-    default NBTTagCompound save(NBTTagCompound nbttagcompound) {
-        return nmssave(nbttagcompound);
-    }
-
-    default void a(Entity.RemovalReason removalReason) {
-        nmsa(removalReason);
-    }
-
 }

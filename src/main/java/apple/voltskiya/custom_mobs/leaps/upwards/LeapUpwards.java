@@ -22,7 +22,7 @@ public class LeapUpwards extends ConfigManager implements LeapEater {
     public void eatEntity(EntityInsentient creature) {
         LeapPostConfig postConfig = new LeapPostConfig(
                 (leapDo) -> DecodeEntity.getHurtTimestamp(creature) >= DecodeEntity.getTicksLived(creature) - 10,
-                creature::isOnGround,
+                () -> DecodeEntity.isOnGround(creature),
                 LeapUpwards::preLeap,
                 LeapUpwards::interruptedLeap,
                 LeapUpwards::endLeap

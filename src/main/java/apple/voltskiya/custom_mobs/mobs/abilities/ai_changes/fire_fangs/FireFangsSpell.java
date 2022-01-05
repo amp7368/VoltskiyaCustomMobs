@@ -1,5 +1,6 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.fire_fangs;
 
+import apple.nms.decoding.entity.DecodeEntity;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.pathfinders.spell.PathfinderGoalShootSpell;
 import net.minecraft.world.entity.EntityInsentient;
@@ -25,7 +26,7 @@ public class FireFangsSpell implements PathfinderGoalShootSpell.Spell {
     public FireFangsSpell(FireFangsCaster me, FireFangsManager.FangsType type) {
         this.me = me.getEntity();
         Location mainLocation = this.me.getBukkitEntity().getLocation();
-        final EntityLiving goalTarget = this.me.getGoalTarget();
+        final EntityLiving goalTarget = DecodeEntity.getLastTarget(this.me);
         Vector mainDirection;
         if (goalTarget == null) mainDirection = mainLocation.getDirection().normalize().multiply(type.getStep());
         else

@@ -2,7 +2,7 @@ package apple.voltskiya.custom_mobs.turret.parent;
 
 import net.minecraft.nbt.NBTTagCompound;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +35,7 @@ public class TurretArrowStack {
     @Nullable
     public ItemStack toItem() {
         if (exists())
-            return InventoryUtils.makeItem(material, count, (String) null, null);
+            return InventoryUtils.makeItem(material, count, null, null);
         return null;
     }
 
@@ -87,7 +87,7 @@ public class TurretArrowStack {
 
     @NotNull
     public NBTTagCompound getEntityTag(ItemStack item) {
-        NBTTagCompound nbt = CraftItemStack.asNMSCopy(item).save(new NBTTagCompound());
+        NBTTagCompound nbt = CraftItemStack.asNMSCopy(item).b(new NBTTagCompound());
         return NbtUtils.getItemEntity(nbt);
     }
 

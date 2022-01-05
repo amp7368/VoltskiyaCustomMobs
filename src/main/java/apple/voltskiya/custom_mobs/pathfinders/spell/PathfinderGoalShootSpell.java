@@ -3,8 +3,10 @@ package apple.voltskiya.custom_mobs.pathfinders.spell;
 import apple.nms.decoding.entity.DecodeEntity;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import net.minecraft.world.entity.EntityInsentient;
+import net.minecraft.world.entity.EntityLiving;
 import net.minecraft.world.entity.ai.goal.PathfinderGoal;
 import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftEntity;
 import voltskiya.apple.utilities.util.DistanceUtils;
 
 public class PathfinderGoalShootSpell<Caster extends PathfinderGoalShootSpell.SpellCaster> extends PathfinderGoal {
@@ -25,12 +27,14 @@ public class PathfinderGoalShootSpell<Caster extends PathfinderGoalShootSpell.Sp
      */
     @Override
     public boolean a() {
-        return this.me.isAlive() &&
+        CraftEntity bukkitEntity = this.me.getBukkitEntity();
+        EntityLiving lastTarget = DecodeEntity.getLastTarget(me);
+        return bukkitEntity.isDead() &&
                 DecodeEntity.getTicksLived(me) - lastShot >= type.getCooldown() &&
-                this.me.getGoalTarget() != null &&
+                lastTarget != null &&
                 type.inRange(DistanceUtils.distance(
-                        this.me.getGoalTarget().getBukkitEntity().getLocation(),
-                        this.me.getBukkitEntity().getLocation()
+                        lastTarget.getBukkitEntity().getLocation(),
+                        bukkitEntity.getLocation()
                 ));
     }
 

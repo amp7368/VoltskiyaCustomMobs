@@ -34,7 +34,7 @@ public class CustomModelEntityImpl<Config extends CustomModelEntityConfig> {
 
     public void rotate(Location center, double angle) {
         XYZ<Double> centerPos = XYZ.from(center.toVector());
-        Location newLocation = VectorUtils.rotate(posVec, facingVec, centerPos, angle);
+        Location newLocation = VectorUtils.rotate(posVec, facingVec, centerPos, Math.toRadians(angle));
         newLocation.setWorld(center.getWorld());
         Entity entity = getEntity();
         if (entity != null)

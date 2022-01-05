@@ -1,24 +1,23 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.tick.reviver.dead;
 
+import apple.nms.decoding.entity.DecodeEntity;
 import net.minecraft.nbt.NBTTagCompound;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftEntity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 
 public class DeadRecordedMob {
     private static final int DEAD_TOO_LONG = 600000;
     private final NBTTagCompound nbt;
-    private final Location location;
+    private Location location;
     private final EntityType entityType;
     private final long diedAtTime;
     private long cooldownIsUpAt = System.currentTimeMillis() + 1000;
 
     public DeadRecordedMob(LivingEntity entity) {
         final net.minecraft.world.entity.Entity original = ((CraftEntity) entity).getHandle();
-        NBTTagCompound nbt = new NBTTagCompound();
-        original.save(nbt);
-        this.nbt = nbt;
+        this.nbt = DecodeEntity.save(original);
         this.location = entity.getLocation();
         this.entityType = entity.getType();
         this.diedAtTime = System.currentTimeMillis();
@@ -54,5 +53,9 @@ public class DeadRecordedMob {
 
     public boolean isDeadTooLong(int deadTooLong) {
         return diedAtTime + deadTooLong < System.currentTimeMillis();
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
     }
 }

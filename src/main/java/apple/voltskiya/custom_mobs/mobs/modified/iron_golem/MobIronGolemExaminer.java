@@ -1,21 +1,21 @@
 package apple.voltskiya.custom_mobs.mobs.modified.iron_golem;
 
 import apple.nms.decoding.entity.DecodeEntity;
-import apple.nms.decoding.entity.DecodeEnumCreatureType;
 import apple.nms.decoding.entity.DecodeEnumMonsterType;
 import apple.nms.decoding.iregistry.DecodeEntityTypes;
-import apple.nms.decoding.iregistry.DecodeIRegistry;
-import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
-import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.holder.NmsMobRegister;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.holder.NmsMobEntitySupers;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.qol.NmsHolderQOL;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.qol.NmsMobWrapperQOL;
 import apple.voltskiya.custom_mobs.mobs.nms.parent.register.RegisteredCustomMob;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.utility.NmsSpawnWrapper;
 import apple.voltskiya.custom_mobs.pathfinders.utilities.PathfinderGoalHurtByTargetExcept;
-import com.mojang.datafixers.types.Type;
-import net.minecraft.core.IRegistry;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.server.level.WorldServer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityInsentient;
 import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.EnumMoveType;
+import net.minecraft.world.entity.ai.attributes.AttributeMapBase;
 import net.minecraft.world.entity.ai.goal.PathfinderGoalSelector;
 import net.minecraft.world.entity.ai.goal.target.PathfinderGoalDefendVillage;
 import net.minecraft.world.entity.ai.goal.target.PathfinderGoalNearestAttackableTarget;
@@ -25,118 +25,109 @@ import net.minecraft.world.entity.monster.EntityCreeper;
 import net.minecraft.world.entity.monster.IMonster;
 import net.minecraft.world.entity.player.EntityHuman;
 import net.minecraft.world.level.World;
-import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
-import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.world.phys.Vec3D;
 
-import java.util.Map;
-import java.util.logging.Level;
+import java.util.Objects;
 
-public class MobIronGolemExaminer extends EntityIronGolem implements RegisteredCustomMob {
+public class MobIronGolemExaminer extends EntityIronGolem implements RegisteredCustomMob, NmsHolderQOL<MobIronGolemExaminer> {
     public static final String REGISTERED_NAME = "mob.examiner.iron_golem";
-    private static EntityTypes<MobIronGolemExaminer> entityTypes;
-
-    /**
-     * registers the IronGolemExaminer as an entity
-     */
-    public static void initialize() {
-        Map<? super Object, Type<?>> types = NmsMobRegister.getMinecraftTypes();
-        final Type<?> oldType = types.get("minecraft:iron_golem");
-        types.put(registeredNameId(), oldType);
-
-        // build it
-        EntityTypes.Builder<MobIronGolemExaminer> entitytypesBuilder = EntityTypes.Builder.a(MobIronGolemExaminer::new, DecodeEnumCreatureType.MONSTER.encode());
-        entityTypes = entitytypesBuilder.a(REGISTERED_NAME);
-        entityTypes = IRegistry.a(DecodeIRegistry.getEntityType(), DecodeIRegistry.getEntityType().getId(DecodeEntityTypes.IRON_GOLEM), REGISTERED_NAME, entityTypes); // this is good
-
-        // log it
-        PluginNmsMobs.get().log(Level.INFO, "registered " + registeredNameId());
-
-    }
+    private static NmsSpawnWrapper<MobIronGolemExaminer> spawner;
+    private NmsMobWrapperQOL<MobIronGolemExaminer> wrapper;
 
     public MobIronGolemExaminer(EntityTypes<? extends EntityIronGolem> entitytypes, World world) {
         super(DecodeEntityTypes.IRON_GOLEM, world);
     }
 
-    @NotNull
-    private static String registeredNameId() {
-        return "minecraft" + ":" + REGISTERED_NAME;
+    public static NmsSpawnWrapper<MobIronGolemExaminer> spawner() {
+        return spawner = Objects.requireNonNullElseGet(spawner, MobIronGolemExaminer::makeSpawner);
+    }
+
+    public static NmsSpawnWrapper<MobIronGolemExaminer> makeSpawner() {
+        return new NmsSpawnWrapper<>(
+                REGISTERED_NAME,
+                MobIronGolemExaminer::new,
+                DecodeEntityTypes.IRON_GOLEM
+        );
     }
 
     @Override
-    public EntityTypes<?> getEntityType() {
-        return entityTypes;
-    }
-
-    /**
-     * spawns a WarpedGremlin
-     *
-     * @param location the org.bukkit location where the mob should be spawned
-     * @param oldNbt   the nbt of the previously spawned mob or null if no entity existed
-     */
-    public static void spawn(Location location, NBTTagCompound oldNbt) {
-        CraftWorld world = (CraftWorld) location.getWorld();
-        final MobIronGolemExaminer gremlin = new MobIronGolemExaminer(entityTypes, world.getHandle());
-        gremlin.prepare(location, oldNbt);
-        gremlin.addScoreboardTag(SpawnCustomMobListener.CUSTOM_SPAWN_COMPLETE_TAG);
-        gremlin.addScoreboardTag(REGISTERED_NAME);
-        world.getHandle().addEntity(gremlin);
-    }
-
-
-    public static void spawnEat(CreatureSpawnEvent event) {
-        Location location = event.getEntity().getLocation();
-        spawn(location, ((CraftEntity) event.getEntity()).getHandle().save(new NBTTagCompound()));
-        event.setCancelled(true);
-    }
-
-    private void prepare(Location location, NBTTagCompound oldNbt) {
-        if (oldNbt != null) {
-            oldNbt.remove("UUID");
-            this.load(oldNbt);
-        }
-        this.setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
-    }
-
-    @Override
-    public void die(DamageSource damagesource) {
-        try {
-            super.die(damagesource);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("hmmmm");
-        }
-    }
-
-    @Override
-    public void load(NBTTagCompound nbttagcompound) {
-        nbttagcompound.setString("id", registeredNameId());
-        super.load(nbttagcompound);
-    }
-
-    @Override
-    public NBTTagCompound save(NBTTagCompound nbttagcompound) {
-        NBTTagCompound data = super.save(nbttagcompound);
-        data.setString("id", registeredNameId());
-        return data;
-    }
-
-    @Override
-    protected void initPathfinder() {
+    protected void u() {
         // copied from super.initPathfinder()
-        super.initPathfinder();
-        DecodeEntity.setTargetSelector(this, new PathfinderGoalSelector(getWorld().getMethodProfilerSupplier()));
+        super.u();
+        DecodeEntity.setTargetSelector(this, new PathfinderGoalSelector(getMethodProfilerSupplier()));
         PathfinderGoalSelector targetSelector = DecodeEntity.getTargetSelector(this);
         targetSelector.a(1, new PathfinderGoalDefendVillage(this));
         // modified to not attack illagers
-        targetSelector.a(2, new PathfinderGoalHurtByTargetExcept(this, (e) -> e.getMonsterType() != DecodeEnumMonsterType.ILLAGER.encode()));
+        targetSelector.a(2, new PathfinderGoalHurtByTargetExcept(this, (e) -> DecodeEntity.getMonsterType(e) != DecodeEnumMonsterType.ILLAGER.encode()));
         targetSelector.a(3, new PathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, 10, true, false, this::a_));
         // modified to not attack illagers
         targetSelector.a(3, new PathfinderGoalNearestAttackableTarget<>(this, EntityInsentient.class, 5, false, false,
-                (entityliving) -> entityliving instanceof IMonster && !(entityliving instanceof EntityCreeper) && entityliving.getMonsterType() != DecodeEnumMonsterType.ILLAGER.encode())
+                (entityliving) -> entityliving instanceof IMonster &&
+                        !(entityliving instanceof EntityCreeper) &&
+                        DecodeEntity.getMonsterType(entityliving) != DecodeEnumMonsterType.ILLAGER.encode())
         );
         targetSelector.a(4, new PathfinderGoalUniversalAngerReset<>(this, false));
+    }
+
+    @Override
+    public MobIronGolemExaminer getSelfEntity() {
+        return this;
+    }
+
+    @Override
+    public NmsSpawnWrapper<MobIronGolemExaminer> getSpawner() {
+        return spawner();
+    }
+
+    @Override
+    public NmsMobWrapperQOL<MobIronGolemExaminer> getSelfWrapper() {
+        return wrapper = Objects.requireNonNullElseGet(wrapper, NmsHolderQOL.super::makeSelfWrapper);
+    }
+
+
+    @Override
+    public NmsMobEntitySupers makeEntitySupers() {
+        return new NmsMobEntitySupers(
+                super::b, // change world
+                super::a, // move
+                super::g, //load
+                super::f, //save
+                super::a // die
+        );
+    }
+
+    @Override
+    public EntityTypes<?> ad() {
+        return nmsgetEntityType();
+    }
+
+    @Override
+    public void a(EnumMoveType enummovetype, Vec3D vec3d) {
+        nmsmove(enummovetype, vec3d);
+    }
+
+    @Override
+    public AttributeMapBase ep() {
+        return nmsgetAttributeMap();
+    }
+
+    @Override
+    public Entity b(WorldServer worldserver) {
+        return nmsChangeWorlds(worldserver);
+    }
+
+    @Override
+    public void g(NBTTagCompound nbttagcompound) {
+        nmsload(nbttagcompound);
+    }
+
+    @Override
+    public NBTTagCompound f(NBTTagCompound nbttagcompound) {
+        return nmssave(nbttagcompound);
+    }
+
+    @Override
+    public void a(Entity.RemovalReason removalReason) {
+        nmsRemove(removalReason);
     }
 }

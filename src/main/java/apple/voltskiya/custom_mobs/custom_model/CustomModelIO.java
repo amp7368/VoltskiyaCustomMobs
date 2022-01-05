@@ -6,7 +6,7 @@ import co.aikar.commands.BukkitCommandCompletionContext;
 import co.aikar.commands.annotation.*;
 import org.bukkit.*;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -91,7 +91,7 @@ public class CustomModelIO extends BaseCommand implements Listener {
                         )
                 ), entity.type, CreatureSpawnEvent.SpawnReason.CUSTOM, spawned -> {
                     Location loc = spawned.getLocation();
-                    ((CraftEntity) spawned).getHandle().load(entity.nbt);
+                    ((CraftEntity) spawned).getHandle().e(entity.nbt);
                     spawned.teleport(loc);
                 });
             }

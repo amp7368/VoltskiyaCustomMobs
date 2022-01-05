@@ -9,12 +9,17 @@ public class MancubusTicker<Config extends MobTickerConfig> extends MobTickManag
     }
 
     @Override
-    public String getName() {
-        return "mancubus";
+    public String getTag() {
+        return config.getTag();
     }
 
     @Override
-    protected boolean isOnlyMobs() {
+    public String getName() {
+        return config.getTag();
+    }
+
+    @Override
+    public boolean isOnlyMobs() {
         return true;
     }
 }

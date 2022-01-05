@@ -2,26 +2,20 @@ package apple.voltskiya.custom_mobs.mobs.nms.nether.angered_soul;
 
 import apple.nms.decoding.attribute.DecodeGenericAttributes;
 import apple.nms.decoding.entity.DecodeEntity;
-import apple.nms.decoding.entity.DecodeEnumCreatureType;
-import apple.nms.decoding.iregistry.DecodeDamageSource;
 import apple.nms.decoding.iregistry.DecodeEntityTypes;
-import apple.nms.decoding.iregistry.DecodeIRegistry;
 import apple.nms.decoding.pathfinder.DecodeControllerMoveFlying;
-import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
-import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.holder.NmsMobRegister;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.holder.NmsMobEntitySupers;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.qol.NmsHolderQOL;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.qol.NmsMobWrapperQOL;
 import apple.voltskiya.custom_mobs.mobs.nms.parent.register.RegisteredCustomMob;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.utility.NmsSpawnWrapper;
 import apple.voltskiya.custom_mobs.pathfinders.PathfinderGoalApproachSlowly;
 import apple.voltskiya.custom_mobs.pathfinders.target_selector.PathfinderGoalClosestPlayer;
-import com.mojang.datafixers.types.Type;
-import net.minecraft.core.IRegistry;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityInsentient;
 import net.minecraft.world.entity.EntityLiving;
 import net.minecraft.world.entity.EntityTypes;
-import net.minecraft.world.entity.ai.attributes.AttributeMapBase;
 import net.minecraft.world.entity.ai.attributes.AttributeProvider;
 import net.minecraft.world.entity.ai.goal.PathfinderGoalLookAtPlayer;
 import net.minecraft.world.entity.ai.goal.PathfinderGoalSelector;
@@ -32,144 +26,92 @@ import net.minecraft.world.entity.player.EntityHuman;
 import net.minecraft.world.level.World;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftSkeleton;
+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftLivingEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.jetbrains.annotations.NotNull;
+import voltskiya.apple.utilities.util.constants.TagConstants;
 
-import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
+import java.util.Objects;
 
-public class MobAngeredSoul extends EntitySkeleton implements RegisteredCustomMob {
+public class MobAngeredSoul extends EntitySkeleton implements RegisteredCustomMob, NmsHolderQOL<MobAngeredSoul> {
     public static final String REGISTERED_NAME = "angered_soul";
     private static final double SIGHT = 100;
-    private static EntityTypes<MobAngeredSoul> entityTypes;
-    private AttributeMapBase attributeMap = null;
-
-    /**
-     * registers the EyePlant as an entity
-     */
-    public static void initialize() {
-        Map<? super Object, Type<?>> types = NmsMobRegister.getMinecraftTypes();
-        final Type<?> oldType = types.get("minecraft:skeleton");
-        types.put(registeredNameId(), oldType);
-
-        // build it
-        EntityTypes.Builder<MobAngeredSoul> entitytypesBuilder = EntityTypes.Builder.a(MobAngeredSoul::new, DecodeEnumCreatureType.MONSTER.encode());
-        entityTypes = entitytypesBuilder.a(REGISTERED_NAME);
-        entityTypes = IRegistry.a(DecodeIRegistry.getEntityType(), DecodeIRegistry.getEntityType().getId(DecodeEntityTypes.SKELETON), REGISTERED_NAME, entityTypes);
-        // log it
-        PluginNmsMobs.get().log(Level.INFO, "registered " + registeredNameId());
-    }
-
-    /**
-     * constructor to match the EntityTypes requirement
-     *
-     * @param world the world to spawn the entity in
-     */
+    public static final double EXPLOSION_RADIUS = 1.5;
+    private static NmsSpawnWrapper<MobAngeredSoul> spawner;
+    private NmsMobWrapperQOL<MobAngeredSoul> wrapper;
 
     public MobAngeredSoul(EntityTypes<MobAngeredSoul> entityTypes, World world) {
         super(DecodeEntityTypes.SKELETON, world);
     }
 
-
-    /**
-     * spawns a WarpedGremlin
-     *
-     * @param location the org.bukkit location where the mob should be spawned
-     * @param oldNbt   the nbt of the previously spawned mob or null if no entity existed
-     */
-    public static void spawn(Location location, @Nullable NBTTagCompound oldNbt) {
-        CraftWorld world = (CraftWorld) location.getWorld();
-        final MobAngeredSoul mob = new MobAngeredSoul(entityTypes, world.getHandle());
-        mob.prepare(location, oldNbt);
-        mob.addScoreboardTag(SpawnCustomMobListener.CUSTOM_SPAWN_COMPLETE_TAG);
-        mob.addScoreboardTag(REGISTERED_NAME);
-        world.getHandle().addEntity(mob);
-    }
-
-    public static void spawnEat(CreatureSpawnEvent event) {
-        Location location = event.getEntity().getLocation();
-        spawn(location, ((CraftEntity) event.getEntity()).getHandle().save(new NBTTagCompound()));
-        event.setCancelled(true);
-    }
-
-    private void prepare(Location location, NBTTagCompound oldNbt) {
-        if (oldNbt != null)
-            this.load(oldNbt);
-        this.setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+    public static NmsSpawnWrapper<MobAngeredSoul> spawner() {
+        return spawner = Objects.requireNonNullElseGet(spawner, () -> new NmsSpawnWrapper<>(
+                REGISTERED_NAME,
+                MobAngeredSoul::new,
+                DecodeEntityTypes.SKELETON
+        ));
     }
 
     @Override
-    public void load(NBTTagCompound nbttagcompound) {
-        nbttagcompound.setString("id", registeredNameId());
-        super.load(nbttagcompound);
-        final boolean invisible = nbttagcompound.getBoolean("Invisible");
-        ((CraftSkeleton) this.getBukkitEntity()).setInvisible(invisible);
+    public NBTTagCompound f(NBTTagCompound nbttagcompound) {
+        return nmssave(nbttagcompound);
     }
 
     @Override
-    public NBTTagCompound save(NBTTagCompound nbttagcompound) {
-        NBTTagCompound data = super.save(nbttagcompound);
-        data.setBoolean("Invisible", this.isInvisible());
-        data.setString("id", registeredNameId());
-        return data;
-    }
-
-
-    @NotNull
-    private static String registeredNameId() {
-        return "minecraft" + ":" + REGISTERED_NAME;
+    public NmsMobEntitySupers makeEntitySupers() {
+        return new NmsMobEntitySupers(
+                super::b, // change world
+                super::a, // move
+                super::g, //load
+                super::f, //save
+                super::a // die
+        );
     }
 
     @Override
-    public AttributeMapBase getAttributeMap() {
-        return this.attributeMap == null ? this.attributeMap = new AttributeMapBase(getAttributeProvider()) : this.attributeMap;
+    public void preparePost() {
+        getBukkitEntity().addScoreboardTag(TagConstants.NO_FALL_DAMAGE);
     }
 
     @Override
-    protected void checkBlockCollisions() {
-        // never collide
+    public MobAngeredSoul getSelfEntity() {
+        return this;
     }
 
+    // collide
     @Override
-    public void collide(Entity entity) {
-        super.collide(entity);
+    public void g(Entity entity) {
+        super.g(entity);
         if (entity instanceof EntityHuman) {
             this.explode();
         }
     }
 
     public void explode() {
-        List<org.bukkit.entity.Entity> nearbyEntities = this.getBukkitEntity().getNearbyEntities(1.5, 1.5, 1.5);
+        List<org.bukkit.entity.Entity> nearbyEntities = this.getBukkitEntity().getNearbyEntities(EXPLOSION_RADIUS, EXPLOSION_RADIUS, EXPLOSION_RADIUS);
         for (org.bukkit.entity.Entity nearby : nearbyEntities) {
-            if (nearby instanceof LivingEntity) {
+            if (nearby instanceof LivingEntity living) {
                 final EntityLiving handle = ((CraftLivingEntity) nearby).getHandle();
-                if (handle != this)
-                    if (!handle.isBlocking()) {
-                        if (nearby instanceof Player player) {
-                            if (player.getGameMode() == GameMode.SURVIVAL)
-                                handle.damageEntity(DecodeDamageSource.MAGIC, 10f);
-                        } else {
-                            handle.damageEntity(DecodeDamageSource.MAGIC, 10f);
-                        }
+                if (handle == this) {
+                    return;
+                }
+                if (nearby instanceof Player player) {
+                    if (player.getGameMode() == GameMode.SURVIVAL && !player.isBlocking()) {
+                        player.damage(10f);
                     }
+                } else {
+                    living.damage(10f);
+                }
             }
-            final Location location = this.getBukkitEntity().getLocation();
-            location.getWorld().spawnParticle(org.bukkit.Particle.EXPLOSION_LARGE, location, 1);
-
         }
-        this.die();
+        final Location location = this.getBukkitEntity().getLocation();
+        location.getWorld().spawnParticle(org.bukkit.Particle.EXPLOSION_LARGE, location, 1);
+        this.removePostHook();
     }
 
     public AttributeProvider getAttributeProvider() {
-        return EntityMonster.fB()
+        return EntityMonster.fD()
                 .a(DecodeGenericAttributes.MOVEMENT_SPEED, 0.25D)
                 .a(DecodeGenericAttributes.FLYING_SPEED, .5d)
                 .a(DecodeGenericAttributes.FOLLOW_RANGE, 100)
@@ -177,25 +119,21 @@ public class MobAngeredSoul extends EntitySkeleton implements RegisteredCustomMo
     }
 
     @Override
-    public EntityTypes<?> getEntityType() {
-        return entityTypes;
+    public EntityTypes<?> ad() {
+        return spawner().entityTypes();
     }
 
+    // isOnGround
     @Override
-    public boolean isOnGround() {
+    public boolean aw() {
         return false;
     }
 
     @Override
-    public boolean isInvulnerable(DamageSource damagesource) {
-        return damagesource == DecodeDamageSource.FALL || super.isInvulnerable(damagesource);
-    }
-
-    @Override
-    protected void initPathfinder() {
+    protected void u() {
         //navigation
-        this.bO = new NavigationFlying(this, getWorld());
-        this.bM = new ControllerMoveGhost(this, 1d); // no gravity true
+        this.bQ = new NavigationFlying(this, DecodeEntity.getWorld(this));
+        this.bO = new ControllerMoveGhost(this, 1d); // no gravity true
         PathfinderGoalSelector goalSelector = DecodeEntity.getGoalSelector(this);
         PathfinderGoalSelector targetSelector = DecodeEntity.getTargetSelector(this);
         goalSelector.a(1, new PathfinderGoalApproachSlowly(this, 1, 10, new AngeredSoulScream(this)));
@@ -208,11 +146,21 @@ public class MobAngeredSoul extends EntitySkeleton implements RegisteredCustomMo
         // do no special pathfinding
     }
 
+    @Override
+    public NmsSpawnWrapper<MobAngeredSoul> getSpawner() {
+        return spawner;
+    }
+
+    @Override
+    public NmsMobWrapperQOL<MobAngeredSoul> getSelfWrapper() {
+        return wrapper = Objects.requireNonNullElseGet(wrapper, NmsHolderQOL.super::makeSelfWrapper);
+    }
+
     private static class ControllerMoveGhost extends DecodeControllerMoveFlying {
         public ControllerMoveGhost(EntityInsentient me, double speed) {
             // me, speed, noGravity
             super(me, (int) speed, true);
-            me.setNoGravity(true);
+            me.getBukkitEntity().setGravity(false);
         }
 
         public void a() {
@@ -220,7 +168,7 @@ public class MobAngeredSoul extends EntitySkeleton implements RegisteredCustomMo
             // check we're moving instead of jumping or whatever
             if (this.k == DecodeOperation.MOVE_TO.encode()) {
                 // set the y change to be a smooth ascent or descent
-                double var2 = y() - d.locY();
+                double var2 = y() - d.getBukkitEntity().getLocation().getY();
                 // change y value to what it should be rather than oscillating with the target
                 DecodeEntity.setYMove(me(), (float) var2);
             }

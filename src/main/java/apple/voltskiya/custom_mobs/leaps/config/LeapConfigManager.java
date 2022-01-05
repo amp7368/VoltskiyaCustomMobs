@@ -8,7 +8,7 @@ import apple.voltskiya.custom_mobs.sql.MobListSql;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftMob;
+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftMob;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import plugin.util.plugin.plugin.util.plugin.PluginManagedModule;

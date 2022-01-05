@@ -8,7 +8,7 @@ import apple.voltskiya.custom_mobs.pathfinders.spell.PathfinderGoalShootSpell;
 import net.minecraft.world.entity.EntityInsentient;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftEntity;
 import org.bukkit.entity.Mob;
 import plugin.util.plugin.plugin.util.plugin.PluginManagedModule;
 
@@ -34,10 +34,11 @@ public class ShootBallManager extends ConfigManager implements RegisteredEntityE
 
     @Override
     public void eatEntity(EntityInsentient entity) {
-        for (String tag : entity.getScoreboardTags()) {
+        for (String tag : entity.getBukkitEntity().getScoreboardTags()) {
             ShootersType type = tagToShootType.get(tag);
             if (type != null) {
-                if (entity.getScoreboardTags().contains("overseer_boss")) type = ShootersType.OVERSEER;
+                if (entity.getBukkitEntity().getScoreboardTags().contains("overseer_boss"))
+                    type = ShootersType.OVERSEER;
                 final CraftEntity bukkitEntity = entity.getBukkitEntity();
                 if (bukkitEntity instanceof Mob mob) {
                     final AttributeInstance followRange = mob.getAttribute(Attribute.GENERIC_FOLLOW_RANGE);

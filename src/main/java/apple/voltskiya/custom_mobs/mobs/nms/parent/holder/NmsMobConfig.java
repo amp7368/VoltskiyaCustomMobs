@@ -21,27 +21,23 @@ public interface NmsMobConfig<TypeEntity extends Entity & NmsMob<TypeEntity, Con
 
     EntityTypes<?> getReplacement();
 
-    Consumer<NmsMobRegister<TypeEntity, Config>> getRegisterPointer();
+    Consumer<NmsMobRegisterConfigable<TypeEntity, Config>> getRegisterPointer();
 
     Config getSelf();
 
-    default Collection<Consumer<NmsMobRegister<TypeEntity, Config>>> getRegisterPointers() {
+    default Collection<Consumer<NmsMobRegisterConfigable<TypeEntity, Config>>> getRegisterPointers() {
         return Collections.singleton(getRegisterPointer());
     }
 
-    default boolean hasModel() {
-        return getModelConfigName() != null;
-    }
-
-    default NmsMobRegister<TypeEntity, Config> make() {
-        return new NmsMobRegister<>(getSelf());
+    default NmsMobRegisterConfigable<TypeEntity, Config> make() {
+        return new NmsMobRegisterConfigable<>(getSelf());
     }
 
     default boolean isSpawnable() {
         return true;
     }
 
-    default Function<World, TypeEntity> getEntityBuilderDefaults(NmsMobRegister<TypeEntity, Config> register) {
+    default Function<World, TypeEntity> getEntityBuilderDefaults(NmsMobRegisterConfigable<TypeEntity, Config> register) {
         return (world) -> getEntityBuilder().createNms(register.getEntityType(), world);
     }
 }

@@ -1,12 +1,13 @@
 package apple.voltskiya.custom_mobs.custom_model;
 
+import apple.nms.decoding.entity.DecodeEntity;
+import apple.nms.decoding.nbt.DecodeNBT;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.nbt.MojangsonParser;
 import net.minecraft.nbt.NBTTagCompound;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.util.Vector;
@@ -78,8 +79,8 @@ public class CustomModelPlugin extends PluginManagedModule {
             c.set("entityType", entity.getType().name());
             CraftEntity e = (CraftEntity) entity;
             NBTTagCompound nbt = new NBTTagCompound();
-            e.getHandle().save(nbt);
-            c.set("nbt", nbt.asString());
+            DecodeEntity.save(e.getHandle());
+            c.set("nbt", nbt.toString());
         }
         yml.save(file);
     }
@@ -103,7 +104,7 @@ public class CustomModelPlugin extends PluginManagedModule {
             EntityType type = EntityType.valueOf(entity.getString("entityType"));
             NBTTagCompound nbt;
             try {
-                nbt = MojangsonParser.parse(entity.getString("nbt"));
+                nbt = DecodeNBT.parse(entity.getString("nbt"));
             } catch (CommandSyntaxException e) {
                 e.printStackTrace();
                 continue;
@@ -155,7 +156,7 @@ public class CustomModelPlugin extends PluginManagedModule {
         CustomModelData model = loadSchematic(fileName);
         File file = new File(this.getDataFolder(), fileName);
         if (!file.exists() || model == null) {
-            throw new IllegalArgumentException("The provided model file " + fileName + ".yml" + " does not exist");
+            throw new IllegalArgumentException("The provided model file " + fileName + " does not exist");
         }
         YamlConfiguration yml = YamlConfiguration.loadConfiguration(file);
         if (!yml.contains("models")) yml.createSection("models");
@@ -193,7 +194,7 @@ public class CustomModelPlugin extends PluginManagedModule {
 
     @Override
     public String getName() {
-        return "Custom Model";
+        return "CustomModel";
     }
 
     @Nullable

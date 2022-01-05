@@ -2,9 +2,11 @@ package apple.voltskiya.custom_mobs.mobs.abilities.tick.mancubus.config;
 
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.parent.MobTickerConfig;
 import ycm.yml.manager.fields.YcmField;
+import ycm.yml.manager.fields.YcmNewlineComment;
 
 public abstract class MancubusConfig implements MobTickerConfig {
     @YcmField
+    @YcmNewlineComment("add  my comment here")
     public int spellCooldown = 20 * 20;
     @YcmField
     public int initialDelay = 40;

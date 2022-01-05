@@ -1,5 +1,7 @@
 package apple.voltskiya.custom_mobs.leaps.revenant;
 
+import apple.nms.decoding.block.DecodeBlockPosition;
+import apple.nms.decoding.entity.DecodeEntity;
 import apple.nms.decoding.pathfinder.DecodeMoveType;
 import apple.voltskiya.custom_mobs.leaps.PathfinderGoalLeap;
 import apple.voltskiya.custom_mobs.leaps.config.LeapPostConfig;
@@ -11,6 +13,7 @@ import net.minecraft.world.entity.EntityLiving;
 import net.minecraft.world.entity.ai.util.RandomPositionGenerator;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftEntity;
 import org.jetbrains.annotations.Nullable;
 import voltskiya.apple.utilities.util.constants.TagConstants;
 import voltskiya.apple.utilities.util.data_structures.Triple;
@@ -46,7 +49,7 @@ public class PathfinderGoalLeapRevenant extends PathfinderGoalLeap {
                 (this.currentLeap == null || !this.currentLeap.isLeaping()) &&
                 !this.postConfig.shouldStopCurrentLeap(null) &&
                 this.postConfig.isOnGround() &&
-                !this.me.getScoreboardTags().contains(TagConstants.isDoingAbility);
+                !this.me.getBukkitEntity().getScoreboardTags().contains(TagConstants.isDoingAbility);
     }
 
 
@@ -56,7 +59,7 @@ public class PathfinderGoalLeapRevenant extends PathfinderGoalLeap {
     @Nullable
     @Override
     protected Location getGoalLocation() {
-        final EntityLiving goalTarget = this.me.getGoalTarget();
+        final EntityLiving goalTarget = DecodeEntity.getLastTarget(this.me);
         Location targetLocation;
         if (goalTarget == null) {
             if (this.me instanceof EntityCreature) {
@@ -67,7 +70,13 @@ public class PathfinderGoalLeapRevenant extends PathfinderGoalLeap {
                     e.printStackTrace();
                     return null;
                 }
-                targetLocation = new Location(this.me.getWorld().getWorld(), loc.getX() + this.me.locX(), loc.getY() + this.me.locY(), loc.getZ() + this.me.locZ());
+
+                CraftEntity bukkitEntity = this.me.getBukkitEntity();
+                Location location = bukkitEntity.getLocation();
+                targetLocation = new Location(bukkitEntity.getWorld(),
+                        DecodeBlockPosition.getX(loc) + location.getX(),
+                        DecodeBlockPosition.getY(loc) + location.getY(),
+                        DecodeBlockPosition.getZ(loc) + location.getZ());
             } else {
                 return null;
             }

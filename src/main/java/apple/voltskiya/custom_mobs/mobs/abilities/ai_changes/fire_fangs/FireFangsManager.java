@@ -48,7 +48,7 @@ public class FireFangsManager extends ConfigManager implements RegisteredEntityE
 
     @Override
     public void eatEntity(EntityInsentient entity) {
-        for (String tag : entity.getScoreboardTags()) {
+        for (String tag : entity.getBukkitEntity().getScoreboardTags()) {
             FangsType type = tagToFangType.get(tag);
             if (type != null) {
                 DecodeEntity.getGoalSelector(entity).a(0, new PathfinderGoalShootSpell<>(new FireFangsCaster(entity), type));

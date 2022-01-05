@@ -11,13 +11,13 @@ import java.util.Map;
 
 public abstract class NmsMobEntityEater<ConfigInterface extends NmsMobConfig<?, ?>
         > implements ConfigHolderSupplier<NmsMobConfigHolder<ConfigInterface>> {
-    private final Map<String, NmsMobRegister<?, ?>> nmsMobs;
+    private final Map<String, NmsMobRegisterConfigable<?, ?>> nmsMobs;
 
     public NmsMobEntityEater() {
         NmsMobConfigHolder<ConfigInterface> holder = getConfigHolder();
         this.nmsMobs = new HashMap<>();
         for (Map.Entry<String, ? extends ConfigInterface> config : holder.getConfigurationsMap().entrySet()) {
-            NmsMobRegister<?, ?> register = config.getValue().make();
+            NmsMobRegisterConfigable<?, ?> register = config.getValue().make();
             if (config.getValue().isSpawnable())
                 this.nmsMobs.put(config.getKey(), register);
         }
@@ -28,7 +28,7 @@ public abstract class NmsMobEntityEater<ConfigInterface extends NmsMobConfig<?, 
     }
 
     public void eatSpawnEvent(String tag, CreatureSpawnEvent event) {
-        NmsMobRegister<?, ?> nmsMob = this.nmsMobs.get(tag);
+        NmsMobRegisterConfigable<?, ?> nmsMob = this.nmsMobs.get(tag);
         if (nmsMob != null)
             nmsMob.eatSpawnEvent(event);
     }

@@ -31,6 +31,13 @@ public class TurretSpawnListener implements Listener {
                         TurretModelImpl::new,
                         TurretMobGm::new)
         );
+        turretTickers.put(TurretTypeIdentifier.INFINITE.getSpawnTag(),
+                new TurretTickManager(
+                        getModel(TurretModelNames.INFINITE),
+                        TurretModelImpl::new,
+                        TurretMobGm::new
+                )
+        );
         VoltskiyaPlugin.get().registerEvents(this);
     }
 

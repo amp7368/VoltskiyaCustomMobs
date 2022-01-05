@@ -1,5 +1,6 @@
 package apple.voltskiya.custom_mobs.trash.dungeon.scanned;
 
+import apple.nms.decoding.entity.DecodeEntity;
 import apple.voltskiya.custom_mobs.trash.dungeon.PluginDungeon;
 import apple.voltskiya.custom_mobs.trash.dungeon.product.Dungeon;
 import apple.voltskiya.custom_mobs.trash.dungeon.product.SpawnDungeonOptions;
@@ -10,7 +11,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.level.World;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_18_R1.CraftWorld;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.util.Vector;
 import voltskiya.apple.utilities.util.JsonUtils;
 
@@ -73,9 +75,9 @@ public class DungeonLocation {
                 PluginDungeon.get().log(Level.WARNING, String.format("There was an error spawning %s at <%d, %d, %d>", mob.getName(), spawnLocation.getBlockX(), spawnLocation.getBlockY(), spawnLocation.getBlockZ()));
                 return;
             }
-            entity.load(mob.nbt);
-            entity.setLocation(spawnLocation.getX(), spawnLocation.getY(), spawnLocation.getZ(), spawnLocation.getYaw(), spawnLocation.getPitch());
-            world.addEntity(entity);
+            DecodeEntity.load(entity, mob.nbt);
+            world.addFreshEntity(entity, CreatureSpawnEvent.SpawnReason.NATURAL);
+            entity.getBukkitEntity().teleport(spawnLocation);
         } else {
             PluginDungeon.get().log(Level.WARNING, String.format("%s is not a valid mob and did not spawn at <%d, %d, %d>", mob.getName(), spawnLocation.getBlockX(), spawnLocation.getBlockY(), spawnLocation.getBlockZ()));
         }

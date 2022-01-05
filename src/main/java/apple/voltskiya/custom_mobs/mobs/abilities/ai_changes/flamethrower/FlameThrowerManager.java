@@ -28,7 +28,7 @@ public class FlameThrowerManager extends ConfigManager implements RegisteredEnti
     }
 
     public void eatEntity(EntityInsentient entity) {
-        for (String tag : entity.getScoreboardTags()) {
+        for (String tag : entity.getBukkitEntity().getScoreboardTags()) {
             FlamethrowerType type = tagToFlamethrowerType.get(tag);
             if (type != null) {
                 DecodeEntity.getGoalSelector(entity).a(0, new PathfinderGoalShootSpell<>(new FlameThrowerCaster(entity), type));

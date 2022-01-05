@@ -3,7 +3,7 @@ package apple.voltskiya.custom_mobs.mobs.nms.overworld.apc33.config;
 import apple.nms.decoding.iregistry.DecodeEntityTypes;
 import apple.voltskiya.custom_mobs.mobs.nms.overworld.apc33.mob.MobAPC33Treads;
 import apple.voltskiya.custom_mobs.mobs.nms.parent.holder.NmsMobConstructor;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.holder.NmsMobRegister;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.holder.NmsMobRegisterConfigable;
 import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelHandler;
 import net.minecraft.world.entity.EntityTypes;
 import org.jetbrains.annotations.Nullable;
@@ -32,7 +32,7 @@ public class MobAPC33ConfigTreads extends MobAPC33Config<MobAPC33Treads, MobAPC3
     }
 
     @Override
-    public Consumer<NmsMobRegister<MobAPC33Treads, MobAPC33ConfigTreads>> getRegisterPointer() {
+    public Consumer<NmsMobRegisterConfigable<MobAPC33Treads, MobAPC33ConfigTreads>> getRegisterPointer() {
         return MobAPC33Treads::setRegister;
     }
 

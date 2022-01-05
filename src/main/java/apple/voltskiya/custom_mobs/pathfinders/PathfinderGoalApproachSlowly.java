@@ -1,5 +1,7 @@
 package apple.voltskiya.custom_mobs.pathfinders;
 
+import apple.nms.decoding.entity.DecodeEntity;
+import apple.nms.decoding.entity.DecodeNavigation;
 import apple.nms.decoding.pathfinder.DecodeMoveType;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.reload.PluginDisable;
@@ -7,8 +9,10 @@ import net.minecraft.server.level.EntityPlayer;
 import net.minecraft.world.entity.EntityInsentient;
 import net.minecraft.world.entity.EntityLiving;
 import net.minecraft.world.entity.ai.goal.PathfinderGoal;
+import net.minecraft.world.entity.ai.navigation.NavigationAbstract;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import voltskiya.apple.utilities.util.DistanceUtils;
 
 import java.util.EnumSet;
@@ -42,15 +46,19 @@ public class PathfinderGoalApproachSlowly extends PathfinderGoal {
      */
     @Override
     public boolean a() {
-        if (this.random.nextInt(CHECK_INTERVAL) == 0) {
-            final EntityLiving goalTarget = this.me.getGoalTarget();
-            if (goalTarget instanceof EntityPlayer && this.isCorrectDistance(goalTarget) && ((EntityPlayer) goalTarget).getBukkitEntity().getGameMode() == GameMode.SURVIVAL) {
-                this.isRunning = true;
-                return true;
-            }
+        if (this.random.nextInt(CHECK_INTERVAL) != 0) {
             return false;
         }
-        return false;
+        final EntityLiving goalTarget = DecodeEntity.getLastTarget(this.me);
+        if (!(goalTarget instanceof EntityPlayer))
+            return false;
+        if (!this.isCorrectDistance(goalTarget))
+            return false;
+        if (((EntityPlayer) goalTarget).getBukkitEntity().getGameMode() != GameMode.SURVIVAL) {
+            return false;
+        }
+        this.isRunning = true;
+        return true;
     }
 
     /**
@@ -65,17 +73,16 @@ public class PathfinderGoalApproachSlowly extends PathfinderGoal {
      * @return something
      */
     @Override
-    public boolean C_() {
+    public boolean D_() {
         return true;
     }
 
 
     private boolean isCorrectDistance(EntityLiving goalTarget) {
-        boolean isCorrect = this.approachedDistance < DistanceUtils.magnitude(goalTarget.locX() - this.me.locX(), goalTarget.locY() - this.me.locY(), goalTarget.locZ() - this.me.locZ());
-        if (!isCorrect) {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), runAfterClose);
-        }
-        return isCorrect;
+        boolean isCorrect = this.approachedDistance < DistanceUtils.distance(this.me.getBukkitEntity().getLocation(), goalTarget.getBukkitEntity().getLocation());
+        if (isCorrect) return true;
+        Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), runAfterClose);
+        return false;
     }
 
 
@@ -92,14 +99,16 @@ public class PathfinderGoalApproachSlowly extends PathfinderGoal {
     @Override
     public void e() {
         // go to the location
-        final EntityLiving goalTarget = this.me.getGoalTarget();
+        final EntityLiving goalTarget = DecodeEntity.getLastTarget(this.me);
         if (goalTarget == null) {
             this.isRunning = false;
         } else {
+            NavigationAbstract navigation = DecodeEntity.getNavigation(this.me);
             if (isCorrectDistance(goalTarget)) {
-                this.me.getNavigation().a(goalTarget.locX(), goalTarget.locY(), goalTarget.locZ(), speed);
+                Location goalLoc = goalTarget.getBukkitEntity().getLocation();
+                navigation.a(goalLoc.getX(), goalLoc.getY(), goalLoc.getZ(), speed);
             } else {
-                this.me.getNavigation().o();
+                DecodeNavigation.cancelNavigation(navigation);
                 this.isRunning = false;
             }
         }
@@ -111,7 +120,7 @@ public class PathfinderGoalApproachSlowly extends PathfinderGoal {
     @Override
     public void d() {
         // quit going to the location
-        this.me.getNavigation().o();
+        DecodeNavigation.cancelNavigation(DecodeEntity.getNavigation(this.me));
     }
 
     public void setMoveType(EnumSet<Type> moveType) {

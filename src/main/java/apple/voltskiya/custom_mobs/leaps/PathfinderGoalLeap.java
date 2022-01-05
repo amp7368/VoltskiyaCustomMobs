@@ -45,7 +45,7 @@ public class PathfinderGoalLeap extends PathfinderGoal {
      */
     @Override
     public boolean a() {
-        if (this.random.nextInt(config.getCheckInterval()) == 0 && !this.me.getScoreboardTags().contains(TagConstants.isDoingAbility)) {
+        if (this.random.nextInt(config.getCheckInterval()) == 0 && !this.me.getBukkitEntity().getScoreboardTags().contains(TagConstants.isDoingAbility)) {
             final Location themLocation = this.getGoalLocation();
             if (themLocation == null) return false;
             final Location meLocation = this.me.getBukkitEntity().getLocation();
@@ -74,7 +74,7 @@ public class PathfinderGoalLeap extends PathfinderGoal {
      * @return something
      */
     @Override
-    public boolean C_() {
+    public boolean D_() {
         return false;
     }
 
@@ -126,7 +126,7 @@ public class PathfinderGoalLeap extends PathfinderGoal {
      * @return the height of me
      */
     protected double getHitBoxHeight() {
-        return me.getHeight();
+        return DecodeEntity.getHeight(me);
     }
 
     /**
@@ -134,7 +134,7 @@ public class PathfinderGoalLeap extends PathfinderGoal {
      */
     @Nullable
     protected Location getGoalLocation() {
-        final EntityLiving goalTarget = this.me.getGoalTarget();
+        final EntityLiving goalTarget = DecodeEntity.getLastTarget(this.me);
         if (goalTarget == null) return null;
         return goalTarget.getBukkitEntity().getLocation();
     }

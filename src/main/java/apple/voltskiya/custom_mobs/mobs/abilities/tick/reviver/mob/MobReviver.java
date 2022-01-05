@@ -1,5 +1,7 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.tick.reviver.mob;
 
+import apple.nms.decoding.entity.DecodeEntity;
+import apple.nms.decoding.nbt.DecodeNBT;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.parent.MobToTick;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.reviver.config.ReviverConfig;
@@ -7,7 +9,7 @@ import apple.voltskiya.custom_mobs.mobs.abilities.tick.reviver.dead.DeadRecorded
 import net.minecraft.nbt.NBTTagCompound;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
@@ -57,9 +59,9 @@ public abstract class MobReviver<Config extends ReviverConfig> extends MobToTick
         NBTTagCompound nbt = reviveMe.getNbt();
         addLinkedMob(newMob);
         final net.minecraft.world.entity.Entity newMobHandle = ((CraftEntity) newMob).getHandle();
-        nbt.remove("UUID");
-        nbt.remove("DeathTime");
-        newMobHandle.load(nbt);
+        DecodeNBT.removeKey(nbt, "UUID");
+        DecodeNBT.removeKey(nbt, "DeathTime");
+        DecodeEntity.load(nmsEntity, nbt);
         LivingEntity newMobLiving = (LivingEntity) newMob;
         double health = newMobLiving.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
         newMobLiving.setHealth(health);
@@ -70,7 +72,7 @@ public abstract class MobReviver<Config extends ReviverConfig> extends MobToTick
         }
         newMobLiving.setAI(false);
         newMob.setInvulnerable(true);
-        reviveMeLocation.add(0, -3, 0);
+        reviveMeLocation.add(0, -2, 0);
         reviveMeLocation.setPitch(-55);
         newMob.teleport(reviveMeLocation);
         double interval = 3d / TIME_TO_RISE;

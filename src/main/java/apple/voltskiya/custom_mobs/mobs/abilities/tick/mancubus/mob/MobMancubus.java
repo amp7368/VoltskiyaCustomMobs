@@ -22,6 +22,7 @@ import voltskiya.apple.utilities.util.VectorUtils;
 import voltskiya.apple.utilities.util.action.OneOffAction;
 import voltskiya.apple.utilities.util.action.RepeatingActionManager;
 import voltskiya.apple.utilities.util.action.ScheduledAction;
+import voltskiya.apple.utilities.util.chance.ChanceRolling;
 import voltskiya.apple.utilities.util.constants.TagConstants;
 import voltskiya.apple.utilities.util.particle.ParticleCircle;
 import voltskiya.apple.utilities.util.sound.SoundActionImpl;
@@ -52,6 +53,7 @@ public abstract class MobMancubus<Config extends MancubusConfig> extends MobToTi
     ParticleCircle particle = new ParticleCircle(null);
     private int cooldownUpAt = 0;
     private LivingEntity target = null;
+    private final ChanceRolling chance = new ChanceRolling(.03);
 
     public MobMancubus(Entity bukkitEntity, Config config) {
         super(bukkitEntity, config);
@@ -67,7 +69,7 @@ public abstract class MobMancubus<Config extends MancubusConfig> extends MobToTi
 
     @Override
     public void tick(int tickSpeed) {
-        if (shouldDoAbility()) {
+        if (shouldDoAbility() && chance.rollXTimes(tickSpeed)) {
             this.target = getTarget();
             if (this.target != null)
                 burst.startActionAndStart(DO_START);

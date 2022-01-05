@@ -32,8 +32,7 @@ public class MobParts {
     }
 
     private enum MobPart {
-        ARMOR_STAND(EntityType.ARMOR_STAND.getKey(), MobPartArmorStand::spawnMobPart),
-        FALLING_BLOCK(EntityType.FALLING_BLOCK.getKey(), MobPartFallingBlock::spawnMobPart);
+        ARMOR_STAND(EntityType.ARMOR_STAND.getKey(), MobPartArmorStand::spawnMobPart);
 
         private final BiFunction<MobPartMother, NmsModelEntityConfig, MobPartChild> spawner;
 

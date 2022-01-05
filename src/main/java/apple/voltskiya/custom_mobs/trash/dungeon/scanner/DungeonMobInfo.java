@@ -1,17 +1,18 @@
 package apple.voltskiya.custom_mobs.trash.dungeon.scanner;
 
 import apple.nms.decoding.entity.DecodeEntity;
+import apple.nms.decoding.iregistry.DecodeEntityTypes;
+import apple.nms.decoding.nbt.DecodeNBT;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.nbt.MojangsonParser;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.entity.EntityTypes;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 import voltskiya.apple.utilities.util.JsonUtils;
@@ -35,21 +36,22 @@ public class DungeonMobInfo {
         fromEntity(entity);
     }
 
-    private void fromEntity(Entity entity) {
-        nbt = new NBTTagCompound();
-        DecodeEntity.do_d(((CraftEntity) entity).getHandle(), nbt);
-        nbt.remove("UUID");
-        mobType = ((CraftEntity) entity).getHandle().getEntityType();
-        this.uuid = entity.getUniqueId().toString();
-        this.location = entity.getLocation();
-    }
-
     public DungeonMobInfo(JsonObject loadFrom) throws CommandSyntaxException {
-        this.nbt = MojangsonParser.parse(loadFrom.get(JsonKeys.MOB_CONFIG_NBT).getAsString());
+        this.nbt = DecodeNBT.parse(loadFrom.get(JsonKeys.MOB_CONFIG_NBT).getAsString());
         this.mobType = null;
         this.uuid = loadFrom.get(JsonKeys.MOB_CONFIG_UUID).getAsString();
         this.entity = Bukkit.getEntity(UUID.fromString(this.uuid));
         this.location = JsonUtils.locationFromJson(loadFrom.get("location"));
+    }
+
+    private void fromEntity(Entity entity) {
+        nbt = new NBTTagCompound();
+        net.minecraft.world.entity.Entity handle = ((CraftEntity) entity).getHandle();
+        DecodeEntity.do_d(handle, nbt);
+        DecodeNBT.removeKey(nbt, "UUID");
+        mobType = DecodeEntityTypes.getType(handle);
+        this.uuid = entity.getUniqueId().toString();
+        this.location = entity.getLocation();
     }
 
     public Material getSpawnEgg() {
@@ -57,13 +59,13 @@ public class DungeonMobInfo {
     }
 
     public String getName() {
-        String name = nbt.getString("CustomName");
+        String name = DecodeNBT.getString(nbt, "CustomName");
         return name.isEmpty() ? "No name" : name;
     }
 
     public JsonElement toJson() {
         JsonObject json = new JsonObject();
-        json.add(JsonKeys.MOB_CONFIG_NBT, new JsonPrimitive(nbt.asString()));
+        json.add(JsonKeys.MOB_CONFIG_NBT, new JsonPrimitive(nbt.toString()));
         json.add(JsonKeys.MOB_CONFIG_UUID, new JsonPrimitive(uuid));
         json.add("location", JsonUtils.locationToJson(location));
         return json;

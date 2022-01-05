@@ -1,5 +1,6 @@
 package apple.voltskiya.custom_mobs.turret.parent;
 
+import apple.nms.decoding.entity.DecodeEntity;
 import apple.utilities.database.SaveFileableKeyed;
 import apple.utilities.util.NumberUtils;
 import apple.voltskiya.custom_mobs.custom_model.spawning.CustomModelEntityImpl;
@@ -10,7 +11,7 @@ import apple.voltskiya.custom_mobs.turret.manage.model.impl.TurretModelImpl;
 import net.minecraft.nbt.NBTTagCompound;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftArrow;
+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftArrow;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -60,7 +61,7 @@ public abstract class TurretMob<Config extends TurretMobConfig>
         this.uuid = main == null ? UUID.randomUUID() : main.getUniqueId();
         this.isDead = false;
         this.health = getConfig().getMaxHealth();
-        this.rotation = 0;
+        this.rotation = turretModel.location.getYaw();
         this.bow = makeTurretBow();
     }
 
@@ -255,8 +256,8 @@ public abstract class TurretMob<Config extends TurretMobConfig>
             return false;
         }
         final Vector newFacing = entity.getLocation().subtract(turretModel.location).toVector().setY(0).normalize();
-        TurretTargeting targeting = getTargeting();
         rotation = VectorUtils.yaw(newFacing);
+        TurretTargeting targeting = getTargeting();
         boolean shouldTarget;
         if (entity instanceof Player player) {
             shouldTarget = targeting.shouldTargetPlayer(player);
@@ -277,10 +278,11 @@ public abstract class TurretMob<Config extends TurretMobConfig>
     private boolean rotate() {
         double angleN = this.rotation;
         double angleO = turretModel.location.getYaw();
-        double angle = Math.abs(angleN - angleO);
+        double angleDiff = Math.abs(angleO - angleN);
         double maxAngle = getConfig().maxRotationAngle();
-        if (angle > maxAngle) return false;
-        // rotate by "angleN" degrees
+        if (angleDiff > maxAngle) return false;
+        // rotate by "angle" degrees
+        double rotatingBy = angleO + angleN;
         turretModel.rotate(angleN);
         return true;
     }
@@ -289,6 +291,9 @@ public abstract class TurretMob<Config extends TurretMobConfig>
     private void shoot() {
         if (bow.isArrowsEmpty() || noBow()) return;
         Location spawnLocation = turretModel.location.clone();
+        float rot = (float) (spawnLocation.getYaw() + this.rotation) + 90;
+        spawnLocation.setYaw(rot);
+
         spawnLocation.add(spawnLocation.getDirection().setY(0).normalize().multiply(3));
         spawnLocation.add(0, 2.5, 0);
         Location goal = getTargeting().getGoalLocation(spawnLocation, this::velocity);
@@ -332,7 +337,7 @@ public abstract class TurretMob<Config extends TurretMobConfig>
         if (entity instanceof CraftArrow arrow) {
             final NBTTagCompound nbt = removedArrow.getEntityNbt();
             if (nbt != null)
-                arrow.getHandle().loadData(nbt);
+                DecodeEntity.load(arrow.getHandle(), nbt);
             if (this.bow.isCrossBow()) {
                 arrow.setShotFromCrossbow(true);
             }

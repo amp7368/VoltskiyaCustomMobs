@@ -1,9 +1,13 @@
 package apple.voltskiya.custom_mobs.pathfinders;
 
+import apple.nms.decoding.entity.DecodeEntity;
+import apple.nms.decoding.entity.DecodeNavigation;
 import apple.nms.decoding.pathfinder.DecodeMoveType;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.utility.NmsUtilityWrapper;
 import apple.voltskiya.custom_mobs.reload.PluginDisable;
 import net.minecraft.world.entity.EntityInsentient;
 import net.minecraft.world.entity.ai.goal.PathfinderGoal;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.util.Vector;
 
@@ -19,6 +23,7 @@ public class PathfinderGoalCraveBlock extends PathfinderGoal {
     private final int checkInterval;
     private final Random random = new Random();
     private final double speed;
+    private final NmsUtilityWrapper<EntityInsentient> wrapper;
     private Vector foundCravedBlock;
 
     /**
@@ -33,6 +38,7 @@ public class PathfinderGoalCraveBlock extends PathfinderGoal {
      */
     public PathfinderGoalCraveBlock(EntityInsentient me, Collection<Material> cravingBlock, int cravingAmount, int rangeOfSight, int checkInterval, double speed) {
         this.me = me;
+        this.wrapper = new NmsUtilityWrapper<>(this.me);
         this.cravingBlock = cravingBlock;
 
         // I cube root this because I check a random cube blocks
@@ -62,9 +68,10 @@ public class PathfinderGoalCraveBlock extends PathfinderGoal {
 
     private void findCravedBlock() {
         // current location
-        int midX = (int) me.locX();
-        int midY = (int) me.locY();
-        int midZ = (int) me.locZ();
+        Location location = me.getBukkitEntity().getLocation();
+        int midX = location.getBlockX();
+        int midY = location.getBlockY();
+        int midZ = location.getBlockZ();
 
         int minX = midX - rangeOfSight;
         int minY = midY - rangeOfSight;
@@ -94,10 +101,11 @@ public class PathfinderGoalCraveBlock extends PathfinderGoal {
         for (; choiceX <= maxChoiceX; choiceX++) {
             for (; choiceY <= maxChoiceY; choiceY++) {
                 for (; choiceZ <= maxChoiceZ; choiceZ++) {
-                    org.bukkit.block.Block block = me.getWorld().getWorld().getBlockAt(choiceX, choiceY, choiceZ);
+                    org.bukkit.block.Block block = me.getBukkitEntity().getWorld().getBlockAt(choiceX, choiceY, choiceZ);
                     if (this.cravingBlock.contains(block.getType())) {
                         // cool! we happened to find the right block!
                         this.foundCravedBlock = new Vector(choiceX, choiceY, choiceZ);
+                        return;
                     }
                 }
             }
@@ -110,14 +118,14 @@ public class PathfinderGoalCraveBlock extends PathfinderGoal {
     @Override
     public boolean b() {
         // navigationAbstract.m() returns true if the entity is *not* navigating anywhere
-        return !this.me.getNavigation().m();
+        return DecodeNavigation.isNavigating(DecodeEntity.getNavigation(this.me));
     }
 
     /**
      * @return something
      */
     @Override
-    public boolean C_() {
+    public boolean D_() {
         return true;
     }
 
@@ -125,16 +133,17 @@ public class PathfinderGoalCraveBlock extends PathfinderGoal {
      * start the pathfinding
      */
     @Override
-    public void c(){
+    public void c() {
 
     }
+
     /**
      * run the pathfinding
      */
     @Override
     public void e() {
         // go to the location
-        this.me.getNavigation().a(this.foundCravedBlock.getX(), this.foundCravedBlock.getY(), this.foundCravedBlock.getZ(), speed);
+        this.wrapper.getNavigation().a(this.foundCravedBlock.getX(), this.foundCravedBlock.getY(), this.foundCravedBlock.getZ(), speed);
     }
 
     /**
@@ -143,7 +152,7 @@ public class PathfinderGoalCraveBlock extends PathfinderGoal {
     @Override
     public void d() {
         // quit going to the location
-        this.me.getNavigation().o();
+        DecodeNavigation.cancelNavigation(this.wrapper.getNavigation());
     }
 
 

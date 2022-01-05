@@ -1,5 +1,6 @@
 package apple.voltskiya.custom_mobs.leaps.upwards;
 
+import apple.nms.decoding.entity.DecodeEntity;
 import apple.voltskiya.custom_mobs.leaps.PathfinderGoalLeap;
 import apple.voltskiya.custom_mobs.leaps.config.LeapPostConfig;
 import apple.voltskiya.custom_mobs.leaps.config.LeapPreConfig;
@@ -28,9 +29,9 @@ public class PathfinderGoalLeapUpwards extends PathfinderGoalLeap {
     @Override
     public boolean a() {
         // navigationAbstract.m() returns true if the entity is *not* navigating anywhere
-        final EntityLiving goalTarget = this.me.getGoalTarget();
+        final EntityLiving goalTarget = DecodeEntity.getLastTarget(this.me);
         if (goalTarget == null) return false;
         // return what above me said and make sure that the mob is higher than a few blocks below the peak of where I'm going
-        return super.a() && goalTarget.locY() - this.me.locY() > this.config.getPeak() - PEAK_MARGIN_OF_ERROR;
+        return super.a() && goalTarget.getBukkitEntity().getLocation().getY() - this.me.getBukkitEntity().getLocation().getY() > this.config.getPeak() - PEAK_MARGIN_OF_ERROR;
     }
 }

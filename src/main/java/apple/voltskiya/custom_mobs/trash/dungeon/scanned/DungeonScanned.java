@@ -10,6 +10,7 @@ import com.destroystokyo.paper.loottable.LootableInventory;
 import com.google.gson.*;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.core.BlockPosition;
+import net.minecraft.server.level.WorldServer;
 import net.minecraft.world.level.block.entity.TileEntity;
 import org.bukkit.Location;
 import org.bukkit.Nameable;
@@ -17,7 +18,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Container;
-import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_18_R1.CraftWorld;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.loot.LootTable;
@@ -215,7 +216,8 @@ public class DungeonScanned {
                         chests.add(new DungeonChestScannedLootTable(blockKey, lootTableKey, block.getLocation(), name));
                     } else if (block instanceof Container) {
                         NamespacedKey blockKey = block.getType().getKey();
-                        @javax.annotation.Nullable TileEntity tileEntity = ((CraftWorld) block.getLocation().getWorld()).getHandle().getTileEntity(new BlockPosition(block.getX(), block.getY(), block.getZ()));
+                        WorldServer worldHandle = ((CraftWorld) block.getLocation().getWorld()).getHandle();
+                        @Nullable TileEntity tileEntity = worldHandle.getBlockEntity(new BlockPosition(block.getX(), block.getY(), block.getZ()), true);
                         if (tileEntity != null)
                             chests.add(new DungeonChestScannedPredetermined(blockKey, tileEntity, block.getLocation(), name));
                     }

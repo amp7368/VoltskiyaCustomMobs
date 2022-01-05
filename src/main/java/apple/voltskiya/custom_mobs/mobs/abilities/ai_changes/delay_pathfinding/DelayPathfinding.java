@@ -1,12 +1,12 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.delay_pathfinding;
 
 import apple.nms.decoding.entity.DecodeEntity;
+import apple.nms.decoding.pathfinder.DecodePathfinder;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
 import apple.voltskiya.custom_mobs.mobs.nms.parent.config.ConfigManager;
 import apple.voltskiya.custom_mobs.mobs.nms.parent.config.YmlSettings;
 import apple.voltskiya.custom_mobs.mobs.nms.parent.register.RegisteredEntityEater;
-import apple.voltskiya.custom_mobs.pathfinders.goal_selector.UtilsPathfinderGoalSelector;
 import apple.voltskiya.custom_mobs.pathfinders.utilities.PathfinderGoalHurtByTargetOnDone;
 import apple.voltskiya.custom_mobs.pathfinders.utilities.PathfinderGoalNearestAttackableTargetCanSee;
 import net.minecraft.world.entity.EntityCreature;
@@ -52,26 +52,27 @@ public class DelayPathfinding extends ConfigManager implements RegisteredEntityE
         // we do the scheduling because we need to make sure we're last
         Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
             PathfinderGoalSelector oldGoalSelector = DecodeEntity.getGoalSelector(entity);
-            DecodeEntity.setGoalSelector(entity, new PathfinderGoalSelector(entity.getWorld().getMethodProfilerSupplier()));
+            DecodeEntity.setGoalSelector(entity, new PathfinderGoalSelector(() -> DecodeEntity.getMethodProfiler(entity)));
 
-            @NotNull Collection<PathfinderGoalWrapped> removedPathfinders = UtilsPathfinderGoalSelector.remove(DecodeEntity.getTargetSelector(entity), PathfinderGoalNearestAttackableTarget.class, PathfinderGoalHurtByTarget.class);
+            PathfinderGoalSelector targetSelector = DecodeEntity.getTargetSelector(entity);
+            @NotNull Collection<PathfinderGoalWrapped> removedPathfinders = DecodePathfinder.removeOfType(targetSelector, PathfinderGoalNearestAttackableTarget.class, PathfinderGoalHurtByTarget.class);
             final PathfinderGoalNearestAttackableTargetCanSee<EntityHuman> canSee = new PathfinderGoalNearestAttackableTargetCanSee<>(entity, EntityHuman.class, true);
             PathfinderGoalHurtByTargetOnDone onHurt = null;
             if (entity instanceof EntityCreature) {
                 onHurt = new PathfinderGoalHurtByTargetOnDone((EntityCreature) entity);
             }
-            DecodeEntity.getTargetSelector(entity).a(1, canSee);
-            if (onHurt != null) DecodeEntity.getTargetSelector(entity).a(0, onHurt);
+            targetSelector.a(1, canSee);
+            if (onHurt != null) targetSelector.a(0, onHurt);
             PathfinderGoalHurtByTargetOnDone finalOnHurt = onHurt;
             final Runnable givePathfinding = () -> {
-                DecodeEntity.getTargetSelector(entity).a(canSee);
-                if (finalOnHurt != null) DecodeEntity.getTargetSelector(entity).a(finalOnHurt);
-                UtilsPathfinderGoalSelector.add(DecodeEntity.getTargetSelector(entity), removedPathfinders);
+                targetSelector.a(canSee);
+                if (finalOnHurt != null) targetSelector.a(finalOnHurt);
+                DecodePathfinder.add(targetSelector, removedPathfinders);
                 DecodeEntity.setGoalSelector(entity, oldGoalSelector);
             };
             canSee.addOnceOnDone(givePathfinding);
             if (onHurt != null) onHurt.addOnceOnDone(givePathfinding);
-            addMob(entity.getUniqueID());
+            addMob(entity.getBukkitEntity().getUniqueId());
         }, 0);
     }
 }

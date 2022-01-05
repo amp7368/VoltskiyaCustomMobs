@@ -2,7 +2,6 @@ package apple.voltskiya.custom_mobs.turret.manage;
 
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.parent.MobTickCloseness;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.parent.MobTickManagerClosenessDefault;
-import apple.voltskiya.custom_mobs.ticking.HighFrequencyTick;
 import apple.voltskiya.custom_mobs.turret.PluginTurret;
 import apple.voltskiya.custom_mobs.turret.manage.model.config.TurretModelConfig;
 import apple.voltskiya.custom_mobs.turret.manage.model.create.TurretMobConstructor;
@@ -11,6 +10,7 @@ import apple.voltskiya.custom_mobs.turret.manage.model.impl.TurretModelImpl;
 import apple.voltskiya.custom_mobs.turret.parent.TurretMob;
 import apple.voltskiya.custom_mobs.util.PlayerClose;
 import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
+import apple.voltskiya.custom_mobs.util.ticking.HighFrequencyTick;
 import org.bukkit.Location;
 import org.jetbrains.annotations.Nullable;
 import voltskiya.apple.configs.plugin.manage.PluginManagedModuleConfig;

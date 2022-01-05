@@ -1,7 +1,7 @@
 package apple.voltskiya.custom_mobs.custom_model;
 
+import apple.nms.decoding.nbt.DecodeNBT;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagFloat;
 import net.minecraft.nbt.NBTTagList;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
@@ -31,11 +31,11 @@ public class CustomModelDataEntity {
         this.y = y;
         this.z = z;
         this.posVec = new XYZ<>(x, y, z);
-        if (nbt.hasKey(ROTATION_NBT)) {
-            NBTTagList rotation = nbt.getList(ROTATION_NBT, NBTTagFloat.a.getTypeId()); //float list
+        if (DecodeNBT.hasKey(nbt, ROTATION_NBT)) {
+            NBTTagList rotation = DecodeNBT.getFloatList(nbt, ROTATION_NBT); //float list
             if (rotation.size() == 2) {
-                float yaw = Float.parseFloat(rotation.get(0).asString());
-                float pitch = Float.parseFloat(rotation.get(1).asString());
+                float yaw = Float.parseFloat(rotation.get(0).toString());
+                float pitch = Float.parseFloat(rotation.get(1).toString());
 
                 Location l = new Location(null, 0, 0, 0);
                 l.setYaw(yaw);
@@ -43,7 +43,7 @@ public class CustomModelDataEntity {
                 this.facingX = l.getDirection().getX();
                 this.facingY = l.getDirection().getY();
                 this.facingZ = l.getDirection().getZ();
-                nbt.remove(ROTATION_NBT);
+                DecodeNBT.removeKey(nbt, ROTATION_NBT);
             } else {
                 this.facingX = facingX;
                 this.facingY = facingY;
@@ -57,7 +57,7 @@ public class CustomModelDataEntity {
         this.facingVec = new XYZ<>(this.facingX, this.facingY, this.facingZ);
         this.type = type;
         this.nbt = nbt;
-        this.nbt.remove(UUID_NBT);
+        DecodeNBT.removeKey(nbt, UUID_NBT);
         this.otherData = otherData;
     }
 

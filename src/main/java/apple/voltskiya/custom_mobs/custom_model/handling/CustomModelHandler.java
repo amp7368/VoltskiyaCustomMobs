@@ -37,7 +37,6 @@ public abstract class CustomModelHandler<Model extends CustomModelConfig<ModelEn
             return null;
         }
         Model model = createEmptyModel();
-        ModelEntityConfig main = null;
         for (CustomModelDataEntity part : modelData.entities) {
             model.addPiece(createEntity(part));
         }

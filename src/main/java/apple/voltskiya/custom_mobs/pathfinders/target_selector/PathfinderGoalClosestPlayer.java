@@ -1,18 +1,26 @@
 package apple.voltskiya.custom_mobs.pathfinders.target_selector;
 
+import apple.nms.decoding.entity.DecodeEntity;
 import apple.nms.decoding.pathfinder.DecodeMoveType;
 import apple.voltskiya.custom_mobs.reload.PluginDisable;
 import net.minecraft.world.entity.EntityInsentient;
 import net.minecraft.world.entity.ai.goal.PathfinderGoal;
-import net.minecraft.world.entity.ai.targeting.PathfinderTargetCondition;
 import net.minecraft.world.entity.player.EntityHuman;
+import org.bukkit.FluidCollisionMode;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
+import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.util.RayTraceResult;
+import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import voltskiya.apple.utilities.util.DistanceUtils;
 
-import java.util.EnumSet;
-import java.util.Random;
+import java.util.*;
 
 public class PathfinderGoalClosestPlayer extends PathfinderGoal {
     private final EntityInsentient me;
@@ -33,21 +41,37 @@ public class PathfinderGoalClosestPlayer extends PathfinderGoal {
 
     @Override
     public boolean a() {
-        if (!this.isRunning && this.me.getGoalTarget() == null && this.random.nextInt(this.checkInterval) == 0) {
-            @Nullable EntityHuman player = this.me.getWorld().a(EntityHuman.class,
-                    PathfinderTargetCondition.a().a(this.sight).a((e) -> e.getBukkitEntity() instanceof Player && ((Player) e.getBukkitEntity()).getGameMode() == GameMode.SURVIVAL),
-                    this.me,
-                    this.me.locX(),
-                    this.me.locY(),
-                    this.me.locZ(),
-                    this.me.getBoundingBox().grow(sight, sight / 2, sight)
-            );
-            if ((this.newTarget = player) == null) {
-                return false;
-            } else {
-                this.isRunning = true;
-                return true;
+        if (this.isRunning || DecodeEntity.getLastTarget(this.me) != null || this.random.nextInt(this.checkInterval) != 0) {
+            return false;
+        }
+
+        Mob bukkitEntity = (Mob) this.me.getBukkitEntity();
+        Location myLocation = bukkitEntity.getLocation();
+        @NotNull Collection<Player> nearbyPlayers = myLocation.getNearbyPlayers(sight, sight / 2, sight,
+                p -> p.getGameMode() == GameMode.SURVIVAL);
+        for (Iterator<Player> iterator = nearbyPlayers.iterator(); iterator.hasNext(); ) {
+            Player nearby = iterator.next();
+            Vector difference = nearby.getLocation().subtract(myLocation).toVector();
+            myLocation.setDirection(difference);
+            @Nullable RayTraceResult rayTrace = myLocation.getWorld().rayTrace(myLocation, myLocation.getDirection(), sight, FluidCollisionMode.NEVER, true, 0.01, null);
+            if (rayTrace == null || rayTrace.getHitEntity() != nearby) {
+                iterator.remove();
+                continue;
             }
+            Block hitBlock = rayTrace.getHitBlock();
+            if (hitBlock != null) {
+                double distanceToBlock = DistanceUtils.distance(myLocation, hitBlock.getLocation());
+                double distanceToEntity = DistanceUtils.magnitude(difference);
+                if (distanceToEntity > distanceToBlock) {
+                    iterator.remove();
+                }
+            }
+        }
+        Optional<Player> closest = nearbyPlayers.stream().min(Comparator.comparingDouble(p -> DistanceUtils.distance(p.getLocation(), myLocation)));
+        if (closest.isPresent()) {
+            newTarget = ((CraftPlayer) closest.get()).getHandle();
+            isRunning = true;
+            return true;
         }
         return false;
     }
@@ -60,7 +84,7 @@ public class PathfinderGoalClosestPlayer extends PathfinderGoal {
     @Override
     public void c() {
         if (newTarget != null) {
-            this.me.setGoalTarget(newTarget, EntityTargetEvent.TargetReason.CLOSEST_PLAYER, true);
+            this.me.setTarget(newTarget, EntityTargetEvent.TargetReason.CLOSEST_PLAYER, true);
         }
         this.isRunning = false;
         this.newTarget = null;

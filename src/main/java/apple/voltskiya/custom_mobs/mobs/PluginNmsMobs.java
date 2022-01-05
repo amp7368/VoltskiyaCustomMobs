@@ -5,34 +5,34 @@ import apple.voltskiya.custom_mobs.mobs.modified.illager.illusioner.MobIllagerIl
 import apple.voltskiya.custom_mobs.mobs.modified.illager.pillager.MobIllagerPillagerExaminer;
 import apple.voltskiya.custom_mobs.mobs.modified.illager.vindicator.MobIllagerVindicatorExaminer;
 import apple.voltskiya.custom_mobs.mobs.modified.iron_golem.MobIronGolemExaminer;
+import apple.voltskiya.custom_mobs.mobs.nms.cool.aledar.MobCart;
+import apple.voltskiya.custom_mobs.mobs.nms.cool.aledar.mob.AledarNavigation;
 import apple.voltskiya.custom_mobs.mobs.nms.misc.MobHealthPack;
-import apple.voltskiya.custom_mobs.mobs.nms.misc.MobTestSkeleton;
 import apple.voltskiya.custom_mobs.mobs.nms.nether.angered_soul.MobAngeredSoul;
 import apple.voltskiya.custom_mobs.mobs.nms.nether.eye_plant.MobEyePlant;
-import apple.voltskiya.custom_mobs.mobs.nms.nether.gremlin.MobWarpedGremlin;
 import apple.voltskiya.custom_mobs.mobs.nms.nether.parasite.MobParasite;
 import apple.voltskiya.custom_mobs.mobs.nms.nether.revenant.MobRevenant;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.utility.NmsSpawnWrapper;
 import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelHandler;
 import apple.voltskiya.custom_mobs.mobs.nms.parts.child.MobPartArmorStand;
-import apple.voltskiya.custom_mobs.trash.aledar.AledarNavigation;
-import apple.voltskiya.custom_mobs.trash.aledar.MobAledar;
-import apple.voltskiya.custom_mobs.trash.aledar.MobCart;
 import plugin.util.plugin.plugin.util.plugin.PluginManagedModule;
 import voltskiya.apple.configs.plugin.manage.ConfigBuilderHolder;
 import voltskiya.apple.configs.plugin.manage.PluginManagedModuleConfig;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 public class PluginNmsMobs extends PluginManagedModule implements PluginManagedModuleConfig {
     private static PluginNmsMobs instance;
+    private List<NmsSpawnWrapper<?>> spawners = new ArrayList<>();
 
     @Override
     public void enable() {
         new AledarNavigation();
-        new SpawnCustomMobListener();
-        new SkelePacketCommand();
+        new SpawnCustomMobListener(spawners);
     }
 
     @Override
@@ -54,22 +54,23 @@ public class PluginNmsMobs extends PluginManagedModule implements PluginManagedM
     public void init() {
         instance = this;
         new NmsModelHandler();
-
-        MobWarpedGremlin.initialize();
-        MobPartArmorStand.initialize();
-        MobAledar.initialize();
-        MobEyePlant.initialize();
-        MobParasite.initialize();
-        MobCart.initialize();
-        MobIronGolemExaminer.initialize();
-        MobIllagerIllusionerExaminer.initialize();
-        MobIllagerPillagerExaminer.initialize();
-        MobIllagerVindicatorExaminer.initialize();
-        MobIllagerEvokerExaminer.initialize();
-        MobRevenant.initialize();
-        MobAngeredSoul.initialize();
-        MobHealthPack.initialize();
-        MobTestSkeleton.initialize();
+        spawners = List.of(
+                MobIllagerEvokerExaminer.spawner(),
+                MobIronGolemExaminer.spawner(),
+                MobIllagerVindicatorExaminer.spawner(),
+                MobIllagerPillagerExaminer.spawner(),
+                MobIllagerIllusionerExaminer.spawner(),
+                MobPartArmorStand.spawner(),
+                MobEyePlant.spawner(),
+                MobAngeredSoul.spawner(),
+                MobHealthPack.spawner(),
+                MobParasite.spawner(),
+                MobCart.spawner(),
+                MobRevenant.spawner()
+        );
+        for (NmsSpawnWrapper<?> spawner : spawners) {
+            spawner.initialize();
+        }
 
         SpawnCustomMobListener.initialize();
     }

@@ -1,120 +1,123 @@
 package apple.voltskiya.custom_mobs.mobs.modified.illager.illusioner;
 
 import apple.nms.decoding.entity.DecodeEntity;
-import apple.nms.decoding.entity.DecodeEnumCreatureType;
 import apple.nms.decoding.iregistry.DecodeEntityTypes;
-import apple.nms.decoding.iregistry.DecodeIRegistry;
-import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
-import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.holder.NmsMobRegister;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.holder.NmsMobEntitySupers;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.qol.NmsHolderQOL;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.qol.NmsMobWrapperQOL;
 import apple.voltskiya.custom_mobs.mobs.nms.parent.register.RegisteredCustomMob;
-import com.mojang.datafixers.types.Type;
-import net.minecraft.core.IRegistry;
+import apple.voltskiya.custom_mobs.mobs.nms.parent.utility.NmsSpawnWrapper;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.level.WorldServer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.EnumMoveType;
+import net.minecraft.world.entity.ai.attributes.AttributeMapBase;
 import net.minecraft.world.entity.ai.goal.PathfinderGoalSelector;
 import net.minecraft.world.entity.ai.goal.target.PathfinderGoalHurtByTarget;
 import net.minecraft.world.entity.ai.goal.target.PathfinderGoalNearestAttackableTarget;
 import net.minecraft.world.entity.animal.EntityIronGolem;
-import net.minecraft.world.entity.monster.EntityIllagerAbstract;
 import net.minecraft.world.entity.monster.EntityIllagerIllusioner;
 import net.minecraft.world.entity.npc.EntityVillagerAbstract;
 import net.minecraft.world.entity.player.EntityHuman;
 import net.minecraft.world.entity.raid.EntityRaider;
 import net.minecraft.world.level.World;
-import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
-import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.world.phys.Vec3D;
 
-import java.util.Map;
-import java.util.logging.Level;
+import java.util.Objects;
 
-public class MobIllagerIllusionerExaminer extends EntityIllagerIllusioner implements RegisteredCustomMob {
-    public static final String REGISTERED_NAME = "mob.examiner.illusioner";
-    private static EntityTypes<MobIllagerIllusionerExaminer> entityTypes;
+public class MobIllagerIllusionerExaminer extends EntityIllagerIllusioner implements RegisteredCustomMob, NmsHolderQOL<MobIllagerIllusionerExaminer> {
+    private static final String REGISTERED_NAME = "mob.examiner.illusioner";
 
-    public static void initialize() {
-        Map<? super Object, Type<?>> types = NmsMobRegister.getMinecraftTypes();
-        final Type<?> oldType = types.get("minecraft:illusioner");
-        types.put(registeredNameId(), oldType);
+    private static NmsSpawnWrapper<MobIllagerIllusionerExaminer> spawner;
 
-        // build it
-        EntityTypes.Builder<MobIllagerIllusionerExaminer> entitytypesBuilder = EntityTypes.Builder.a(MobIllagerIllusionerExaminer::new, DecodeEnumCreatureType.MONSTER.encode());
-        entityTypes = entitytypesBuilder.a(REGISTERED_NAME);
-        entityTypes = IRegistry.a(DecodeIRegistry.getEntityType(), DecodeIRegistry.getEntityType().getId(DecodeEntityTypes.ILLUSIONER), REGISTERED_NAME, entityTypes); // this is good
+    private NmsMobWrapperQOL<MobIllagerIllusionerExaminer> wrapper;
 
-        // log it
-        PluginNmsMobs.get().log(Level.INFO, "registered " + registeredNameId());
-    }
-
-    public MobIllagerIllusionerExaminer(EntityTypes<? extends EntityIllagerAbstract> entitytypes, World world) {
+    public MobIllagerIllusionerExaminer(EntityTypes<?> entitytypes, World world) {
         super(DecodeEntityTypes.ILLUSIONER, world);
     }
 
-    @NotNull
-    private static String registeredNameId() {
-        return "minecraft" + ":" + REGISTERED_NAME;
+    public static NmsSpawnWrapper<MobIllagerIllusionerExaminer> spawner() {
+        return spawner = Objects.requireNonNullElseGet(spawner, MobIllagerIllusionerExaminer::makeSpawner);
+    }
+
+    public static NmsSpawnWrapper<MobIllagerIllusionerExaminer> makeSpawner() {
+        return new NmsSpawnWrapper<>(
+                REGISTERED_NAME,
+                MobIllagerIllusionerExaminer::new,
+                DecodeEntityTypes.ILLUSIONER
+        );
     }
 
     @Override
-    public EntityTypes<?> getEntityType() {
-        return entityTypes;
-    }
-
-    /**
-     * spawns a WarpedGremlin
-     *
-     * @param location the org.bukkit location where the mob should be spawned
-     * @param oldNbt   the nbt of the previously spawned mob or null if no entity existed
-     */
-    public static void spawn(Location location, NBTTagCompound oldNbt) {
-        CraftWorld world = (CraftWorld) location.getWorld();
-        final MobIllagerIllusionerExaminer entity = new MobIllagerIllusionerExaminer(entityTypes, world.getHandle());
-        entity.prepare(location, oldNbt);
-        entity.addScoreboardTag(SpawnCustomMobListener.CUSTOM_SPAWN_COMPLETE_TAG);
-        entity.addScoreboardTag(REGISTERED_NAME);
-        world.getHandle().addEntity(entity);
-    }
-
-
-    public static void spawnEat(CreatureSpawnEvent event) {
-        Location location = event.getEntity().getLocation();
-        spawn(location, ((CraftEntity) event.getEntity()).getHandle().save(new NBTTagCompound()));
-        event.setCancelled(true);
-    }
-
-    private void prepare(Location location, NBTTagCompound oldNbt) {
-        if (oldNbt != null) {
-            oldNbt.remove("UUID");
-            this.load(oldNbt);
-        }
-        this.setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
-    }
-
-
-    @Override
-    public void load(NBTTagCompound nbttagcompound) {
-        nbttagcompound.setString("id", registeredNameId());
-        super.load(nbttagcompound);
-    }
-
-    @Override
-    public NBTTagCompound save(NBTTagCompound nbttagcompound) {
-        NBTTagCompound data = super.save(nbttagcompound);
-        data.setString("id", registeredNameId());
-        return data;
-    }
-
-
-    @Override
-    protected void initPathfinder() {
-        super.initPathfinder();
-        DecodeEntity.setTargetSelector(this, new PathfinderGoalSelector(getWorld().getMethodProfilerSupplier()));
+    protected void u() {
+        super.u();
+        DecodeEntity.setTargetSelector(this, new PathfinderGoalSelector(getMethodProfilerSupplier()));
         PathfinderGoalSelector targetSelector = DecodeEntity.getTargetSelector(this);
         targetSelector.a(1, (new PathfinderGoalHurtByTarget(this, EntityIronGolem.class, EntityRaider.class)).a(new Class[0]));
-        targetSelector.a(2, (new PathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)).a(300));
-        targetSelector.a(3, (new PathfinderGoalNearestAttackableTarget<>(this, EntityVillagerAbstract.class, false)).a(300));
+        targetSelector.a(2, (new PathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, true)).c(300));
+        targetSelector.a(3, (new PathfinderGoalNearestAttackableTarget<>(this, EntityVillagerAbstract.class, false)).c(300));
+    }
+
+    @Override
+    public MobIllagerIllusionerExaminer getSelfEntity() {
+        return this;
+    }
+
+    @Override
+    public NmsSpawnWrapper<MobIllagerIllusionerExaminer> getSpawner() {
+        return spawner();
+    }
+
+    @Override
+    public NmsMobWrapperQOL<MobIllagerIllusionerExaminer> getSelfWrapper() {
+        return wrapper = Objects.requireNonNullElseGet(wrapper, NmsHolderQOL.super::makeSelfWrapper);
+    }
+
+
+    @Override
+    public NmsMobEntitySupers makeEntitySupers() {
+        return new NmsMobEntitySupers(
+                super::b, // change world
+                super::a, // move
+                super::g, //load
+                super::f, //save
+                super::a // die
+        );
+    }
+
+    @Override
+    public EntityTypes<?> ad() {
+        return nmsgetEntityType();
+    }
+
+    @Override
+    public void a(EnumMoveType enummovetype, Vec3D vec3d) {
+        nmsmove(enummovetype, vec3d);
+    }
+
+    @Override
+    public AttributeMapBase ep() {
+        return nmsgetAttributeMap();
+    }
+
+    @Override
+    public Entity b(WorldServer worldserver) {
+        return nmsChangeWorlds(worldserver);
+    }
+
+    @Override
+    public void g(NBTTagCompound nbttagcompound) {
+        nmsload(nbttagcompound);
+    }
+
+    @Override
+    public NBTTagCompound f(NBTTagCompound nbttagcompound) {
+        return nmssave(nbttagcompound);
+    }
+
+    @Override
+    public void a(Entity.RemovalReason removalReason) {
+        nmsRemove(removalReason);
     }
 }

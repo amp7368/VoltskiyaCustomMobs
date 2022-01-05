@@ -1,7 +1,11 @@
 package apple.voltskiya.custom_mobs.mobs.abilities;
 
+import apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.bowlike.BowlikeMoveManager;
 import apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.micro_misles.MicroMissileManager;
+import apple.voltskiya.custom_mobs.mobs.abilities.tick.fireball.FireballThrowManager;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.lost_soul.BlemishDeathListener;
+import apple.voltskiya.custom_mobs.mobs.abilities.tick.mancubus.MancubusManager;
+import apple.voltskiya.custom_mobs.mobs.abilities.tick.reviver.ReviverManager;
 import plugin.util.plugin.plugin.util.plugin.PluginManagedModule;
 import voltskiya.apple.configs.plugin.manage.ConfigBuilderHolder;
 import voltskiya.apple.configs.plugin.manage.PluginManagedModuleConfig;
@@ -24,9 +28,14 @@ public class MobTickPlugin extends PluginManagedModule
     @Override
     public void enable() {
         new MobTickDeathListener();
-        new MobTickSpawnListener();
+        new OldMobTickSpawnListener();
         new MicroMissileManager();
         new BlemishDeathListener();
+
+        new BowlikeMoveManager();
+        new ReviverManager();
+        new FireballThrowManager();
+        new MancubusManager();
     }
 
     public static MobTickPlugin get() {
@@ -35,7 +44,7 @@ public class MobTickPlugin extends PluginManagedModule
 
     @Override
     public String getName() {
-        return "mobtick";
+        return "MobTick";
     }
 
     @Override

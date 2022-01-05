@@ -1,11 +1,12 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.shoot_ball;
 
+import apple.nms.decoding.entity.DecodeEntity;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.pathfinders.spell.PathfinderGoalShootSpell;
 import apple.voltskiya.custom_mobs.util.projectile.ProjectileParticleMissle;
 import net.minecraft.world.entity.EntityLiving;
 import org.bukkit.*;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
@@ -66,9 +67,9 @@ public class ShootBallSpell implements PathfinderGoalShootSpell.Spell {
         public ChargeUp(int ticksToCharge) {
             this.ticksToCharge = ticksToCharge;
             this.soundCountdown = Math.max(1, this.ticksToCharge / 8);
-            goalTarget = shootBallCaster.getEntity().getGoalTarget();
+            goalTarget = DecodeEntity.getLastTarget(shootBallCaster.getEntity());
             LivingEntity target;
-            if (goalTarget == null || goalTarget.getRemovalReason() != null) target = null;
+            if (goalTarget == null || goalTarget.getBukkitEntity().isDead()) target = null;
             else {
                 if (goalTarget.getBukkitEntity() instanceof LivingEntity)
                     target = (LivingEntity) goalTarget.getBukkitEntity();
@@ -81,12 +82,12 @@ public class ShootBallSpell implements PathfinderGoalShootSpell.Spell {
 
         @Override
         public void run() {
-            if (!shootBallCaster.getEntity().isAlive()) {
+            if (shootBallCaster.getEntity().getBukkitEntity().isDead()) {
                 return; // no need to do anything more. it's dead
             }
             // track the target
             LivingEntity target;
-            if (goalTarget == null || goalTarget.getRemovalReason() != null) target = null;
+            if (goalTarget == null || goalTarget.getBukkitEntity().isDead()) target = null;
             else {
                 if (goalTarget.getBukkitEntity() instanceof LivingEntity)
                     target = (LivingEntity) goalTarget.getBukkitEntity();

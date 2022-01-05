@@ -1,14 +1,13 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.tick.parent;
 
 import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.register.RegisteredEntityEater;
-import apple.voltskiya.custom_mobs.ticking.HighFrequencyTick;
 import apple.voltskiya.custom_mobs.util.PlayerClose;
 import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
+import apple.voltskiya.custom_mobs.util.ticking.HighFrequencyTick;
+import apple.voltskiya.mob_manager.parent.listen.SpawnHandlerListener;
+import apple.voltskiya.mob_manager.parent.mob.MMSpawned;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Mob;
 import org.jetbrains.annotations.Nullable;
 import voltskiya.apple.configs.plugin.manage.PluginManagedModuleConfig;
 import voltskiya.apple.utilities.util.DistanceUtils;
@@ -16,8 +15,7 @@ import voltskiya.apple.utilities.util.DistanceUtils;
 import java.util.*;
 
 public abstract class MobTickManagerTicker<Config extends MobTickerConfig>
-        implements Runnable,
-        RegisteredEntityEater {
+        implements Runnable, SpawnHandlerListener {
     protected final Config config;
     private final MobTickCloseness[] closeness;
     private final MobTicker[] closenessToTicker;
@@ -49,8 +47,17 @@ public abstract class MobTickManagerTicker<Config extends MobTickerConfig>
         return MobTickManagerClosenessDefault.values();
     }
 
+    @Override
+    public void handle(MMSpawned mmSpawned) {
+        eatEntity(mmSpawned.getEntity());
+        eatMMSpawned(mmSpawned);
+    }
+
     public void eatEntity(Entity entity) {
         addMobToTick(config.createMob(entity));
+    }
+
+    public void eatMMSpawned(MMSpawned mmSpawned) {
     }
 
     public void addMobToTick(MobToTick<?> mob) {
@@ -74,13 +81,6 @@ public abstract class MobTickManagerTicker<Config extends MobTickerConfig>
         return MobTickPlugin.get();
     }
 
-    public boolean shouldAccept(LivingEntity entity) {
-        return !isOnlyMobs() || entity instanceof Mob;
-    }
-
-    protected boolean isOnlyMobs() {
-        return false;
-    }
 
     public static class MobTicker {
         private final int tickSpeed;
