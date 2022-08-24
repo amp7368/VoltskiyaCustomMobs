@@ -1,11 +1,15 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.tick.orbital_strike.small;
 
+import apple.mc.utilities.world.vector.VectorUtils;
+import apple.utilities.structures.Pair;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.Tickable;
+import apple.voltskiya.custom_mobs.mobs.abilities.tick.orbital_strike.OrbitalStrike.OrbitalStrikeType;
 import apple.voltskiya.custom_mobs.sql.MobListSql;
-import apple.voltskiya.custom_mobs.util.DistanceUtils;
 import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
-import apple.voltskiya.custom_mobs.util.constants.TagConstants;
-import apple.voltskiya.custom_mobs.util.data_structures.Pair;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Random;
+import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -13,11 +17,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Random;
-import java.util.UUID;
+import voltskiya.apple.utilities.minecraft.TagConstants;
 
 public class SmallOrbitalStrikeIndividualTicker implements Tickable {
 
@@ -48,7 +48,8 @@ public class SmallOrbitalStrikeIndividualTicker implements Tickable {
         long now = System.currentTimeMillis();
         while (strikerUidIterator.hasNext()) {
             Pair<UUID, Long> strikerUid = strikerUidIterator.next();
-            if (now - strikerUid.getValue() < SmallOrbitalStrikeManagerTicker.get().STRIKE_COOLDOWN) {
+            if (now - strikerUid.getValue()
+                < OrbitalStrikeType.SMALL.getCooldown()) {
                 continue;
             }
             Entity striker = Bukkit.getEntity(strikerUid.getKey());
@@ -59,7 +60,8 @@ public class SmallOrbitalStrikeIndividualTicker implements Tickable {
                 trim = true;
             } else {
                 tickStriker(striker, strikerUid);
-                if (SmallOrbitalStrikeManagerTicker.get().amIGivingStriker(striker, closeness, strikerUid.getValue())) {
+                if (SmallOrbitalStrikeManagerTicker.get()
+                    .amIGivingStriker(striker, closeness, strikerUid.getValue())) {
                     MobListSql.removeMob(strikerUid.getKey());
                     strikerUidIterator.remove();
                     trim = true;
@@ -76,8 +78,10 @@ public class SmallOrbitalStrikeIndividualTicker implements Tickable {
     }
 
     private synchronized void tickStriker(Entity striker, Pair<UUID, Long> strikerUid) {
-        if (isCheckStrike && !striker.getScoreboardTags().contains(TagConstants.isDoingAbility)) {
-            if (random.nextDouble() < SmallOrbitalStrikeManagerTicker.get().STRIKE_CHANCE * closeness.getGiver().getTickSpeed()) {
+        if (isCheckStrike && !striker.getScoreboardTags().contains(TagConstants.IS_DOING_ABILITY)) {
+            if (random.nextDouble()
+                < OrbitalStrikeType.SMALL.getChance() * closeness.getGiver()
+                .getTickSpeed()) {
                 checkStrike(striker, strikerUid);
             }
         }
@@ -87,11 +91,12 @@ public class SmallOrbitalStrikeIndividualTicker implements Tickable {
         Location strikerLocation = striker.getLocation();
         @Nullable LivingEntity target = ((Mob) striker).getTarget();
         if (target == null) {
-            Player closest = UpdatedPlayerList.getClosestPlayer(striker.getLocation());
+            Player closest = UpdatedPlayerList.getClosestPlayerPlayer(striker.getLocation());
             if (closest != null) {
                 Location pLocation = closest.getLocation();
-                double d = DistanceUtils.distance(pLocation, strikerLocation);
-                if (d < SmallOrbitalStrikeManagerTicker.get().STRIKE_DISTANCE && ((Mob) striker).hasLineOfSight(closest)) {
+                double d = VectorUtils.distance(pLocation, strikerLocation);
+                if (d < OrbitalStrikeType.SMALL.getRange()
+                    && ((Mob) striker).hasLineOfSight(closest)) {
                     target = closest;
                 }
             }

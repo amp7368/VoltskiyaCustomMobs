@@ -1,28 +1,24 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.tick.warper;
 
-import apple.voltskiya.custom_mobs.VoltskiyaModule;
-import apple.voltskiya.custom_mobs.mobs.ConfigManager;
-import apple.voltskiya.custom_mobs.mobs.RegisteredEntityEater;
-import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
-import apple.voltskiya.custom_mobs.ticking.HighFrequencyTick;
-import apple.voltskiya.custom_mobs.ticking.LowFrequencyTick;
-import apple.voltskiya.custom_mobs.ticking.NormalFrequencyTick;
-import apple.voltskiya.custom_mobs.ticking.TickGiverable;
-import apple.voltskiya.custom_mobs.util.DistanceUtils;
+import apple.mc.utilities.world.vector.VectorUtils;
 import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
-import org.bukkit.Location;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.jetbrains.annotations.Nullable;
-
+import apple.voltskiya.custom_mobs.util.ticking.HighFrequencyTick;
+import apple.voltskiya.custom_mobs.util.ticking.LowFrequencyTick;
+import apple.voltskiya.custom_mobs.util.ticking.NormalFrequencyTick;
+import apple.voltskiya.custom_mobs.util.ticking.TickGiverable;
+import apple.voltskiya.mob_manager.listen.SpawnHandlerListener;
+import apple.voltskiya.mob_manager.mob.MMSpawned;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import org.bukkit.Location;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
-public class WarperManagerTicker extends ConfigManager implements RegisteredEntityEater {
-    public int PARTICLES;
-    public int WARP_RADIUS;
-    public double WARP_CHANCE;
+public class WarperManagerTicker implements SpawnHandlerListener {
+
     private final Map<WarperManagerTicker.Closeness, WarperIndividualTicker> closenessToWarperes = new HashMap<>() {{
         for (WarperManagerTicker.Closeness closeness : WarperManagerTicker.Closeness.values())
             put(closeness, new WarperIndividualTicker(closeness));
@@ -32,43 +28,24 @@ public class WarperManagerTicker extends ConfigManager implements RegisteredEnti
 
     public WarperManagerTicker() throws IOException {
         instance = this;
-        WARP_CHANCE = (double) getValueOrInit(YmlSettings.WARP_CHANCE.getPath());
-        WARP_RADIUS = (int) getValueOrInit(YmlSettings.WARP_RADIUS.getPath());
-        PARTICLES = (int) getValueOrInit(YmlSettings.PARTICLES.getPath());
     }
 
     public static WarperManagerTicker get() {
         return instance;
     }
 
-    @Override
-    public void eatEntity(Entity warper) {
+    public void eatEntity(MMSpawned mmSpawned) {
+        LivingEntity warper = mmSpawned.getEntity();
         // this is a warper
         WarperManagerTicker.Closeness closeness = determineConcern(warper);
         closenessToWarperes.get(closeness).giveWarper(warper);
     }
 
     @Override
-    public String getName() {
+    public String getTag() {
         return "warper";
     }
 
-    @Override
-    public apple.voltskiya.custom_mobs.mobs.YmlSettings[] getSettings() {
-        return YmlSettings.values();
-    }
-
-    @Override
-    public void initializeYml() throws IOException {
-        for (WarperManagerTicker.YmlSettings setting : WarperManagerTicker.YmlSettings.values()) {
-            setValueIfNotExists(setting.getPath(), setting.value);
-        }
-    }
-
-    @Override
-    protected VoltskiyaModule getPlugin() {
-        return MobTickPlugin.get();
-    }
 
     public boolean amIGivingWarper(Entity entity, WarperManagerTicker.Closeness currentCloseness) {
         WarperManagerTicker.Closeness actualCloseness = determineConcern(entity);
@@ -82,11 +59,16 @@ public class WarperManagerTicker extends ConfigManager implements RegisteredEnti
     private WarperManagerTicker.Closeness determineConcern(Entity warper) {
         Location warperLocation = warper.getLocation();
 
-        @Nullable Player player = UpdatedPlayerList.getClosestPlayer(warperLocation);
+        @Nullable Player player = UpdatedPlayerList.getClosestPlayerPlayer(warperLocation);
         if (player == null)
             return WarperManagerTicker.Closeness.lowest();
         else
             return WarperManagerTicker.Closeness.getCloseness(warperLocation, player.getLocation());
+    }
+
+    @Override
+    public void handle(MMSpawned mmSpawned) {
+
     }
 
     enum Closeness {
@@ -95,7 +77,8 @@ public class WarperManagerTicker extends ConfigManager implements RegisteredEnti
         LOW_CLOSE(70, LowFrequencyTick.get());
 
         private final double distance;
-        private static final WarperManagerTicker.Closeness[] order = new WarperManagerTicker.Closeness[]{HIGH_CLOSE, NORMAL_CLOSE, LOW_CLOSE};
+        private static final WarperManagerTicker.Closeness[] order = new WarperManagerTicker.Closeness[]{
+            HIGH_CLOSE, NORMAL_CLOSE, LOW_CLOSE};
         private final TickGiverable giver;
 
         Closeness(double distance, TickGiverable giver) {
@@ -103,8 +86,9 @@ public class WarperManagerTicker extends ConfigManager implements RegisteredEnti
             this.giver = giver;
         }
 
-        private static WarperManagerTicker.Closeness getCloseness(Location aLocation, Location bLocation) {
-            double d = DistanceUtils.distance(aLocation, bLocation);
+        private static WarperManagerTicker.Closeness getCloseness(Location aLocation,
+            Location bLocation) {
+            double d = VectorUtils.distance(aLocation, bLocation);
             for (WarperManagerTicker.Closeness closeness : order) {
                 if (closeness.distance >= d) {
                     return closeness;
@@ -119,28 +103,6 @@ public class WarperManagerTicker extends ConfigManager implements RegisteredEnti
 
         public TickGiverable getGiver() {
             return giver;
-        }
-    }
-
-    private enum YmlSettings implements apple.voltskiya.custom_mobs.mobs.YmlSettings {
-        WARP_RADIUS("warpRadius", 10),
-        WARP_CHANCE("warpChance", .04d),
-        PARTICLES("particles", 40);
-
-        private final String path;
-        private final Object value;
-
-        YmlSettings(String path, Object value) {
-            this.path = path;
-            this.value = value;
-        }
-
-        public String getPath() {
-            return path;
-        }
-
-        public Object getValue() {
-            return value;
         }
     }
 }

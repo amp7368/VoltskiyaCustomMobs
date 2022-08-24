@@ -2,13 +2,13 @@ package apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.flamethrower;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.pathfinders.spell.PathfinderGoalShootSpell;
-import net.minecraft.world.entity.EntityInsentient;
+import net.minecraft.world.entity.Mob;
 import org.bukkit.Bukkit;
 
 public class FlameThrowerSpell implements PathfinderGoalShootSpell.Spell {
     public static final VoltskiyaPlugin PLUGIN = VoltskiyaPlugin.get();
     private State state;
-    private final EntityInsentient me;
+    private final Mob me;
     private final FlameThrowerManager.FlamethrowerType flamethrowerType;
     private final FlameThrowerShot flameThrower;
 

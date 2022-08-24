@@ -1,19 +1,19 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.flamethrower;
 
-import apple.voltskiya.custom_mobs.util.VectorUtils;
-import net.minecraft.world.entity.EntityInsentient;
+import net.minecraft.world.entity.Mob;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftMob;
+import org.bukkit.craftbukkit.v1_19_R1.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_19_R1.entity.CraftMob;
 import org.bukkit.util.Vector;
+import apple.mc.utilities.world.vector.VectorUtils;
 
 import java.util.Random;
 
 public class FlameThrowerShot {
     private static final double DENSITY = 1;
-    private final EntityInsentient handle;
+    private final Mob handle;
     private final CraftMob bukkitEntity;
     private final double radius;
     private final FlameThrowerCaster me;

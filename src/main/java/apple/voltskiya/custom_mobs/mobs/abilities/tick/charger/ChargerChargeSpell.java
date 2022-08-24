@@ -1,31 +1,34 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.tick.charger;
 
+import static apple.voltskiya.custom_mobs.mobs.abilities.tick.charger.ChargerChargeHelper.chargeSound;
+import static apple.voltskiya.custom_mobs.mobs.abilities.tick.charger.ChargerChargeHelper.chargeUpSound;
+import static apple.voltskiya.custom_mobs.mobs.abilities.tick.charger.ChargerChargeHelper.runFeetParticles;
+import static apple.voltskiya.custom_mobs.mobs.abilities.tick.charger.ChargerChargeHelper.stunParticles;
+import static apple.voltskiya.custom_mobs.mobs.abilities.tick.charger.ChargerChargeHelper.stunned;
+
+import apple.mc.utilities.item.material.MaterialUtils;
 import apple.nms.decoding.entity.DecodeEntity;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.pathfinders.spell.PathfinderGoalCharge;
-import apple.voltskiya.custom_mobs.util.constants.TagConstants;
-import apple.voltskiya.custom_mobs.util.minecraft.MaterialUtils;
-import net.minecraft.world.entity.EntityInsentient;
+import java.util.Collections;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftMob;
+import org.bukkit.craftbukkit.v1_19_R1.entity.CraftMob;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
-
-import java.util.Collections;
-
-import static apple.voltskiya.custom_mobs.mobs.abilities.tick.charger.ChargerChargeHelper.*;
+import voltskiya.apple.utilities.minecraft.TagConstants;
 
 public class ChargerChargeSpell {
+
     protected final Charger charger;
     protected final Mob chargerMob;
     protected Location finalLocation;
-    protected final EntityInsentient chargerHandle;
+    protected final net.minecraft.world.entity.Mob chargerHandle;
     protected ChargingState state = ChargingState.CHARGE_UP;
 
     public ChargerChargeSpell(Charger charger, Entity target) {
@@ -45,28 +48,22 @@ public class ChargerChargeSpell {
         x *= 3;
         y *= 3;
         z *= 3;
-        Vector overshoot = new Vector(x, y, z).normalize().multiply(this.charger.getType().getOvershootDistance());
+        Vector overshoot = new Vector(x, y, z).normalize()
+            .multiply(this.charger.getType().getOvershootDistance());
         this.finalLocation = chargerLocation.clone().add(overshoot).add(x, y, z);
     }
 
     public void stateChoice() {
         switch (state) {
-            case CHARGE_UP:
-                new ChargeUp().run();
-                break;
-            case RUN:
-                new ChargeRun().run();
-                break;
-            case HIT_WALL:
-                new ChargeStun(this.charger.getType().getChargeStunTime()).run();
-                break;
-            case TIRED:
-                new ChargeStun(this.charger.getType().getChargeTiredTime()).run();
-                break;
+            case CHARGE_UP -> new ChargeUp().run();
+            case RUN -> new ChargeRun().run();
+            case HIT_WALL -> new ChargeStun(this.charger.getType().getChargeStunTime()).run();
+            case TIRED -> new ChargeStun(this.charger.getType().getChargeTiredTime()).run();
         }
     }
 
     protected class ChargeUp implements Runnable {
+
         private int count = 0;
 
         public ChargeUp() {
@@ -76,8 +73,10 @@ public class ChargerChargeSpell {
 
         @Override
         public void run() {
-            if (chargerMob.isDead()) return;
-            Material below = chargerMob.getLocation().clone().subtract(0, 1, 0).getBlock().getType();
+            if (chargerMob.isDead())
+                return;
+            Material below = chargerMob.getLocation().clone().subtract(0, 1, 0).getBlock()
+                .getType();
             runFeetParticles(chargerMob.getLocation(), below, 25);
             count++;
             if (count == charger.getType().getChargeUpTime()) {
@@ -90,33 +89,30 @@ public class ChargerChargeSpell {
     }
 
     protected class ChargeRun implements Runnable {
+
         public void run() {
-            PotionEffect strength = new PotionEffect(PotionEffectType.INCREASE_DAMAGE, charger.getType().getMaxChargeTime(), 1, false, false);
+            PotionEffect strength = new PotionEffect(PotionEffectType.INCREASE_DAMAGE,
+                charger.getType().getMaxChargeTime(), 1, false, false);
             chargerMob.addPotionEffect(strength);
             chargeSound(chargerMob.getLocation());
             chargerMob.setAI(true);
-            DecodeEntity.getGoalSelector(chargerHandle).a(
-                    -1, new PathfinderGoalCharge(
-                            chargerHandle,
-                            finalLocation,
-                            charger.getType().getOvershootSpeed(),
-                            1000,
-                            Collections.singletonList(PathfinderGoalCharge.ChargeResult.HIT_ENTITY),
-                            this::dealWithResult
-                    )
-            );
+            DecodeEntity.getGoalSelector(chargerHandle).addGoal(-1,
+                new PathfinderGoalCharge(chargerHandle, finalLocation,
+                    charger.getType().getOvershootSpeed(), 1000,
+                    Collections.singletonList(PathfinderGoalCharge.ChargeResult.HIT_ENTITY),
+                    this::dealWithResult));
         }
 
         public void dealWithResult(PathfinderGoalCharge.ChargeResult result) {
             switch (result) {
-                case HIT_WALL:
+                case HIT_WALL -> {
                     state = ChargingState.HIT_WALL;
                     stateChoice();
-                    break;
-                case HIT_NOTHING:
+                }
+                case HIT_NOTHING -> {
                     state = ChargingState.TIRED;
                     stateChoice();
-                    break;
+                }
             }
         }
     }
@@ -129,6 +125,7 @@ public class ChargerChargeSpell {
     }
 
     protected class ChargeStun {
+
         private final int chargeStunTime;
 
         public ChargeStun(int chargeStunTime) {
@@ -154,7 +151,7 @@ public class ChargerChargeSpell {
             Location eyeLocation = chargerMob.getEyeLocation();
             stunParticles(eyeLocation, chargeStunTime);
             Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
-                chargerMob.removeScoreboardTag(TagConstants.isDoingAbility);
+                TagConstants.removeIsDoingAbility(chargerMob);
                 chargerMob.setAI(true);
                 ChargerManagerTicker.get().giveCharger(charger);
             }, chargeStunTime);

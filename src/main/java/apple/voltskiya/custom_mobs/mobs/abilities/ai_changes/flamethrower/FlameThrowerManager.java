@@ -1,110 +1,48 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.flamethrower;
 
 import apple.nms.decoding.entity.DecodeEntity;
-import apple.voltskiya.custom_mobs.VoltskiyaModule;
-import apple.voltskiya.custom_mobs.mobs.ConfigManager;
-import apple.voltskiya.custom_mobs.mobs.RegisteredEntityEater;
-import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
+import apple.utilities.util.NumberUtils;
 import apple.voltskiya.custom_mobs.pathfinders.spell.PathfinderGoalShootSpell;
-import net.minecraft.world.entity.EntityInsentient;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import apple.voltskiya.mob_manager.listen.SpawnHandlerListener;
+import apple.voltskiya.mob_manager.mob.MMSpawned;
 import java.util.function.BiFunction;
+import net.minecraft.world.entity.Mob;
 
-public class FlameThrowerManager extends ConfigManager implements RegisteredEntityEater {
-    public Map<String, FlamethrowerType> tagToFlamethrowerType;
+public class FlameThrowerManager implements SpawnHandlerListener {
 
-    public FlameThrowerManager() throws IOException {
-        FlamethrowerType.NORMAL.minRange = (double) getValueOrInit(YmlSettings.NORMAL_MIN_RANGE.getPath());
-        FlamethrowerType.NORMAL.range = (double) getValueOrInit(YmlSettings.NORMAL_RANGE.getPath());
-        FlamethrowerType.NORMAL.cooldown = (int) getValueOrInit(YmlSettings.NORMAL_COOLDOWN.getPath());
-        tagToFlamethrowerType = new HashMap<>() {
-            {
-                put("flamethrower_basic", FlamethrowerType.NORMAL);
-            }
-        };
-    }
-
-    public void eatEntity(EntityInsentient entity) {
-        for (String tag : entity.getScoreboardTags()) {
-            FlamethrowerType type = tagToFlamethrowerType.get(tag);
-            if (type != null) {
-                DecodeEntity.getGoalSelector(entity).a(0, new PathfinderGoalShootSpell<>(new FlameThrowerCaster(entity), type));
-            }
-        }
-    }
-
-
-    /**
-     * @return the name of the sub_module (a step below a module)
-     */
     @Override
-    public String getName() {
+    public String getTag() {
         return "flamethower";
     }
 
-    /**
-     * @return the default values for the config file
-     */
     @Override
-    public YmlSettings[] getSettings() {
-        return YmlSettings.values();
+    public void handle(MMSpawned mmSpawned) {
+        Mob entity = (Mob) mmSpawned.getNmsEntity();
+        DecodeEntity.getGoalSelector(entity).addGoal(0,
+            new PathfinderGoalShootSpell<>(new FlameThrowerCaster(entity),
+                FlamethrowerType.NORMAL));
     }
 
-    /**
-     * @return the module associated with this config
-     */
-    @Override
-    protected VoltskiyaModule getPlugin() {
-        return MobTickPlugin.get();
-    }
-
-
-    public enum YmlSettings implements apple.voltskiya.custom_mobs.mobs.YmlSettings {
-        NORMAL_RANGE("normal.range", 13d),
-        NORMAL_COOLDOWN("normal.cooldown", 300),
-        NORMAL_MIN_RANGE("normal.min_range", 4d);
-        private final String path;
-        private final Object value;
-
-        YmlSettings(String path, Object value) {
-            this.path = path;
-            this.value = value;
-        }
-
-        public String getPath() {
-            return path;
-        }
-
-        public Object getValue() {
-            return value;
-        }
-    }
 
     public enum FlamethrowerType implements PathfinderGoalShootSpell.SpellType<FlameThrowerCaster> {
-        NORMAL(0, 0, FlameThrowerSpell::new);
-
-        public double minRange;
-        private double range;
-        private int cooldown;
+        NORMAL(FlameThrowerConfig.get(), FlameThrowerSpell::new);
+        private final FlameThrowerConfig config;
         private final BiFunction<FlameThrowerCaster, FlamethrowerType, FlameThrowerSpell> runnableConstructor;
 
-        FlamethrowerType(double range, int cooldown, BiFunction<FlameThrowerCaster, FlamethrowerType, FlameThrowerSpell> runnableConstructor) {
-            this.range = range;
-            this.cooldown = cooldown;
+        FlamethrowerType(FlameThrowerConfig config,
+            BiFunction<FlameThrowerCaster, FlamethrowerType, FlameThrowerSpell> runnableConstructor) {
+            this.config = config;
             this.runnableConstructor = runnableConstructor;
         }
 
         @Override
         public int getCooldown() {
-            return cooldown;
+            return config.cooldown;
         }
 
         @Override
         public boolean inRange(double distance) {
-            return distance <= range;
+            return NumberUtils.betweenDouble(config.minRange, distance, config.range);
         }
 
         @Override

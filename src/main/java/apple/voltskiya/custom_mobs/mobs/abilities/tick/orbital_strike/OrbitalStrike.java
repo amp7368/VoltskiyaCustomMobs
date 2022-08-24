@@ -1,10 +1,20 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.tick.orbital_strike;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import apple.voltskiya.custom_mobs.mobs.abilities.tick.orbital_strike.large.LargeOrbitalStrikeManagerTicker;
-import apple.voltskiya.custom_mobs.mobs.abilities.tick.orbital_strike.small.SmallOrbitalStrikeManagerTicker;
+import apple.voltskiya.custom_mobs.mobs.abilities.tick.orbital_strike.large.OrbitalStrikeConfig;
+import apple.voltskiya.custom_mobs.mobs.abilities.tick.orbital_strike.large.OrbitalStrikeConfig.OrbitalStrikeTypeConfig;
 import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
-import org.bukkit.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.function.Function;
+import org.bukkit.Bukkit;
+import org.bukkit.Color;
+import org.bukkit.Location;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
+import org.bukkit.World;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Player;
@@ -12,13 +22,9 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.function.Function;
-
 
 public class OrbitalStrike {
+
     private final World targetWorld;
     private final OrbitalStrikeType type;
     private double xt;
@@ -30,7 +36,8 @@ public class OrbitalStrike {
     private final List<Location> previousLocations = new ArrayList<>();
     private final double targetRadius;
 
-    public OrbitalStrike(World targetWorld, double xt, double yt, double zt, OrbitalStrike.OrbitalStrikeType type) {
+    public OrbitalStrike(World targetWorld, double xt, double yt, double zt,
+        OrbitalStrike.OrbitalStrikeType type) {
         this.targetRadius = type.getTargetRadius();
         this.xt = xt;
         this.yt = yt;
@@ -44,11 +51,17 @@ public class OrbitalStrike {
 
     public synchronized void sound(Location strikerLocation) {
         if (type == OrbitalStrikeType.SMALL) {
-            strikerLocation.getWorld().playSound(strikerLocation, Sound.ENTITY_WITHER_SPAWN, SoundCategory.HOSTILE, 30, 2f);
+            strikerLocation.getWorld()
+                .playSound(strikerLocation, Sound.ENTITY_WITHER_SPAWN, SoundCategory.HOSTILE, 30,
+                    2f);
         } else if (type == OrbitalStrikeType.MEDIUM) {
-            strikerLocation.getWorld().playSound(strikerLocation, Sound.ENTITY_WITHER_SPAWN, SoundCategory.HOSTILE, 30, 1.2f);
+            strikerLocation.getWorld()
+                .playSound(strikerLocation, Sound.ENTITY_WITHER_SPAWN, SoundCategory.HOSTILE, 30,
+                    1.2f);
         } else if (type == OrbitalStrikeType.LARGE) {
-            strikerLocation.getWorld().playSound(strikerLocation, Sound.BLOCK_END_PORTAL_SPAWN, SoundCategory.HOSTILE, 50, 1.5f);
+            strikerLocation.getWorld()
+                .playSound(strikerLocation, Sound.BLOCK_END_PORTAL_SPAWN, SoundCategory.HOSTILE, 50,
+                    1.5f);
         }
     }
 
@@ -59,7 +72,8 @@ public class OrbitalStrike {
         if (currentTick % 5 == 0) {
             target();
         }
-        if (currentTick >= type.getStrikeTargetTime() && currentTick % type.getFireballInterval() == 0)
+        if (currentTick >= type.getStrikeTargetTime()
+            && currentTick % type.getFireballInterval() == 0)
             fireball();
         if (currentTick++ == type.getTotalStrikeTime()) {
             return;
@@ -85,16 +99,14 @@ public class OrbitalStrike {
             @NotNull Vector direction = new Vector(0, -1.5, 0);
             location.setDirection(direction);
             final EntityType firebll = type.getFireball(i);
-            if (firebll == null) continue;
-            targetWorld.spawnEntity(location,
-                    firebll,
-                    CreatureSpawnEvent.SpawnReason.CUSTOM,
-                    fire -> {
-                        if (random.nextDouble() < .8)
-                            ((Fireball) fire).setIsIncendiary(false);
-                        fire.setVelocity(direction);
-                    }
-            );
+            if (firebll == null)
+                continue;
+            targetWorld.spawnEntity(location, firebll, CreatureSpawnEvent.SpawnReason.CUSTOM,
+                fire -> {
+                    if (random.nextDouble() < .8)
+                        ((Fireball) fire).setIsIncendiary(false);
+                    fire.setVelocity(direction);
+                });
         }
     }
 
@@ -103,7 +115,8 @@ public class OrbitalStrike {
         if (previousLocations.isEmpty())
             targetLocation = new Location(targetWorld, xt, yt, zt);
         else
-            targetLocation = previousLocations.get((int) Math.max(0, previousLocations.size() - type.getMovementLag()));
+            targetLocation = previousLocations.get(
+                (int) Math.max(0, previousLocations.size() - type.getMovementLag()));
         double xt = targetLocation.getX();
         double yt = targetLocation.getY();
         double zt = targetLocation.getZ();
@@ -118,8 +131,7 @@ public class OrbitalStrike {
                 targetWorld.spawnParticle(Particle.LAVA, xt + x, yt + y, zt + z, 1);
             }
             targetWorld.spawnParticle(Particle.REDSTONE, xt + x, yt + y, zt + z, 5, 0, 0, 0, 1,
-                    new Particle.DustOptions(Color.fromBGR(0, 0, 99), type.getParticleSize())
-            );
+                new Particle.DustOptions(Color.fromBGR(0, 0, 99), type.getParticleSize()));
         }
 
         // make flame outerCircle
@@ -131,8 +143,7 @@ public class OrbitalStrike {
             double z = Math.sin(Math.toRadians(theta)) * (radius + radiusOffset);
             double y = random.nextDouble() * .3;
             targetWorld.spawnParticle(Particle.REDSTONE, xt + x, yt + y, zt + z, 5, 0, 0, 0, 1,
-                    new Particle.DustOptions(Color.fromBGR(0, 0, 36), type.getParticleSize())
-            );
+                new Particle.DustOptions(Color.fromBGR(0, 0, 36), type.getParticleSize()));
 //            targetWorld.spawnParticle(Particle.FLAME, xt + x, yt + y, zt + z, 5, 0, 0, 0, 0);
         }
         // make flame pentagram
@@ -150,13 +161,10 @@ public class OrbitalStrike {
             double xInterval = (x2 - x1) / particlesMine;
             double zInterval = (z2 - z1) / particlesMine;
             for (double i = 0, x = x1, z = z1; i < particlesMine;
-                 x += xInterval,
-                         z += zInterval,
-                         i++) {
+                x += xInterval, z += zInterval, i++) {
                 double y = random.nextDouble() * 0.3;
                 targetWorld.spawnParticle(Particle.REDSTONE, xt + x, yt + y, zt + z, 5, 0, 0, 0, 1,
-                        new Particle.DustOptions(Color.fromBGR(0, 0, 36), type.getParticleSize())
-                );
+                    new Particle.DustOptions(Color.fromBGR(0, 0, 36), type.getParticleSize()));
 //                targetWorld.spawnParticle(Particle.FLAME, xt + x, yt + y, zt + z, 5, 0, 0, 0, 0);
             }
         }
@@ -166,7 +174,7 @@ public class OrbitalStrike {
     private void targetModify() {
         final Location oldLocation = new Location(targetWorld, xt, yt, zt);
         previousLocations.add(oldLocation);
-        Player closest = UpdatedPlayerList.getClosestPlayer(oldLocation);
+        Player closest = UpdatedPlayerList.getClosestPlayerPlayer(oldLocation);
         if (closest != null) {
             final Location closestLocation = closest.getLocation();
             double dx = closestLocation.getX() - xt;
@@ -189,78 +197,30 @@ public class OrbitalStrike {
 
 
     public enum OrbitalStrikeType {
-        SMALL(
-                SmallOrbitalStrikeManagerTicker.get().STRIKE_TARGET_TIME,
-                0,
-                0,
-                SmallOrbitalStrikeManagerTicker.get().STRIKE_TIME,
-                0,
-                SmallOrbitalStrikeManagerTicker.get().STRIKE_TARGET_RADIUS,
-                SmallOrbitalStrikeManagerTicker.get().DESTRUCTION_BLAZE_INTERVAL,
-                40, 0.5f,
-                (i) -> i == 0 ? EntityType.SMALL_FIREBALL : null
-        ),
-        LARGE(LargeOrbitalStrikeManagerTicker.get().STRIKE_TARGET_TIME,
-                LargeOrbitalStrikeManagerTicker.get().STRIKE_MOVEMENT_SPEED,
-                LargeOrbitalStrikeManagerTicker.get().STRIKE_MOVEMENT_LAG,
-                LargeOrbitalStrikeManagerTicker.get().STRIKE_TIME,
-                LargeOrbitalStrikeManagerTicker.get().STRIKE_HEIGHT,
-                LargeOrbitalStrikeManagerTicker.get().STRIKE_TARGET_RADIUS,
-                LargeOrbitalStrikeManagerTicker.get().DESTRUCTION_BLAZE_INTERVAL,
-                100, 1.5f,
-                (i) -> i == 1 ?
-                        random.nextDouble() < .5 ? null : EntityType.FIREBALL :
-                        EntityType.SMALL_FIREBALL
-        ), MEDIUM(
-                SmallOrbitalStrikeManagerTicker.get().STRIKE_TARGET_TIME,
-                0,
-                0,
-                SmallOrbitalStrikeManagerTicker.get().STRIKE_TIME,
-                0,
-                SmallOrbitalStrikeManagerTicker.get().STRIKE_TARGET_RADIUS * 2,
-                SmallOrbitalStrikeManagerTicker.get().DESTRUCTION_BLAZE_INTERVAL,
-                60, .75f,
-                (i) -> i == 0 ? EntityType.SMALL_FIREBALL : null
-        );
+        SMALL(OrbitalStrikeConfig.get().small, (i) -> i == 0 ? EntityType.SMALL_FIREBALL : null),
+        MEDIUM(OrbitalStrikeConfig.get().medium, (i) -> i == 0 ? EntityType.SMALL_FIREBALL : null),
 
-        private final int strikeTargetTime;
-        private final double strikeMovementSpeed;
-        private final double strikeMovementLag;
-        private final int strikeTime;
-        private final double strikeHeight;
-        private final double strikeTargetRadius;
+        LARGE(OrbitalStrikeConfig.get().large,
+            (i) -> i == 1 ? random.nextDouble() < .5 ? null : EntityType.FIREBALL
+                : EntityType.SMALL_FIREBALL);
         private final Function<Integer, EntityType> fireball;
-        private final double fireballInterval;
-        private final int particles;
-        private final float particleSize;
+        private OrbitalStrikeTypeConfig config;
 
-        OrbitalStrikeType(int strikeTargetTime, double strikeMovementSpeed, double strikeMovementLag,
-                          int strikeTime, double strikeHeight, double strikeTargetRadius,
-                          double fireballInterval, int particles, float particleSize,
-                          Function<Integer, EntityType> fireball
-        ) {
-            this.strikeTargetTime = strikeTargetTime;
-            this.strikeMovementSpeed = strikeMovementSpeed;
-            this.strikeMovementLag = strikeMovementLag;
-            this.strikeTime = strikeTime;
-            this.strikeHeight = strikeHeight;
-            this.strikeTargetRadius = strikeTargetRadius;
+        OrbitalStrikeType(OrbitalStrikeTypeConfig config, Function<Integer, EntityType> fireball) {
+            this.config = config;
             this.fireball = fireball;
-            this.particles = particles;
-            this.particleSize = particleSize;
-            this.fireballInterval = fireballInterval;
         }
 
         public int getStrikeTargetTime() {
-            return this.strikeTargetTime;
+            return this.config.targetTime;
         }
 
         public double getMovementLag() {
-            return this.strikeMovementLag;
+            return this.config.movementTargetLag;
         }
 
         public double getMovementSpeed() {
-            return this.strikeMovementSpeed;
+            return this.config.movementSpeed;
         }
 
         public boolean doesModify() {
@@ -268,15 +228,19 @@ public class OrbitalStrike {
         }
 
         public int getTotalStrikeTime() {
-            return this.strikeTime;
+            return this.config.totalTime;
+        }
+
+        public double getFireballMinHeight() {
+            return this.config.minHeight;
         }
 
         public double getFireballHeight() {
-            return this.strikeHeight;
+            return this.config.height;
         }
 
         public double getTargetRadius() {
-            return strikeTargetRadius;
+            return this.config.radius;
         }
 
         public EntityType getFireball(int i) {
@@ -284,15 +248,27 @@ public class OrbitalStrike {
         }
 
         public double getFireballInterval() {
-            return fireballInterval;
+            return this.config.shootInterval;
         }
 
         public int getParticles() {
-            return particles;
+            return 1;
         }
 
         public float getParticleSize() {
-            return particleSize;
+            return 0.7f;
+        }
+
+        public double getRange() {
+            return config.targetingRange;
+        }
+
+        public long getCooldown() {
+            return this.config.cooldown;
+        }
+
+        public double getChance() {
+            return this.config.chancePerTickADouble;
         }
     }
 }

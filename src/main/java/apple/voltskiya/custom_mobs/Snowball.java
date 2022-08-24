@@ -1,41 +1,43 @@
 package apple.voltskiya.custom_mobs;
 
-import org.bukkit.*;
+import apple.lib.pmc.PluginModule;
+import apple.mc.utilities.inventory.item.InventoryUtils;
+import java.util.Random;
+import org.bukkit.Bukkit;
+import org.bukkit.Color;
+import org.bukkit.Location;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Random;
+public class Snowball extends PluginModule implements Listener {
 
-public class Snowball implements Listener {
     private static final String SNOWBALL = "snowball";
 
-    public Snowball() {
+    @Override
+    public void enable() {
         Bukkit.getPluginManager().registerEvents(this, VoltskiyaPlugin.get());
+    }
+
+    @Override
+    public String getName() {
+        return "Snowball";
     }
 
     @EventHandler
     public void snowballEvent(PlayerInteractEvent event) {
-        if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-            ItemStack item = event.getItem();
-            if (item != null && !item.getType().isAir()) {
-                // we might have a snowball? O.o
-                final ItemMeta itemMeta = item.getItemMeta();
-                if (itemMeta != null) {
-                    String name = itemMeta.getDisplayName();
-                    if (name.equals(SNOWBALL)) {
-                        // we have a snowball!
-                        snowball(event);
-                    }
-                }
-            }
+        if (event.getAction().isRightClick()) {
+            @NotNull String name = InventoryUtils.get().getDisplayName(event.getItem());
+            if (name.equals(SNOWBALL))
+                snowball(event);
         }
     }
 
@@ -70,7 +72,8 @@ public class Snowball implements Listener {
             currentLocation.add(direction);
             snowballParticles();
             Player player = collision();
-            if (!currentLocation.getBlock().getType().isAir()) return;
+            if (!currentLocation.getBlock().getType().isAir())
+                return;
             if (player != null) {
                 world.playSound(currentLocation, Sound.BLOCK_SNOW_BREAK, 40, .85f);
                 return;
@@ -83,7 +86,9 @@ public class Snowball implements Listener {
             for (Player p : world.getPlayers()) {
                 BoundingBox b = p.getBoundingBox();
                 Vector[] corners = getSnowballCorners();
-                for (Vector corner : corners) if (b.contains(corner)) return p;
+                for (Vector corner : corners)
+                    if (b.contains(corner))
+                        return p;
             }
             return null;
         }
@@ -93,15 +98,14 @@ public class Snowball implements Listener {
             double y = currentLocation.getY();
             double z = currentLocation.getZ();
             return new Vector[]{
-                    new Vector(x + HITBOX * radius, y + HITBOX * radius, z + HITBOX * radius),
-                    new Vector(x + HITBOX * radius, y + HITBOX * radius, z - HITBOX * radius),
-                    new Vector(x + HITBOX * radius, y - HITBOX * radius, z + HITBOX * radius),
-                    new Vector(x + HITBOX * radius, y - HITBOX * radius, z - HITBOX * radius),
-                    new Vector(x - HITBOX * radius, y + HITBOX * radius, z + HITBOX * radius),
-                    new Vector(x - HITBOX * radius, y + HITBOX * radius, z - HITBOX * radius),
-                    new Vector(x - HITBOX * radius, y - HITBOX * radius, z + HITBOX * radius),
-                    new Vector(x - HITBOX * radius, y - HITBOX * radius, z - HITBOX * radius)
-            };
+                new Vector(x + HITBOX * radius, y + HITBOX * radius, z + HITBOX * radius),
+                new Vector(x + HITBOX * radius, y + HITBOX * radius, z - HITBOX * radius),
+                new Vector(x + HITBOX * radius, y - HITBOX * radius, z + HITBOX * radius),
+                new Vector(x + HITBOX * radius, y - HITBOX * radius, z - HITBOX * radius),
+                new Vector(x - HITBOX * radius, y + HITBOX * radius, z + HITBOX * radius),
+                new Vector(x - HITBOX * radius, y + HITBOX * radius, z - HITBOX * radius),
+                new Vector(x - HITBOX * radius, y - HITBOX * radius, z + HITBOX * radius),
+                new Vector(x - HITBOX * radius, y - HITBOX * radius, z - HITBOX * radius)};
         }
 
         private void snowballParticles() {
@@ -111,7 +115,8 @@ public class Snowball implements Listener {
                 double x = Math.cos(Math.toRadians(theta)) * radius;
                 double y = Math.sin(Math.toRadians(theta)) * radius;
                 double z = Math.sin(Math.toRadians(thetay)) * radius;
-                world.spawnParticle(Particle.REDSTONE, currentLocation, 0, x, y, z, new Particle.DustOptions(Color.fromRGB(0xFFFFFF), 1.4f));
+                world.spawnParticle(Particle.REDSTONE, currentLocation, 0, x, y, z,
+                    new Particle.DustOptions(Color.fromRGB(0xFFFFFF), 1.4f));
             }
         }
     }

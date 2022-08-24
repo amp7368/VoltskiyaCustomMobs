@@ -1,26 +1,27 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.tick.charger;
 
+import apple.mc.utilities.world.vector.VectorUtils;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.Tickable;
-import apple.voltskiya.custom_mobs.ticking.TickGiverable;
-import apple.voltskiya.custom_mobs.util.DistanceUtils;
 import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
+import apple.voltskiya.custom_mobs.util.ticking.TickGiverable;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Random;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Random;
-
 public class ChargerIndividualTicker implements Tickable {
+
     private final TickGiverable giver;
     private final ArrayList<Charger> chargers = new ArrayList<>();
     private final ChargerManagerTicker.Closeness closeness;
     private boolean isTicking = false;
     private long myTickerUid = -1;
     private boolean isCharging = false;
+    private final Random random = new Random();
 
 
     public ChargerIndividualTicker(TickGiverable giver, ChargerManagerTicker.Closeness closeness) {
@@ -56,29 +57,32 @@ public class ChargerIndividualTicker implements Tickable {
     }
 
     private synchronized boolean tickCharger(Charger charger) {
-        if (!isCharging) return false;
+        if (!isCharging)
+            return false;
         if (charger.isChargeable()) {
-            if (new Random().nextDouble() < charger.getType().getChargeChance() * giver.getTickSpeed()) {
+            if (random.nextDouble() < charger.getType().getChargeChance() * giver.getTickSpeed()) {
                 Location chargerLocation = charger.getEntity().getLocation();
                 Player playerToChargeAt = null;
                 double chargeError = Double.MAX_VALUE;
                 for (Player player : UpdatedPlayerList.getPlayers()) {
-                    if (player.getGameMode() == GameMode.SURVIVAL && chargerLocation.getWorld().getUID().equals(player.getWorld().getUID())) {
+                    if (player.getGameMode() == GameMode.SURVIVAL && chargerLocation.getWorld()
+                        .getUID().equals(player.getWorld().getUID())) {
                         // check that the player is in the facing direction of the charger
                         Location playerLocation = player.getLocation();
                         Location change = playerLocation.clone().subtract(chargerLocation);
                         final double dx = change.getX();
                         final double dy = change.getY();
                         final double dz = change.getZ();
-                        final double changeMagnitude = DistanceUtils.magnitude(dx, dy, dz);
+                        final double changeMagnitude = VectorUtils.magnitude(dx, dy, dz);
                         if (changeMagnitude > charger.getType().getTooCloseToCharge()) {
                             // multiply the chargerFacing times the magnitude
                             // to see if the charge is reasonable
-                            @NotNull Vector chargerFacing = chargerLocation.getDirection();
-                            chargerFacing.multiply(changeMagnitude);
+                            @NotNull Vector chargerFacing = change.toVector().normalize();
+                            chargerFacing.multiply(changeMagnitude + 6);
                             Location result = chargerLocation.clone().add(chargerFacing);
-                            double error = DistanceUtils.magnitude(result.subtract(playerLocation));
-                            if (error < chargeError && error < charger.getType().getMarginOfError()) {
+                            double error = VectorUtils.magnitude(result.subtract(playerLocation));
+                            if (error < chargeError && error < charger.getType()
+                                .getMarginOfError()) {
                                 playerToChargeAt = player;
                                 chargeError = error;
                             }
@@ -87,8 +91,11 @@ public class ChargerIndividualTicker implements Tickable {
                 }
 
                 if (playerToChargeAt != null) {
-                    Player player = UpdatedPlayerList.getClosestPlayer(playerToChargeAt.getLocation());
-                    if (player != null && DistanceUtils.distance(player.getLocation(), playerToChargeAt.getLocation()) < 3) {
+                    Player player = UpdatedPlayerList.getClosestPlayerPlayer(
+                        playerToChargeAt.getLocation());
+                    if (player != null &&
+                        VectorUtils.distance(player.getLocation(), playerToChargeAt.getLocation())
+                            < 3) {
                         // say we charged
                         charger.chargeNow();
                         charger.getType().construct(charger, playerToChargeAt);
