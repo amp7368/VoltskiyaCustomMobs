@@ -1,15 +1,16 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.tick.reviver.dead;
 
 import apple.nms.decoding.entity.DecodeEntity;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_18_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_19_R1.entity.CraftEntity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 
 public class DeadRecordedMob {
+
     private static final int DEAD_TOO_LONG = 600000;
-    private final NBTTagCompound nbt;
+    private final CompoundTag nbt;
     private Location location;
     private final EntityType entityType;
     private final long diedAtTime;
@@ -23,7 +24,7 @@ public class DeadRecordedMob {
         this.diedAtTime = System.currentTimeMillis();
     }
 
-    public NBTTagCompound getNbt() {
+    public CompoundTag getNbt() {
         return nbt;
     }
 

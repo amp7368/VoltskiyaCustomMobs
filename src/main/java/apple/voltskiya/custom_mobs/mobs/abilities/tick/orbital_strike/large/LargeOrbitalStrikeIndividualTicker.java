@@ -1,9 +1,16 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.tick.orbital_strike.large;
 
+import apple.mc.utilities.world.vector.VectorUtils;
+import apple.utilities.structures.Pair;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.orbital_strike.OrbitalStrike;
+import apple.voltskiya.custom_mobs.mobs.abilities.tick.orbital_strike.OrbitalStrike.OrbitalStrikeType;
 import apple.voltskiya.custom_mobs.sql.MobListSql;
 import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Random;
+import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -11,17 +18,11 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
-import voltskiya.apple.utilities.util.DistanceUtils;
-import voltskiya.apple.utilities.util.constants.TagConstants;
-import voltskiya.apple.utilities.util.data_structures.Pair;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Random;
-import java.util.UUID;
+import voltskiya.apple.utilities.minecraft.TagConstants;
 
 
 public class LargeOrbitalStrikeIndividualTicker {
+
     private final LargeOrbitalStrikeManagerTicker.Closeness closeness;
     private boolean isCheckStrike = false;
     private final ArrayList<Pair<UUID, Long>> strikers = new ArrayList<>();
@@ -48,7 +49,7 @@ public class LargeOrbitalStrikeIndividualTicker {
         long now = System.currentTimeMillis();
         while (strikerUidIterator.hasNext()) {
             Pair<UUID, Long> strikerUid = strikerUidIterator.next();
-            if (now - strikerUid.getValue() < LargeOrbitalStrikeManagerTicker.get().STRIKE_COOLDOWN) {
+            if (now - strikerUid.getValue() < OrbitalStrikeType.LARGE.getCooldown()) {
                 continue;
             }
             Entity striker = Bukkit.getEntity(strikerUid.getKey());
@@ -59,7 +60,8 @@ public class LargeOrbitalStrikeIndividualTicker {
                 trim = true;
             } else {
                 tickStriker(striker, strikerUid);
-                if (LargeOrbitalStrikeManagerTicker.get().amIGivingStriker(striker, closeness, strikerUid.getValue())) {
+                if (LargeOrbitalStrikeManagerTicker.get()
+                    .amIGivingStriker(striker, closeness, strikerUid.getValue())) {
                     MobListSql.removeMob(strikerUid.getKey());
                     strikerUidIterator.remove();
                     trim = true;
@@ -76,8 +78,10 @@ public class LargeOrbitalStrikeIndividualTicker {
     }
 
     private synchronized void tickStriker(Entity striker, Pair<UUID, Long> strikerUid) {
-        if (isCheckStrike && !striker.getScoreboardTags().contains(TagConstants.isDoingAbility)) {
-            if (random.nextDouble() < LargeOrbitalStrikeManagerTicker.get().STRIKE_CHANCE * closeness.getGiver().getTickSpeed()) {
+        if (isCheckStrike && !striker.getScoreboardTags().contains(TagConstants.IS_DOING_ABILITY)) {
+            if (random.nextDouble()
+                < OrbitalStrikeType.LARGE.getChance() * closeness.getGiver()
+                .getTickSpeed()) {
                 checkStrike(striker, strikerUid);
             }
         }
@@ -90,26 +94,28 @@ public class LargeOrbitalStrikeIndividualTicker {
             Player closest = UpdatedPlayerList.getClosestPlayerPlayer(striker.getLocation());
             if (closest != null) {
                 Location pLocation = closest.getLocation();
-                double d = DistanceUtils.distance(pLocation, strikerLocation);
-                if (d < LargeOrbitalStrikeManagerTicker.get().STRIKE_DISTANCE && ((Mob) striker).hasLineOfSight(closest)) {
+                double d = VectorUtils.distance(pLocation, strikerLocation);
+                if (d < OrbitalStrikeType.LARGE.getRange() && ((Mob) striker).hasLineOfSight(
+                    closest)) {
                     target = closest;
                 }
             }
         }
         if (target != null) {
-            striker.addScoreboardTag(TagConstants.isDoingAbility);
+            TagConstants.addIsDoingAbility(striker);
             // we have the target. time to orbital strike it
             final Location targetLocation = target.getLocation();
             ((Mob) striker).setAI(false);
             ((Mob) striker).setTarget(null);
-            new OrbitalStrike(target.getWorld(), targetLocation.getX(), targetLocation.getY(), targetLocation.getZ(), OrbitalStrike.OrbitalStrikeType.LARGE);
+            new OrbitalStrike(target.getWorld(), targetLocation.getX(), targetLocation.getY(),
+                targetLocation.getZ(), OrbitalStrike.OrbitalStrikeType.LARGE);
             strikerUid.setValue(System.currentTimeMillis());
             @Nullable LivingEntity finalTarget = target;
             Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
                 ((Mob) striker).setAI(true);
                 ((Mob) striker).setTarget(finalTarget);
-                striker.removeScoreboardTag(TagConstants.isDoingAbility);
-            }, LargeOrbitalStrikeManagerTicker.get().STRIKE_TIME);
+                TagConstants.removeIsDoingAbility(striker);
+            }, OrbitalStrikeType.LARGE.getStrikeTargetTime());
         }
     }
 

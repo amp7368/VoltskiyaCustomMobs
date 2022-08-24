@@ -1,16 +1,17 @@
 package apple.voltskiya.custom_mobs.util;
 
-import plugin.util.plugin.plugin.util.plugin.PluginManagedModule;
 
-public class PluginUtils extends PluginManagedModule {
+import apple.lib.pmc.PluginModule;
+
+public class PluginUtils extends PluginModule {
+
     private static PluginUtils instance;
 
     public static PluginUtils get() {
         return instance;
     }
 
-    @Override
-    public void init() {
+    public PluginUtils() {
         instance = this;
     }
 

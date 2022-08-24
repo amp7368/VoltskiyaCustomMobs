@@ -1,29 +1,42 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.micro_misles;
 
 import apple.nms.decoding.entity.DecodeEntity;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.register.RegisteredEntityEater;
 import apple.voltskiya.custom_mobs.pathfinders.spell.PathfinderGoalShootMicroMissle;
-import net.minecraft.world.entity.EntityInsentient;
+import apple.voltskiya.mob_manager.listen.SpawnHandlerListener;
+import apple.voltskiya.mob_manager.mob.MMSpawned;
+import net.minecraft.world.entity.Mob;
 
-public class MicroMissleShooter implements RegisteredEntityEater {
+public class MicroMissleShooter implements SpawnHandlerListener {
+
     private static final int COOLDOWN = 20 * 10;
 
-    public void eatEntity(EntityInsentient mob) {
-        DecodeEntity.getGoalSelector(mob).a(0, new PathfinderGoalShootMicroMissle(mob, 2 * 20, 1, MissileType.LONER));
-        DecodeEntity.getGoalSelector(mob).a(1, new PathfinderGoalShootMicroMissle(mob, COOLDOWN, 5, MissileType.FLURRY));
+    @Override
+    public boolean isOnlyMobs() {
+        return true;
+    }
+
+    @Override
+    public void handle(MMSpawned mmSpawned) {
+        Mob mob = mmSpawned.getNmsMob();
+        DecodeEntity.getGoalSelector(mob)
+            .addGoal(0, new PathfinderGoalShootMicroMissle(mob, 2 * 20, 1, MissileType.LONER));
+        DecodeEntity.getGoalSelector(mob)
+            .addGoal(1, new PathfinderGoalShootMicroMissle(mob, COOLDOWN, 5, MissileType.FLURRY));
     }
 
     /**
      * @return the name of the sub_module (a step below a module)
      */
     @Override
-    public String getName() {
+    public String getTag() {
         return "micro_missile_shooter";
     }
 
     public enum MissileType {
-        FLURRY(MicroMissileConfig.SPEED, MicroMissileConfig.MIN_TICKS_TO_LIVE, MicroMissileConfig.DAMAGE_AMOUNT),
-        LONER(MicroMissileConfig.SPEED * 1.25, MicroMissileConfig.MIN_TICKS_TO_LIVE * 3, MicroMissileConfig.DAMAGE_AMOUNT * 2);
+        FLURRY(MicroMissileConfig.get().speed, MicroMissileConfig.get().minTicksToLive,
+            MicroMissileConfig.get().damageAmount),
+        LONER(MicroMissileConfig.get().speed * 1.25, MicroMissileConfig.get().minTicksToLive * 3,
+            MicroMissileConfig.get().damageAmount * 2);
         public final double damageAmount;
         public final int minTicksToLive;
         public final double speed;

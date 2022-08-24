@@ -1,21 +1,24 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.tick.parent;
 
-import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
+import apple.mc.utilities.world.vector.VectorUtils;
 import apple.voltskiya.custom_mobs.util.PlayerClose;
 import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
 import apple.voltskiya.custom_mobs.util.ticking.HighFrequencyTick;
-import apple.voltskiya.mob_manager.parent.listen.SpawnHandlerListener;
-import apple.voltskiya.mob_manager.parent.mob.MMSpawned;
+import apple.voltskiya.mob_manager.listen.SpawnHandlerListener;
+import apple.voltskiya.mob_manager.mob.MMSpawned;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.UUID;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.Nullable;
-import voltskiya.apple.configs.plugin.manage.PluginManagedModuleConfig;
-import voltskiya.apple.utilities.util.DistanceUtils;
-
-import java.util.*;
 
 public abstract class MobTickManagerTicker<Config extends MobTickerConfig>
-        implements Runnable, SpawnHandlerListener {
+    implements Runnable, SpawnHandlerListener {
+
     protected final Config config;
     private final MobTickCloseness[] closeness;
     private final MobTicker[] closenessToTicker;
@@ -31,6 +34,16 @@ public abstract class MobTickManagerTicker<Config extends MobTickerConfig>
     }
 
     @Override
+    public String getTag() {
+        return config.getTag();
+    }
+
+    @Override
+    public String getName() {
+        return config.getTag();
+    }
+
+    @Override
     public void run() {
         for (MobTicker ticker : closenessToTicker) {
             ticker.tick();
@@ -39,8 +52,8 @@ public abstract class MobTickManagerTicker<Config extends MobTickerConfig>
 
     private MobTickCloseness[] getClosenessOrdered() {
         return Arrays.stream(getClosenessValues())
-                .sorted(Comparator.comparingDouble(MobTickCloseness::getDistance))
-                .toArray(MobTickCloseness[]::new);
+            .sorted(Comparator.comparingDouble(MobTickCloseness::getDistance))
+            .toArray(MobTickCloseness[]::new);
     }
 
     protected MobTickCloseness[] getClosenessValues() {
@@ -68,7 +81,7 @@ public abstract class MobTickManagerTicker<Config extends MobTickerConfig>
     }
 
     private MobTickCloseness getCloseness(Location aLocation, @Nullable Location bLocation) {
-        double d = DistanceUtils.distance(aLocation, bLocation);
+        double d = VectorUtils.distance(aLocation, bLocation);
         for (MobTickCloseness closeness : closeness) {
             if (closeness.getDistance() >= d) {
                 return closeness;
@@ -77,12 +90,8 @@ public abstract class MobTickManagerTicker<Config extends MobTickerConfig>
         return closeness[closeness.length - 1];
     }
 
-    public PluginManagedModuleConfig getModule() {
-        return MobTickPlugin.get();
-    }
-
-
     public static class MobTicker {
+
         private final int tickSpeed;
         private final Map<UUID, MobToTick<?>> mobsToTick = new HashMap<>();
         private int currentTick;
@@ -109,7 +118,8 @@ public abstract class MobTickManagerTicker<Config extends MobTickerConfig>
 
         private void doTickOnMobs() {
             synchronized (mobsToTick) {
-                for (Iterator<MobToTick<?>> iterator = mobsToTick.values().iterator(); iterator.hasNext(); ) {
+                for (Iterator<MobToTick<?>> iterator = mobsToTick.values().iterator();
+                    iterator.hasNext(); ) {
                     MobToTick<?> mobToTick = iterator.next();
                     if (mobToTick.shouldRemove()) {
                         mobToTick.killIfNotDead();

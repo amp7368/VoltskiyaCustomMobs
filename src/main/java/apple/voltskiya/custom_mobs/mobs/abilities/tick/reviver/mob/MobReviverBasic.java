@@ -1,19 +1,29 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.tick.reviver.mob;
 
+import apple.mc.utilities.world.vector.VectorUtils;
 import apple.nms.decoding.entity.DecodeEntity;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.reviver.config.ReviverConfigBasic;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.reviver.dead.DeadRecordedMob;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.reviver.dead.ReviveDeadManager;
 import apple.voltskiya.custom_mobs.pathfinders.utilities.PathfinderGoalMoveToTarget;
-import org.bukkit.*;
+import org.bukkit.Color;
+import org.bukkit.Location;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.util.Vector;
-import voltskiya.apple.utilities.util.DistanceUtils;
-import voltskiya.apple.utilities.util.action.*;
+import voltskiya.apple.utilities.action.ActionMeta;
+import voltskiya.apple.utilities.action.ActionReturn;
+import voltskiya.apple.utilities.action.OneOffAction;
+import voltskiya.apple.utilities.action.RepeatableActionImpl;
+import voltskiya.apple.utilities.action.RepeatingActionManager;
 
 public class MobReviverBasic extends MobReviver<ReviverConfigBasic> {
+
     public static final int SUMMON_TICKING_INTERVAL = 3;
     private static final String DO_INIT = "init";
     private static final String DO_SUMMON1 = "summon1";
@@ -24,12 +34,12 @@ public class MobReviverBasic extends MobReviver<ReviverConfigBasic> {
 
     public MobReviverBasic(Entity reviver, ReviverConfigBasic config) {
         super(reviver, config);
-        action = new RepeatingActionManager(VoltskiyaPlugin.get())
-                .registerInit(this::initSummon)
-                .registerAction(new OneOffAction(DO_SUMMON1, this::summon1))
-                .registerAction(new OneOffAction(DO_START, this::summonStart))
-                .registerAction(new RepeatableActionImpl(DO_START_RITUAL, this::doReviveRitual, config.reviveRitualTime, SUMMON_TICKING_INTERVAL))
-                .registerFinally(this::quitRevive);
+        action = new RepeatingActionManager(VoltskiyaPlugin.get()).registerInit(this::initSummon)
+            .registerAction(new OneOffAction(DO_SUMMON1, this::summon1))
+            .registerAction(new OneOffAction(DO_START, this::summonStart)).registerAction(
+                new RepeatableActionImpl(DO_START_RITUAL, this::doReviveRitual,
+                    config.reviveRitualTime, SUMMON_TICKING_INTERVAL))
+            .registerFinally(this::quitRevive);
     }
 
     private void initSummon() {
@@ -42,7 +52,7 @@ public class MobReviverBasic extends MobReviver<ReviverConfigBasic> {
             return;
         }
         ReviveDeadManager.removeMob(reviveMe);
-        double distance = DistanceUtils.distance(reviveMe.getLocation(), getLocation());
+        double distance = VectorUtils.distance(reviveMe.getLocation(), getLocation());
         if (distance > config.searchRadius) {
             return;
         }
@@ -52,12 +62,9 @@ public class MobReviverBasic extends MobReviver<ReviverConfigBasic> {
         }
         targetLocation = targetLocation.getBlock().getLocation().add(0.5, 1, 0.5);
         this.reviveMe.setLocation(targetLocation);
-        DecodeEntity.getGoalSelector(getEntityInsentient())
-                .a(-1, new PathfinderGoalMoveToTarget(getEntityInsentient(),
-                        targetLocation,
-                        1.6,
-                        config.giveUpTick,
-                        () -> action.startActionAndStart(DO_START)));
+        DecodeEntity.getGoalSelector(getMob()).addGoal(-1,
+            new PathfinderGoalMoveToTarget(getMob(), targetLocation, (int) 1.6, config.giveUpTick,
+                () -> action.startActionAndStart(DO_START)));
     }
 
     @Override
@@ -66,7 +73,7 @@ public class MobReviverBasic extends MobReviver<ReviverConfigBasic> {
     }
 
     private void summonStart() {
-        if (reviveMe == null || DistanceUtils.distance(reviveMe.getLocation(), getLocation()) > 2) {
+        if (reviveMe == null || VectorUtils.distance(reviveMe.getLocation(), getLocation()) > 2) {
             // say we failed
             ReviveDeadManager.addMob(reviveMe);
             return;
@@ -80,11 +87,13 @@ public class MobReviverBasic extends MobReviver<ReviverConfigBasic> {
         double z = reviveMeLocation.getZ() - reviverLocation.getZ();
         double magnitude = x * x + z * z;
 
-        Location newLoc = reviverLocation.setDirection(new Vector(x / magnitude, -.5, z / magnitude));
+        Location newLoc = reviverLocation.setDirection(
+            new Vector(x / magnitude, -.5, z / magnitude));
         reviver.teleport(newLoc);
 
         final World world = reviverLocation.getWorld();
-        world.playSound(reviveMe.getLocation(), Sound.BLOCK_BEACON_DEACTIVATE, SoundCategory.HOSTILE, 35, .7f);
+        world.playSound(reviveMe.getLocation(), Sound.BLOCK_BEACON_DEACTIVATE,
+            SoundCategory.HOSTILE, 35, .7f);
         action.startAction(DO_START_RITUAL);
     }
 
@@ -112,7 +121,8 @@ public class MobReviverBasic extends MobReviver<ReviverConfigBasic> {
             double xi = random.random().nextDouble() - .5;
             double yi = random.random().nextDouble() * 2;
             double zi = random.random().nextDouble() - .5;
-            world.spawnParticle(Particle.REDSTONE, xLoc + xi, yLoc + yi, zLoc + zi, 1, new Particle.DustOptions(Color.RED, 1f));
+            world.spawnParticle(Particle.REDSTONE, xLoc + xi, yLoc + yi, zLoc + zi, 1,
+                new Particle.DustOptions(Color.RED, 1f));
         }
         return ActionReturn.go();
     }

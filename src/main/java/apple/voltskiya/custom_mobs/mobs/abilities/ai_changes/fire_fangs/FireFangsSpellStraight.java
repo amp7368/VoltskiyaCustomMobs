@@ -1,11 +1,12 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.fire_fangs;
 
 import apple.nms.decoding.entity.DecodeEntity;
-import net.minecraft.world.entity.EntityLiving;
+import net.minecraft.world.entity.LivingEntity;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
 public class FireFangsSpellStraight extends FireFangsSpell {
+
     private final int nextSpawnTime;
     private final int ticksToLive;
     private int nextSpawnCountdown;
@@ -28,17 +29,15 @@ public class FireFangsSpellStraight extends FireFangsSpell {
             this.nextSpawnCountdown = this.nextSpawnTime;
             this.count--;
             Location mainLocation = this.me.getBukkitEntity().getLocation();
-            final EntityLiving goalTarget = DecodeEntity.getLastTarget(this.me);
+            LivingEntity goalTarget = DecodeEntity.getLastTarget(this.me);
             Vector mainDirection;
-            if (goalTarget == null) mainDirection = mainLocation.getDirection().normalize().multiply(type.getStep());
+            if (goalTarget == null)
+                mainDirection = mainLocation.getDirection().normalize().multiply(type.getStep());
             else
-                mainDirection = goalTarget.getBukkitEntity().getLocation().toVector().subtract(mainLocation.toVector()).normalize();
-            this.fangLines.add(new FireFangLine(
-                    mainDirection,
-                    mainLocation,
-                    this.ticksToLive,
-                    this.type.getFireLength()
-            ));
+                mainDirection = goalTarget.getBukkitEntity().getLocation().toVector()
+                    .subtract(mainLocation.toVector()).normalize();
+            this.fangLines.add(new FireFangLine(mainDirection, mainLocation, this.ticksToLive,
+                this.type.getFireLength()));
         }
         super.stateChoice();
     }

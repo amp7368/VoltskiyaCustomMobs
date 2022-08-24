@@ -1,7 +1,6 @@
 name: VoltskiyaCustomMobs
 version: 1.0
 main: apple.voltskiya.custom_mobs.VoltskiyaPlugin
-api-version: 1.16
+api-version: 1.19
 authors: [ appleptr16 ]
-depend: [ LoadDependencies, VoltskiyaUtilities, DecodingNms ]
-softdepend: [ LoadDependencies, DecodingNms, VoltskiyaUtilities , AppleConfigs, VoltskiyaMobManager ]
+softdepend: [ LoadDependencies, AppleConfigs, AppleMCUtil, DecodingNms, VoltskiyaUtilities, VoltskiyaMobManager ]

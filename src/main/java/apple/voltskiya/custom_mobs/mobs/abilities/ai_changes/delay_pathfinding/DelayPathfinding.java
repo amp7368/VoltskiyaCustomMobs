@@ -3,76 +3,72 @@ package apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.delay_pathfinding;
 import apple.nms.decoding.entity.DecodeEntity;
 import apple.nms.decoding.pathfinder.DecodePathfinder;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.config.ConfigManager;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.config.YmlSettings;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.register.RegisteredEntityEater;
 import apple.voltskiya.custom_mobs.pathfinders.utilities.PathfinderGoalHurtByTargetOnDone;
 import apple.voltskiya.custom_mobs.pathfinders.utilities.PathfinderGoalNearestAttackableTargetCanSee;
-import net.minecraft.world.entity.EntityCreature;
-import net.minecraft.world.entity.EntityInsentient;
-import net.minecraft.world.entity.ai.goal.PathfinderGoalSelector;
-import net.minecraft.world.entity.ai.goal.PathfinderGoalWrapped;
-import net.minecraft.world.entity.ai.goal.target.PathfinderGoalHurtByTarget;
-import net.minecraft.world.entity.ai.goal.target.PathfinderGoalNearestAttackableTarget;
-import net.minecraft.world.entity.player.EntityHuman;
+import apple.voltskiya.mob_manager.listen.MMSpawnListener;
+import apple.voltskiya.mob_manager.listen.SpawnHandlerListener;
+import apple.voltskiya.mob_manager.mob.MMSpawned;
+import java.util.Collection;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.ai.goal.GoalSelector;
+import net.minecraft.world.entity.ai.goal.WrappedGoal;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.player.Player;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
-import plugin.util.plugin.plugin.util.plugin.PluginManagedModule;
 
-import java.util.Collection;
+public class DelayPathfinding implements SpawnHandlerListener {
 
-public class DelayPathfinding extends ConfigManager implements RegisteredEntityEater {
-    /**
-     * @return the name of the sub_module (a step below a module)
-     */
-    @Override
-    public String getName() {
-        return "guard_stare";
-    }
-
-    /**
-     * @return the default values for the config file
-     */
-    @Override
-    public YmlSettings[] getSettings() {
-        return new YmlSettings[0];
-    }
-
-    /**
-     * @return the module associated with this config
-     */
-    @Override
-    protected PluginManagedModule getPlugin() {
-        return MobTickPlugin.get();
+    public DelayPathfinding() {
+        MMSpawnListener.get().addListener(this);
     }
 
     @Override
-    public void eatEntity(EntityInsentient entity) {
+    public boolean isOnlyMobs() {
+        return true;
+    }
+
+    @Override
+    public void handle(MMSpawned mmSpawned) {
+        Mob entity = mmSpawned.getNmsMob();
         // we do the scheduling because we need to make sure we're last
         Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
-            PathfinderGoalSelector oldGoalSelector = DecodeEntity.getGoalSelector(entity);
-            DecodeEntity.setGoalSelector(entity, new PathfinderGoalSelector(() -> DecodeEntity.getMethodProfiler(entity)));
+            GoalSelector oldGoalSelector = DecodeEntity.getGoalSelector(entity);
+            DecodeEntity.setGoalSelector(entity,
+                new GoalSelector(() -> DecodeEntity.getMethodProfiler(entity)));
 
-            PathfinderGoalSelector targetSelector = DecodeEntity.getTargetSelector(entity);
-            @NotNull Collection<PathfinderGoalWrapped> removedPathfinders = DecodePathfinder.removeOfType(targetSelector, PathfinderGoalNearestAttackableTarget.class, PathfinderGoalHurtByTarget.class);
-            final PathfinderGoalNearestAttackableTargetCanSee<EntityHuman> canSee = new PathfinderGoalNearestAttackableTargetCanSee<>(entity, EntityHuman.class, true);
+            GoalSelector targetSelector = DecodeEntity.getTargetSelector(entity);
+            @NotNull Collection<WrappedGoal> removedPathfinders = DecodePathfinder.removeOfType(
+                targetSelector, NearestAttackableTargetGoal.class, HurtByTargetGoal.class);
+            final PathfinderGoalNearestAttackableTargetCanSee<Player> canSee = new PathfinderGoalNearestAttackableTargetCanSee<>(
+                entity, Player.class, true);
             PathfinderGoalHurtByTargetOnDone onHurt = null;
-            if (entity instanceof EntityCreature) {
-                onHurt = new PathfinderGoalHurtByTargetOnDone((EntityCreature) entity);
+            if (entity instanceof PathfinderMob) {
+                onHurt = new PathfinderGoalHurtByTargetOnDone((PathfinderMob) entity);
             }
-            targetSelector.a(1, canSee);
-            if (onHurt != null) targetSelector.a(0, onHurt);
+            targetSelector.addGoal(1, canSee);
+            if (onHurt != null)
+                targetSelector.addGoal(0, onHurt);
             PathfinderGoalHurtByTargetOnDone finalOnHurt = onHurt;
             final Runnable givePathfinding = () -> {
-                targetSelector.a(canSee);
-                if (finalOnHurt != null) targetSelector.a(finalOnHurt);
+                targetSelector.removeGoal(canSee);
+                if (finalOnHurt != null)
+                    targetSelector.removeGoal(finalOnHurt);
                 DecodePathfinder.add(targetSelector, removedPathfinders);
                 DecodeEntity.setGoalSelector(entity, oldGoalSelector);
             };
             canSee.addOnceOnDone(givePathfinding);
-            if (onHurt != null) onHurt.addOnceOnDone(givePathfinding);
-            addMob(entity.getBukkitEntity().getUniqueId());
+            if (onHurt != null)
+                onHurt.addOnceOnDone(givePathfinding);
         }, 0);
     }
+
+    @Override
+    public String getTag() {
+        return "guard_stare";
+    }
+
+
 }

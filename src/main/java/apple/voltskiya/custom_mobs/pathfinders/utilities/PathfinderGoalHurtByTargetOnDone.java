@@ -1,33 +1,33 @@
 package apple.voltskiya.custom_mobs.pathfinders.utilities;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import net.minecraft.world.entity.EntityCreature;
-import net.minecraft.world.entity.ai.goal.target.PathfinderGoalHurtByTarget;
+import java.util.ArrayList;
+import java.util.Collection;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.IllegalPluginAccessException;
 
-import java.util.ArrayList;
-import java.util.Collection;
+public class PathfinderGoalHurtByTargetOnDone extends HurtByTargetGoal {
 
-public class PathfinderGoalHurtByTargetOnDone extends PathfinderGoalHurtByTarget {
     private final Collection<Runnable> onDoneOnce = new ArrayList<>();
     private boolean shouldDoOnDoneOnce = true;
 
-    public PathfinderGoalHurtByTargetOnDone(EntityCreature entitycreature, Class<?>... aclass) {
+    public PathfinderGoalHurtByTargetOnDone(PathfinderMob entitycreature, Class<?>... aclass) {
         super(entitycreature, aclass);
     }
 
     @Override
-    public boolean b() {
-        final boolean b = super.b();
+    public boolean canContinueToUse() {
+        final boolean b = super.canContinueToUse();
         if (b) {
-            this.d(); //we only fire once
+            this.tick(); //we only fire once
         }
         return b;
     }
 
     @Override
-    public void d() {
+    public void tick() {
         if (this.shouldDoOnDoneOnce) {
             this.shouldDoOnDoneOnce = false;
             try {

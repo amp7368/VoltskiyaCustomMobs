@@ -1,22 +1,25 @@
 package apple.voltskiya.custom_mobs.mobs.abilities;
 
+import apple.configs.factory.AppleConfigLike;
+import apple.lib.pmc.PluginModule;
+import apple.mc.utilities.PluginModuleMcUtil;
 import apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.bowlike.BowlikeMoveManager;
+import apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.fire_fangs.FireFangsConfig;
+import apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.flamethrower.FlameThrowerConfig;
+import apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.micro_misles.MicroMissileConfig;
 import apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.micro_misles.MicroMissileManager;
+import apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.shoot_ball.ShootBallConfig;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.fireball.FireballThrowManager;
-import apple.voltskiya.custom_mobs.mobs.abilities.tick.lost_soul.BlemishDeathListener;
-import apple.voltskiya.custom_mobs.mobs.abilities.tick.mancubus.MancubusManager;
+import apple.voltskiya.custom_mobs.mobs.abilities.tick.lost_soul.BlemishSoulConfig;
+import apple.voltskiya.custom_mobs.mobs.abilities.tick.orbital_strike.large.OrbitalStrikeConfig;
+import apple.voltskiya.custom_mobs.mobs.abilities.tick.orbital_strike.mancubus.MancubusManager;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.reviver.ReviverManager;
-import plugin.util.plugin.plugin.util.plugin.PluginManagedModule;
-import voltskiya.apple.configs.plugin.manage.ConfigBuilderHolder;
-import voltskiya.apple.configs.plugin.manage.PluginManagedModuleConfig;
-import voltskiya.apple.utilities.util.action.PluginManagedRepeatingAction;
-
-import java.util.Collection;
-import java.util.Collections;
+import apple.voltskiya.custom_mobs.mobs.abilities.tick.warper.WarperConfig;
+import java.util.List;
 
 
-public class MobTickPlugin extends PluginManagedModule
-        implements PluginManagedModuleConfig, PluginManagedRepeatingAction {
+public class MobTickPlugin extends PluginModule implements PluginModuleMcUtil {
+
     private static MobTickPlugin instance;
 
 
@@ -28,9 +31,7 @@ public class MobTickPlugin extends PluginManagedModule
     @Override
     public void enable() {
         new MobTickDeathListener();
-        new OldMobTickSpawnListener();
         new MicroMissileManager();
-        new BlemishDeathListener();
 
         new BowlikeMoveManager();
         new ReviverManager();
@@ -48,7 +49,14 @@ public class MobTickPlugin extends PluginManagedModule
     }
 
     @Override
-    public Collection<ConfigBuilderHolder<?>> getConfigsToRegister() {
-        return Collections.emptyList();
+    public List<AppleConfigLike> getConfigs() {
+        return List.of(configYaml(BlemishSoulConfig.class, "BlemishSoulConfig.yml"),
+            configYaml(FireFangsConfig.class, "FireFangsConfig.yml"),
+            configYaml(FlameThrowerConfig.class, "FlamethrowerConfig.yml"),
+            configYaml(MicroMissileConfig.class, "MicroMissileConfig.yml"),
+            configYaml(ShootBallConfig.class, "ShootBallConfig.yml"),
+            configYaml(OrbitalStrikeConfig.class, "OrbitalStrikeConfig.yml"),
+            configYaml(WarperConfig.class, "WarperConfig.yml"));
+
     }
 }

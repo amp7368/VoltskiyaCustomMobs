@@ -1,5 +1,9 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.tick.warper;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Random;
+import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -10,12 +14,8 @@ import org.bukkit.entity.Mob;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Random;
-import java.util.UUID;
-
 public class WarperIndividualTicker {
+
     private final WarperManagerTicker.Closeness closeness;
     private boolean isWarping = false;
     private final ArrayList<UUID> warpers = new ArrayList<>();
@@ -64,7 +64,8 @@ public class WarperIndividualTicker {
 
     private synchronized void tickWarper(Entity warper) {
         if (isWarping) {
-            if (random.nextDouble() < WarperManagerTicker.get().WARP_CHANCE * closeness.getGiver().getTickSpeed()) {
+            if (random.nextDouble() < WarperConfig.get().WARP_CHANCE * closeness.getGiver()
+                .getTickSpeed()) {
                 warp(warper);
             }
         }
@@ -79,7 +80,8 @@ public class WarperIndividualTicker {
                 Location warpTo = null;
                 for (int i = 0; i < 10; i++) {
                     warpTo = findWarpTo(target.getLocation());
-                    if (warpTo != null) break;
+                    if (warpTo != null)
+                        break;
                 }
                 if (warpTo != null) {
                     particles(warper.getLocation(), warpTo);
@@ -97,7 +99,7 @@ public class WarperIndividualTicker {
         double xf = to.getX();
         double yf = to.getY();
         double zf = to.getZ();
-        final int particles = WarperManagerTicker.get().PARTICLES;
+        final int particles = WarperConfig.get().PARTICLES;
         double xInterval = (xf - x) / particles;
         double yInterval = (yf - y) / particles;
         double zInterval = (zf - z) / particles;
@@ -111,13 +113,13 @@ public class WarperIndividualTicker {
     private synchronized Location findWarpTo(Location targetLocation) {
         double theta = random.nextDouble() * 360;
         double thetay = random.nextDouble() * 360;
-        double radius = random.nextDouble() * WarperManagerTicker.get().WARP_RADIUS;
+        double radius = random.nextDouble() * WarperConfig.get().WARP_RADIUS;
         double x = Math.cos(Math.toRadians(theta)) * radius + targetLocation.getX();
         double y = Math.sin(Math.toRadians(theta)) * radius + targetLocation.getY();
         double z = Math.sin(Math.toRadians(thetay)) * radius + targetLocation.getZ();
         World world = targetLocation.getWorld();
         if (world.getBlockAt((int) x, (int) y, (int) z).getType().isAir() &&
-                world.getBlockAt((int) x, (int) y + 1, (int) z).getType().isAir()) {
+            world.getBlockAt((int) x, (int) y + 1, (int) z).getType().isAir()) {
             return new Location(world, x, y, z);
         }
         return null;

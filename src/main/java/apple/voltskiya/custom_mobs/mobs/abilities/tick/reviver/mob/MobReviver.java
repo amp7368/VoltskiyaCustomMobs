@@ -6,16 +6,16 @@ import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.parent.MobToTick;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.reviver.config.ReviverConfig;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.reviver.dead.DeadRecordedMob;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.craftbukkit.v1_18_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_19_R1.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.loot.LootTables;
-import voltskiya.apple.utilities.util.chance.ChanceRolling;
+import voltskiya.apple.utilities.chance.ChanceRolling;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +56,7 @@ public abstract class MobReviver<Config extends ReviverConfig> extends MobToTick
 
     private void dealWithSummonedMob(DeadRecordedMob reviveMe, Entity newMob) {
         Location reviveMeLocation = reviveMe.getLocation();
-        NBTTagCompound nbt = reviveMe.getNbt();
+        CompoundTag nbt = reviveMe.getNbt();
         addLinkedMob(newMob);
         final net.minecraft.world.entity.Entity newMobHandle = ((CraftEntity) newMob).getHandle();
         DecodeNBT.removeKey(nbt, "UUID");

@@ -9,8 +9,8 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
-import voltskiya.apple.utilities.util.VectorUtils;
-import voltskiya.apple.utilities.util.minecraft.MaterialUtils;
+import apple.mc.utilities.world.vector.VectorUtils;
+import apple.mc.utilities.item.material.MaterialUtils;
 
 import java.util.List;
 import java.util.Random;

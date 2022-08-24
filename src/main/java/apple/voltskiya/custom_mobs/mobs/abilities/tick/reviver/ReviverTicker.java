@@ -9,16 +9,6 @@ public class ReviverTicker<Config extends MobTickerConfig> extends MobTickManage
     }
 
     @Override
-    public String getTag() {
-        return config.getTag();
-    }
-
-    @Override
-    public String getName() {
-        return config.getTag();
-    }
-
-    @Override
     public boolean isOnlyMobs() {
         return true;
     }

@@ -1,17 +1,17 @@
 package apple.voltskiya.custom_mobs.mobs.abilities.tick.parent;
 
 import apple.nms.decoding.entity.DecodeEntity;
-import net.minecraft.world.entity.EntityInsentient;
+import net.minecraft.world.entity.Mob;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_18_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_19_R1.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Mob;
 import org.jetbrains.annotations.Nullable;
-import voltskiya.apple.utilities.util.constants.TagConstants;
+import voltskiya.apple.utilities.minecraft.TagConstants;
 
 public abstract class MobToTick<Config extends MobTickerConfig> {
+
     protected Entity bukkitEntity;
     protected net.minecraft.world.entity.Entity nmsEntity;
     protected Config config;
@@ -34,12 +34,12 @@ public abstract class MobToTick<Config extends MobTickerConfig> {
         return nmsEntity;
     }
 
-    public EntityInsentient getEntityInsentient() {
-        return (EntityInsentient) nmsEntity;
+    public Mob getMob() {
+        return (Mob) nmsEntity;
     }
 
-    public Mob getBukkitMob() {
-        return (Mob) bukkitEntity;
+    public org.bukkit.entity.Mob getBukkitMob() {
+        return (org.bukkit.entity.Mob) bukkitEntity;
     }
 
     // utility about mob
@@ -65,7 +65,7 @@ public abstract class MobToTick<Config extends MobTickerConfig> {
     }
 
     public boolean isDoingAction() {
-        return bukkitEntity.getScoreboardTags().contains(TagConstants.isDoingAbility);
+        return bukkitEntity.getScoreboardTags().contains(TagConstants.IS_DOING_ABILITY);
     }
 
     public void setIsDoingAction(boolean isDoingAction) {
@@ -76,16 +76,19 @@ public abstract class MobToTick<Config extends MobTickerConfig> {
     }
 
     public boolean wasHit(int inLast) {
-        EntityInsentient mob = getEntityInsentient();
+        Mob mob = getMob();
         int hurt = DecodeEntity.getHurtTimestamp(mob);
         int ticksLived = DecodeEntity.getTicksLived(mob);
 
         return hurt != 0 && hurt + inLast >= ticksLived && getBukkitMob().getLastDamage() != 0;
     }
 
-    @Nullable
-    public LivingEntity getTarget() {
+    public @Nullable LivingEntity getTarget() {
         return getBukkitMob().getTarget();
+    }
+
+    public boolean hasTarget() {
+        return getTarget() != null;
     }
 
     // custom information about the mob
