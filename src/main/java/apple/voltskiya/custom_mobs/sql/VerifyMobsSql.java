@@ -3,7 +3,7 @@ package apple.voltskiya.custom_mobs.sql;
 import static apple.voltskiya.custom_mobs.sql.DBNames.MobNames;
 
 import apple.lib.pmc.PluginModule;
-import apple.voltskiya.custom_mobs.mobs.abilities.MobTickPlugin;
+import apple.voltskiya.custom_mobs.abilities.MobTickPlugin;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;

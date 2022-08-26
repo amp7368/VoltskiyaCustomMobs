@@ -2,7 +2,7 @@ package apple.voltskiya.custom_mobs.util;
 
 import apple.mc.utilities.world.vector.VectorUtils;
 import apple.utilities.util.ObjectUtilsFormatting;
-import apple.voltskiya.custom_mobs.mobs.abilities.tick.Tickable;
+import apple.voltskiya.custom_mobs.abilities.tick.Tickable;
 import apple.voltskiya.custom_mobs.util.ticking.HighFrequencyTick;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;

@@ -1,6 +1,6 @@
 package apple.voltskiya.custom_mobs.util.projectile;
 
-import apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.shoot_ball.ShootBallManager;
+import apple.voltskiya.custom_mobs.abilities.ai_changes.shoot_ball.ShootBallManager;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.util.Vector;
