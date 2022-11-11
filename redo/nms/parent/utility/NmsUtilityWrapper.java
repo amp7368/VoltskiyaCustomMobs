@@ -1,12 +1,12 @@
-package apple.voltskiya.custom_mobs.mobs.nms.parent.utility;
+package apple.voltskiya.custom_mobs.nms.parent.utility;
 
-import apple.nms.decoding.iregistry.DecodeEntityTypes;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.holder.NmsMobEntitySupers;
+import apple.nms.decoding.iregistry.DecodeEntityType;
+import apple.voltskiya.custom_mobs.nms.parent.holder.NmsMobEntitySupers;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityLiving;
-import net.minecraft.world.entity.EntityTypes;
-import net.minecraft.world.entity.ai.attributes.AttributeDefaults;
-import net.minecraft.world.entity.ai.attributes.AttributeMapBase;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.attributes.DefaultAttributes;
+import net.minecraft.world.entity.ai.attributes.AttributeMap;
 
 import java.util.Objects;
 
@@ -36,7 +36,7 @@ public class NmsUtilityWrapper<SelfEntity extends Entity> implements NmsUtility<
 
     @Override
     public String getSaveId() {
-        return DecodeEntityTypes.getKey(getEntityType()).toString();
+        return DecodeEntityType.getKey(getEntityType()).toString();
     }
 
     @Override
@@ -45,13 +45,13 @@ public class NmsUtilityWrapper<SelfEntity extends Entity> implements NmsUtility<
     }
 
     @Override
-    public EntityTypes<?> nmsgetEntityType() {
+    public EntityType<?> nmsgetEntityType() {
         return selfEntity.ad();
     }
 
     @Override
-    public AttributeMapBase nmsgetAttributeMap() {
-        @SuppressWarnings("unchecked") EntityTypes<? extends EntityLiving> entityTypes = (EntityTypes<? extends EntityLiving>) this.getEntityType();
-        return new AttributeMapBase(AttributeDefaults.a(entityTypes));
+    public AttributeMap nmsgetAttributeMap() {
+        @SuppressWarnings("unchecked") EntityType<? extends EntityLiving> EntityType = (EntityType<? extends EntityLiving>) this.getEntityType();
+        return new AttributeMap(DefaultAttributes.a(EntityType));
     }
 }

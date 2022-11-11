@@ -1,29 +1,29 @@
-package apple.voltskiya.custom_mobs.mobs.nms.nether.eye_plant;
+package apple.voltskiya.custom_mobs.nms.nether.eye_plant;
 
 import apple.nms.decoding.entity.DecodeEntity;
-import apple.nms.decoding.iregistry.DecodeEntityTypes;
+import apple.nms.decoding.iregistry.DecodeEntityType;
 import apple.nms.decoding.sound.DecodeSoundEffects;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.holder.NmsMobEntitySupers;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.qol.NmsMobWrapperQOLModel;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.qol.NmsModelHolderQOL;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.register.RegisteredCustomMob;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.utility.NmsSpawnWrapperModel;
-import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelHandler;
-import apple.voltskiya.custom_mobs.mobs.nms.parts.child.MobParts;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.level.WorldServer;
+import apple.voltskiya.custom_mobs.nms.parent.holder.NmsMobEntitySupers;
+import apple.voltskiya.custom_mobs.nms.parent.qol.NmsMobWrapperQOLModel;
+import apple.voltskiya.custom_mobs.nms.parent.qol.NmsModelHolderQOL;
+import apple.voltskiya.custom_mobs.nms.parent.register.RegisteredCustomMob;
+import apple.voltskiya.custom_mobs.nms.parent.utility.NmsSpawnWrapperModel;
+import apple.voltskiya.custom_mobs.nms.parts.NmsModelHandler;
+import apple.voltskiya.custom_mobs.nms.parts.child.MobParts;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEffect;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EnumMoveType;
-import net.minecraft.world.entity.ai.attributes.AttributeDefaults;
-import net.minecraft.world.entity.ai.attributes.AttributeMapBase;
-import net.minecraft.world.entity.ai.attributes.AttributeProvider;
+import net.minecraft.world.entity.ai.attributes.DefaultAttributes;
+import net.minecraft.world.entity.ai.attributes.AttributeMap;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.goal.GoalLookAtPlayer;
 import net.minecraft.world.entity.monster.EntityZombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.World;
-import net.minecraft.world.phys.Vec3D;
+import net.minecraft.world.phys.Vec3;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_19_R1.entity.CraftEntity;
 import org.jetbrains.annotations.NotNull;
@@ -34,8 +34,8 @@ public class MobEyePlant extends EntityZombie implements RegisteredCustomMob, Nm
     private static NmsSpawnWrapperModel<MobEyePlant> spawner;
     private final NmsMobWrapperQOLModel<MobEyePlant> selfWrapper = new NmsMobWrapperQOLModel<>(this);
 
-    public MobEyePlant(EntityTypes<?> entitytypes, World world) {
-        super(DecodeEntityTypes.ZOMBIE, world);
+    public MobEyePlant(EntityType<?> EntityType, World world) {
+        super(DecodeEntityType.ZOMBIE, world);
     }
 
     public static NmsSpawnWrapperModel<MobEyePlant> spawner() {
@@ -48,7 +48,7 @@ public class MobEyePlant extends EntityZombie implements RegisteredCustomMob, Nm
         return new NmsSpawnWrapperModel<>(
                 model.getName(),
                 MobEyePlant::new,
-                DecodeEntityTypes.ZOMBIE,
+                DecodeEntityType.ZOMBIE,
                 model
         );
     }
@@ -121,38 +121,38 @@ public class MobEyePlant extends EntityZombie implements RegisteredCustomMob, Nm
     }
 
     @Override
-    public AttributeProvider getAttributeProvider() {
-        return AttributeDefaults.a(DecodeEntityTypes.ZOMBIE);
+    public AttributeSupplier getAttributeSupplier() {
+        return DefaultAttributes.a(DecodeEntityType.ZOMBIE);
     }
 
     @Override
-    public EntityTypes<?> ad() {
+    public EntityType<?> ad() {
         return nmsgetEntityType();
     }
 
     @Override
-    public void a(EnumMoveType enummovetype, Vec3D vec3d) {
-        nmsmove(enummovetype, vec3d);
+    public void a(EnumMoveType enummovetype, Vec3 Vec3) {
+        nmsmove(enummovetype, Vec3);
     }
 
     @Override
-    public AttributeMapBase ep() {
+    public AttributeMap ep() {
         return nmsgetAttributeMap();
     }
 
     @Override
-    public Entity b(WorldServer worldserver) {
-        return nmsChangeWorlds(worldserver);
+    public Entity b(ServerLevel ServerLevel) {
+        return nmsChangeWorlds(ServerLevel);
     }
 
     @Override
-    public void g(NBTTagCompound nbttagcompound) {
-        nmsload(nbttagcompound);
+    public void g(CompoundTag CompoundTag) {
+        nmsload(CompoundTag);
     }
 
     @Override
-    public NBTTagCompound f(NBTTagCompound nbttagcompound) {
-        return nmssave(nbttagcompound);
+    public CompoundTag f(CompoundTag CompoundTag) {
+        return nmssave(CompoundTag);
     }
 
     @Override

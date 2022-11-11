@@ -1,36 +1,35 @@
-package apple.voltskiya.custom_mobs.mobs.nms.parent.utility;
+package apple.voltskiya.custom_mobs.abilities.ai_changes.revenant.trash;
 
 import apple.nms.decoding.entity.DecodeEntity;
 import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.holder.NmsMobRegisterConfigable;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.EntityType;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_19_R1.entity.CraftEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.jetbrains.annotations.NotNull;
 
-public class NmsSpawnWrapper<SelfEntity extends Entity & NmsUtility<SelfEntity>> {
+public class NmsSpawnWrapper<SelfEntity extends Entity> {
+
     private final String name;
     private final String tag;
-    private final EntityTypes.b<SelfEntity> create;
-    private final EntityTypes<?> replacement;
-    private EntityTypes<SelfEntity> entityTypes;
+    private final EntityType.Builder<SelfEntity> create;
+    private final EntityType<?> replacement;
+    private EntityType<SelfEntity> entityType;
 
-    public NmsSpawnWrapper(String name, EntityTypes.b<SelfEntity> create, EntityTypes<?> replacement) {
+    public NmsSpawnWrapper(String name, EntityType.Builder<SelfEntity> create,
+        EntityType<?> replacement) {
         this.name = name;
         this.tag = name;
         this.create = create;
         this.replacement = replacement;
     }
 
-    /**
-     * registers the IllagerExaminer as an entity
-     */
     public void initialize() {
-        entityTypes = NmsMobRegisterConfigable.registerEntityTypesStatic(registeredNameId(), create, replacement);
+        entityType = NmsMobRegisterConfigable.registerEntityTypeStatic(registeredNameId(), create,
+            replacement);
     }
 
     @NotNull
@@ -38,17 +37,11 @@ public class NmsSpawnWrapper<SelfEntity extends Entity & NmsUtility<SelfEntity>>
         return "minecraft" + ":" + name;
     }
 
-    /**
-     * spawns it
-     *
-     * @param location the org.bukkit location where the mob should be spawned
-     * @param oldNbt   the nbt of the previously spawned mob or null if no entity existed
-     * @return the spawned
-     */
-    public SelfEntity spawn(Location location, NBTTagCompound oldNbt) {
+
+    public SelfEntity spawn(Location location, CompoundTag oldNbt) {
         CraftWorld world = (CraftWorld) location.getWorld();
 
-        SelfEntity entity = create.create(entityTypes, world.getHandle());
+        SelfEntity entity = create.create(entityType, world.getHandle());
         entity.prepare(location, oldNbt);
         CraftEntity bukkitEntity = entity.getBukkitEntity();
         bukkitEntity.addScoreboardTag(SpawnCustomMobListener.CUSTOM_SPAWN_COMPLETE_TAG);
@@ -61,7 +54,7 @@ public class NmsSpawnWrapper<SelfEntity extends Entity & NmsUtility<SelfEntity>>
     public void spawnEat(CreatureSpawnEvent event) {
         Location location = event.getEntity().getLocation();
         Entity handle = ((CraftEntity) event.getEntity()).getHandle();
-        NBTTagCompound oldNbt = DecodeEntity.save(handle);
+        CompoundTag oldNbt = DecodeEntity.save(handle);
         spawn(location, oldNbt);
         event.setCancelled(true);
     }
@@ -74,7 +67,7 @@ public class NmsSpawnWrapper<SelfEntity extends Entity & NmsUtility<SelfEntity>>
         return this.name;
     }
 
-    public EntityTypes<SelfEntity> entityTypes() {
-        return entityTypes;
+    public EntityType<SelfEntity> entityType() {
+        return entityType;
     }
 }

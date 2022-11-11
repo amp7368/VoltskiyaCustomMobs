@@ -6,7 +6,7 @@ import apple.voltskiya.custom_mobs.util.ticking.LowFrequencyTick;
 import apple.voltskiya.custom_mobs.util.ticking.NormalFrequencyTick;
 import apple.voltskiya.custom_mobs.util.ticking.TickGiverable;
 import apple.voltskiya.custom_mobs.util.ticking.VeryLowFrequencyTick;
-import apple.voltskiya.mob_manager.listen.SpawnHandlerListener;
+import apple.voltskiya.mob_manager.listen.SpawnListener;
 import apple.voltskiya.mob_manager.mob.MMSpawned;
 import java.io.IOException;
 import java.util.HashMap;
@@ -17,7 +17,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
-public class SmallOrbitalStrikeManagerTicker implements SpawnHandlerListener {
+public class SmallOrbitalStrikeManagerTicker implements SpawnListener {
 
     private static SmallOrbitalStrikeManagerTicker instance;
     private final Map<Closeness, SmallOrbitalStrikeIndividualTicker> closenessToStrikeres = new HashMap<>() {{
@@ -35,7 +35,7 @@ public class SmallOrbitalStrikeManagerTicker implements SpawnHandlerListener {
     }
 
     @Override
-    public void handle(MMSpawned mmSpawned) {
+    public void doSpawn(MMSpawned mmSpawned) {
         LivingEntity striker = mmSpawned.getEntity();
         Closeness closeness = determineConcern(striker);
         closenessToStrikeres.get(closeness).giveStriker(striker, 0);
@@ -43,7 +43,7 @@ public class SmallOrbitalStrikeManagerTicker implements SpawnHandlerListener {
 
 
     @Override
-    public String getTag() {
+    public String getBriefTag() {
         return "small_orbital_strike";
     }
 

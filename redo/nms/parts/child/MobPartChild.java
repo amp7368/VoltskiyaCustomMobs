@@ -1,7 +1,7 @@
-package apple.voltskiya.custom_mobs.mobs.nms.parts.child;
+package apple.voltskiya.custom_mobs.nms.parts.child;
 
 import apple.nms.decoding.iregistry.DecodeDamageSource;
-import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelEntityConfig;
+import apple.voltskiya.custom_mobs.nms.parts.NmsModelEntityConfig;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;

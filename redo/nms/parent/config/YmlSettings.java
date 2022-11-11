@@ -1,4 +1,4 @@
-package apple.voltskiya.custom_mobs.mobs.nms.parent.config;
+package apple.voltskiya.custom_mobs.nms.parent.config;
 
 public interface YmlSettings {
     String getPath();

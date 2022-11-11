@@ -1,14 +1,14 @@
 package apple.voltskiya.custom_mobs.leaps;
 
 import apple.voltskiya.custom_mobs.leaps.config.LeapConfigManager;
-import apple.mc.utilities.PluginModule;
+import apple.mc.utilities.AppleModule;
 
 import java.io.IOException;
 
-public class LeapPlugin extends PluginModule {
-    private static PluginModule instance;
+public class LeapPlugin extends AppleModule {
+    private static AppleModule instance;
 
-    public static PluginModule get() {
+    public static AppleModule get() {
         return instance;
     }
 

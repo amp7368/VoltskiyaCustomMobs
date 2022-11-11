@@ -1,9 +1,9 @@
 package apple.voltskiya.custom_mobs.delay_pathfinding;
 
 
-import apple.lib.pmc.PluginModule;
+import apple.lib.pmc.AppleModule;
 
-public class DelayPathfindingPlugin extends PluginModule {
+public class DelayPathfindingPlugin extends AppleModule {
 
     @Override
     public void enable() {

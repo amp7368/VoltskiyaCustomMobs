@@ -1,12 +1,12 @@
-package apple.voltskiya.custom_mobs.mobs.nms.parent.holder;
+package apple.voltskiya.custom_mobs.nms.parent.holder;
 
-import apple.voltskiya.custom_mobs.mobs.nms.parts.MobPartMother;
-import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModel;
-import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelHandler;
-import apple.voltskiya.custom_mobs.mobs.nms.parts.child.MobPartChild;
+import apple.voltskiya.custom_mobs.nms.parts.MobPartMother;
+import apple.voltskiya.custom_mobs.nms.parts.NmsModel;
+import apple.voltskiya.custom_mobs.nms.parts.NmsModelHandler;
+import apple.voltskiya.custom_mobs.nms.parts.child.MobPartChild;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.ai.attributes.AttributeMapBase;
+import net.minecraft.world.entity.ai.attributes.AttributeMap;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,7 @@ public class NmsMobWrappedConfigable<
     private final NmsMobRegisterConfigable<SelfEntity, Config> register;
     private final SelfEntity selfEntity;
     private List<MobPartChild> children;
-    private AttributeMapBase attributeMap;
+    private AttributeMap attributeMap;
     private NmsMobEntitySupers entitySupers;
 
     public NmsMobWrappedConfigable(NmsMobRegisterConfigable<SelfEntity, Config> register, SelfEntity myself) {
@@ -33,8 +33,8 @@ public class NmsMobWrappedConfigable<
         this.children = MobPartMother.makeChildren(uuid, mainEntity, model.mainPart(), modelName);
     }
 
-    public AttributeMapBase getAttributeMap() {
-        return this.attributeMap == null ? this.attributeMap = new AttributeMapBase(register.getAttributeProvider()) : this.attributeMap;
+    public AttributeMap getAttributeMap() {
+        return this.attributeMap == null ? this.attributeMap = new AttributeMap(register.getAttributeSupplier()) : this.attributeMap;
     }
 
     public List<Packet<?>> move(boolean isLookingRelevant) {

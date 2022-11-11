@@ -1,11 +1,11 @@
-package apple.voltskiya.custom_mobs.mobs.nms.cool.aledar.config;
+package apple.voltskiya.custom_mobs.nms.cool.aledar.config;
 
-import apple.nms.decoding.iregistry.DecodeEntityTypes;
-import apple.voltskiya.custom_mobs.mobs.nms.cool.aledar.mob.MobAledar;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.holder.NmsMobConstructor;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.holder.NmsMobRegisterConfigable;
-import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelHandler;
-import net.minecraft.world.entity.EntityTypes;
+import apple.nms.decoding.iregistry.DecodeEntityType;
+import apple.voltskiya.custom_mobs.nms.cool.aledar.mob.MobAledar;
+import apple.voltskiya.custom_mobs.nms.parent.holder.NmsMobConstructor;
+import apple.voltskiya.custom_mobs.nms.parent.holder.NmsMobRegisterConfigable;
+import apple.voltskiya.custom_mobs.nms.parts.NmsModelHandler;
+import net.minecraft.world.entity.EntityType;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
@@ -30,8 +30,8 @@ public class MobAledarConfigImpl extends MobAledarConfig<MobAledar, MobAledarCon
     }
 
     @Override
-    public EntityTypes<?> getReplacement() {
-        return DecodeEntityTypes.PILLAGER;
+    public EntityType<?> getReplacement() {
+        return DecodeEntityType.PILLAGER;
     }
 
     @Override

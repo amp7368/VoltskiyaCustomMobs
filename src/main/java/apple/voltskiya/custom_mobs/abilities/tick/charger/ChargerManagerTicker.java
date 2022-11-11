@@ -6,7 +6,7 @@ import apple.voltskiya.custom_mobs.util.ticking.HighFrequencyTick;
 import apple.voltskiya.custom_mobs.util.ticking.LowFrequencyTick;
 import apple.voltskiya.custom_mobs.util.ticking.NormalFrequencyTick;
 import apple.voltskiya.custom_mobs.util.ticking.TickGiverable;
-import apple.voltskiya.mob_manager.listen.SpawnHandlerListener;
+import apple.voltskiya.mob_manager.listen.SpawnListener;
 import apple.voltskiya.mob_manager.mob.MMSpawned;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +16,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ChargerManagerTicker implements SpawnHandlerListener {
+public class ChargerManagerTicker implements SpawnListener {
 
     private static ChargerManagerTicker instance;
     private final Map<Closeness, ChargerIndividualTicker> closenessToChargeres = new HashMap<>() {{
@@ -39,7 +39,7 @@ public class ChargerManagerTicker implements SpawnHandlerListener {
     }
 
     @Override
-    public void handle(MMSpawned mmSpawned) {
+    public void doSpawn(MMSpawned mmSpawned) {
         @NotNull Mob charger = mmSpawned.getMob();
         Closeness closeness = determineConcern(charger);
         for (ChargerType type : ChargerType.values()) {
@@ -59,7 +59,7 @@ public class ChargerManagerTicker implements SpawnHandlerListener {
     }
 
     @Override
-    public String getTag() {
+    public String getBriefTag() {
         return "charger";
     }
 

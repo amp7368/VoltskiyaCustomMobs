@@ -19,8 +19,4 @@ public class MicroMissileConfig {
     public static MicroMissileConfig get() {
         return instance;
     }
-
-    public String getTag() {
-        return "micro_missile";
-    }
 }

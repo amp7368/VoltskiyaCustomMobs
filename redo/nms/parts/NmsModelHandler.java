@@ -1,4 +1,4 @@
-package apple.voltskiya.custom_mobs.mobs.nms.parts;
+package apple.voltskiya.custom_mobs.nms.parts;
 
 import apple.utilities.util.FileFormatting;
 import apple.voltskiya.custom_mobs.trash.dungeon.custom_model.CustomModelDataEntity;
@@ -6,7 +6,7 @@ import apple.voltskiya.custom_mobs.trash.dungeon.custom_model.handling.CustomMod
 import apple.voltskiya.custom_mobs.trash.dungeon.custom_model.handling.ModelName;
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
 import org.jetbrains.annotations.NotNull;
-import apple.mc.utilities.PluginModule;
+import apple.mc.utilities.AppleModule;
 
 import java.io.File;
 
@@ -32,7 +32,7 @@ public class NmsModelHandler extends CustomModelHandler<NmsModel, NmsModelEntity
     }
 
     @Override
-    protected PluginModule getModule() {
+    protected AppleModule getModule() {
         return PluginNmsMobs.get();
     }
 

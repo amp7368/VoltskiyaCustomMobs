@@ -5,7 +5,6 @@ import apple.utilities.structures.Pair;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.abilities.tick.orbital_strike.OrbitalStrike;
 import apple.voltskiya.custom_mobs.abilities.tick.orbital_strike.OrbitalStrike.OrbitalStrikeType;
-import apple.voltskiya.custom_mobs.sql.MobListSql;
 import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -55,14 +54,12 @@ public class LargeOrbitalStrikeIndividualTicker {
             Entity striker = Bukkit.getEntity(strikerUid.getKey());
             if (striker == null) {
                 // remove this striker D:
-                MobListSql.removeMob(strikerUid.getKey());
                 strikerUidIterator.remove();
                 trim = true;
             } else {
                 tickStriker(striker, strikerUid);
                 if (LargeOrbitalStrikeManagerTicker.get()
                     .amIGivingStriker(striker, closeness, strikerUid.getValue())) {
-                    MobListSql.removeMob(strikerUid.getKey());
                     strikerUidIterator.remove();
                     trim = true;
                 }

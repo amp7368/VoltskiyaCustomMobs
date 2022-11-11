@@ -1,6 +1,6 @@
 package apple.voltskiya.custom_mobs.abilities.tick.parent;
 
-import apple.lib.pmc.PluginModule;
+import apple.lib.pmc.AppleModule;
 import apple.voltskiya.mob_manager.listen.MMSpawnListener;
 import java.util.Collection;
 import java.util.HashMap;
@@ -10,9 +10,9 @@ public abstract class MobEntityEater<Holder extends MobTickerConfigHolder<?>> im
     ConfigHolderSupplier<Holder> {
 
     private final Map<String, MobTickManagerTicker<?>> tickers;
-    private PluginModule module;
+    private AppleModule module;
 
-    public MobEntityEater(PluginModule module) {
+    public MobEntityEater(AppleModule module) {
         this.module = module;
         this.tickers = new HashMap<>();
         for (Map.Entry<String, ? extends MobTickerConfig> config : getConfigHolder().getConfigurationsMap()
@@ -32,7 +32,7 @@ public abstract class MobEntityEater<Holder extends MobTickerConfigHolder<?>> im
     }
 
     @Override
-    public PluginModule getModule() {
+    public AppleModule getModule() {
         return module;
     }
 }

@@ -1,20 +1,20 @@
-package apple.voltskiya.custom_mobs.mobs.nms.cool.aledar;
+package apple.voltskiya.custom_mobs.nms.cool.aledar;
 
-import apple.nms.decoding.iregistry.DecodeEntityTypes;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.holder.NmsMobEntitySupers;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.qol.NmsMobWrapperQOLModel;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.qol.NmsModelHolderQOL;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.utility.NmsSpawnWrapperModel;
-import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelHandler;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.level.WorldServer;
+import apple.nms.decoding.iregistry.DecodeEntityType;
+import apple.voltskiya.custom_mobs.nms.parent.holder.NmsMobEntitySupers;
+import apple.voltskiya.custom_mobs.nms.parent.qol.NmsMobWrapperQOLModel;
+import apple.voltskiya.custom_mobs.nms.parent.qol.NmsModelHolderQOL;
+import apple.voltskiya.custom_mobs.nms.parent.utility.NmsSpawnWrapperModel;
+import apple.voltskiya.custom_mobs.nms.parts.NmsModelHandler;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EnumMoveType;
-import net.minecraft.world.entity.ai.attributes.AttributeMapBase;
+import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.entity.animal.horse.EntityHorse;
 import net.minecraft.world.level.World;
-import net.minecraft.world.phys.Vec3D;
+import net.minecraft.world.phys.Vec3;
 import org.bukkit.Material;
 import org.bukkit.entity.Horse;
 import voltskiya.apple.utilities.minecraft.InventoryUtils;
@@ -25,8 +25,8 @@ public class MobCart extends EntityHorse implements NmsModelHolderQOL<MobCart> {
     private static NmsSpawnWrapperModel<MobCart> spawner;
     private NmsMobWrapperQOLModel<MobCart> wrapper;
 
-    public MobCart(EntityTypes<MobCart> var0, World world) {
-        super(DecodeEntityTypes.HORSE, world);
+    public MobCart(EntityType<MobCart> var0, World world) {
+        super(DecodeEntityType.HORSE, world);
     }
 
     public static NmsSpawnWrapperModel<MobCart> spawner() {
@@ -38,7 +38,7 @@ public class MobCart extends EntityHorse implements NmsModelHolderQOL<MobCart> {
         return new NmsSpawnWrapperModel<>(
                 model.getName(),
                 MobCart::new,
-                DecodeEntityTypes.ZOMBIE,
+                DecodeEntityType.ZOMBIE,
                 model
         );
     }
@@ -92,33 +92,33 @@ public class MobCart extends EntityHorse implements NmsModelHolderQOL<MobCart> {
     }
 
     @Override
-    public EntityTypes<?> ad() {
+    public EntityType<?> ad() {
         return nmsgetEntityType();
     }
 
     @Override
-    public void a(EnumMoveType enummovetype, Vec3D vec3d) {
-        nmsmove(enummovetype, vec3d);
+    public void a(EnumMoveType enummovetype, Vec3 Vec3) {
+        nmsmove(enummovetype, Vec3);
     }
 
     @Override
-    public AttributeMapBase ep() {
+    public AttributeMap ep() {
         return nmsgetAttributeMap();
     }
 
     @Override
-    public Entity b(WorldServer worldserver) {
-        return nmsChangeWorlds(worldserver);
+    public Entity b(ServerLevel ServerLevel) {
+        return nmsChangeWorlds(ServerLevel);
     }
 
     @Override
-    public void g(NBTTagCompound nbttagcompound) {
-        nmsload(nbttagcompound);
+    public void g(CompoundTag CompoundTag) {
+        nmsload(CompoundTag);
     }
 
     @Override
-    public NBTTagCompound f(NBTTagCompound nbttagcompound) {
-        return nmssave(nbttagcompound);
+    public CompoundTag f(CompoundTag CompoundTag) {
+        return nmssave(CompoundTag);
     }
 
     @Override

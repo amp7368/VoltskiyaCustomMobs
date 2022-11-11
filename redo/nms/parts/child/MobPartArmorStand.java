@@ -1,35 +1,35 @@
-package apple.voltskiya.custom_mobs.mobs.nms.parts.child;
+package apple.voltskiya.custom_mobs.nms.parts.child;
 
 import apple.nms.decoding.entity.DecodeEntity;
 import apple.nms.decoding.entity.DecodeEnumMonsterType;
 import apple.nms.decoding.iregistry.DecodeDamageSource;
-import apple.nms.decoding.iregistry.DecodeEntityTypes;
+import apple.nms.decoding.iregistry.DecodeEntityType;
 import apple.nms.decoding.world.DecodeWorld;
 import apple.voltskiya.custom_mobs.trash.dungeon.custom_model.CustomModelDataEntity;
 import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.holder.NmsMobEntitySupers;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.qol.NmsHolderQOL;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.qol.NmsMobWrapperQOL;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.register.RegisteredCustomMob;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.utility.NmsSpawnWrapper;
-import apple.voltskiya.custom_mobs.mobs.nms.parts.MobPartMother;
-import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelEntityConfig;
-import net.minecraft.nbt.NBTTagCompound;
+import apple.voltskiya.custom_mobs.nms.parent.holder.NmsMobEntitySupers;
+import apple.voltskiya.custom_mobs.nms.parent.qol.NmsHolderQOL;
+import apple.voltskiya.custom_mobs.nms.parent.qol.NmsMobWrapperQOL;
+import apple.voltskiya.custom_mobs.nms.parent.register.RegisteredCustomMob;
+import apple.voltskiya.custom_mobs.nms.parent.utility.NmsSpawnWrapper;
+import apple.voltskiya.custom_mobs.nms.parts.MobPartMother;
+import apple.voltskiya.custom_mobs.nms.parts.NmsModelEntityConfig;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityStatus;
-import net.minecraft.server.level.WorldServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.EnumHand;
 import net.minecraft.world.EnumInteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EnumMonsterType;
 import net.minecraft.world.entity.EnumMoveType;
-import net.minecraft.world.entity.ai.attributes.AttributeMapBase;
+import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.entity.decoration.EntityArmorStand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.World;
-import net.minecraft.world.phys.Vec3D;
+import net.minecraft.world.phys.Vec3;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_19_R1.entity.CraftArmorStand;
 import org.bukkit.craftbukkit.v1_19_R1.entity.CraftEntity;
@@ -51,22 +51,22 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild,
     private NmsModelEntityConfig config;
     private NmsMobWrapperQOL<MobPartArmorStand> wrapper;
 
-    public MobPartArmorStand(EntityTypes<MobPartArmorStand> entityTypes, World world, MobPartMother mother, NmsModelEntityConfig config) {
-        super(DecodeEntityTypes.ARMOR_STAND, world);
+    public MobPartArmorStand(EntityType<MobPartArmorStand> EntityType, World world, MobPartMother mother, NmsModelEntityConfig config) {
+        super(DecodeEntityType.ARMOR_STAND, world);
         this.mainMob = mother;
         this.config = config;
         prepare(config);
     }
 
-    public MobPartArmorStand(EntityTypes<?> entityTypes, World world) {
-        super(DecodeEntityTypes.ARMOR_STAND, world);
+    public MobPartArmorStand(EntityType<?> EntityType, World world) {
+        super(DecodeEntityType.ARMOR_STAND, world);
         // just die on restarts because we'll be remade
         DecodeEntity.die(this, DecodeDamageSource.OUT_OF_WORLD);
     }
 
     public static MobPartArmorStand spawnMobPart(MobPartMother mother, NmsModelEntityConfig config) {
-        final World world = DecodeWorld.getWorldServer(mother.entity.getBukkitEntity().getWorld());
-        final MobPartArmorStand bodyPart = new MobPartArmorStand(spawner.entityTypes(), world, mother, config);
+        final World world = DecodeWorld.getServerLevel(mother.entity.getBukkitEntity().getWorld());
+        final MobPartArmorStand bodyPart = new MobPartArmorStand(spawner.EntityType(), world, mother, config);
         world.addFreshEntity(bodyPart, CreatureSpawnEvent.SpawnReason.NATURAL);
         return bodyPart;
     }
@@ -79,7 +79,7 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild,
         return new NmsSpawnWrapper<>(
                 REGISTERED_NAME,
                 MobPartArmorStand::new,
-                DecodeEntityTypes.ILLUSIONER
+                DecodeEntityType.ILLUSIONER
         );
     }
 
@@ -141,7 +141,7 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild,
     }
 
     @Override
-    public void a(EnumMoveType enummovetype, Vec3D vec3d) {
+    public void a(EnumMoveType enummovetype, Vec3 Vec3) {
         // do nothing because I'll manually call move this when mainMob moves
         // and it would just cause unnecessary lag
     }
@@ -199,7 +199,7 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild,
     }
 
     @Override
-    public EnumInteractionResult a(Player entityhuman, Vec3D vec3d, EnumHand enumhand) {
+    public EnumInteractionResult a(Player entityhuman, Vec3 Vec3, EnumHand enumhand) {
         return this.mainMob.entity.a(entityhuman, enumhand);
     }
 
@@ -247,28 +247,28 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild,
     }
 
     @Override
-    public EntityTypes<?> ad() {
+    public EntityType<?> ad() {
         return nmsgetEntityType();
     }
 
     @Override
-    public AttributeMapBase ep() {
+    public AttributeMap ep() {
         return nmsgetAttributeMap();
     }
 
     @Override
-    public Entity b(WorldServer worldserver) {
-        return nmsChangeWorlds(worldserver);
+    public Entity b(ServerLevel ServerLevel) {
+        return nmsChangeWorlds(ServerLevel);
     }
 
     @Override
-    public void g(NBTTagCompound nbttagcompound) {
-        nmsload(nbttagcompound);
+    public void g(CompoundTag CompoundTag) {
+        nmsload(CompoundTag);
     }
 
     @Override
-    public NBTTagCompound f(NBTTagCompound nbttagcompound) {
-        return nmssave(nbttagcompound);
+    public CompoundTag f(CompoundTag CompoundTag) {
+        return nmssave(CompoundTag);
     }
 
     @Override

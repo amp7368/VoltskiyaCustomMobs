@@ -3,11 +3,18 @@ package apple.voltskiya.custom_mobs.abilities.tick.reviver.mob;
 import apple.nms.decoding.entity.DecodeEntity;
 import apple.nms.decoding.nbt.DecodeNBT;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import apple.voltskiya.custom_mobs.abilities.tick.reviver.config.ReviverConfig;
 import apple.voltskiya.custom_mobs.abilities.tick.parent.MobToTick;
+import apple.voltskiya.custom_mobs.abilities.tick.reviver.config.ReviverConfig;
 import apple.voltskiya.custom_mobs.abilities.tick.reviver.dead.DeadRecordedMob;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import net.minecraft.nbt.CompoundTag;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.craftbukkit.v1_19_R1.entity.CraftEntity;
 import org.bukkit.entity.Entity;
@@ -17,11 +24,8 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.loot.LootTables;
 import voltskiya.apple.utilities.chance.ChanceRolling;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
 public abstract class MobReviver<Config extends ReviverConfig> extends MobToTick<Config> {
+
     protected final ChanceRolling random;
     private static final long TIME_TO_RISE = 50;
     private static final double PARTICLE_RADIUS = .5;
@@ -49,15 +53,16 @@ public abstract class MobReviver<Config extends ReviverConfig> extends MobToTick
 
     protected void doReviveSummon(DeadRecordedMob reviveMe) {
         Location reviveMeLocation = reviveMe.getLocation();
-        reviveMeLocation.getWorld().spawnEntity(reviveMeLocation, reviveMe.getEntityType(), CreatureSpawnEvent.SpawnReason.CUSTOM,
-                newMob -> dealWithSummonedMob(reviveMe, newMob)
+        reviveMeLocation.getWorld().spawnEntity(reviveMeLocation, reviveMe.getEntityType(),
+            CreatureSpawnEvent.SpawnReason.CUSTOM,
+            newMob -> dealWithSummonedMob(reviveMe, newMob)
         );
     }
 
     private void dealWithSummonedMob(DeadRecordedMob reviveMe, Entity newMob) {
         Location reviveMeLocation = reviveMe.getLocation();
         CompoundTag nbt = reviveMe.getNbt();
-        addLinkedMob(newMob);
+        this.addLinkedMob(newMob);
         final net.minecraft.world.entity.Entity newMobHandle = ((CraftEntity) newMob).getHandle();
         DecodeNBT.removeKey(nbt, "UUID");
         DecodeNBT.removeKey(nbt, "DeathTime");
@@ -79,7 +84,8 @@ public abstract class MobReviver<Config extends ReviverConfig> extends MobToTick
         for (int time = 0; time < TIME_TO_RISE; time++) {
             if (time % 3 == 0)
                 Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
-                    getLocation().getWorld().playSound(getLocation(), Sound.BLOCK_GRAVEL_BREAK, 6, 0.75f);
+                    getLocation().getWorld()
+                        .playSound(getLocation(), Sound.BLOCK_GRAVEL_BREAK, 6, 0.75f);
                 }, time);
             Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
                 Location newLocation = newMob.getLocation();
@@ -117,7 +123,8 @@ public abstract class MobReviver<Config extends ReviverConfig> extends MobToTick
         for (UUID uuid : linkedMobs) {
             Entity mob = Bukkit.getEntity(uuid);
             if (mob != null) {
-                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> killLinkedMob(mob), (long) (i++ * random.random().nextDouble() * 30));
+                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> killLinkedMob(mob),
+                    (long) (i++ * random.random().nextDouble() * 30));
             }
         }
     }
@@ -130,7 +137,8 @@ public abstract class MobReviver<Config extends ReviverConfig> extends MobToTick
             double zi = random.random().nextDouble() - .5;
             location.getWorld().spawnParticle(Particle.SMOKE_LARGE, location, 1, xi, yi, zi, 1);
         }
-        location.getWorld().playSound(location, Sound.ITEM_TOTEM_USE, SoundCategory.HOSTILE, 10, 1.3f);
+        location.getWorld()
+            .playSound(location, Sound.ITEM_TOTEM_USE, SoundCategory.HOSTILE, 10, 1.3f);
         mob.remove();
     }
 }

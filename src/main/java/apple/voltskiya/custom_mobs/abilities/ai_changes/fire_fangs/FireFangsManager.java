@@ -3,14 +3,15 @@ package apple.voltskiya.custom_mobs.abilities.ai_changes.fire_fangs;
 import apple.nms.decoding.entity.DecodeEntity;
 import apple.voltskiya.custom_mobs.abilities.ai_changes.fire_fangs.FireFangsConfig.FireFangsTypeConfig;
 import apple.voltskiya.custom_mobs.pathfinders.spell.PathfinderGoalShootSpell;
-import apple.voltskiya.mob_manager.listen.SpawnHandlerListener;
+import apple.voltskiya.mob_manager.listen.MMSpawnListener;
+import apple.voltskiya.mob_manager.listen.SpawnListener;
 import apple.voltskiya.mob_manager.mob.MMSpawned;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
 import net.minecraft.world.entity.Mob;
 
-public class FireFangsManager implements SpawnHandlerListener {
+public class FireFangsManager implements SpawnListener {
 
     public Map<String, FangsType> tagToFangType;
 
@@ -23,23 +24,24 @@ public class FireFangsManager implements SpawnHandlerListener {
             put("fire_fangs_triple_blue", FangsType.BLUE_TRIPLE);
             put("fire_fangs_triple_blue_straight", FangsType.BLUE_TRIPLE_STRAIGHT);
         }};
-
+        MMSpawnListener.get().addListener(this);
     }
 
     @Override
-    public String getTag() {
+    public String getBriefTag() {
         return "fire_fangs";
     }
 
 
     @Override
-    public void handle(MMSpawned mmSpawned) {
+    public void doSpawn(MMSpawned mmSpawned) {
         Mob entity = (Mob) mmSpawned.getNmsEntity();
         for (String tag : mmSpawned.getEntity().getScoreboardTags()) {
             FangsType type = tagToFangType.get(tag);
             if (type == null) {
                 continue;
             }
+            System.out.println(tag);
             DecodeEntity.getGoalSelector(entity)
                 .addGoal(0, new PathfinderGoalShootSpell<>(new FireFangsCaster(entity), type));
         }

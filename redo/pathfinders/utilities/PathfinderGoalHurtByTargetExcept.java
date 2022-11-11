@@ -1,6 +1,6 @@
 package apple.voltskiya.custom_mobs.pathfinders.utilities;
 
-import apple.voltskiya.custom_mobs.mobs.nms.parent.utility.NmsUtilityWrapper;
+import apple.voltskiya.custom_mobs.nms.parent.utility.NmsUtilityWrapper;
 import apple.voltskiya.custom_mobs.reload.PluginDisable;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.Mob;

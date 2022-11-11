@@ -1,9 +1,11 @@
 package apple.voltskiya.custom_mobs.abilities.tick.lost_soul;
 
 import apple.voltskiya.custom_mobs.abilities.tick.Tickable;
-import apple.voltskiya.custom_mobs.sql.MobListSql;
 import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
 import apple.voltskiya.custom_mobs.util.ticking.TickGiverable;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -13,11 +15,8 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Vex;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.UUID;
-
 public class LostSoulIndividualTicker implements Tickable {
+
     private final TickGiverable giver;
     private final ArrayList<UUID> vexes = new ArrayList<>();
     private final LostSoulManagerTicker.Closeness closeness;
@@ -26,7 +25,8 @@ public class LostSoulIndividualTicker implements Tickable {
     private long myTickerUid = -1;
 
 
-    public LostSoulIndividualTicker(TickGiverable giver, LostSoulManagerTicker.Closeness closeness) {
+    public LostSoulIndividualTicker(TickGiverable giver,
+        LostSoulManagerTicker.Closeness closeness) {
         this.giver = giver;
         this.closeness = closeness;
     }
@@ -61,16 +61,16 @@ public class LostSoulIndividualTicker implements Tickable {
     }
 
     private synchronized void tickVex(Vex vex) {
-        if (isCheckCollision) {
-            Player player = UpdatedPlayerList.getCollision(vex.getBoundingBox());
-            if (player != null) {
-                Location location = vex.getLocation();
-                location.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, player.getEyeLocation(), 0);
-                location.getWorld().playSound(player.getEyeLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1, 1);
-                player.damage(LostSoulManagerTicker.get().DAMAGE_AMOUNT, vex);
-                MobListSql.removeMob(vex.getUniqueId());
-                vex.remove();
-            }
+        if (!isCheckCollision)
+            return;
+        Player player = UpdatedPlayerList.getCollision(vex.getBoundingBox());
+        if (player != null) {
+            Location location = vex.getLocation();
+            location.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, player.getEyeLocation(), 0);
+            location.getWorld()
+                .playSound(player.getEyeLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1, 1);
+            player.damage(LostSoulManagerTicker.get().DAMAGE_AMOUNT, vex);
+            vex.remove();
         }
     }
 

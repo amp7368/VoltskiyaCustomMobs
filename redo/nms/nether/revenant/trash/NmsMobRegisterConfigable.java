@@ -1,4 +1,4 @@
-package apple.voltskiya.custom_mobs.mobs.nms.parent.holder;
+package apple.voltskiya.custom_mobs.abilities.ai_changes.revenant.trash;
 
 import apple.nms.decoding.entity.DecodeEntity;
 import apple.nms.decoding.entity.DecodeEnumCreatureType;
@@ -7,8 +7,8 @@ import apple.nms.decoding.iregistry.DecodeIRegistry;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
 import apple.voltskiya.custom_mobs.mobs.SpawnCustomMobListener;
-import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModel;
-import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelHandler;
+import apple.voltskiya.custom_mobs.nms.parts.NmsModel;
+import apple.voltskiya.custom_mobs.nms.parts.NmsModelHandler;
 import com.mojang.datafixers.DataFixUtils;
 import com.mojang.datafixers.DataFixer;
 import com.mojang.datafixers.schemas.Schema;
@@ -18,15 +18,15 @@ import com.mojang.datafixers.types.templates.TaggedChoice;
 import net.minecraft.SharedConstants;
 import net.minecraft.core.IRegistry;
 import net.minecraft.core.RegistryBlocks;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.MinecraftKey;
-import net.minecraft.server.level.WorldServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.datafix.DataConverterRegistry;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityLiving;
-import net.minecraft.world.entity.EntityTypes;
-import net.minecraft.world.entity.ai.attributes.AttributeDefaults;
-import net.minecraft.world.entity.ai.attributes.AttributeProvider;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.attributes.DefaultAttributes;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
@@ -40,7 +40,7 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 
 public class NmsMobRegisterConfigable<
-        TypeEntity extends Entity & NmsMob<TypeEntity, Config>,
+        TypeEntity extends Entity,
         Config extends NmsMobConfig<TypeEntity, Config>
         > implements SpawnCustomMobListener.CustomSpawnEater {
     private static final int failId = DecodeIRegistry.getId(DecodeIRegistry.getEntityType(), null);
@@ -57,10 +57,10 @@ public class NmsMobRegisterConfigable<
     }
 
     private final String name;
-    private final EntityTypes.b<TypeEntity> mobConstructor;
-    private final EntityTypes<?> replacement;
+    private final EntityType.b<TypeEntity> mobConstructor;
+    private final EntityType<?> replacement;
     private final Config config;
-    private EntityTypes<TypeEntity> entityTypes;
+    private EntityType<TypeEntity> EntityType;
     private NmsModel model;
     private NmsModelHandler.ModelConfigName modelName;
 
@@ -70,7 +70,7 @@ public class NmsMobRegisterConfigable<
         this.mobConstructor = config.getEntityBuilder().builder();
         this.replacement = config.getReplacement();
         this.config = config;
-        registerEntityTypes();
+        registerEntityType();
         registerModel(config.getModelConfigName());
         setPointers(config.getRegisterPointers());
     }
@@ -84,28 +84,28 @@ public class NmsMobRegisterConfigable<
         getMinecraftTypes().putIfAbsent(mobName, new EmptyPartPassthrough());
     }
 
-    public static <T extends Entity> EntityTypes<T> registerEntityTypesStatic(@NotNull String mobName, EntityTypes.b<T> mobConstructor, EntityTypes<?> replacement) {
+    public static <T extends Entity> EntityType<T> registerEntityTypeStatic(@NotNull String mobName, EntityType.b<T> mobConstructor, EntityType<?> replacement) {
         // register the  datafixer
         registerDataFixer(mobName);
 
         // build it
-        RegistryBlocks<EntityTypes<?>> registry = DecodeIRegistry.getEntityType();
+        RegistryBlocks<EntityType<?>> registry = DecodeIRegistry.getEntityType();
 
-        EntityTypes.Builder<T> entitytypesBuilder = EntityTypes.Builder.a(mobConstructor, DecodeEnumCreatureType.MONSTER.encode());
-        EntityTypes<T> builtEntityTypes = entitytypesBuilder.a(mobName);
-        int currentId = DecodeIRegistry.getId(registry, builtEntityTypes);
+        EntityType.Builder<T> EntityTypeBuilder = EntityType.Builder.a(mobConstructor, DecodeEnumCreatureType.MONSTER.encode());
+        EntityType<T> builtEntityType = EntityTypeBuilder.a(mobName);
+        int currentId = DecodeIRegistry.getId(registry, builtEntityType);
         if (currentId != failId) {
             System.err.println(currentId);
-            return builtEntityTypes;
+            return builtEntityType;
         }
         // register it
         int replacementId = DecodeIRegistry.getId(registry, replacement);
-        EntityTypes<T> entityTypes = IRegistry.a(registry, replacementId, mobName, builtEntityTypes);
+        EntityType<T> EntityType = IRegistry.a(registry, replacementId, mobName, builtEntityType);
 
         // log it
         PluginNmsMobs.get().log(Level.INFO, "registered " + mobName);
 
-        return entityTypes;
+        return EntityType;
     }
 
     private void setPointers(Collection<Consumer<NmsMobRegisterConfigable<TypeEntity, Config>>> registerPointers) {
@@ -114,13 +114,13 @@ public class NmsMobRegisterConfigable<
         }
     }
 
-    public void registerEntityTypes() {
-        this.entityTypes = registerEntityTypesStatic(registeredNameId(), this.mobConstructor, replacement);
+    public void registerEntityType() {
+        this.EntityType = registerEntityTypeStatic(registeredNameId(), this.mobConstructor, replacement);
     }
 
-    public TypeEntity spawn(Location location, NBTTagCompound oldNbt) {
-        WorldServer world = ((CraftWorld) location.getWorld()).getHandle();
-        final TypeEntity entity = mobConstructor.create(entityTypes, world);
+    public TypeEntity spawn(Location location, CompoundTag oldNbt) {
+        ServerLevel world = ((CraftWorld) location.getWorld()).getHandle();
+        final TypeEntity entity = mobConstructor.create(EntityType, world);
         entity.prepare(location, oldNbt);
         entity.addChildren();
         CraftEntity bukkitEntity = entity.getBukkitEntity();
@@ -134,7 +134,7 @@ public class NmsMobRegisterConfigable<
     public void eatSpawnEvent(CreatureSpawnEvent event) {
         Location location = event.getEntity().getLocation();
         Entity entity = ((CraftEntity) event.getEntity()).getHandle();
-        NBTTagCompound oldNbt = DecodeEntity.save(entity);
+        CompoundTag oldNbt = DecodeEntity.save(entity);
         spawn(location, oldNbt);
         event.setCancelled(true);
     }
@@ -149,8 +149,8 @@ public class NmsMobRegisterConfigable<
         }
     }
 
-    public EntityTypes<TypeEntity> getEntityType() {
-        return this.entityTypes;
+    public EntityType<TypeEntity> getEntityType() {
+        return this.EntityType;
     }
 
     @NotNull
@@ -170,9 +170,9 @@ public class NmsMobRegisterConfigable<
 //        return new NamespacedKey("minecraft", getTag());
     }
 
-    public AttributeProvider getAttributeProvider() {
-        @SuppressWarnings("unchecked") EntityTypes<? extends EntityLiving> entityTypes = (EntityTypes<? extends EntityLiving>) this.replacement;
-        return AttributeDefaults.a(entityTypes);
+    public AttributeSupplier getAttributeSupplier() {
+        @SuppressWarnings("unchecked") EntityType<? extends EntityLiving> EntityType = (EntityType<? extends EntityLiving>) this.replacement;
+        return DefaultAttributes.a(EntityType);
     }
 
     public NmsModel getModel() {
@@ -191,7 +191,7 @@ public class NmsMobRegisterConfigable<
         return config;
     }
 
-    public EntityTypes<?> getReplacement() {
+    public EntityType<?> getReplacement() {
         return replacement;
     }
 }

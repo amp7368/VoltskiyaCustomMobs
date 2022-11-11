@@ -1,4 +1,4 @@
-package apple.voltskiya.custom_mobs.mobs.nms.nether.angered_soul;
+package apple.voltskiya.custom_mobs.nms.nether.angered_soul;
 
 import apple.nms.decoding.entity.DecodeEntity;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;

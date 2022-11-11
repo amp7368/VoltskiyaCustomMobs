@@ -4,7 +4,7 @@ import apple.mc.utilities.world.vector.VectorUtils;
 import apple.voltskiya.custom_mobs.util.PlayerClose;
 import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;
 import apple.voltskiya.custom_mobs.util.ticking.HighFrequencyTick;
-import apple.voltskiya.mob_manager.listen.SpawnHandlerListener;
+import apple.voltskiya.mob_manager.listen.SpawnListener;
 import apple.voltskiya.mob_manager.mob.MMSpawned;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -17,7 +17,7 @@ import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class MobTickManagerTicker<Config extends MobTickerConfig>
-    implements Runnable, SpawnHandlerListener {
+    implements Runnable, SpawnListener {
 
     protected final Config config;
     private final MobTickCloseness[] closeness;
@@ -34,12 +34,7 @@ public abstract class MobTickManagerTicker<Config extends MobTickerConfig>
     }
 
     @Override
-    public String getTag() {
-        return config.getTag();
-    }
-
-    @Override
-    public String getName() {
+    public String getBriefTag() {
         return config.getTag();
     }
 
@@ -61,7 +56,7 @@ public abstract class MobTickManagerTicker<Config extends MobTickerConfig>
     }
 
     @Override
-    public void handle(MMSpawned mmSpawned) {
+    public void doSpawn(MMSpawned mmSpawned) {
         eatEntity(mmSpawned.getEntity());
         eatMMSpawned(mmSpawned);
     }

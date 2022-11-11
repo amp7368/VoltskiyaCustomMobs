@@ -1,22 +1,22 @@
-package apple.voltskiya.custom_mobs.mobs.nms.nether.angered_soul;
+package apple.voltskiya.custom_mobs.nms.nether.angered_soul;
 
 import apple.nms.decoding.attribute.DecodeGenericAttributes;
 import apple.nms.decoding.entity.DecodeEntity;
-import apple.nms.decoding.iregistry.DecodeEntityTypes;
+import apple.nms.decoding.iregistry.DecodeEntityType;
 import apple.nms.decoding.pathfinder.DecodeControllerMoveFlying;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.holder.NmsMobEntitySupers;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.qol.NmsHolderQOL;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.qol.NmsMobWrapperQOL;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.register.RegisteredCustomMob;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.utility.NmsSpawnWrapper;
+import apple.voltskiya.custom_mobs.nms.parent.holder.NmsMobEntitySupers;
+import apple.voltskiya.custom_mobs.nms.parent.qol.NmsHolderQOL;
+import apple.voltskiya.custom_mobs.nms.parent.qol.NmsMobWrapperQOL;
+import apple.voltskiya.custom_mobs.nms.parent.register.RegisteredCustomMob;
+import apple.voltskiya.custom_mobs.nms.parent.utility.NmsSpawnWrapper;
 import apple.voltskiya.custom_mobs.pathfinders.GoalApproachSlowly;
 import apple.voltskiya.custom_mobs.pathfinders.target_selector.GoalClosestPlayer;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.EntityLiving;
-import net.minecraft.world.entity.EntityTypes;
-import net.minecraft.world.entity.ai.attributes.AttributeProvider;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.goal.GoalLookAtPlayer;
 import net.minecraft.world.entity.ai.goal.GoalSelector;
 import net.minecraft.world.entity.ai.navigation.NavigationFlying;
@@ -41,21 +41,21 @@ public class MobAngeredSoul extends EntitySkeleton implements RegisteredCustomMo
     private static NmsSpawnWrapper<MobAngeredSoul> spawner;
     private NmsMobWrapperQOL<MobAngeredSoul> wrapper;
 
-    public MobAngeredSoul(EntityTypes<MobAngeredSoul> entityTypes, World world) {
-        super(DecodeEntityTypes.SKELETON, world);
+    public MobAngeredSoul(EntityType<MobAngeredSoul> EntityType, World world) {
+        super(DecodeEntityType.SKELETON, world);
     }
 
     public static NmsSpawnWrapper<MobAngeredSoul> spawner() {
         return spawner = Objects.requireNonNullElseGet(spawner, () -> new NmsSpawnWrapper<>(
                 REGISTERED_NAME,
                 MobAngeredSoul::new,
-                DecodeEntityTypes.SKELETON
+                DecodeEntityType.SKELETON
         ));
     }
 
     @Override
-    public NBTTagCompound f(NBTTagCompound nbttagcompound) {
-        return nmssave(nbttagcompound);
+    public CompoundTag f(CompoundTag CompoundTag) {
+        return nmssave(CompoundTag);
     }
 
     @Override
@@ -110,7 +110,7 @@ public class MobAngeredSoul extends EntitySkeleton implements RegisteredCustomMo
         this.removePostHook();
     }
 
-    public AttributeProvider getAttributeProvider() {
+    public AttributeSupplier getAttributeSupplier() {
         return EntityMonster.fD()
                 .a(DecodeGenericAttributes.MOVEMENT_SPEED, 0.25D)
                 .a(DecodeGenericAttributes.FLYING_SPEED, .5d)
@@ -119,8 +119,8 @@ public class MobAngeredSoul extends EntitySkeleton implements RegisteredCustomMo
     }
 
     @Override
-    public EntityTypes<?> ad() {
-        return spawner().entityTypes();
+    public EntityType<?> ad() {
+        return spawner().EntityType();
     }
 
     // isOnGround

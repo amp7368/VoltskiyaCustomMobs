@@ -1,8 +1,8 @@
-package apple.voltskiya.custom_mobs.mobs.nms.parent.qol;
+package apple.voltskiya.custom_mobs.nms.parent.qol;
 
-import apple.voltskiya.custom_mobs.mobs.nms.parent.utility.NmsSpawnWrapperModel;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.utility.NmsUtility;
-import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModel;
+import apple.voltskiya.custom_mobs.nms.parent.utility.NmsSpawnWrapperModel;
+import apple.voltskiya.custom_mobs.nms.parent.utility.NmsUtility;
+import apple.voltskiya.custom_mobs.nms.parts.NmsModel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 

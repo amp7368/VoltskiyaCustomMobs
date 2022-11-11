@@ -1,9 +1,9 @@
-package apple.voltskiya.custom_mobs.mobs.nms.parent.qol;
+package apple.voltskiya.custom_mobs.nms.parent.qol;
 
-import apple.voltskiya.custom_mobs.mobs.nms.parent.holder.NmsMobEntitySupers;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.utility.NmsUtility;
+import apple.voltskiya.custom_mobs.nms.parent.holder.NmsMobEntitySupers;
+import apple.voltskiya.custom_mobs.nms.parent.utility.NmsUtility;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.ai.attributes.AttributeMapBase;
+import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -12,20 +12,20 @@ import java.util.Random;
 public class NmsMobWrapperQOL<SelfEntity extends Entity & NmsUtility<SelfEntity>> {
     private final SelfEntity selfEntity;
     private final Random random = new Random();
-    private AttributeMapBase attributeMap = null;
+    private AttributeMap attributeMap = null;
     private NmsMobEntitySupers entitySupers;
 
     public NmsMobWrapperQOL(SelfEntity entity) {
         this.selfEntity = entity;
     }
 
-    public AttributeMapBase getAttributeMap() {
+    public AttributeMap getAttributeMap() {
         return this.attributeMap = Objects.requireNonNullElseGet(this.attributeMap, this::makeAttributeMap);
     }
 
     @NotNull
-    private AttributeMapBase makeAttributeMap() {
-        return new AttributeMapBase(selfEntity.getAttributeProvider());
+    private AttributeMap makeAttributeMap() {
+        return new AttributeMap(selfEntity.getAttributeSupplier());
     }
 
     public SelfEntity getSelfEntity() {

@@ -3,7 +3,7 @@ package apple.voltskiya.custom_mobs.abilities.ai_changes.shoot_ball;
 import apple.nms.decoding.entity.DecodeEntity;
 import apple.voltskiya.custom_mobs.abilities.ai_changes.shoot_ball.ShootBallConfig.ShootBallTypeConfig;
 import apple.voltskiya.custom_mobs.pathfinders.spell.PathfinderGoalShootSpell;
-import apple.voltskiya.mob_manager.listen.SpawnHandlerListener;
+import apple.voltskiya.mob_manager.listen.SpawnListener;
 import apple.voltskiya.mob_manager.mob.MMSpawned;
 import java.io.IOException;
 import java.util.HashMap;
@@ -14,7 +14,7 @@ import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.craftbukkit.v1_19_R1.entity.CraftEntity;
 import org.bukkit.entity.Mob;
 
-public class ShootBallManager implements SpawnHandlerListener {
+public class ShootBallManager implements SpawnListener {
 
     public Map<String, ShootersType> tagToShootType;
 
@@ -25,7 +25,7 @@ public class ShootBallManager implements SpawnHandlerListener {
     }
 
     @Override
-    public String getTag() {
+    public String getBriefTag() {
         return "shoot_ball";
     }
 
@@ -35,7 +35,7 @@ public class ShootBallManager implements SpawnHandlerListener {
     }
 
     @Override
-    public void handle(MMSpawned mmSpawned) {
+    public void doSpawn(MMSpawned mmSpawned) {
         net.minecraft.world.entity.Mob entity = mmSpawned.getNmsMob();
         for (String tag : entity.getBukkitEntity().getScoreboardTags()) {
             ShootersType type = tagToShootType.get(tag);

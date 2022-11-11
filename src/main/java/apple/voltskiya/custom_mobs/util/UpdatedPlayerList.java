@@ -18,7 +18,6 @@ import org.jetbrains.annotations.Nullable;
 public class UpdatedPlayerList implements Tickable {
 
     private static List<Player> players = new ArrayList<>(Bukkit.getOnlinePlayers());
-    private static final Object PLAYER_SYNC = new Object();
 
     public UpdatedPlayerList() {
         HighFrequencyTick.get().add(this::tick);

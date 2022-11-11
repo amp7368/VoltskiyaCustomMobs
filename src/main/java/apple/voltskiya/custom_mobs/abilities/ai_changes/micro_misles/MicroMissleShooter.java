@@ -2,13 +2,18 @@ package apple.voltskiya.custom_mobs.abilities.ai_changes.micro_misles;
 
 import apple.nms.decoding.entity.DecodeEntity;
 import apple.voltskiya.custom_mobs.pathfinders.spell.PathfinderGoalShootMicroMissle;
-import apple.voltskiya.mob_manager.listen.SpawnHandlerListener;
+import apple.voltskiya.mob_manager.listen.MMSpawnListener;
+import apple.voltskiya.mob_manager.listen.SpawnListener;
 import apple.voltskiya.mob_manager.mob.MMSpawned;
 import net.minecraft.world.entity.Mob;
 
-public class MicroMissleShooter implements SpawnHandlerListener {
+public class MicroMissleShooter implements SpawnListener {
 
     private static final int COOLDOWN = 20 * 10;
+
+    public MicroMissleShooter() {
+        MMSpawnListener.get().addListener(this);
+    }
 
     @Override
     public boolean isOnlyMobs() {
@@ -16,7 +21,7 @@ public class MicroMissleShooter implements SpawnHandlerListener {
     }
 
     @Override
-    public void handle(MMSpawned mmSpawned) {
+    public void doSpawn(MMSpawned mmSpawned) {
         Mob mob = mmSpawned.getNmsMob();
         DecodeEntity.getGoalSelector(mob)
             .addGoal(0, new PathfinderGoalShootMicroMissle(mob, 2 * 20, 1, MissileType.LONER));
@@ -28,7 +33,7 @@ public class MicroMissleShooter implements SpawnHandlerListener {
      * @return the name of the sub_module (a step below a module)
      */
     @Override
-    public String getTag() {
+    public String getBriefTag() {
         return "micro_missile_shooter";
     }
 

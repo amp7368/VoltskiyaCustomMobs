@@ -1,7 +1,7 @@
 package apple.voltskiya.custom_mobs;
 
+import apple.lib.pmc.AppleModule;
 import apple.lib.pmc.ApplePlugin;
-import apple.lib.pmc.PluginModule;
 import apple.voltskiya.custom_mobs.abilities.MobTickPlugin;
 import apple.voltskiya.custom_mobs.delay_pathfinding.DelayPathfindingPlugin;
 import apple.voltskiya.custom_mobs.reload.PluginEnable;
@@ -24,7 +24,7 @@ public class VoltskiyaPlugin extends ApplePlugin {
     }
 
     @Override
-    public Collection<PluginModule> getModules() {
+    public Collection<AppleModule> getModules() {
         return List.of(new Ticking(), // this has to go first
             new PluginUtils(), new MobTickPlugin(), new PluginEnable(),
             new DelayPathfindingPlugin());

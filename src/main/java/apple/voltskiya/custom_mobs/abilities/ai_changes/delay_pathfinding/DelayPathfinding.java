@@ -6,7 +6,7 @@ import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.pathfinders.utilities.PathfinderGoalHurtByTargetOnDone;
 import apple.voltskiya.custom_mobs.pathfinders.utilities.PathfinderGoalNearestAttackableTargetCanSee;
 import apple.voltskiya.mob_manager.listen.MMSpawnListener;
-import apple.voltskiya.mob_manager.listen.SpawnHandlerListener;
+import apple.voltskiya.mob_manager.listen.SpawnListener;
 import apple.voltskiya.mob_manager.mob.MMSpawned;
 import java.util.Collection;
 import net.minecraft.world.entity.Mob;
@@ -19,7 +19,7 @@ import net.minecraft.world.entity.player.Player;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
-public class DelayPathfinding implements SpawnHandlerListener {
+public class DelayPathfinding implements SpawnListener {
 
     public DelayPathfinding() {
         MMSpawnListener.get().addListener(this);
@@ -31,7 +31,7 @@ public class DelayPathfinding implements SpawnHandlerListener {
     }
 
     @Override
-    public void handle(MMSpawned mmSpawned) {
+    public void doSpawn(MMSpawned mmSpawned) {
         Mob entity = mmSpawned.getNmsMob();
         // we do the scheduling because we need to make sure we're last
         Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
@@ -66,7 +66,7 @@ public class DelayPathfinding implements SpawnHandlerListener {
     }
 
     @Override
-    public String getTag() {
+    public String getBriefTag() {
         return "guard_stare";
     }
 

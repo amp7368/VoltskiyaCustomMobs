@@ -1,4 +1,4 @@
-package apple.voltskiya.custom_mobs.mobs.nms.utils;
+package apple.voltskiya.custom_mobs.nms.utils;
 
 public class NbtConstants {
     public static final String ARMOR_ITEMS = "ArmorItems";

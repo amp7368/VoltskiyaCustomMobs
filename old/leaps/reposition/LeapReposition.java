@@ -5,12 +5,12 @@ import apple.voltskiya.custom_mobs.leaps.LeapEater;
 import apple.voltskiya.custom_mobs.leaps.LeapPlugin;
 import apple.voltskiya.custom_mobs.leaps.config.LeapDo;
 import apple.voltskiya.custom_mobs.leaps.config.LeapPostConfig;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.config.ConfigManager;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.config.YmlSettings;
+import apple.voltskiya.custom_mobs.nms.parent.config.ConfigManager;
+import apple.voltskiya.custom_mobs.nms.parent.config.YmlSettings;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.EntityLiving;
 import org.bukkit.util.Vector;
-import apple.mc.utilities.PluginModule;
+import apple.mc.utilities.AppleModule;
 
 public class LeapReposition extends ConfigManager implements LeapEater {
     private static boolean shouldStopLeap(EntityLiving creature) {
@@ -52,7 +52,7 @@ public class LeapReposition extends ConfigManager implements LeapEater {
     }
 
     @Override
-    protected PluginModule getPlugin() {
+    protected AppleModule getPlugin() {
         return LeapPlugin.get();
     }
 }

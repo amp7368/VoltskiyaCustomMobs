@@ -57,7 +57,9 @@ public class ReviveDeadManager implements DeathEater {
     }
 
     public static void removeMob(DeadRecordedMob dead) {
-        deadMobs.remove(dead);
+        synchronized (deadMobs) {
+            deadMobs.remove(dead);
+        }
     }
 
     @Override

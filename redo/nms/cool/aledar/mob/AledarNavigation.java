@@ -1,4 +1,4 @@
-package apple.voltskiya.custom_mobs.mobs.nms.cool.aledar.mob;
+package apple.voltskiya.custom_mobs.nms.cool.aledar.mob;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import co.aikar.commands.BaseCommand;

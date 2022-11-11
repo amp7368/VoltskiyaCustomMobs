@@ -1,4 +1,4 @@
-package apple.voltskiya.custom_mobs.mobs.nms.parent.holder;
+package apple.voltskiya.custom_mobs.nms.parent.holder;
 
 import java.util.Collection;
 import java.util.HashMap;

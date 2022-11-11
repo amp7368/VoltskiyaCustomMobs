@@ -6,9 +6,9 @@ import apple.voltskiya.custom_mobs.util.ticking.HighFrequencyTick;
 import apple.voltskiya.custom_mobs.util.ticking.LowFrequencyTick;
 import apple.voltskiya.custom_mobs.util.ticking.NormalFrequencyTick;
 import apple.voltskiya.custom_mobs.util.ticking.TickGiverable;
-import apple.voltskiya.mob_manager.listen.SpawnHandlerListener;
+import apple.voltskiya.mob_manager.listen.MMSpawnListener;
+import apple.voltskiya.mob_manager.listen.SpawnListener;
 import apple.voltskiya.mob_manager.mob.MMSpawned;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import org.bukkit.Location;
@@ -17,7 +17,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Vex;
 import org.jetbrains.annotations.Nullable;
 
-public class LostSoulManagerTicker implements SpawnHandlerListener {
+public class LostSoulManagerTicker implements SpawnListener {
 
     protected final double DAMAGE_AMOUNT = 2;
     private static LostSoulManagerTicker instance;
@@ -26,8 +26,9 @@ public class LostSoulManagerTicker implements SpawnHandlerListener {
             put(closeness, new LostSoulIndividualTicker(closeness.getGiver(), closeness));
     }};
 
-    public LostSoulManagerTicker() throws IOException {
+    public LostSoulManagerTicker() {
         instance = this;
+        MMSpawnListener.get().addListener(this);
         closenessToVexes.get(Closeness.HIGH_CLOSE).setIsCheckCollision();
     }
 
@@ -41,7 +42,7 @@ public class LostSoulManagerTicker implements SpawnHandlerListener {
     }
 
     @Override
-    public void handle(MMSpawned mmSpawned) {
+    public void doSpawn(MMSpawned mmSpawned) {
         Entity entity = mmSpawned.getEntity();
         if (entity instanceof Vex vex) {
             Closeness closeness = determineConcern(vex);
@@ -50,7 +51,7 @@ public class LostSoulManagerTicker implements SpawnHandlerListener {
     }
 
     @Override
-    public String getTag() {
+    public String getBriefTag() {
         return "lost_soul";
     }
 
@@ -76,8 +77,8 @@ public class LostSoulManagerTicker implements SpawnHandlerListener {
 
     enum Closeness {
         HIGH_CLOSE(30, HighFrequencyTick.get()),
-        NORMAL_CLOSE(60, NormalFrequencyTick.get()),
-        LOW_CLOSE(100, LowFrequencyTick.get());
+        NORMAL_CLOSE(70, NormalFrequencyTick.get()),
+        LOW_CLOSE(200, LowFrequencyTick.get());
 
         private final double distance;
         private static final Closeness[] order = new Closeness[]{HIGH_CLOSE, NORMAL_CLOSE,

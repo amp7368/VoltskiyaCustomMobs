@@ -17,7 +17,7 @@ public class ReviverConfigBasic extends ReviverConfig {
 
     @Override
     public String getTag() {
-        return "reviver";
+        return "reviver_basic";
     }
 
     @Override

@@ -44,9 +44,8 @@ public class MicroMissileManager implements Tickable {
             Block hitBlock = rayTrace.getHitBlock();
             targetLocation = hitBlock.getLocation();
         }
-        final MicroMissileManager microMissileManager = get();
 
-        microMissileManager.giveMissile(
+        get().giveMissile(
             new MicroMissile(spawnLocation, targetLocation, missileType.speed,
                 missileType.minTicksToLive, missileType.damageAmount));
         for (int i = 0; i < count - 1; i++) {
@@ -55,7 +54,7 @@ public class MicroMissileManager implements Tickable {
             newTarget.add((random.nextDouble() - 0.5) * MicroMissileConfig.get().variability,
                 (random.nextDouble() - 0.5) * MicroMissileConfig.get().variability,
                 (random.nextDouble() - 0.5) * MicroMissileConfig.get().variability);
-            microMissileManager.giveMissile(
+            get().giveMissile(
                 new MicroMissile(spawnLocation, newTarget, missileType.speed,
                     missileType.minTicksToLive, missileType.damageAmount));
         }

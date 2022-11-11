@@ -6,7 +6,7 @@ import apple.voltskiya.custom_mobs.util.ticking.HighFrequencyTick;
 import apple.voltskiya.custom_mobs.util.ticking.LowFrequencyTick;
 import apple.voltskiya.custom_mobs.util.ticking.NormalFrequencyTick;
 import apple.voltskiya.custom_mobs.util.ticking.TickGiverable;
-import apple.voltskiya.mob_manager.listen.SpawnHandlerListener;
+import apple.voltskiya.mob_manager.listen.SpawnListener;
 import apple.voltskiya.mob_manager.mob.MMSpawned;
 import java.io.IOException;
 import java.util.HashMap;
@@ -17,7 +17,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
-public class WarperManagerTicker implements SpawnHandlerListener {
+public class WarperManagerTicker implements SpawnListener {
 
     private final Map<WarperManagerTicker.Closeness, WarperIndividualTicker> closenessToWarperes = new HashMap<>() {{
         for (WarperManagerTicker.Closeness closeness : WarperManagerTicker.Closeness.values())
@@ -42,7 +42,7 @@ public class WarperManagerTicker implements SpawnHandlerListener {
     }
 
     @Override
-    public String getTag() {
+    public String getBriefTag() {
         return "warper";
     }
 
@@ -67,7 +67,7 @@ public class WarperManagerTicker implements SpawnHandlerListener {
     }
 
     @Override
-    public void handle(MMSpawned mmSpawned) {
+    public void doSpawn(MMSpawned mmSpawned) {
 
     }
 

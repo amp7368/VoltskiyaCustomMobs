@@ -73,7 +73,9 @@ public class MobReviverBasic extends MobReviver<ReviverConfigBasic> {
     }
 
     private void summonStart() {
-        if (reviveMe == null || VectorUtils.distance(reviveMe.getLocation(), getLocation()) > 2) {
+        if (reviveMe == null)
+            return;
+        if (VectorUtils.distance(reviveMe.getLocation(), getLocation()) > 2) {
             // say we failed
             ReviveDeadManager.addMob(reviveMe);
             return;

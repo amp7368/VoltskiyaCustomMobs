@@ -1,18 +1,18 @@
-package apple.voltskiya.custom_mobs.mobs.nms.parent.utility;
+package apple.voltskiya.custom_mobs.abilities.ai_changes.revenant.trash;
 
 import apple.nms.decoding.entity.DecodeEntity;
 import apple.nms.decoding.nbt.DecodeNBT;
 import apple.utilities.util.ObjectUtilsFormatting;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.holder.NmsMobEntitySupers;
-import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModel;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.level.WorldServer;
+import apple.voltskiya.custom_mobs.nms.parent.holder.NmsMobEntitySupers;
+import apple.voltskiya.custom_mobs.nms.parts.NmsModel;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.profiling.GameProfilerFiller;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.ai.attributes.AttributeDefaults;
-import net.minecraft.world.entity.ai.attributes.AttributeMapBase;
-import net.minecraft.world.entity.ai.attributes.AttributeProvider;
-import net.minecraft.world.phys.Vec3D;
+import net.minecraft.world.entity.ai.attributes.DefaultAttributes;
+import net.minecraft.world.entity.ai.attributes.AttributeMap;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.phys.Vec3;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.Nullable;
@@ -21,12 +21,12 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 public interface NmsUtility<SelfEntity extends Entity> extends DecodeEntity {
-    default void prepare(Location location, NBTTagCompound oldNbt) {
+    default void prepare(Location location, CompoundTag oldNbt) {
         NmsModel selfModel = getSelfModel();
-        final NBTTagCompound newNbt = ObjectUtilsFormatting.failToNull(selfModel, NmsModel::mainPart, (m) -> m.getData().nbt);
-        final NBTTagCompound mergedNbt;
+        final CompoundTag newNbt = ObjectUtilsFormatting.failToNull(selfModel, NmsModel::mainPart, (m) -> m.getData().nbt);
+        final CompoundTag mergedNbt;
         if (oldNbt == null) {
-            mergedNbt = Objects.requireNonNullElseGet(newNbt, NBTTagCompound::new);
+            mergedNbt = Objects.requireNonNullElseGet(newNbt, CompoundTag::new);
         } else mergedNbt = DecodeNBT.merge(oldNbt, newNbt);
         DecodeNBT.removeKey(mergedNbt, "UUID");
         SelfEntity selfEntity = getSelfEntity();
@@ -54,8 +54,8 @@ public interface NmsUtility<SelfEntity extends Entity> extends DecodeEntity {
 
     ///////////////////////////////////
 
-    default void nmsmove(EnumMoveType enummovetype, Vec3D vec3d) {
-        getEntitySupers().move(enummovetype, vec3d);
+    default void nmsmove(EnumMoveType enummovetype, Vec3 Vec3) {
+        getEntitySupers().move(enummovetype, Vec3);
         movePostHook();
         movePost();
     }
@@ -68,8 +68,8 @@ public interface NmsUtility<SelfEntity extends Entity> extends DecodeEntity {
 
 
     @Nullable
-    default Entity nmsChangeWorlds(WorldServer worldserver) {
-        final Entity result = getEntitySupers().changeWorlds(worldserver);
+    default Entity nmsChangeWorlds(ServerLevel ServerLevel) {
+        final Entity result = getEntitySupers().changeWorlds(ServerLevel);
         changeWorldsPostHook(result);
         changeWorldsPost(result);
         return result;
@@ -82,9 +82,9 @@ public interface NmsUtility<SelfEntity extends Entity> extends DecodeEntity {
     }
 
 
-    default void nmsload(NBTTagCompound nbttagcompound) {
-        DecodeNBT.setString(nbttagcompound, "id", getSaveId());
-        getEntitySupers().load(nbttagcompound);
+    default void nmsload(CompoundTag CompoundTag) {
+        DecodeNBT.setString(CompoundTag, "id", getSaveId());
+        getEntitySupers().load(CompoundTag);
         loadPostHook();
         loadPost();
     }
@@ -95,18 +95,18 @@ public interface NmsUtility<SelfEntity extends Entity> extends DecodeEntity {
     default void loadPostHook() {
     }
 
-    default NBTTagCompound nmssave(NBTTagCompound nbttagcompound) {
-        NBTTagCompound nbt = getEntitySupers().save(nbttagcompound);
+    default CompoundTag nmssave(CompoundTag CompoundTag) {
+        CompoundTag nbt = getEntitySupers().save(CompoundTag);
         DecodeNBT.setString(nbt, "id", getSaveId());
         savePostHook(nbt);
         savePost(nbt);
         return nbt;
     }
 
-    default void savePost(NBTTagCompound nbt) {
+    default void savePost(CompoundTag nbt) {
     }
 
-    default void savePostHook(NBTTagCompound nbt) {
+    default void savePostHook(CompoundTag nbt) {
     }
 
 
@@ -130,9 +130,9 @@ public interface NmsUtility<SelfEntity extends Entity> extends DecodeEntity {
 
     SelfEntity getSelfEntity();
 
-    EntityTypes<?> nmsgetEntityType();
+    EntityType<?> nmsgetEntityType();
 
-    AttributeMapBase nmsgetAttributeMap();
+    AttributeMap nmsgetAttributeMap();
 
     @Nullable
     default NmsModel getSelfModel() {
@@ -143,40 +143,40 @@ public interface NmsUtility<SelfEntity extends Entity> extends DecodeEntity {
         return getSelfModel() != null;
     }
 
-    default AttributeProvider getAttributeProvider() {
-        @SuppressWarnings("unchecked") EntityTypes<? extends EntityLiving> entityType = (EntityTypes<? extends EntityLiving>) getEntityType();
-        return AttributeDefaults.a(entityType);
+    default AttributeSupplier getAttributeSupplier() {
+        @SuppressWarnings("unchecked") EntityType<? extends EntityLiving> entityType = (EntityType<? extends EntityLiving>) getEntityType();
+        return DefaultAttributes.a(entityType);
     }
 
     // getEntityType
     //////////////////////
-    default EntityTypes<?> ad() {
+    default EntityType<?> ad() {
         return nmsgetEntityType();
     }
 
     // getAttributeMap
-    default AttributeMapBase ep() {
+    default AttributeMap ep() {
         return nmsgetAttributeMap();
     }
 
     // move
-    default void a(EnumMoveType enummovetype, Vec3D vec3d) {
-        nmsmove(enummovetype, vec3d);
+    default void a(EnumMoveType enummovetype, Vec3 Vec3) {
+        nmsmove(enummovetype, Vec3);
     }
 
     // change worlds
-    default Entity b(WorldServer worldserver) {
-        return nmsChangeWorlds(worldserver);
+    default Entity b(ServerLevel ServerLevel) {
+        return nmsChangeWorlds(ServerLevel);
     }
 
     // load
-    default void g(NBTTagCompound nbttagcompound) {
-        nmsload(nbttagcompound);
+    default void g(CompoundTag CompoundTag) {
+        nmsload(CompoundTag);
     }
 
     // save
-    default NBTTagCompound f(NBTTagCompound nbttagcompound) {
-        return nmssave(nbttagcompound);
+    default CompoundTag f(CompoundTag CompoundTag) {
+        return nmssave(CompoundTag);
     }
 
     default void a(Entity.RemovalReason removalReason) {
@@ -185,28 +185,28 @@ public interface NmsUtility<SelfEntity extends Entity> extends DecodeEntity {
 
     // UTILITY METHODS
     //////////////////////
-    default EntityTypes<?> getEntityType() {
+    default EntityType<?> getEntityType() {
         return this.ad();
     }
 
-    default AttributeMapBase getAttributeMap() {
+    default AttributeMap getAttributeMap() {
         return ep();
     }
 
-    default Entity changeWorlds(WorldServer world) {
+    default Entity changeWorlds(ServerLevel world) {
         return b(world);
     }
 
-    default void load(NBTTagCompound nbt) {
+    default void load(CompoundTag nbt) {
         this.g(nbt);
     }
 
-    default NBTTagCompound save(NBTTagCompound nbt) {
+    default CompoundTag save(CompoundTag nbt) {
         return f(nbt);
     }
 
-    default NBTTagCompound save() {
-        return save(new NBTTagCompound());
+    default CompoundTag save() {
+        return save(new CompoundTag());
     }
 
     default void remove(Entity.RemovalReason removalReason) {

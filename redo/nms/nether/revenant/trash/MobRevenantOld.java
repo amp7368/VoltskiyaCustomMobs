@@ -1,85 +1,86 @@
-package apple.voltskiya.custom_mobs.nms.misc;
+package apple.voltskiya.custom_mobs.abilities.ai_changes.revenant.trash;
 
+import apple.nms.decoding.attribute.DecodeGenericAttributes;
 import apple.nms.decoding.entity.DecodeEntity;
-import apple.nms.decoding.iregistry.DecodeDamageSource;
 import apple.nms.decoding.iregistry.DecodeEntityType;
 import apple.voltskiya.custom_mobs.nms.parent.holder.NmsMobEntitySupers;
 import apple.voltskiya.custom_mobs.nms.parent.qol.NmsHolderQOL;
 import apple.voltskiya.custom_mobs.nms.parent.qol.NmsMobWrapperQOL;
 import apple.voltskiya.custom_mobs.nms.parent.register.RegisteredCustomMob;
 import apple.voltskiya.custom_mobs.nms.parent.utility.NmsSpawnWrapper;
+import apple.voltskiya.custom_mobs.pathfinders.GoalBowShootNoBow;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.game.PacketPlayOutSpawnEntityLiving;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EnumMoveType;
 import net.minecraft.world.entity.ai.attributes.AttributeMap;
-import net.minecraft.world.entity.monster.EntityZombie;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.monster.EntitySkeleton;
+import net.minecraft.world.entity.monster.EntitySkeletonAbstract;
 import net.minecraft.world.level.World;
 import net.minecraft.world.phys.Vec3;
-import org.bukkit.craftbukkit.v1_19_R1.entity.CraftHumanEntity;
-import org.bukkit.entity.LivingEntity;
 
 import java.util.Objects;
 
-public class MobHealthPack extends EntityZombie implements RegisteredCustomMob, NmsHolderQOL<MobHealthPack> {
-    public static final String REGISTERED_NAME = "health_pack";
+public class MobRevenantOld extends EntitySkeleton implements RegisteredCustomMob, NmsHolderQOL<MobRevenantOld> {
+    public static final String REGISTERED_NAME = "revenant";
+    private static NmsSpawnWrapper<MobRevenantOld> spawner;
+    private NmsMobWrapperQOL<MobRevenantOld> wrapper;
 
-    private static NmsSpawnWrapper<MobHealthPack> spawner;
-    private NmsMobWrapperQOL<MobHealthPack> wrapper;
-
-
-    public MobHealthPack(EntityType<MobHealthPack> EntityType, World world) {
-        super(DecodeEntityType.ZOMBIE, world);
+    public MobRevenantOld(EntityType<? extends EntitySkeleton> EntityType, World world) {
+        super(DecodeEntityType.SKELETON, world);
     }
 
-    public static NmsSpawnWrapper<MobHealthPack> spawner() {
-        return spawner = Objects.requireNonNullElseGet(spawner, MobHealthPack::makeSpawner);
+    @Override
+    public AttributeSupplier getAttributeSupplier() {
+        return EntitySkeletonAbstract.n()
+                .a(DecodeGenericAttributes.FOLLOW_RANGE, 50)
+                .a();
     }
 
-    public static NmsSpawnWrapper<MobHealthPack> makeSpawner() {
+    public static NmsSpawnWrapper<MobRevenantOld> spawner() {
+        return spawner = Objects.requireNonNullElseGet(spawner, MobRevenantOld::makeSpawner);
+    }
+
+    @Override
+    public void a(PacketPlayOutSpawnEntityLiving packetplayoutspawnentityliving) {
+        super.a(packetplayoutspawnentityliving);
+    }
+
+    public static NmsSpawnWrapper<MobRevenantOld> makeSpawner() {
         return new NmsSpawnWrapper<>(
                 REGISTERED_NAME,
-                MobHealthPack::new,
+                MobRevenantOld::new,
                 DecodeEntityType.ZOMBIE
         );
     }
 
-    // collide
-    @Override
-    public void g(Entity entity) {
-        if (entity instanceof Player human) {
-            this.healPlayer(human);
-            DecodeEntity.die(this, DecodeDamageSource.OUT_OF_WORLD);
-        }
-    }
-
-    private void healPlayer(Player player) {
-        double health = ((LivingEntity) getBukkitEntity()).getHealth();
-        CraftHumanEntity playerBukkit = player.getBukkitEntity();
-        health = playerBukkit.getHealth() + health;
-        health = Math.min(playerBukkit.getMaxHealth(), health);
-        playerBukkit.setHealth(health);
-    }
-
-    // initPathfinder
+    // initpathfinder
     @Override
     protected void u() {
+        super.u();
+        DecodeEntity.getGoalSelector(this).a(4, new GoalBowShootNoBow<>(this, 1.0D, 20, 15.0F));
     }
 
     @Override
-    public MobHealthPack getSelfEntity() {
+    public void t() {
+        // do no *special* pathfinding
+    }
+
+    @Override
+    public MobRevenantOld getSelfEntity() {
         return this;
     }
 
     @Override
-    public NmsSpawnWrapper<MobHealthPack> getSpawner() {
+    public NmsSpawnWrapper<MobRevenantOld> getSpawner() {
         return spawner();
     }
 
     @Override
-    public NmsMobWrapperQOL<MobHealthPack> getSelfWrapper() {
+    public NmsMobWrapperQOL<MobRevenantOld> getSelfWrapper() {
         return wrapper = Objects.requireNonNullElseGet(wrapper, NmsHolderQOL.super::makeSelfWrapper);
     }
 
@@ -128,5 +129,9 @@ public class MobHealthPack extends EntityZombie implements RegisteredCustomMob, 
     @Override
     public void a(Entity.RemovalReason removalReason) {
         nmsRemove(removalReason);
+    }
+
+    public void setWrapper(NmsMobWrapperQOL<MobRevenantOld> wrapper) {
+        this.wrapper = wrapper;
     }
 }

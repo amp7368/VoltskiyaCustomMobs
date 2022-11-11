@@ -2,10 +2,10 @@ package apple.voltskiya.custom_mobs.leaps.pounce;
 
 import apple.voltskiya.custom_mobs.leaps.LeapEater;
 import apple.voltskiya.custom_mobs.leaps.LeapPlugin;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.config.ConfigManager;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.config.YmlSettings;
+import apple.voltskiya.custom_mobs.nms.parent.config.ConfigManager;
+import apple.voltskiya.custom_mobs.nms.parent.config.YmlSettings;
 import net.minecraft.world.entity.Mob;
-import apple.mc.utilities.PluginModule;
+import apple.mc.utilities.AppleModule;
 
 public class LeapPounceUpwards extends ConfigManager implements LeapEater {
 
@@ -34,7 +34,7 @@ public class LeapPounceUpwards extends ConfigManager implements LeapEater {
      * @return the module associated with this config
      */
     @Override
-    protected PluginModule getPlugin() {
+    protected AppleModule getPlugin() {
         return LeapPlugin.get();
     }
 }

@@ -3,7 +3,7 @@ package apple.voltskiya.custom_mobs.pathfinders.utilities;
 import apple.nms.decoding.entity.DecodeEntity;
 import apple.nms.decoding.entity.DecodeNavigation;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.utility.NmsUtilityWrapper;
+import apple.voltskiya.custom_mobs.nms.parent.utility.NmsUtilityWrapper;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import org.bukkit.Bukkit;

@@ -2,7 +2,7 @@ package apple.voltskiya.custom_mobs.abilities.tick.lost_soul;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.mob_manager.listen.MMSpawnListener;
-import apple.voltskiya.mob_manager.listen.SpawnHandlerListener;
+import apple.voltskiya.mob_manager.listen.SpawnListener;
 import apple.voltskiya.mob_manager.mob.MMSpawned;
 import java.util.Collection;
 import java.util.HashSet;
@@ -23,9 +23,8 @@ import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-public class BlemishSpawnManager implements SpawnHandlerListener, Listener {
+public class BlemishSpawnManager implements SpawnListener, Listener {
 
-    public static String SUMMON_VEX;
     private final HashSet<UUID> ghasts = new HashSet<>();
 
     public BlemishSpawnManager() {
@@ -39,7 +38,8 @@ public class BlemishSpawnManager implements SpawnHandlerListener, Listener {
     }
 
     @Override
-    public void handle(MMSpawned mmSpawned) {
+    public void doSpawn(MMSpawned mmSpawned) {
+        System.out.println("spawned");
         if (mmSpawned.getEntity() instanceof Ghast ghast) {
             final UUID uuid = ghast.getUniqueId();
             ghasts.add(uuid);
@@ -47,7 +47,7 @@ public class BlemishSpawnManager implements SpawnHandlerListener, Listener {
     }
 
     @Override
-    public String getTag() {
+    public String getBriefTag() {
         return "blemish_gateway";
     }
 
@@ -104,7 +104,7 @@ public class BlemishSpawnManager implements SpawnHandlerListener, Listener {
             + Math.cos(Math.toRadians(-angleFar)) * directionRightRight.getZ());
 
         String cmd = "execute at " + me.getUniqueId() + " run summon vex " + location.getX() + " "
-            + location.getY() + " " + location.getZ() + " " + SUMMON_VEX;
+            + location.getY() + " " + location.getZ() + " " + BlemishSoulConfig.SUMMON_LOST_SOUL;
         for (int i = 0; i < spawns; i++) {
             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), cmd);
         }

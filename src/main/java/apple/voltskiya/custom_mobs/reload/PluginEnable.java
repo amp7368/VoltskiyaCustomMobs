@@ -1,13 +1,13 @@
 package apple.voltskiya.custom_mobs.reload;
 
-import apple.lib.pmc.PluginModule;
+import apple.lib.pmc.AppleModule;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import voltskiya.apple.utilities.minecraft.TagConstants;
 
-public class PluginEnable extends PluginModule {
+public class PluginEnable extends AppleModule {
 
     @Override
     public void enable() {
@@ -17,7 +17,7 @@ public class PluginEnable extends PluginModule {
                     entity.removeScoreboardTag(TagConstants.IS_DOING_ABILITY);
                 }
             }
-        }, 160);
+        });
     }
 
     @Override

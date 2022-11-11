@@ -1,4 +1,4 @@
-package apple.voltskiya.custom_mobs.mobs.nms.parts;
+package apple.voltskiya.custom_mobs.nms.parts;
 
 
 import java.util.List;
