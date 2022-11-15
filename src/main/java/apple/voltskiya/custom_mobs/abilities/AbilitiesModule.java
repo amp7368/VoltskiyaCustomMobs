@@ -1,7 +1,6 @@
 package apple.voltskiya.custom_mobs.abilities;
 
-import apple.voltskiya.custom_mobs.abilities.ai_changes.shoot_ball.ShootBallConfig;
-import apple.voltskiya.custom_mobs.abilities.ai_changes.shoot_ball.ShootBallManager;
+import apple.voltskiya.custom_mobs.abilities.overseer.laser.MissileLaserAbilitySpawner;
 import apple.voltskiya.custom_mobs.abilities.common.micro_missile.MicroMissileConfig;
 import apple.voltskiya.custom_mobs.abilities.common.micro_missile.MicroMissileManager;
 import apple.voltskiya.custom_mobs.abilities.common.micro_missile.MicroMissileShooter;
@@ -46,7 +45,6 @@ public class AbilitiesModule extends AbstractModule {
 
         new MicroMissileManager();
         new MicroMissileShooter();
-        new ShootBallManager();
         new BlemishSpawnManager();
         new LostSoulManagerTicker();
     }
@@ -57,7 +55,7 @@ public class AbilitiesModule extends AbstractModule {
 
     @Override
     public String getName() {
-        return "MobTick";
+        return "Ability";
     }
 
     @Override
@@ -65,10 +63,10 @@ public class AbilitiesModule extends AbstractModule {
         return List.of(add(configJson(ReviverAbilitySpawner.class, "ReviverConfig", "Reviver")),
             add(configJson(FireballAbilitySpawner.class, "FireballConfig", "Fireball")),
             add(configJson(MancubusAbilitySpawner.class, "MancubusConfig", "Mancubus")),
+            add(configJson(MissileLaserAbilitySpawner.class, "MissileLaserConfig", "MissileLaser")),
             configJson(BlemishSoulConfig.class, "BlemishSoulConfig"),
             configJson(FireFangsConfig.class, "FireFangsConfig"),
             configJson(MicroMissileConfig.class, "MicroMissileConfig"),
-            configJson(ShootBallConfig.class, "ShootBallConfig"),
             configJson(OrbitalStrikeConfig.class, "OrbitalStrikeConfig"),
             configJson(WarperConfig.class, "WarperConfig"));
 

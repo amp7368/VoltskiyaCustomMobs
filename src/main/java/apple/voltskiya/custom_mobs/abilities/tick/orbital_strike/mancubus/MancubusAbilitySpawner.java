@@ -7,7 +7,7 @@ import java.util.List;
 
 public class MancubusAbilitySpawner implements SpawnListenerHolder {
 
-    public MancubusConfig basic = new MancubusConfig("mancubus.basic");
+    public MancubusConfig basic = new MancubusConfig();
 
     @Override
     public Collection<SpawnListener> getListeners() {

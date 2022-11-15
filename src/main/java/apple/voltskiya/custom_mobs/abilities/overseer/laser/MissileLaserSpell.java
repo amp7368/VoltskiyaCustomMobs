@@ -1,23 +1,20 @@
-package apple.voltskiya.custom_mobs.abilities.ai_changes.shoot_ball;
+package apple.voltskiya.custom_mobs.abilities.overseer.laser;
 
 import apple.mc.utilities.world.vector.VectorUtils;
-import apple.nms.decoding.entity.DecodeEntity;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import apple.voltskiya.custom_mobs.pathfinders.spell.PathfinderGoalShootSpell;
 import apple.voltskiya.custom_mobs.util.projectile.ProjectileParticleMissle;
+import apple.voltskiya.mob_manager.mob.MMSpawned;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
-import org.bukkit.craftbukkit.v1_19_R1.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
@@ -25,33 +22,33 @@ import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
-public class ShootBallSpell implements PathfinderGoalShootSpell.Spell {
+public class MissileLaserSpell<Config extends MissileLaserConfig> {
 
     private static final double EXPLOSION_RADIUS = 3.5;
     private static final double DAMAGE_AMOUNT = 4;
-    private static final VoltskiyaPlugin PLUGIN = VoltskiyaPlugin.get();
-    private final ShootBallCaster shootBallCaster;
-    private final ShootBallManager.ShootersType shootersType;
+    private final MMSpawned mob;
+    private final Config shootersType;
     private final double shotSpeed;
-    private net.minecraft.world.entity.LivingEntity goalTarget;
+    private final MobMissileLaser<Config> mobMissileLaser;
+    private @Nullable LivingEntity goalTarget;
     private State state;
     private Location predictedLocation;
     private Location lastViableShot = null;
 
-    public ShootBallSpell(ShootBallCaster shootBallCaster,
-        ShootBallManager.ShootersType shootersType) {
-        this.shootBallCaster = shootBallCaster;
-        this.shootersType = shootersType;
-        this.shotSpeed = shootersType.getShotSpeed();
+    public MissileLaserSpell(MobMissileLaser<Config> mobMissileLaser, Config config) {
+        this.mobMissileLaser = mobMissileLaser;
+        this.mob = mobMissileLaser.getMMSpawned();
+        this.shootersType = config;
+        this.shotSpeed = shootersType.shotSpeed;
         this.state = State.CHARGE_UP;
     }
 
-    @Override
+
     public void stateChoice() {
         switch (state) {
-            case CHARGE_UP -> new ChargeUp(shootersType.getChargeUpTicks());
-            case SHOOT ->
-                new Shooting(shootersType.getShotsToTake(), shootersType.getTimeToShoot());
+            case CHARGE_UP -> new ChargeUp(shootersType.chargeUpTicks);
+            case SHOOT -> new Shooting(shootersType.shotsToTake, shootersType.timeToShoot);
+            case FINISH -> mobMissileLaser.finish();
         }
     }
 
@@ -79,34 +76,25 @@ public class ShootBallSpell implements PathfinderGoalShootSpell.Spell {
         public ChargeUp(int ticksToCharge) {
             this.ticksToCharge = ticksToCharge;
             this.soundCountdown = Math.max(1, this.ticksToCharge / 8);
-            goalTarget = DecodeEntity.getLastTarget(shootBallCaster.getEntity());
-            LivingEntity target;
-            if (goalTarget == null || goalTarget.getBukkitEntity().isDead())
-                target = null;
-            else {
-                if (goalTarget.getBukkitEntity() instanceof LivingEntity)
-                    target = (LivingEntity) goalTarget.getBukkitEntity();
-                else
-                    target = null;
-            }
+            goalTarget = mob.getTarget();
 
-            this.previousLocations.add(lastViableShot = this.nowLocation =
-                target == null ? null : target.getEyeLocation());
+            Location targetLocation = goalTarget == null ? null : goalTarget.getEyeLocation();
+            this.previousLocations.add(lastViableShot = this.nowLocation = targetLocation);
             run();
         }
 
         @Override
         public void run() {
-            if (shootBallCaster.getEntity().getBukkitEntity().isDead()) {
+            if (mob.getEntity().isDead()) {
                 return; // no need to do anything more. it's dead
             }
             // track the target
             LivingEntity target;
-            if (goalTarget == null || goalTarget.getBukkitEntity().isDead())
+            if (goalTarget == null || goalTarget.isDead())
                 target = null;
             else {
-                if (goalTarget.getBukkitEntity() instanceof LivingEntity)
-                    target = (LivingEntity) goalTarget.getBukkitEntity();
+                if (goalTarget != null)
+                    target = goalTarget;
                 else
                     target = null;
             }
@@ -121,7 +109,7 @@ public class ShootBallSpell implements PathfinderGoalShootSpell.Spell {
             if (currentTick % TICK_PER_STEP == 0) {
 
                 // get the distance to the current target location
-                final CraftEntity me = shootBallCaster.getEntity().getBukkitEntity();
+                final Entity me = mob.getEntity();
                 Location myLocation =
                     me instanceof Mob ? ((Mob) me).getEyeLocation() : me.getLocation();
                 Vector vectorToTarget = myLocation.toVector().subtract(this.nowLocation.toVector());
@@ -155,7 +143,8 @@ public class ShootBallSpell implements PathfinderGoalShootSpell.Spell {
                 return;
             }
             this.currentTick++;
-            Bukkit.getScheduler().scheduleSyncDelayedTask(PLUGIN, this, 1);
+
+            VoltskiyaPlugin.get().scheduleSyncDelayedTask(this, 1);
         }
 
         private void dealWithResult() {
@@ -179,7 +168,7 @@ public class ShootBallSpell implements PathfinderGoalShootSpell.Spell {
                 this.soundCountdownIndex = (int) (this.soundCountdown = (int) Math.max(
                     this.soundCountdown / 1.05, 1));
                 // get the distance to the current target location
-                final CraftEntity me = shootBallCaster.getEntity().getBukkitEntity();
+                final Entity me = mob.getEntity();
                 Location myLocation =
                     me instanceof Mob ? ((Mob) me).getEyeLocation() : me.getLocation();
                 float pitch = .5f - this.soundCountdown / 10f + 1f;
@@ -210,11 +199,7 @@ public class ShootBallSpell implements PathfinderGoalShootSpell.Spell {
         public void run() {
             while (!shootTicks.isEmpty() && shootTicks.get(0) <= currentTick) {
                 shootTicks.remove(0);
-                CraftEntity me = shootBallCaster.getEntity().getBukkitEntity();
-                Location eyeLocation =
-                    me instanceof LivingEntity ? ((LivingEntity) me).getEyeLocation()
-                        : me.getLocation();
-
+                Location eyeLocation = mob.getEyeLocation();
                 if (predictedLocation == null) {
                     dealWithResult();
                     return;
@@ -224,15 +209,9 @@ public class ShootBallSpell implements PathfinderGoalShootSpell.Spell {
                     .add(direction.clone().normalize());
                 Location shootForLocation = locationToShootFrom.clone().add(direction.multiply(2));
                 shootSound(locationToShootFrom);
-                new ProjectileParticleMissle(
-                    locationToShootFrom,
-                    shootForLocation,
-                    direction.normalize(),
-                    Collections.singletonList(Particle.FLAME),
-                    .13,
-                    this::finishedShotCallback,
-                    3
-                );
+                new ProjectileParticleMissle(locationToShootFrom, shootForLocation,
+                    direction.normalize(), Collections.singletonList(Particle.FLAME), .13,
+                    this::finishedShotCallback, 3);
             }
 
             // if we finished shooting, stop shooting
@@ -241,7 +220,7 @@ public class ShootBallSpell implements PathfinderGoalShootSpell.Spell {
                 return;
             }
             this.currentTick += TICK_PER_STEP;
-            Bukkit.getScheduler().scheduleSyncDelayedTask(PLUGIN, this, TICK_PER_STEP);
+            VoltskiyaPlugin.get().scheduleSyncDelayedTask(this, TICK_PER_STEP);
 
         }
 

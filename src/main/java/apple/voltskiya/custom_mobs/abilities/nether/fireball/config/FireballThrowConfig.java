@@ -9,10 +9,9 @@ public class FireballThrowConfig extends MMAbilityConfig {
     public double minSight = 4d;
     public double maxSight = 100000;
     public double shotSpeed = 1d;
-    private final transient String tag;
+    public transient String tag;
 
-    public FireballThrowConfig(String tag) {
-        this.tag = tag;
+    public FireballThrowConfig() {
     }
 
     @Override
