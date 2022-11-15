@@ -22,6 +22,11 @@ public class ReviverConfigBasic extends ReviverConfig implements SpawnListener {
     }
 
     @Override
+    public boolean isOnlyMobs() {
+        return true;
+    }
+
+    @Override
     public void doSpawn(MMSpawned mob) {
         new MobReviverBasic(mob, this);
     }

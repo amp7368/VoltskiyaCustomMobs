@@ -8,14 +8,13 @@ import java.util.List;
 
 public class FireballAbilitySpawner implements SpawnListenerHolder {
 
-    public final FireballThrowConfig basic1 = new FireballThrowConfig("fireball.basic");
-    public final FireballThrowConfig basic2 = new FireballThrowConfig("fireball.basic2");
-    public final FireballThrowConfig basic3 = new FireballThrowConfig("fireball.basic3");
-    public final FireballThrowConfig basic4 = new FireballThrowConfig("fireball.basic4");
-    public final FireballThrowConfig rapid = new FireballThrowConfig("fireball.rapid");
+    public final FireballThrowConfig basic = new FireballThrowConfig();
+    public final FireballThrowConfig rapid = new FireballThrowConfig();
 
     @Override
     public Collection<SpawnListener> getListeners() {
-        return List.of(basic1, basic2, basic3, basic4, rapid);
+        basic.tag = "fireball.basic";
+        rapid.tag = "fireball.rapid";
+        return List.of(basic, rapid);
     }
 }

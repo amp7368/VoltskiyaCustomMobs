@@ -1,4 +1,4 @@
-package apple.voltskiya.custom_mobs.abilities.ai_changes.delay_pathfinding;
+package apple.voltskiya.custom_mobs.abilities.delay_pathfinding;
 
 import apple.nms.decoding.entity.DecodeEntity;
 import apple.nms.decoding.pathfinder.DecodePathfinder;

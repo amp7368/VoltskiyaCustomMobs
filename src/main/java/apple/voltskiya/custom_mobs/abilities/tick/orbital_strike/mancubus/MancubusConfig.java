@@ -31,12 +31,6 @@ public class MancubusConfig extends MMAbilityConfig {
 
     public double burst3Angle2 = 15;
 
-    private transient String tag;
-
-    public MancubusConfig(String tag) {
-        this.tag = tag;
-    }
-
     @Override
     public void doSpawn(MMSpawned mob) {
         new MobMancubus<>(mob, this);
@@ -49,6 +43,6 @@ public class MancubusConfig extends MMAbilityConfig {
 
     @Override
     public String getBriefTag() {
-        return this.tag;
+        return "mancubus.basic";
     }
 }
