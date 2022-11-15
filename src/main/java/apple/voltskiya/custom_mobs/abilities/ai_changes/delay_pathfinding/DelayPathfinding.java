@@ -7,6 +7,7 @@ import apple.voltskiya.custom_mobs.pathfinders.utilities.PathfinderGoalHurtByTar
 import apple.voltskiya.custom_mobs.pathfinders.utilities.PathfinderGoalNearestAttackableTargetCanSee;
 import apple.voltskiya.mob_manager.listen.MMSpawnListener;
 import apple.voltskiya.mob_manager.listen.SpawnListener;
+import apple.voltskiya.mob_manager.listen.order.MMSpawningOrder;
 import apple.voltskiya.mob_manager.mob.MMSpawned;
 import java.util.Collection;
 import net.minecraft.world.entity.Mob;
@@ -63,6 +64,11 @@ public class DelayPathfinding implements SpawnListener {
             if (onHurt != null)
                 onHurt.addOnceOnDone(givePathfinding);
         }, 0);
+    }
+
+    @Override
+    public MMSpawningOrder order() {
+        return MMSpawningOrder.LATEST;
     }
 
     @Override

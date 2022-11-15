@@ -5,7 +5,6 @@ import apple.voltskiya.custom_mobs.abilities.ai_changes.shoot_ball.ShootBallConf
 import apple.voltskiya.custom_mobs.pathfinders.spell.PathfinderGoalShootSpell;
 import apple.voltskiya.mob_manager.listen.SpawnListener;
 import apple.voltskiya.mob_manager.mob.MMSpawned;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -18,10 +17,11 @@ public class ShootBallManager implements SpawnListener {
 
     public Map<String, ShootersType> tagToShootType;
 
-    public ShootBallManager() throws IOException {
+    public ShootBallManager() {
         tagToShootType = new HashMap<>() {{
             put("fireball_laser", ShootersType.NORMAL);
         }};
+        this.registerSpawnListener();
     }
 
     @Override

@@ -1,11 +1,11 @@
 package apple.voltskiya.custom_mobs.util.ticking;
 
-import apple.lib.pmc.AppleModule;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.abilities.tick.Tickable;
+import com.voltskiya.lib.AbstractModule;
 import org.bukkit.Bukkit;
 
-public class Ticking extends AppleModule {
+public class Ticking extends AbstractModule {
 
     private Tickable[] tickables;
 

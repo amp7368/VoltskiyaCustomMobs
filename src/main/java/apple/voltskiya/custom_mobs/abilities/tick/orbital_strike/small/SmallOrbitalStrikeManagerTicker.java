@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,7 +35,7 @@ public class SmallOrbitalStrikeManagerTicker implements SpawnListener {
 
     @Override
     public void doSpawn(MMSpawned mmSpawned) {
-        LivingEntity striker = mmSpawned.getEntity();
+        Entity striker = mmSpawned.getEntity();
         Closeness closeness = determineConcern(striker);
         closenessToStrikeres.get(closeness).giveStriker(striker, 0);
     }

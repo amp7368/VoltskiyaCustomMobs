@@ -5,7 +5,7 @@ import apple.voltskiya.custom_mobs.leaps.LeapPlugin;
 import apple.voltskiya.custom_mobs.nms.parent.config.ConfigManager;
 import apple.voltskiya.custom_mobs.nms.parent.config.YmlSettings;
 import net.minecraft.world.entity.Mob;
-import apple.mc.utilities.AppleModule;
+import apple.mc.utilities.AbstractModule;
 
 public class LeapPounceNormal extends ConfigManager implements LeapEater {
 
@@ -33,7 +33,7 @@ public class LeapPounceNormal extends ConfigManager implements LeapEater {
      * @return the module associated with this config
      */
     @Override
-    protected AppleModule getPlugin() {
+    protected AbstractModule getPlugin() {
         return LeapPlugin.get();
     }
 }

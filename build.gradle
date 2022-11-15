@@ -33,7 +33,7 @@ configurations {
 }
 
 dependencies {
-    compileOnly 'mc.pmc:ApplePluginManager:3.0-SNAPSHOT'
+    compileOnly 'mc.pmc:VoltPluginManager:3.1-SNAPSHOT'
     compileOnly 'mc.apple:AppleMCUtil:1.0-SNAPSHOT'
     compileOnly 'mc.nms:DecodingNms:1.19.2-2.0-SNAPSHOT'
     compileOnly 'voltskiya.utilities:VoltskiyaUtilities:2.0-SNAPSHOT'

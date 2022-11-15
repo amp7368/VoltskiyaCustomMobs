@@ -39,7 +39,7 @@ public abstract class ConfigManager {
     /**
      * @return the module associated with this config
      */
-    protected abstract AppleModule getPlugin();
+    protected abstract AbstractModule getPlugin();
 
     /**
      * sets the value of a field if that field doesn't already have a value

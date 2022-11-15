@@ -10,7 +10,7 @@ import apple.voltskiya.custom_mobs.nms.parent.config.YmlSettings;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.EntityLiving;
 import org.bukkit.util.Vector;
-import apple.mc.utilities.AppleModule;
+import apple.mc.utilities.AbstractModule;
 
 public class LeapRevenant extends ConfigManager implements LeapEater {
 
@@ -62,7 +62,7 @@ public class LeapRevenant extends ConfigManager implements LeapEater {
      * @return the module associated with this config
      */
     @Override
-    protected AppleModule getPlugin() {
+    protected AbstractModule getPlugin() {
         return LeapPlugin.get();
     }
 }

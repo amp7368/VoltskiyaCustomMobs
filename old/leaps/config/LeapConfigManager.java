@@ -1,6 +1,6 @@
 package apple.voltskiya.custom_mobs.leaps.config;
 
-import apple.lib.pmc.AppleModule;
+import com.voltskiya.lib.pmc.AbstractModule;
 import apple.voltskiya.custom_mobs.leaps.LeapPlugin;
 import apple.voltskiya.custom_mobs.leaps.misc.LeapSpecificMisc;
 import apple.voltskiya.custom_mobs.nms.parent.config.ConfigManager;
@@ -85,7 +85,7 @@ public class LeapConfigManager extends ConfigManager {
     }
 
     @Override
-    protected AppleModule getPlugin() {
+    protected AbstractModule getPlugin() {
         return LeapPlugin.get();
     }
 

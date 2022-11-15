@@ -13,7 +13,7 @@ import net.minecraft.world.entity.Mob;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
-import apple.mc.utilities.AppleModule;
+import apple.mc.utilities.AbstractModule;
 
 
 public class LeapUpwards extends ConfigManager implements LeapEater {
@@ -64,7 +64,7 @@ public class LeapUpwards extends ConfigManager implements LeapEater {
      * @return the module associated with this config
      */
     @Override
-    protected AppleModule getPlugin() {
+    protected AbstractModule getPlugin() {
         return LeapPlugin.get();
     }
 }
