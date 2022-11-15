@@ -1,4 +1,4 @@
-package apple.voltskiya.custom_mobs.mobs.nms.parent.config;
+package apple.voltskiya.custom_mobs.nms.parent.config;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -39,7 +39,7 @@ public abstract class ConfigManager {
     /**
      * @return the module associated with this config
      */
-    protected abstract PluginModule getPlugin();
+    protected abstract AbstractModule getPlugin();
 
     /**
      * sets the value of a field if that field doesn't already have a value

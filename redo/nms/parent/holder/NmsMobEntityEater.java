@@ -1,9 +1,9 @@
-package apple.voltskiya.custom_mobs.mobs.nms.parent.holder;
+package apple.voltskiya.custom_mobs.nms.parent.holder;
 
 import apple.voltskiya.custom_mobs.mobs.PluginNmsMobs;
 import apple.voltskiya.custom_mobs.mobs.abilities.tick.parent.ConfigHolderSupplier;
 import org.bukkit.event.entity.CreatureSpawnEvent;
-import voltskiya.apple.configs.plugin.manage.PluginModuleConfig;
+import voltskiya.apple.configs.plugin.manage.AbstractModuleConfig;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -33,7 +33,7 @@ public abstract class NmsMobEntityEater<ConfigInterface extends NmsMobConfig<?, 
             nmsMob.eatSpawnEvent(event);
     }
 
-    public PluginModuleConfig getModule() {
+    public AbstractModuleConfig getModule() {
         return PluginNmsMobs.get();
     }
 

@@ -1,8 +1,8 @@
-package apple.voltskiya.custom_mobs.mobs.nms.parent.holder;
+package apple.voltskiya.custom_mobs.nms.parent.holder;
 
-import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelHandler;
+import apple.voltskiya.custom_mobs.nms.parts.NmsModelHandler;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,7 +19,7 @@ public interface NmsMobConfig<TypeEntity extends Entity & NmsMob<TypeEntity, Con
 
     NmsMobConstructor<TypeEntity, Config> getEntityBuilder();
 
-    EntityTypes<?> getReplacement();
+    EntityType<?> getReplacement();
 
     Consumer<NmsMobRegisterConfigable<TypeEntity, Config>> getRegisterPointer();
 

@@ -3,8 +3,8 @@ package apple.voltskiya.custom_mobs.pathfinders.spell;
 import apple.nms.decoding.entity.DecodeEntity;
 import apple.nms.decoding.pathfinder.DecodeMoveType;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.micro_misles.MicroMissileManager;
-import apple.voltskiya.custom_mobs.mobs.abilities.ai_changes.micro_misles.MicroMissleShooter;
+import apple.voltskiya.custom_mobs.abilities.common.micro_missile.MicroMissileManager;
+import apple.voltskiya.custom_mobs.abilities.common.micro_missile.MicroMissileShooter;
 import java.util.EnumSet;
 import java.util.Random;
 import javax.annotation.Nullable;
@@ -25,10 +25,10 @@ public class PathfinderGoalShootMicroMissle extends Goal {
     private final int cooldown;
     private final int count;
     private int lastShot = 0;
-    private final MicroMissleShooter.MissileType missileType;
+    private final MicroMissileShooter.MissileType missileType;
 
     public PathfinderGoalShootMicroMissle(Mob me, int cooldown, int count,
-        MicroMissleShooter.MissileType missileType) {
+        MicroMissileShooter.MissileType missileType) {
         this.me = me;
         this.cooldown = cooldown;
         this.count = count;
@@ -53,7 +53,7 @@ public class PathfinderGoalShootMicroMissle extends Goal {
         if (targetLocation != null) {
             this.lastShot = DecodeEntity.getTicksLived(me);
             Location shootFromLocation = ((LivingEntity) this.me.getBukkitEntity()).getEyeLocation();
-            if (missileType == MicroMissleShooter.MissileType.FLURRY) {
+            if (missileType == MicroMissileShooter.MissileType.FLURRY) {
                 sounds();
                 try {
                     Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {

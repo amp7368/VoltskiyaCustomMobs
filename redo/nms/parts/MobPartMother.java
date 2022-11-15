@@ -1,7 +1,7 @@
-package apple.voltskiya.custom_mobs.mobs.nms.parts;
+package apple.voltskiya.custom_mobs.nms.parts;
 
-import apple.voltskiya.custom_mobs.mobs.nms.parts.child.MobPartChild;
-import apple.voltskiya.custom_mobs.mobs.nms.parts.child.MobParts;
+import apple.voltskiya.custom_mobs.nms.parts.child.MobPartChild;
+import apple.voltskiya.custom_mobs.nms.parts.child.MobParts;
 import net.minecraft.world.entity.Entity;
 import org.bukkit.Location;
 import voltskiya.apple.utilities.EntityLocation;

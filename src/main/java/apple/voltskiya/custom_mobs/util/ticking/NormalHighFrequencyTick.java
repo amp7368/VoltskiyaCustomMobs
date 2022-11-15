@@ -1,6 +1,6 @@
 package apple.voltskiya.custom_mobs.util.ticking;
 
-import apple.voltskiya.custom_mobs.mobs.abilities.tick.Tickable;
+import apple.voltskiya.custom_mobs.abilities.tick.Tickable;
 
 public class NormalHighFrequencyTick extends TickGiverable implements Tickable {
 

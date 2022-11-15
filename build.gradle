@@ -33,9 +33,7 @@ configurations {
 }
 
 dependencies {
-    compileOnly 'apple.utilities:AppleUtilities:1.2-SNAPSHOT'
-    compileOnly 'mc.pmc:PluginManagerCreator:2.0-SNAPSHOT'
-    compileOnly 'mc.configs:AppleConfigs:2.0-SNAPSHOT'
+    compileOnly 'mc.pmc:VoltPluginManager:3.1-SNAPSHOT'
     compileOnly 'mc.apple:AppleMCUtil:1.0-SNAPSHOT'
     compileOnly 'mc.nms:DecodingNms:1.19.2-2.0-SNAPSHOT'
     compileOnly 'voltskiya.utilities:VoltskiyaUtilities:2.0-SNAPSHOT'
@@ -48,12 +46,15 @@ dependencies {
     compileOnly 'de.tr7zw:item-nbt-api-plugin:2.10.0'
 
     compileOnly 'org.jetbrains:annotations:23.0.0'
-    compileOnly 'com.google.code.gson:gson:2.9.0'
-}
-jar {
+    compileOnly 'com.google.code.gson:gson:2.10'
 }
 remap {
-    dependsOn(jar)
-    archiveDirectory.set(file(serverBuildDir))
     version.set '1.19.2'
+    dependsOn(jar)
+    doLast {
+        copy {
+            from jar.getArchiveFile()
+            into file(serverBuildDir)
+        }
+    }
 }

@@ -1,23 +1,23 @@
-package apple.voltskiya.custom_mobs.mobs.nms.misc;
+package apple.voltskiya.custom_mobs.nms.misc;
 
 import apple.nms.decoding.entity.DecodeEntity;
 import apple.nms.decoding.iregistry.DecodeDamageSource;
-import apple.nms.decoding.iregistry.DecodeEntityTypes;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.holder.NmsMobEntitySupers;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.qol.NmsHolderQOL;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.qol.NmsMobWrapperQOL;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.register.RegisteredCustomMob;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.utility.NmsSpawnWrapper;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.level.WorldServer;
+import apple.nms.decoding.iregistry.DecodeEntityType;
+import apple.voltskiya.custom_mobs.nms.parent.holder.NmsMobEntitySupers;
+import apple.voltskiya.custom_mobs.nms.parent.qol.NmsHolderQOL;
+import apple.voltskiya.custom_mobs.nms.parent.qol.NmsMobWrapperQOL;
+import apple.voltskiya.custom_mobs.nms.parent.register.RegisteredCustomMob;
+import apple.voltskiya.custom_mobs.nms.parent.utility.NmsSpawnWrapper;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EnumMoveType;
-import net.minecraft.world.entity.ai.attributes.AttributeMapBase;
+import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.entity.monster.EntityZombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.World;
-import net.minecraft.world.phys.Vec3D;
+import net.minecraft.world.phys.Vec3;
 import org.bukkit.craftbukkit.v1_19_R1.entity.CraftHumanEntity;
 import org.bukkit.entity.LivingEntity;
 
@@ -30,8 +30,8 @@ public class MobHealthPack extends EntityZombie implements RegisteredCustomMob, 
     private NmsMobWrapperQOL<MobHealthPack> wrapper;
 
 
-    public MobHealthPack(EntityTypes<MobHealthPack> entityTypes, World world) {
-        super(DecodeEntityTypes.ZOMBIE, world);
+    public MobHealthPack(EntityType<MobHealthPack> EntityType, World world) {
+        super(DecodeEntityType.ZOMBIE, world);
     }
 
     public static NmsSpawnWrapper<MobHealthPack> spawner() {
@@ -42,7 +42,7 @@ public class MobHealthPack extends EntityZombie implements RegisteredCustomMob, 
         return new NmsSpawnWrapper<>(
                 REGISTERED_NAME,
                 MobHealthPack::new,
-                DecodeEntityTypes.ZOMBIE
+                DecodeEntityType.ZOMBIE
         );
     }
 
@@ -96,33 +96,33 @@ public class MobHealthPack extends EntityZombie implements RegisteredCustomMob, 
     }
 
     @Override
-    public EntityTypes<?> ad() {
+    public EntityType<?> ad() {
         return nmsgetEntityType();
     }
 
     @Override
-    public void a(EnumMoveType enummovetype, Vec3D vec3d) {
-        nmsmove(enummovetype, vec3d);
+    public void a(EnumMoveType enummovetype, Vec3 Vec3) {
+        nmsmove(enummovetype, Vec3);
     }
 
     @Override
-    public AttributeMapBase ep() {
+    public AttributeMap ep() {
         return nmsgetAttributeMap();
     }
 
     @Override
-    public Entity b(WorldServer worldserver) {
-        return nmsChangeWorlds(worldserver);
+    public Entity b(ServerLevel ServerLevel) {
+        return nmsChangeWorlds(ServerLevel);
     }
 
     @Override
-    public void g(NBTTagCompound nbttagcompound) {
-        nmsload(nbttagcompound);
+    public void g(CompoundTag CompoundTag) {
+        nmsload(CompoundTag);
     }
 
     @Override
-    public NBTTagCompound f(NBTTagCompound nbttagcompound) {
-        return nmssave(nbttagcompound);
+    public CompoundTag f(CompoundTag CompoundTag) {
+        return nmssave(CompoundTag);
     }
 
     @Override

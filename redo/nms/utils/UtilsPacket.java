@@ -1,4 +1,4 @@
-package apple.voltskiya.custom_mobs.mobs.nms.utils;
+package apple.voltskiya.custom_mobs.nms.utils;
 
 import apple.nms.decoding.packet.DecodePlayerConnection;
 import apple.voltskiya.custom_mobs.util.UpdatedPlayerList;

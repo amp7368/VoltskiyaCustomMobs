@@ -1,6 +1,6 @@
-package apple.voltskiya.custom_mobs.mobs.nms.cool.aledar.config;
+package apple.voltskiya.custom_mobs.nms.cool.aledar.config;
 
-import apple.voltskiya.custom_mobs.mobs.nms.parent.holder.NmsMobConfigHolder;
+import apple.voltskiya.custom_mobs.nms.parent.holder.NmsMobConfigHolder;
 
 
 import java.util.Collection;

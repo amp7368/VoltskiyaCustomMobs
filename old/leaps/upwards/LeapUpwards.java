@@ -7,13 +7,13 @@ import apple.voltskiya.custom_mobs.leaps.LeapPlugin;
 import apple.voltskiya.custom_mobs.leaps.config.LeapDo;
 import apple.voltskiya.custom_mobs.leaps.config.LeapPostConfig;
 import apple.voltskiya.custom_mobs.leaps.sounds.LeapSounds;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.config.ConfigManager;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.config.YmlSettings;
+import apple.voltskiya.custom_mobs.nms.parent.config.ConfigManager;
+import apple.voltskiya.custom_mobs.nms.parent.config.YmlSettings;
 import net.minecraft.world.entity.Mob;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
-import apple.mc.utilities.PluginModule;
+import apple.mc.utilities.AbstractModule;
 
 
 public class LeapUpwards extends ConfigManager implements LeapEater {
@@ -64,7 +64,7 @@ public class LeapUpwards extends ConfigManager implements LeapEater {
      * @return the module associated with this config
      */
     @Override
-    protected PluginModule getPlugin() {
+    protected AbstractModule getPlugin() {
         return LeapPlugin.get();
     }
 }

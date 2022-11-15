@@ -1,4 +1,4 @@
-package apple.voltskiya.custom_mobs.mobs.nms.nether.parasite;
+package apple.voltskiya.custom_mobs.nms.nether.parasite;
 
 import apple.nms.decoding.entity.DecodeEntity;
 import apple.nms.decoding.iregistry.DecodeDamageSource;

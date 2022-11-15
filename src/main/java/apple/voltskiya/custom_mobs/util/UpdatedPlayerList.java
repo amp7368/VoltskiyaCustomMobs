@@ -2,7 +2,7 @@ package apple.voltskiya.custom_mobs.util;
 
 import apple.mc.utilities.world.vector.VectorUtils;
 import apple.utilities.util.ObjectUtilsFormatting;
-import apple.voltskiya.custom_mobs.mobs.abilities.tick.Tickable;
+import apple.voltskiya.custom_mobs.abilities.tick.Tickable;
 import apple.voltskiya.custom_mobs.util.ticking.HighFrequencyTick;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
@@ -18,7 +18,6 @@ import org.jetbrains.annotations.Nullable;
 public class UpdatedPlayerList implements Tickable {
 
     private static List<Player> players = new ArrayList<>(Bukkit.getOnlinePlayers());
-    private static final Object PLAYER_SYNC = new Object();
 
     public UpdatedPlayerList() {
         HighFrequencyTick.get().add(this::tick);

@@ -1,11 +1,11 @@
-package apple.voltskiya.custom_mobs.mobs.nms.parent.qol;
+package apple.voltskiya.custom_mobs.nms.parent.qol;
 
-import apple.voltskiya.custom_mobs.mobs.nms.parent.holder.NmsMobEntitySupers;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.utility.NmsSpawnWrapper;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.utility.NmsUtility;
+import apple.voltskiya.custom_mobs.nms.parent.holder.NmsMobEntitySupers;
+import apple.voltskiya.custom_mobs.nms.parent.utility.NmsSpawnWrapper;
+import apple.voltskiya.custom_mobs.nms.parent.utility.NmsUtility;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityTypes;
-import net.minecraft.world.entity.ai.attributes.AttributeMapBase;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.attributes.AttributeMap;
 
 import java.util.Random;
 
@@ -23,7 +23,7 @@ public interface NmsHolderQOL<SelfEntity extends Entity & NmsHolderQOL<SelfEntit
         return getSelfWrapper().getRandom();
     }
 
-    default AttributeMapBase nmsgetAttributeMap() {
+    default AttributeMap nmsgetAttributeMap() {
         return getSelfWrapper().getAttributeMap();
     }
 
@@ -33,8 +33,8 @@ public interface NmsHolderQOL<SelfEntity extends Entity & NmsHolderQOL<SelfEntit
     }
 
     @Override
-    default EntityTypes<?> nmsgetEntityType() {
-        return getSpawner().entityTypes();
+    default EntityType<?> nmsgetEntityType() {
+        return getSpawner().EntityType();
     }
 
     default NmsMobWrapperQOL<SelfEntity> makeSelfWrapper() {

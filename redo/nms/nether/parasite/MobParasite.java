@@ -1,22 +1,22 @@
-package apple.voltskiya.custom_mobs.mobs.nms.nether.parasite;
+package apple.voltskiya.custom_mobs.nms.nether.parasite;
 
 import apple.nms.decoding.entity.DecodeEntity;
 import apple.nms.decoding.entity.DecodeEnumMonsterType;
-import apple.nms.decoding.iregistry.DecodeEntityTypes;
+import apple.nms.decoding.iregistry.DecodeEntityType;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.holder.NmsMobEntitySupers;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.qol.NmsMobWrapperQOLModel;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.qol.NmsModelHolderQOL;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.register.RegisteredCustomMob;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.utility.NmsSpawnWrapperModel;
-import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelHandler;
-import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelHandler.ModelConfigName;
+import apple.voltskiya.custom_mobs.nms.parent.holder.NmsMobEntitySupers;
+import apple.voltskiya.custom_mobs.nms.parent.qol.NmsMobWrapperQOLModel;
+import apple.voltskiya.custom_mobs.nms.parent.qol.NmsModelHolderQOL;
+import apple.voltskiya.custom_mobs.nms.parent.register.RegisteredCustomMob;
+import apple.voltskiya.custom_mobs.nms.parent.utility.NmsSpawnWrapperModel;
+import apple.voltskiya.custom_mobs.nms.parts.NmsModelHandler;
+import apple.voltskiya.custom_mobs.nms.parts.NmsModelHandler.ModelConfigName;
 import apple.voltskiya.custom_mobs.pathfinders.GoalCraveBlock;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.EntityPlayer;
-import net.minecraft.server.level.WorldServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.ai.attributes.AttributeMapBase;
+import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.entity.ai.goal.GoalFloat;
 import net.minecraft.world.entity.ai.goal.GoalMeleeAttack;
 import net.minecraft.world.entity.ai.goal.GoalRandomStrollLand;
@@ -25,7 +25,7 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.EntityAnimal;
 import net.minecraft.world.entity.monster.EntityZombie;
 import net.minecraft.world.level.World;
-import net.minecraft.world.phys.Vec3D;
+import net.minecraft.world.phys.Vec3;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_19_R1.entity.CraftEntity;
@@ -38,11 +38,11 @@ public class MobParasite extends EntityZombie implements RegisteredCustomMob, Nm
     private static NmsSpawnWrapperModel<MobParasite> spawner;
     private NmsMobWrapperQOLModel<MobParasite> wrapper;
 
-    public MobParasite(EntityTypes<MobParasite> entityTypes, World world) {
-        super(DecodeEntityTypes.ZOMBIE, world);
+    public MobParasite(EntityType<MobParasite> EntityType, World world) {
+        super(DecodeEntityType.ZOMBIE, world);
     }
 
-    public static void spawn(Location location, NBTTagCompound oldNbt, Vector velocity) {
+    public static void spawn(Location location, CompoundTag oldNbt, Vector velocity) {
         MobParasite mob = spawner.spawn(location, oldNbt);
         CraftEntity bukkitEntity = mob.getBukkitEntity();
         if (velocity != null)
@@ -59,7 +59,7 @@ public class MobParasite extends EntityZombie implements RegisteredCustomMob, Nm
         return new NmsSpawnWrapperModel<>(
                 model.getName(),
                 MobParasite::new,
-                DecodeEntityTypes.ZOMBIE,
+                DecodeEntityType.ZOMBIE,
                 model
         );
     }
@@ -141,33 +141,33 @@ public class MobParasite extends EntityZombie implements RegisteredCustomMob, Nm
     }
 
     @Override
-    public EntityTypes<?> ad() {
+    public EntityType<?> ad() {
         return nmsgetEntityType();
     }
 
     @Override
-    public void a(EnumMoveType enummovetype, Vec3D vec3d) {
-        nmsmove(enummovetype, vec3d);
+    public void a(EnumMoveType enummovetype, Vec3 Vec3) {
+        nmsmove(enummovetype, Vec3);
     }
 
     @Override
-    public AttributeMapBase ep() {
+    public AttributeMap ep() {
         return nmsgetAttributeMap();
     }
 
     @Override
-    public Entity b(WorldServer worldserver) {
-        return nmsChangeWorlds(worldserver);
+    public Entity b(ServerLevel ServerLevel) {
+        return nmsChangeWorlds(ServerLevel);
     }
 
     @Override
-    public void g(NBTTagCompound nbttagcompound) {
-        nmsload(nbttagcompound);
+    public void g(CompoundTag CompoundTag) {
+        nmsload(CompoundTag);
     }
 
     @Override
-    public NBTTagCompound f(NBTTagCompound nbttagcompound) {
-        return nmssave(nbttagcompound);
+    public CompoundTag f(CompoundTag CompoundTag) {
+        return nmssave(CompoundTag);
     }
 
     @Override

@@ -1,27 +1,27 @@
-package apple.voltskiya.custom_mobs.mobs.nms.cool.aledar.mob;
+package apple.voltskiya.custom_mobs.nms.cool.aledar.mob;
 
 import apple.nms.decoding.entity.DecodeEntity;
-import apple.nms.decoding.iregistry.DecodeEntityTypes;
-import apple.voltskiya.custom_mobs.mobs.nms.cool.aledar.config.MobAledarConfigImpl;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.holder.NmsMob;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.holder.NmsMobEntitySupers;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.holder.NmsMobRegisterConfigable;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.holder.NmsMobWrappedConfigable;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.register.RegisteredCustomMob;
-import apple.voltskiya.custom_mobs.mobs.nms.parts.child.MobPartArmorStand;
-import apple.voltskiya.custom_mobs.mobs.nms.parts.child.MobPartChild;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.level.WorldServer;
+import apple.nms.decoding.iregistry.DecodeEntityType;
+import apple.voltskiya.custom_mobs.nms.cool.aledar.config.MobAledarConfigImpl;
+import apple.voltskiya.custom_mobs.nms.parent.holder.NmsMob;
+import apple.voltskiya.custom_mobs.nms.parent.holder.NmsMobEntitySupers;
+import apple.voltskiya.custom_mobs.nms.parent.holder.NmsMobRegisterConfigable;
+import apple.voltskiya.custom_mobs.nms.parent.holder.NmsMobWrappedConfigable;
+import apple.voltskiya.custom_mobs.nms.parent.register.RegisteredCustomMob;
+import apple.voltskiya.custom_mobs.nms.parts.child.MobPartArmorStand;
+import apple.voltskiya.custom_mobs.nms.parts.child.MobPartChild;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EnumMoveType;
-import net.minecraft.world.entity.ai.attributes.AttributeMapBase;
+import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.monster.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.World;
-import net.minecraft.world.phys.Vec3D;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,8 +37,8 @@ public class MobAledar extends EntityPillager implements RegisteredCustomMob, Nm
     private final List<MobPartArmorStand> rightWheels = new ArrayList<>();
     private NmsMobWrappedConfigable<MobAledar, MobAledarConfigImpl> mobManager;
 
-    public MobAledar(EntityTypes<?> entitytypes, World world) {
-        super(DecodeEntityTypes.PILLAGER, world);
+    public MobAledar(EntityType<?> EntityType, World world) {
+        super(DecodeEntityType.PILLAGER, world);
     }
 
     @Override
@@ -111,8 +111,8 @@ public class MobAledar extends EntityPillager implements RegisteredCustomMob, Nm
 
 
     @Override
-    public void a(EnumMoveType enummovetype, Vec3D vec3d) {
-        double moveAmount = vec3d.g();
+    public void a(EnumMoveType enummovetype, Vec3 Vec3) {
+        double moveAmount = Vec3.g();
 //      move/(pi*2*r)*360; r = .625/2/2
         moveAmount *= 360;
         moveAmount /= Math.PI * 2 * SMALL_STAND_HEAD_RADIUS;
@@ -125,7 +125,7 @@ public class MobAledar extends EntityPillager implements RegisteredCustomMob, Nm
                 wheel.rotateHead(0f, 0f, (float) moveAmount);
             }
         }
-        nmsmove(enummovetype, vec3d);
+        nmsmove(enummovetype, Vec3);
     }
 
     @Override
@@ -140,28 +140,28 @@ public class MobAledar extends EntityPillager implements RegisteredCustomMob, Nm
     }
 
     @Override
-    public EntityTypes<?> ad() {
+    public EntityType<?> ad() {
         return nmsgetEntityType();
     }
 
     @Override
-    public AttributeMapBase ep() {
+    public AttributeMap ep() {
         return nmsgetAttributeMap();
     }
 
     @Override
-    public Entity b(WorldServer worldserver) {
-        return nmsChangeWorlds(worldserver);
+    public Entity b(ServerLevel ServerLevel) {
+        return nmsChangeWorlds(ServerLevel);
     }
 
     @Override
-    public void g(NBTTagCompound nbttagcompound) {
-        nmsload(nbttagcompound);
+    public void g(CompoundTag CompoundTag) {
+        nmsload(CompoundTag);
     }
 
     @Override
-    public NBTTagCompound f(NBTTagCompound nbttagcompound) {
-        return nmssave(nbttagcompound);
+    public CompoundTag f(CompoundTag CompoundTag) {
+        return nmssave(CompoundTag);
     }
 
     @Override

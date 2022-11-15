@@ -31,7 +31,7 @@ public class PathfinderGoalShootSpell<Caster extends PathfinderGoalShootSpell.Sp
     public boolean canUse() {
         CraftEntity bukkitEntity = this.me.getBukkitEntity();
         LivingEntity lastTarget = DecodeEntity.getLastTarget(me);
-        return bukkitEntity.isDead()
+        return !bukkitEntity.isDead()
             && DecodeEntity.getTicksLived(me) - lastShot >= type.getCooldown() && lastTarget != null
             && type.inRange(VectorUtils.distance(lastTarget.getBukkitEntity().getLocation(),
             bukkitEntity.getLocation()));

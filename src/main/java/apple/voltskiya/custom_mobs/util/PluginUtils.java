@@ -1,9 +1,9 @@
 package apple.voltskiya.custom_mobs.util;
 
 
-import apple.lib.pmc.PluginModule;
+import com.voltskiya.lib.AbstractModule;
 
-public class PluginUtils extends PluginModule {
+public class PluginUtils extends AbstractModule {
 
     private static PluginUtils instance;
 

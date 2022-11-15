@@ -1,18 +1,18 @@
-package apple.voltskiya.custom_mobs.mobs.nms.parent.utility;
+package apple.voltskiya.custom_mobs.nms.parent.utility;
 
-import apple.voltskiya.custom_mobs.mobs.nms.parent.qol.NmsModelHolderQOL;
-import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModel;
-import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModelHandler;
-import net.minecraft.nbt.NBTTagCompound;
+import apple.voltskiya.custom_mobs.nms.parent.qol.NmsModelHolderQOL;
+import apple.voltskiya.custom_mobs.nms.parts.NmsModel;
+import apple.voltskiya.custom_mobs.nms.parts.NmsModelHandler;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.EntityType;
 import org.bukkit.Location;
 
 public class NmsSpawnWrapperModel<SelfEntity extends Mob & NmsModelHolderQOL<SelfEntity>> extends NmsSpawnWrapper<SelfEntity> {
     private final NmsModelHandler.ModelConfigName modelName;
     private NmsModel model;
 
-    public NmsSpawnWrapperModel(String name, EntityTypes.b<SelfEntity> create, EntityTypes<?> replacement, NmsModelHandler.ModelConfigName registeredModel) {
+    public NmsSpawnWrapperModel(String name, EntityType.b<SelfEntity> create, EntityType<?> replacement, NmsModelHandler.ModelConfigName registeredModel) {
         super(name, create, replacement);
         this.modelName = registeredModel;
     }
@@ -24,7 +24,7 @@ public class NmsSpawnWrapperModel<SelfEntity extends Mob & NmsModelHolderQOL<Sel
     }
 
     @Override
-    public SelfEntity spawn(Location location, NBTTagCompound oldNbt) {
+    public SelfEntity spawn(Location location, CompoundTag oldNbt) {
         SelfEntity spawned = super.spawn(location, oldNbt);
         spawned.addChildrenPost();
         return null;

@@ -1,16 +1,16 @@
-package apple.voltskiya.custom_mobs.mobs.nms.parent.holder;
+package apple.voltskiya.custom_mobs.nms.parent.holder;
 
 
-import apple.voltskiya.custom_mobs.mobs.nms.parent.register.RegisteredCustomMob;
-import apple.voltskiya.custom_mobs.mobs.nms.parent.utility.NmsUtility;
-import apple.voltskiya.custom_mobs.mobs.nms.parts.NmsModel;
-import apple.voltskiya.custom_mobs.mobs.nms.parts.child.MobPartChild;
-import apple.voltskiya.custom_mobs.mobs.nms.utils.UtilsPacket;
+import apple.voltskiya.custom_mobs.nms.parent.register.RegisteredCustomMob;
+import apple.voltskiya.custom_mobs.nms.parent.utility.NmsUtility;
+import apple.voltskiya.custom_mobs.nms.parts.NmsModel;
+import apple.voltskiya.custom_mobs.nms.parts.child.MobPartChild;
+import apple.voltskiya.custom_mobs.nms.utils.UtilsPacket;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityTypes;
-import net.minecraft.world.entity.ai.attributes.AttributeMapBase;
-import net.minecraft.world.entity.ai.attributes.AttributeProvider;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.attributes.AttributeMap;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -41,8 +41,8 @@ public interface NmsMob<
     }
 
     @Override
-    default AttributeProvider getAttributeProvider() {
-        return getRegister().getAttributeProvider();
+    default AttributeSupplier getAttributeSupplier() {
+        return getRegister().getAttributeSupplier();
     }
 
 
@@ -80,11 +80,11 @@ public interface NmsMob<
         }
     }
 
-    default EntityTypes<?> nmsgetEntityType() {
+    default EntityType<?> nmsgetEntityType() {
         return getRegister().getEntityType();
     }
 
-    default AttributeMapBase nmsgetAttributeMap() {
+    default AttributeMap nmsgetAttributeMap() {
         return verifyMobWrapper().getAttributeMap();
     }
 
