@@ -32,10 +32,9 @@ public abstract class NmsSpawner<E extends Entity> implements ReSpawnListener {
 
 
     @Override
-    public MMReSpawnResult doReSpawn(CreatureSpawnEvent event) {
-        LivingEntity originalEntity = event.getEntity();
-        Location location = originalEntity.getLocation();
-        CompoundTag nbt = DecodeEntity.save(((CraftEntity) originalEntity).getHandle());
+    public MMReSpawnResult doReSpawn(Entity originalEntity) {
+        Location location = originalEntity.getBukkitEntity().getLocation();
+        CompoundTag nbt = DecodeEntity.save(originalEntity);
         ServerLevel world = ((CraftWorld) location.getWorld()).getHandle();
         E entity = getEntityFactory().create(getEntityType(), world);
         prepare(entity, location, nbt);

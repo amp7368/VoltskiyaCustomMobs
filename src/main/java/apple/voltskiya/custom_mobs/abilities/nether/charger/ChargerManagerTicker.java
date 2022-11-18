@@ -27,15 +27,11 @@ public class ChargerManagerTicker implements SpawnListener {
 
     public ChargerManagerTicker() {
         instance = this;
+        registerSpawnListener();
     }
 
     public static ChargerManagerTicker get() {
         return instance;
-    }
-
-    @Override
-    public boolean isOnlyMobs() {
-        return true;
     }
 
     @Override

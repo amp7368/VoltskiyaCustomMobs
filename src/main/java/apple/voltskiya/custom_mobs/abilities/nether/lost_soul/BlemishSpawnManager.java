@@ -1,7 +1,6 @@
 package apple.voltskiya.custom_mobs.abilities.nether.lost_soul;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import apple.voltskiya.mob_manager.listen.MMSpawnListener;
 import apple.voltskiya.mob_manager.listen.SpawnListener;
 import apple.voltskiya.mob_manager.mob.MMSpawned;
 import java.util.Collection;
@@ -17,7 +16,6 @@ import org.bukkit.entity.Mob;
 import org.bukkit.entity.Vex;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.util.Vector;
@@ -28,13 +26,13 @@ public class BlemishSpawnManager implements SpawnListener, Listener {
     private final HashSet<UUID> ghasts = new HashSet<>();
 
     public BlemishSpawnManager() {
-        MMSpawnListener.get().addListener(this);
+        this.registerSpawnListener();
         Bukkit.getPluginManager().registerEvents(this, VoltskiyaPlugin.get());
     }
 
     @Override
-    public boolean shouldHandle(CreatureSpawnEvent event) {
-        return event.getEntityType() == EntityType.GHAST;
+    public boolean shouldHandle(Entity entity) {
+        return entity.getType() == EntityType.GHAST;
     }
 
     @Override

@@ -5,7 +5,6 @@ import apple.nms.decoding.pathfinder.DecodePathfinder;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.pathfinders.utilities.PathfinderGoalHurtByTargetOnDone;
 import apple.voltskiya.custom_mobs.pathfinders.utilities.PathfinderGoalNearestAttackableTargetCanSee;
-import apple.voltskiya.mob_manager.listen.MMSpawnListener;
 import apple.voltskiya.mob_manager.listen.SpawnListener;
 import apple.voltskiya.mob_manager.listen.order.MMSpawningOrder;
 import apple.voltskiya.mob_manager.mob.MMSpawned;
@@ -23,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 public class DelayPathfinding implements SpawnListener {
 
     public DelayPathfinding() {
-        MMSpawnListener.get().addListener(this);
+        this.registerSpawnListener();
     }
 
     @Override

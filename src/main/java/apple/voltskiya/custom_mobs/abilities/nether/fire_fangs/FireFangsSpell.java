@@ -47,6 +47,7 @@ public class FireFangsSpell implements PathfinderGoalShootSpell.Spell {
                     VectorUtils.rotateVector(mainDirection.getX(), mainDirection.getZ(),
                         mainDirection.getY(), Math.toRadians(-30)), mainLocation.clone(),
                     ticksToLive, fireLength));
+                return;
             case NORMAL:
             case BLUE_NORMAL:
             case TRIPLE_STRAIGHT:
@@ -106,6 +107,6 @@ public class FireFangsSpell implements PathfinderGoalShootSpell.Spell {
     }
 
     protected boolean shouldRun() {
-        return this.fangLines.isEmpty();
+        return !this.fangLines.isEmpty();
     }
 }

@@ -68,7 +68,7 @@ public class MobReviverBasic extends MobReviver<ReviverConfigBasic> {
     }
 
     @Override
-    public void doDeath() {
+    public void cleanUp(boolean isDead) {
         this.action.stop();
     }
 

@@ -2,19 +2,18 @@ package apple.voltskiya.custom_mobs.ai.bowlike;
 
 import apple.nms.decoding.entity.DecodeEntity;
 import apple.voltskiya.custom_mobs.pathfinders.PathfinderGoalBowShootNoBow;
-import apple.voltskiya.mob_manager.listen.MMSpawnListener;
 import apple.voltskiya.mob_manager.listen.SpawnListener;
 import apple.voltskiya.mob_manager.mob.MMSpawned;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.RangedAttackMob;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.craftbukkit.v1_19_R1.entity.CraftEntity;
+import org.bukkit.entity.Entity;
 
 public class BowlikeMoveManager implements SpawnListener {
 
     public BowlikeMoveManager() {
-        MMSpawnListener.get().addListener(this);
+        this.registerSpawnListener();
     }
 
     @Override
@@ -26,9 +25,9 @@ public class BowlikeMoveManager implements SpawnListener {
     }
 
     @Override
-    public boolean shouldHandle(CreatureSpawnEvent event) {
-        LivingEntity entity = event.getEntity();
-        return entity instanceof Monster && entity instanceof RangedAttackMob;
+    public boolean shouldHandle(Entity entity) {
+        return ((CraftEntity) entity).getHandle() instanceof Monster
+            && entity instanceof RangedAttackMob;
     }
 
     @Override

@@ -2,7 +2,6 @@ package apple.voltskiya.custom_mobs.abilities.common.micro_missile;
 
 import apple.nms.decoding.entity.DecodeEntity;
 import apple.voltskiya.custom_mobs.pathfinders.spell.PathfinderGoalShootMicroMissle;
-import apple.voltskiya.mob_manager.listen.MMSpawnListener;
 import apple.voltskiya.mob_manager.listen.SpawnListener;
 import apple.voltskiya.mob_manager.mob.MMSpawned;
 import net.minecraft.world.entity.Mob;
@@ -12,7 +11,7 @@ public class MicroMissileShooter implements SpawnListener {
     private static final int COOLDOWN = 20 * 10;
 
     public MicroMissileShooter() {
-        MMSpawnListener.get().addListener(this);
+        this.registerSpawnListener();
     }
 
     @Override

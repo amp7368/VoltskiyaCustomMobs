@@ -33,7 +33,7 @@ public class MobMissileLaser<Config extends MissileLaserConfig> extends MMAbilit
 
 
     @Override
-    public void doDeath() {
+    public void cleanUp(boolean isDead) {
     }
 
     public void finish() {
