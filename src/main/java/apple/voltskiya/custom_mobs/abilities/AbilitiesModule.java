@@ -16,7 +16,7 @@ import apple.voltskiya.custom_mobs.abilities.nether.warper.WarperConfig;
 import apple.voltskiya.custom_mobs.abilities.nether.warper.WarperManagerTicker;
 import apple.voltskiya.custom_mobs.abilities.overseer.laser.MissileLaserAbilitySpawner;
 import apple.voltskiya.custom_mobs.abilities.tick.orbital_strike.OrbitalStrikeAbilitySpawner;
-import apple.voltskiya.custom_mobs.abilities.tick.orbital_strike.large.mancubus.MancubusAbilitySpawner;
+import apple.voltskiya.custom_mobs.abilities.nether.mancubus.MancubusAbilitySpawner;
 import apple.voltskiya.mob_manager.listen.SpawnListenerHolder;
 import com.voltskiya.lib.AbstractModule;
 import com.voltskiya.lib.configs.data.config.AppleConfig;
