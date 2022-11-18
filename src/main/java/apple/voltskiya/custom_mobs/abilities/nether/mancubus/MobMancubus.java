@@ -1,4 +1,4 @@
-package apple.voltskiya.custom_mobs.abilities.tick.orbital_strike.large.mancubus;
+package apple.voltskiya.custom_mobs.abilities.nether.mancubus;
 
 import apple.mc.utilities.world.vector.VectorUtils;
 import apple.utilities.util.NumberUtils;
