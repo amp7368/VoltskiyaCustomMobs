@@ -50,7 +50,7 @@ public class MobFireballThrow<Config extends FireballThrowConfig> extends MMAbil
     }
 
     @Override
-    public void doDeath() {
+    public void cleanUp(boolean isDead) {
         actionManager.stop();
     }
 

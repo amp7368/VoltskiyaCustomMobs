@@ -1,4 +1,4 @@
-package apple.voltskiya.custom_mobs.abilities.tick.orbital_strike.mancubus;
+package apple.voltskiya.custom_mobs.abilities.tick.orbital_strike.large.mancubus;
 
 import apple.mc.utilities.world.vector.VectorUtils;
 import apple.utilities.util.NumberUtils;
@@ -16,7 +16,6 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import voltskiya.apple.utilities.action.OneOffAction;
 import voltskiya.apple.utilities.action.RepeatingActionManager;
 import voltskiya.apple.utilities.action.ScheduledAction;
@@ -77,7 +76,7 @@ public class MobMancubus<Config extends MancubusConfig> extends MMAbility<Config
 
     @Override
     protected boolean canStartAbility() {
-        @Nullable LivingEntity target = getTarget();
+        this.target = getTarget();
         if (target == null)
             return false;
         double distanceToTarget = VectorUtils.distance(target.getLocation(), getLocation());
@@ -87,7 +86,7 @@ public class MobMancubus<Config extends MancubusConfig> extends MMAbility<Config
     }
 
     @Override
-    public void doDeath() {
+    public void cleanUp(boolean isDead) {
         this.quitBurst();
     }
 

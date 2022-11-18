@@ -2,7 +2,6 @@ package apple.voltskiya.custom_mobs.abilities.nether.fire_fangs;
 
 import apple.nms.decoding.entity.DecodeEntity;
 import apple.voltskiya.custom_mobs.pathfinders.spell.PathfinderGoalShootSpell;
-import apple.voltskiya.mob_manager.listen.MMSpawnListener;
 import apple.voltskiya.mob_manager.listen.SpawnListener;
 import apple.voltskiya.mob_manager.mob.MMSpawned;
 import java.util.HashMap;
@@ -22,7 +21,7 @@ public class FireFangsManager implements SpawnListener {
             put("fire_fangs_triple_blue", FireFangsType.BLUE_TRIPLE);
             put("fire_fangs_triple_blue_straight", FireFangsType.BLUE_TRIPLE_STRAIGHT);
         }};
-        MMSpawnListener.get().addListener(this);
+        this.registerSpawnListener();
     }
 
     @Override
@@ -36,9 +35,8 @@ public class FireFangsManager implements SpawnListener {
         Mob entity = (Mob) mmSpawned.getNmsEntity();
         for (String tag : mmSpawned.getEntity().getScoreboardTags()) {
             FireFangsType type = tagToFangType.get(tag);
-            if (type == null) {
+            if (type == null)
                 continue;
-            }
             DecodeEntity.getGoalSelector(entity)
                 .addGoal(0, new PathfinderGoalShootSpell<>(new FireFangsCaster(entity), type));
         }

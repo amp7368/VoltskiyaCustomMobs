@@ -50,7 +50,7 @@ public class MobReviverPulse extends MobReviver<ReviverConfigPulse> {
     }
 
     @Override
-    public void doDeath() {
+    public void cleanUp(boolean isDead) {
         pulse.stop();
     }
 

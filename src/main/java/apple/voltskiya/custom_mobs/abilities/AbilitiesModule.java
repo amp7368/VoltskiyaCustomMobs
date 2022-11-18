@@ -1,11 +1,11 @@
 package apple.voltskiya.custom_mobs.abilities;
 
-import apple.voltskiya.custom_mobs.abilities.overseer.laser.MissileLaserAbilitySpawner;
 import apple.voltskiya.custom_mobs.abilities.common.micro_missile.MicroMissileConfig;
 import apple.voltskiya.custom_mobs.abilities.common.micro_missile.MicroMissileManager;
 import apple.voltskiya.custom_mobs.abilities.common.micro_missile.MicroMissileShooter;
 import apple.voltskiya.custom_mobs.abilities.common.reviver.ReviverAbilitySpawner;
 import apple.voltskiya.custom_mobs.abilities.common.reviver.dead.ReviveDeadManager;
+import apple.voltskiya.custom_mobs.abilities.nether.charger.ChargerManagerTicker;
 import apple.voltskiya.custom_mobs.abilities.nether.fire_fangs.FireFangsConfig;
 import apple.voltskiya.custom_mobs.abilities.nether.fire_fangs.FireFangsManager;
 import apple.voltskiya.custom_mobs.abilities.nether.fireball.FireballAbilitySpawner;
@@ -13,8 +13,10 @@ import apple.voltskiya.custom_mobs.abilities.nether.lost_soul.BlemishSoulConfig;
 import apple.voltskiya.custom_mobs.abilities.nether.lost_soul.BlemishSpawnManager;
 import apple.voltskiya.custom_mobs.abilities.nether.lost_soul.LostSoulManagerTicker;
 import apple.voltskiya.custom_mobs.abilities.nether.warper.WarperConfig;
-import apple.voltskiya.custom_mobs.abilities.tick.orbital_strike.large.OrbitalStrikeConfig;
-import apple.voltskiya.custom_mobs.abilities.tick.orbital_strike.mancubus.MancubusAbilitySpawner;
+import apple.voltskiya.custom_mobs.abilities.nether.warper.WarperManagerTicker;
+import apple.voltskiya.custom_mobs.abilities.overseer.laser.MissileLaserAbilitySpawner;
+import apple.voltskiya.custom_mobs.abilities.tick.orbital_strike.OrbitalStrikeAbilitySpawner;
+import apple.voltskiya.custom_mobs.abilities.tick.orbital_strike.large.mancubus.MancubusAbilitySpawner;
 import apple.voltskiya.mob_manager.listen.SpawnListenerHolder;
 import com.voltskiya.lib.AbstractModule;
 import com.voltskiya.lib.configs.data.config.AppleConfig;
@@ -37,12 +39,13 @@ public class AbilitiesModule extends AbstractModule {
 
     @Override
     public void enable() {
-        new FireFangsManager();
-        new ReviveDeadManager();
-
         configs.stream().map(AppleConfig::getInstance)
             .forEach(SpawnListenerHolder::registerListeners);
 
+        new FireFangsManager();
+        new ReviveDeadManager();
+        new ChargerManagerTicker();
+        new WarperManagerTicker();
         new MicroMissileManager();
         new MicroMissileShooter();
         new BlemishSpawnManager();
@@ -64,10 +67,11 @@ public class AbilitiesModule extends AbstractModule {
             add(configJson(FireballAbilitySpawner.class, "FireballConfig", "Fireball")),
             add(configJson(MancubusAbilitySpawner.class, "MancubusConfig", "Mancubus")),
             add(configJson(MissileLaserAbilitySpawner.class, "MissileLaserConfig", "MissileLaser")),
+            add(configJson(OrbitalStrikeAbilitySpawner.class, "OrbitalStrikeConfig",
+                "OrbitalStrike")),
             configJson(BlemishSoulConfig.class, "BlemishSoulConfig"),
             configJson(FireFangsConfig.class, "FireFangsConfig"),
             configJson(MicroMissileConfig.class, "MicroMissileConfig"),
-            configJson(OrbitalStrikeConfig.class, "OrbitalStrikeConfig"),
             configJson(WarperConfig.class, "WarperConfig"));
 
     }

@@ -29,5 +29,8 @@ public class FireFangsConfig {
             this.step = step;
             this.cooldown = cooldown;
         }
+
+        public FireFangsTypeConfig() {
+        }
     }
 }

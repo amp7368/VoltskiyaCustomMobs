@@ -1,4 +1,4 @@
-package apple.voltskiya.custom_mobs.abilities.tick.orbital_strike.mancubus;
+package apple.voltskiya.custom_mobs.abilities.tick.orbital_strike.large.mancubus;
 
 import apple.voltskiya.mob_manager.listen.SpawnListener;
 import apple.voltskiya.mob_manager.listen.SpawnListenerHolder;

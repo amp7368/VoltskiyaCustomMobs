@@ -6,7 +6,6 @@ import apple.voltskiya.custom_mobs.util.ticking.HighFrequencyTick;
 import apple.voltskiya.custom_mobs.util.ticking.LowFrequencyTick;
 import apple.voltskiya.custom_mobs.util.ticking.NormalFrequencyTick;
 import apple.voltskiya.custom_mobs.util.ticking.TickGiverable;
-import apple.voltskiya.mob_manager.listen.MMSpawnListener;
 import apple.voltskiya.mob_manager.listen.SpawnListener;
 import apple.voltskiya.mob_manager.mob.MMSpawned;
 import java.util.HashMap;
@@ -28,7 +27,7 @@ public class LostSoulManagerTicker implements SpawnListener {
 
     public LostSoulManagerTicker() {
         instance = this;
-        MMSpawnListener.get().addListener(this);
+        this.registerSpawnListener();
         closenessToVexes.get(Closeness.HIGH_CLOSE).setIsCheckCollision();
     }
 
