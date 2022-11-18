@@ -6,17 +6,16 @@ import apple.voltskiya.custom_mobs.abilities.common.micro_missile.MicroMissileSh
 import apple.voltskiya.custom_mobs.abilities.common.reviver.ReviverAbilitySpawner;
 import apple.voltskiya.custom_mobs.abilities.common.reviver.dead.ReviveDeadManager;
 import apple.voltskiya.custom_mobs.abilities.nether.charger.ChargerManagerTicker;
-import apple.voltskiya.custom_mobs.abilities.nether.fire_fangs.FireFangsConfig;
-import apple.voltskiya.custom_mobs.abilities.nether.fire_fangs.FireFangsManager;
+import apple.voltskiya.custom_mobs.abilities.nether.fire_fangs.FireFangsSpawner;
 import apple.voltskiya.custom_mobs.abilities.nether.fireball.FireballAbilitySpawner;
 import apple.voltskiya.custom_mobs.abilities.nether.lost_soul.BlemishSoulConfig;
 import apple.voltskiya.custom_mobs.abilities.nether.lost_soul.BlemishSpawnManager;
 import apple.voltskiya.custom_mobs.abilities.nether.lost_soul.LostSoulManagerTicker;
+import apple.voltskiya.custom_mobs.abilities.nether.mancubus.MancubusAbilitySpawner;
 import apple.voltskiya.custom_mobs.abilities.nether.warper.WarperConfig;
 import apple.voltskiya.custom_mobs.abilities.nether.warper.WarperManagerTicker;
 import apple.voltskiya.custom_mobs.abilities.overseer.laser.MissileLaserAbilitySpawner;
 import apple.voltskiya.custom_mobs.abilities.tick.orbital_strike.OrbitalStrikeAbilitySpawner;
-import apple.voltskiya.custom_mobs.abilities.nether.mancubus.MancubusAbilitySpawner;
 import apple.voltskiya.mob_manager.listen.SpawnListenerHolder;
 import com.voltskiya.lib.AbstractModule;
 import com.voltskiya.lib.configs.data.config.AppleConfig;
@@ -42,7 +41,6 @@ public class AbilitiesModule extends AbstractModule {
         configs.stream().map(AppleConfig::getInstance)
             .forEach(SpawnListenerHolder::registerListeners);
 
-        new FireFangsManager();
         new ReviveDeadManager();
         new ChargerManagerTicker();
         new WarperManagerTicker();
@@ -69,8 +67,8 @@ public class AbilitiesModule extends AbstractModule {
             add(configJson(MissileLaserAbilitySpawner.class, "MissileLaserConfig", "MissileLaser")),
             add(configJson(OrbitalStrikeAbilitySpawner.class, "OrbitalStrikeConfig",
                 "OrbitalStrike")),
+            add(configJson(FireFangsSpawner.class, "FireFangsConfig", "FireFangs")),
             configJson(BlemishSoulConfig.class, "BlemishSoulConfig"),
-            configJson(FireFangsConfig.class, "FireFangsConfig"),
             configJson(MicroMissileConfig.class, "MicroMissileConfig"),
             configJson(WarperConfig.class, "WarperConfig"));
 

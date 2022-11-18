@@ -2,63 +2,61 @@ package apple.voltskiya.custom_mobs.abilities.nether.fire_fangs;
 
 import apple.mc.utilities.item.material.MaterialUtils;
 import apple.mc.utilities.world.vector.VectorUtils;
-import apple.nms.decoding.entity.DecodeEntity;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import apple.voltskiya.custom_mobs.pathfinders.spell.PathfinderGoalShootSpell;
+import apple.voltskiya.custom_mobs.abilities.nether.fire_fangs.FireFangsSpawner.FireFangsTypeConfig;
+import apple.voltskiya.mob_manager.mob.MMSpawned;
+import apple.voltskiya.mob_manager.mob.ability.MMAbility;
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.EvokerFangs;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.Nullable;
 
-public class FireFangsSpell implements PathfinderGoalShootSpell.Spell {
+public class FireFangsSpell extends MMAbility<FireFangsTypeConfig> {
 
     protected final List<FireFangLine> fangLines = new ArrayList<>();
-    protected final FireFangsType type;
-    protected final Mob me;
 
-    public FireFangsSpell(FireFangsCaster me, FireFangsType type) {
-        this.me = me.getEntity();
-        Location mainLocation = this.me.getBukkitEntity().getLocation();
-        final LivingEntity goalTarget = DecodeEntity.getLastTarget(this.me);
+    public FireFangsSpell(MMSpawned mob, FireFangsTypeConfig config) {
+        super(mob, config, config.activation());
+    }
+
+    @Override
+    protected void startAbility() {
+        Location mainLocation = this.getEntity().getLocation();
+        final @Nullable LivingEntity goalTarget = this.getTarget();
         Vector mainDirection;
         if (goalTarget == null)
-            mainDirection = mainLocation.getDirection().normalize().multiply(type.getStep());
+            mainDirection = mainLocation.getDirection().normalize().multiply(config.step);
         else
-            mainDirection = goalTarget.getBukkitEntity().getLocation().toVector()
+            mainDirection = goalTarget.getLocation().toVector()
                 .subtract(mainLocation.toVector()).normalize();
-        this.type = type;
-        int ticksToLive = Math.max(1, Math.min(100, (int) (type.getRange() / type.getStep())));
-        int fireLength = type.getFireLength();
-        switch (this.type) {
-            case TRIPLE:
-            case BLUE_TRIPLE:
-                fangLines.add(new FireFangLine(
-                    VectorUtils.rotateVector(mainDirection.getX(), mainDirection.getZ(),
-                        mainDirection.getY(), Math.toRadians(30)), mainLocation.clone(),
-                    ticksToLive, fireLength));
-                fangLines.add(new FireFangLine(
-                    VectorUtils.rotateVector(mainDirection.getX(), mainDirection.getZ(),
-                        mainDirection.getY(), Math.toRadians(-30)), mainLocation.clone(),
-                    ticksToLive, fireLength));
-                return;
-            case NORMAL:
-            case BLUE_NORMAL:
-            case TRIPLE_STRAIGHT:
-            case BLUE_TRIPLE_STRAIGHT:
-                fangLines.add(
-                    new FireFangLine(mainDirection, mainLocation.clone(), ticksToLive, fireLength));
+        int ticksToLive = Math.max(1, Math.min(100, (int) (config.fireLength / config.step)));
+        int fireLength = config.fireLength;
+        if (config.isTriple) {
+            fangLines.add(new FireFangLine(
+                VectorUtils.rotateVector(mainDirection.getX(), mainDirection.getZ(),
+                    mainDirection.getY(), Math.toRadians(30)), mainLocation.clone(),
+                ticksToLive, fireLength));
+            fangLines.add(new FireFangLine(
+                VectorUtils.rotateVector(mainDirection.getX(), mainDirection.getZ(),
+                    mainDirection.getY(), Math.toRadians(-30)), mainLocation.clone(),
+                ticksToLive, fireLength));
         }
+        fangLines.add(
+            new FireFangLine(mainDirection, mainLocation.clone(), ticksToLive, fireLength));
+    }
+
+    @Override
+    public void cleanUp(boolean isDead) {
     }
 
 
-    @Override
     public void stateChoice() {
         for (final FireFangLine fireFangLine : this.fangLines) {
             Location location = fireFangLine.getLocation();
@@ -85,13 +83,13 @@ public class FireFangsSpell implements PathfinderGoalShootSpell.Spell {
             }
             final Block blockAt = location.getWorld()
                 .getBlockAt(location.getBlockX(), location.getBlockY(), location.getBlockZ());
-            Material oldType = blockAt.getType(); // might be cave air (idk how it's different)
+            Material oldType = blockAt.getType();
             if (MaterialUtils.isPassable(oldType)) {
                 location.getWorld()
                     .spawn(location, EvokerFangs.class, CreatureSpawnEvent.SpawnReason.CUSTOM,
                         (evokerFangs -> {
                         }));
-                blockAt.setType(type.isBlue() ? Material.SOUL_FIRE : Material.FIRE, false);
+                blockAt.setType(config.isBlue ? Material.SOUL_FIRE : Material.FIRE, false);
                 Bukkit.getScheduler()
                     .scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> blockAt.setType(oldType),
                         fireFangLine.getFireLength());
@@ -100,13 +98,16 @@ public class FireFangsSpell implements PathfinderGoalShootSpell.Spell {
             }
         }
         this.fangLines.removeIf(FireFangLine::isDead);
-        if (this.shouldRun()) {
+        if (this.hasLines()) {
             Bukkit.getScheduler()
                 .scheduleSyncDelayedTask(VoltskiyaPlugin.get(), this::stateChoice, 1);
-        }
+        } else
+            this.finishAbility();
     }
 
-    protected boolean shouldRun() {
+    protected boolean hasLines() {
         return !this.fangLines.isEmpty();
     }
+
+
 }
