@@ -23,12 +23,12 @@ public class FireFangsSpell extends MMAbility<FireFangsTypeConfig> {
     protected final List<FireFangLine> fangLines = new ArrayList<>();
 
     public FireFangsSpell(MMSpawned mob, FireFangsTypeConfig config) {
-        super(mob, config, config.activation());
+        super(mob, config);
     }
 
     @Override
     protected void startAbility() {
-        Location mainLocation = this.getEntity().getLocation();
+        Location mainLocation = this.getLocation();
         final @Nullable LivingEntity goalTarget = this.getTarget();
         Vector mainDirection;
         if (goalTarget == null)
@@ -50,6 +50,7 @@ public class FireFangsSpell extends MMAbility<FireFangsTypeConfig> {
         }
         fangLines.add(
             new FireFangLine(mainDirection, mainLocation.clone(), ticksToLive, fireLength));
+        this.stateChoice();
     }
 
     @Override

@@ -4,39 +4,22 @@ import apple.voltskiya.mob_manager.listen.SpawnListener;
 import apple.voltskiya.mob_manager.listen.SpawnListenerHolder;
 import apple.voltskiya.mob_manager.mob.MMSpawned;
 import apple.voltskiya.mob_manager.mob.ability.MMAbilityConfig;
+import apple.voltskiya.mob_manager.mob.ability.activation.Activation;
+import apple.voltskiya.mob_manager.mob.ability.activation.ActivationRange;
 import java.util.Collection;
 import java.util.List;
 
 public class FireFangsSpawner implements SpawnListenerHolder {
 
-    public FireFangsTypeConfig basic = new FireFangsTypeConfig();
-    public FireFangsTypeConfig triple = new FireFangsTypeConfig();
-    public FireFangsTypeConfig tripleStraight = new FireFangsTypeConfig();
-    public FireFangsTypeConfig blueBasic = new FireFangsTypeConfig();
-    public FireFangsTypeConfig blueTriple = new FireFangsTypeConfig();
-    public FireFangsTypeConfig blueTripleStraight = new FireFangsTypeConfig();
+    public FireFangsTypeConfig basic = new FireFangsTypeConfig(false, false, false);
+    public FireFangsTypeConfig triple = new FireFangsTypeConfig(false, true, false);
+    public FireFangsTypeConfig tripleStraight = new FireFangsTypeConfig(true, true, false);
+    public FireFangsTypeConfig blueBasic = new FireFangsTypeConfig(false, false, true);
+    public FireFangsTypeConfig blueTriple = new FireFangsTypeConfig(false, true, true);
+    public FireFangsTypeConfig blueTripleStraight = new FireFangsTypeConfig(false, true, true);
 
     @Override
     public Collection<SpawnListener> getListeners() {
-        basic.tag = "fire_fangs.basic.blue";
-        triple.tag = "fire_fangs.triple.blue";
-        tripleStraight.tag = "fire_fangs.triple_straight.blue";
-        blueBasic.tag = "fire_fangs.basic.blue";
-        blueTriple.tag = "fire_fangs.triple.blue";
-        blueTripleStraight.tag = "fire_fangs.triple_straight.blue";
-
-        triple.isTriple = true;
-        tripleStraight.isTriple = true;
-        blueTriple.isTriple = true;
-        blueTripleStraight.isTriple = true;
-
-        blueBasic.isBlue = true;
-        blueTriple.isBlue = true;
-        blueTripleStraight.isBlue = true;
-
-        tripleStraight.isStraight = true;
-        blueTripleStraight.isStraight = true;
-
         return List.of(basic, triple, tripleStraight, blueBasic, blueTriple, blueTripleStraight);
     }
 
@@ -44,10 +27,32 @@ public class FireFangsSpawner implements SpawnListenerHolder {
 
         public double step = 1;
         public int fireLength = 250;
-        public boolean isBlue;
-        public boolean isTriple;
-        private String tag;
-        private boolean isStraight = false;
+        public transient boolean isBlue;
+        public transient boolean isTriple;
+        public transient boolean isStraight;
+
+        public ActivationRange range = new ActivationRange(20);
+        private transient String tag = "fire_fangs";
+
+        public FireFangsTypeConfig() {
+        }
+
+        public FireFangsTypeConfig(boolean isStraight, boolean isTriple, boolean isBlue) {
+            if (!isStraight && !isTriple)
+                this.tag += ".basic";
+
+            this.isTriple = isTriple;
+            if (this.isTriple)
+                this.tag += ".triple";
+
+            this.isStraight = isStraight;
+            if (isStraight)
+                this.tag += ".straight";
+
+            this.isBlue = isBlue;
+            if (this.isBlue)
+                this.tag += ".blue";
+        }
 
 
         @Override
@@ -61,6 +66,11 @@ public class FireFangsSpawner implements SpawnListenerHolder {
         @Override
         public String getBriefTag() {
             return this.tag;
+        }
+
+        @Override
+        public Collection<Activation> getActivations() {
+            return List.of(range);
         }
     }
 }

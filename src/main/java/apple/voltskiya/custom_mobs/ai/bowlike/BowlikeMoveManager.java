@@ -21,13 +21,18 @@ public class BowlikeMoveManager implements SpawnListener {
         Mob nms = mmSpawned.getNmsMob();
         PathfinderGoalBowShootNoBow<?> pathfinder = new PathfinderGoalBowShootNoBow<>(
             (Monster & RangedAttackMob) nms, 1.0D, 20, 15.0F);
-        DecodeEntity.getGoalSelector(nms).addGoal(4, pathfinder);
+        DecodeEntity.getGoalSelector(nms).addGoal(0, pathfinder);
     }
 
     @Override
     public boolean shouldHandle(Entity entity) {
-        return ((CraftEntity) entity).getHandle() instanceof Monster
-            && entity instanceof RangedAttackMob;
+        return ((CraftEntity) entity).getHandle() instanceof Monster monster
+            && monster instanceof RangedAttackMob;
+    }
+
+    @Override
+    public String getExtensionTag() {
+        return "ai";
     }
 
     @Override

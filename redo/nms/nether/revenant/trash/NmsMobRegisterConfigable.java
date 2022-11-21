@@ -40,9 +40,10 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 
 public class NmsMobRegisterConfigable<
-        TypeEntity extends Entity,
-        Config extends NmsMobConfig<TypeEntity, Config>
-        > implements SpawnCustomMobListener.CustomSpawnEater {
+    TypeEntity extends Entity,
+    Config extends NmsMobConfig<TypeEntity, Config>
+    > implements SpawnCustomMobListener.CustomSpawnEater {
+
     private static final int failId = DecodeIRegistry.getId(DecodeIRegistry.getEntityType(), null);
     private static final TaggedChoice.TaggedChoiceType<?> choiceType;
 
@@ -84,7 +85,8 @@ public class NmsMobRegisterConfigable<
         getMinecraftTypes().putIfAbsent(mobName, new EmptyPartPassthrough());
     }
 
-    public static <T extends Entity> EntityType<T> registerEntityTypeStatic(@NotNull String mobName, EntityType.b<T> mobConstructor, EntityType<?> replacement) {
+    public static <T extends Entity> EntityType<T> registerEntityTypeStatic(@NotNull String mobName, EntityType.b<T> mobConstructor,
+        EntityType<?> replacement) {
         // register the  datafixer
         registerDataFixer(mobName);
 

@@ -1,17 +1,37 @@
 package apple.voltskiya.custom_mobs.abilities.nether.warper;
 
-public class WarperConfig {
+import apple.voltskiya.mob_manager.mob.MMSpawned;
+import apple.voltskiya.mob_manager.mob.ability.MMAbilityConfig;
+import apple.voltskiya.mob_manager.mob.ability.activation.Activation;
+import apple.voltskiya.mob_manager.mob.ability.activation.ActivationRange;
+import java.util.Collection;
+import java.util.List;
 
-    public int PARTICLES;
-    public int WARP_RADIUS;
-    public double WARP_CHANCE;
-    private static WarperConfig instance;
+public class WarperConfig extends MMAbilityConfig {
 
-    public WarperConfig() {
-        instance = this;
+    public int particles = 3;
+    public ActivationRange range = new ActivationRange(7);
+    private transient String tag;
+
+    public WarperConfig(String tag) {
+        this.tag = tag;
     }
 
-    public static WarperConfig get() {
-        return instance;
+    public WarperConfig() {
+    }
+
+    @Override
+    public void doSpawn(MMSpawned mob) {
+        new MobWarper(mob, this);
+    }
+
+    @Override
+    public Collection<Activation> getActivations() {
+        return List.of(range);
+    }
+
+    @Override
+    public String getBriefTag() {
+        return this.tag;
     }
 }

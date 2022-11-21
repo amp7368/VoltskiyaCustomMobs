@@ -22,6 +22,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.loot.LootTables;
 
 public abstract class MobReviver<Config extends ReviverConfig> extends MMAbility<Config> {
@@ -32,7 +33,7 @@ public abstract class MobReviver<Config extends ReviverConfig> extends MMAbility
     private final List<UUID> linkedMobs = new ArrayList<>();
 
     public MobReviver(MMSpawned mob, Config config) {
-        super(mob, config, config.activation());
+        super(mob, config);
     }
 
     public void linkMob(Entity newMob) {
@@ -51,10 +52,9 @@ public abstract class MobReviver<Config extends ReviverConfig> extends MMAbility
         Location reviveMeLocation = reviveMe.getLocation();
         CompoundTag nbt = reviveMe.getNbt();
         this.linkMob(newMob);
-        final net.minecraft.world.entity.Entity newMobHandle = ((CraftEntity) newMob).getHandle();
         DecodeNBT.removeKey(nbt, "UUID");
         DecodeNBT.removeKey(nbt, "DeathTime");
-        DecodeEntity.load(getNmsEntity(), nbt);
+        DecodeEntity.load(((CraftEntity) newMob).getHandle(), nbt);
         LivingEntity newMobLiving = (LivingEntity) newMob;
         double health = newMobLiving.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
         newMobLiving.setHealth(health);
@@ -105,7 +105,8 @@ public abstract class MobReviver<Config extends ReviverConfig> extends MMAbility
         }
     }
 
-    public void kill() {
+    @Override
+    public void onDeath(EntityDeathEvent event) {
         int i = 1;
         final VoltskiyaPlugin plugin = VoltskiyaPlugin.get();
         for (UUID uuid : linkedMobs) {
