@@ -2,6 +2,10 @@ package apple.voltskiya.custom_mobs.abilities.nether.mancubus;
 
 import apple.voltskiya.mob_manager.mob.MMSpawned;
 import apple.voltskiya.mob_manager.mob.ability.MMAbilityConfig;
+import apple.voltskiya.mob_manager.mob.ability.activation.Activation;
+import apple.voltskiya.mob_manager.mob.ability.activation.ActivationRange;
+import java.util.Collection;
+import java.util.List;
 
 public class MancubusConfig extends MMAbilityConfig {
 
@@ -12,10 +16,6 @@ public class MancubusConfig extends MMAbilityConfig {
     public int burstDelay2 = 10;
 
     public int burstDelay3 = 10;
-
-    public double minSight = 3d;
-
-    public double maxSight = 1000;
 
     public double shotSpeed = 0.6;
 
@@ -30,6 +30,7 @@ public class MancubusConfig extends MMAbilityConfig {
     public double burst3Angle1 = -15;
 
     public double burst3Angle2 = 15;
+    public ActivationRange range = new ActivationRange(3, 1000);
 
     @Override
     public void doSpawn(MMSpawned mob) {
@@ -44,5 +45,10 @@ public class MancubusConfig extends MMAbilityConfig {
     @Override
     public String getBriefTag() {
         return "mancubus.basic";
+    }
+
+    @Override
+    public Collection<Activation> getActivations() {
+        return List.of(range);
     }
 }

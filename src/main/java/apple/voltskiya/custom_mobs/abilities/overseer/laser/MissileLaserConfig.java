@@ -2,14 +2,19 @@ package apple.voltskiya.custom_mobs.abilities.overseer.laser;
 
 import apple.voltskiya.mob_manager.mob.MMSpawned;
 import apple.voltskiya.mob_manager.mob.ability.MMAbilityConfig;
+import apple.voltskiya.mob_manager.mob.ability.activation.Activation;
+import apple.voltskiya.mob_manager.mob.ability.activation.ActivationRange;
+import java.util.Collection;
+import java.util.List;
 
 public class MissileLaserConfig extends MMAbilityConfig {
 
-    public double range = 50;
     public double shotSpeed = .9;
     public int chargeUpTicks = 80;
     public int shotsToTake = 15;
     public int timeToShoot = 20;
+
+    public ActivationRange range = new ActivationRange(50);
 
     public transient String tag;
 
@@ -28,7 +33,8 @@ public class MissileLaserConfig extends MMAbilityConfig {
         return this.tag;
     }
 
-    public boolean inRange(double distance) {
-        return distance <= this.range;
+    @Override
+    public Collection<Activation> getActivations() {
+        return List.of(range);
     }
 }

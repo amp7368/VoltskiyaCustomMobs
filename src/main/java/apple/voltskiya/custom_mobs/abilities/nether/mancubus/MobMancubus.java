@@ -1,7 +1,6 @@
 package apple.voltskiya.custom_mobs.abilities.nether.mancubus;
 
 import apple.mc.utilities.world.vector.VectorUtils;
-import apple.utilities.util.NumberUtils;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.mob_manager.mob.MMSpawned;
 import apple.voltskiya.mob_manager.mob.ability.MMAbility;
@@ -58,7 +57,7 @@ public class MobMancubus<Config extends MancubusConfig> extends MMAbility<Config
     private LivingEntity target = null;
 
     public MobMancubus(MMSpawned mob, Config config) {
-        super(mob, config, config.activation());
+        super(mob, config);
         this.burst = new RepeatingActionManager(VoltskiyaPlugin.get()).registerInit(this::initBurst)
             .registerAction(new OneOffAction(DO_START, this::doStart)).registerAction(
                 new ScheduledAction(DO_BURST1, this::burst1,
@@ -76,13 +75,7 @@ public class MobMancubus<Config extends MancubusConfig> extends MMAbility<Config
 
     @Override
     protected boolean canStartAbility() {
-        this.target = getTarget();
-        if (target == null)
-            return false;
-        double distanceToTarget = VectorUtils.distance(target.getLocation(), getLocation());
-        if (!getMob().hasLineOfSight(target))
-            return false;
-        return NumberUtils.betweenDouble(config.minSight, distanceToTarget, config.maxSight);
+        return hasTarget();
     }
 
     @Override

@@ -3,13 +3,13 @@ package apple.voltskiya.custom_mobs.abilities.tick.orbital_strike;
 import apple.voltskiya.custom_mobs.abilities.tick.orbital_strike.OrbitalStrike.OrbitalStrikeType;
 import apple.voltskiya.mob_manager.mob.MMSpawned;
 import apple.voltskiya.mob_manager.mob.ability.MMAbilityConfig;
+import apple.voltskiya.mob_manager.mob.ability.activation.ActivationRange;
 import java.util.Random;
 import org.bukkit.entity.EntityType;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class OrbitalStrikeConfig extends MMAbilityConfig {
 
-    public int range = 100;
     public double radius = 6;
     public double minHeight = 20;
     public double totalHeight = 20;
@@ -22,7 +22,8 @@ public abstract class OrbitalStrikeConfig extends MMAbilityConfig {
     public int particles = 100;
 
     public float particleSize = 0.7f;
-    public boolean doesModify;
+    public boolean doesModify = false;
+    public ActivationRange range = new ActivationRange(100);
     private static final Random random = new Random();
 
     @Override

@@ -2,10 +2,10 @@ package apple.voltskiya.custom_mobs.pathfinders.utilities;
 
 import apple.mc.utilities.world.vector.VectorUtils;
 import apple.nms.decoding.entity.DecodeEntity;
-import apple.nms.decoding.entity.DecodeNavigation;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.level.pathfinder.Path;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
@@ -18,8 +18,7 @@ public class PathfinderGoalMoveToTarget extends Goal {
     private final int speed;
     private boolean calledBack = false;
 
-    public PathfinderGoalMoveToTarget(Mob me, Location target, int speed, int giveUpTick,
-        Runnable callBack) {
+    public PathfinderGoalMoveToTarget(Mob me, Location target, int speed, int giveUpTick, Runnable callBack) {
         this.me = me;
         this.target = target;
         this.giveUpTick = DecodeEntity.getTicksLived(me) + giveUpTick;
@@ -41,7 +40,7 @@ public class PathfinderGoalMoveToTarget extends Goal {
      */
     @Override
     public boolean canContinueToUse() {
-        return this.canUse();
+        return canUse();
     }
 
     @Override
@@ -49,12 +48,16 @@ public class PathfinderGoalMoveToTarget extends Goal {
         return true;
     }
 
+    @Override
+    public void start() {
+        Path path = this.me.getNavigation().createPath(this.target.getX(), this.target.getY(), this.target.getZ(), speed);
+        this.me.getNavigation().moveTo(path, this.speed);
+    }
 
     @Override
     public void tick() {
         // go to the location
-        this.me.getNavigation()
-            .createPath(this.target.getX(), this.target.getY(), this.target.getZ(), speed);
+        this.me.getNavigation().recomputePath();
     }
 
     /**
@@ -63,13 +66,12 @@ public class PathfinderGoalMoveToTarget extends Goal {
     @Override
     public void stop() {
         // quit going to the location
-        DecodeNavigation.cancelNavigation(this.me.getNavigation());
+        this.me.getNavigation().stop();
         if (!calledBack) {
             Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), callBack);
             calledBack = true;
         }
-        Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(),
-            () -> DecodeEntity.getGoalSelector(me).removeGoal(this));
+        Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> DecodeEntity.getGoalSelector(me).removeGoal(this));
     }
 
 }

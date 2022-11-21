@@ -1,7 +1,5 @@
 package apple.voltskiya.custom_mobs.abilities.nether.fireball.mob;
 
-import apple.mc.utilities.world.vector.VectorUtils;
-import apple.utilities.util.NumberUtils;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.abilities.nether.fireball.config.FireballThrowConfig;
 import apple.voltskiya.mob_manager.mob.MMSpawned;
@@ -12,7 +10,6 @@ import org.bukkit.SoundCategory;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.entity.SmallFireball;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.util.Vector;
@@ -41,7 +38,7 @@ public class MobFireballThrow<Config extends FireballThrowConfig> extends MMAbil
         .registerFinally(this::finishAbility);
 
     public MobFireballThrow(MMSpawned mob, Config config) {
-        super(mob, config, config.activation());
+        super(mob, config);
     }
 
     @Override
@@ -56,14 +53,9 @@ public class MobFireballThrow<Config extends FireballThrowConfig> extends MMAbil
 
     @Override
     protected boolean canStartAbility() {
-        @Nullable LivingEntity target = getTarget();
-        if (!(target instanceof Player player))
-            return false;
-        double distanceToTarget = VectorUtils.distance(player.getLocation(), getLocation());
-        if (!getMob().hasLineOfSight(player))
-            return false;
-        return NumberUtils.betweenDouble(config.minSight, distanceToTarget, config.maxSight);
+        return hasTarget();
     }
+
 
     private void doChargeUp() {
         soundManager.playSound(SOUND_THROW, getLocation());

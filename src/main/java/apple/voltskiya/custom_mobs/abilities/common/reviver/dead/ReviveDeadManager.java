@@ -76,7 +76,11 @@ public class ReviveDeadManager implements SpawnListener {
         synchronized (deadMobs) {
             deadMobs.add(new DeadRecordedMob(entity));
         }
+    }
 
+    @Override
+    public String getExtensionTag() {
+        return "passive";
     }
 
     @Override

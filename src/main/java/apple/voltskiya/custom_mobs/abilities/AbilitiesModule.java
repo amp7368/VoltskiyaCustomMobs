@@ -12,8 +12,7 @@ import apple.voltskiya.custom_mobs.abilities.nether.lost_soul.BlemishSoulConfig;
 import apple.voltskiya.custom_mobs.abilities.nether.lost_soul.BlemishSpawnManager;
 import apple.voltskiya.custom_mobs.abilities.nether.lost_soul.LostSoulManagerTicker;
 import apple.voltskiya.custom_mobs.abilities.nether.mancubus.MancubusAbilitySpawner;
-import apple.voltskiya.custom_mobs.abilities.nether.warper.WarperConfig;
-import apple.voltskiya.custom_mobs.abilities.nether.warper.WarperManagerTicker;
+import apple.voltskiya.custom_mobs.abilities.nether.warper.WarperConfigSpawner;
 import apple.voltskiya.custom_mobs.abilities.overseer.laser.MissileLaserAbilitySpawner;
 import apple.voltskiya.custom_mobs.abilities.tick.orbital_strike.OrbitalStrikeAbilitySpawner;
 import apple.voltskiya.mob_manager.listen.SpawnListenerHolder;
@@ -38,12 +37,10 @@ public class AbilitiesModule extends AbstractModule {
 
     @Override
     public void enable() {
-        configs.stream().map(AppleConfig::getInstance)
-            .forEach(SpawnListenerHolder::registerListeners);
+        configs.stream().map(AppleConfig::getInstance).forEach(SpawnListenerHolder::registerListeners);
 
         new ReviveDeadManager();
         new ChargerManagerTicker();
-        new WarperManagerTicker();
         new MicroMissileManager();
         new MicroMissileShooter();
         new BlemishSpawnManager();
@@ -65,12 +62,11 @@ public class AbilitiesModule extends AbstractModule {
             add(configJson(FireballAbilitySpawner.class, "FireballConfig", "Fireball")),
             add(configJson(MancubusAbilitySpawner.class, "MancubusConfig", "Mancubus")),
             add(configJson(MissileLaserAbilitySpawner.class, "MissileLaserConfig", "MissileLaser")),
-            add(configJson(OrbitalStrikeAbilitySpawner.class, "OrbitalStrikeConfig",
-                "OrbitalStrike")),
+            add(configJson(OrbitalStrikeAbilitySpawner.class, "OrbitalStrikeConfig", "OrbitalStrike")),
             add(configJson(FireFangsSpawner.class, "FireFangsConfig", "FireFangs")),
+            add(configJson(WarperConfigSpawner.class, "WarperConfig")),
             configJson(BlemishSoulConfig.class, "BlemishSoulConfig"),
-            configJson(MicroMissileConfig.class, "MicroMissileConfig"),
-            configJson(WarperConfig.class, "WarperConfig"));
+            configJson(MicroMissileConfig.class, "MicroMissileConfig"));
 
     }
 

@@ -33,11 +33,9 @@ public class MobReviverBasic extends MobReviver<ReviverConfigBasic> {
 
     public MobReviverBasic(MMSpawned reviver, ReviverConfigBasic config) {
         super(reviver, config);
-        action = new RepeatingActionManager(VoltskiyaPlugin.get()).registerAction(
-                new OneOffAction(DO_SUMMON1, this::summon1))
+        action = new RepeatingActionManager(VoltskiyaPlugin.get()).registerAction(new OneOffAction(DO_SUMMON1, this::summon1))
             .registerAction(new OneOffAction(DO_START, this::summonStart)).registerAction(
-                new RepeatableActionImpl(DO_START_RITUAL, this::doReviveRitual,
-                    config.reviveRitualTime, SUMMON_TICKING_INTERVAL))
+                new RepeatableActionImpl(DO_START_RITUAL, this::doReviveRitual, config.reviveRitualTime, SUMMON_TICKING_INTERVAL))
             .registerFinally(this::quitRevive);
     }
 
@@ -57,9 +55,9 @@ public class MobReviverBasic extends MobReviver<ReviverConfigBasic> {
         }
         targetLocation = targetLocation.getBlock().getLocation().add(0.5, 1, 0.5);
         this.reviveMe.setLocation(targetLocation);
-        DecodeEntity.getGoalSelector(getNmsMob()).addGoal(-1,
-            new PathfinderGoalMoveToTarget(getNmsMob(), targetLocation, (int) 1.6,
-                config.giveUpTick, () -> action.startActionAndStart(DO_START)));
+        DecodeEntity.getGoalSelector(getNmsMob()).addGoal(0,
+            new PathfinderGoalMoveToTarget(getNmsMob(), targetLocation, (int) 1.6, config.giveUpTick,
+                () -> action.startActionAndStart(DO_START)));
     }
 
     @Override
@@ -89,24 +87,23 @@ public class MobReviverBasic extends MobReviver<ReviverConfigBasic> {
         double z = reviveMeLocation.getZ() - reviverLocation.getZ();
         double magnitude = x * x + z * z;
 
-        Location newLoc = reviverLocation.setDirection(
-            new Vector(x / magnitude, -.5, z / magnitude));
+        Location newLoc = reviverLocation.setDirection(new Vector(x / magnitude, -.5, z / magnitude));
         reviver.teleport(newLoc);
 
         final World world = reviverLocation.getWorld();
-        world.playSound(reviveMe.getLocation(), Sound.BLOCK_BEACON_DEACTIVATE,
-            SoundCategory.HOSTILE, 35, .7f);
+        world.playSound(reviveMe.getLocation(), Sound.BLOCK_BEACON_DEACTIVATE, SoundCategory.HOSTILE, 35, .7f);
         action.startAction(DO_START_RITUAL);
     }
 
     private void quitRevive() {
         getMob().setAI(true);
         this.setBlocked(false);
+        this.finishAbility();
     }
 
     private ActionReturn doReviveRitual(ActionMeta meta) {
         // if the mob was just spawned or it was hurt a while ago
-        if (wasHit(meta.currentTick()) || this.mob.isDead()) {
+        if (wasHit(meta.currentTick()) || this.isDead()) {
             reviveMe.resetCooldown(config.deadCooldown);
             return ActionReturn.stop();
         }
@@ -123,8 +120,7 @@ public class MobReviverBasic extends MobReviver<ReviverConfigBasic> {
             double xi = random.nextDouble() - .5;
             double yi = random.nextDouble() * 2;
             double zi = random.nextDouble() - .5;
-            world.spawnParticle(Particle.REDSTONE, xLoc + xi, yLoc + yi, zLoc + zi, 1,
-                new Particle.DustOptions(Color.RED, 1f));
+            world.spawnParticle(Particle.REDSTONE, xLoc + xi, yLoc + yi, zLoc + zi, 1, new Particle.DustOptions(Color.RED, 1f));
         }
         return ActionReturn.go();
     }
