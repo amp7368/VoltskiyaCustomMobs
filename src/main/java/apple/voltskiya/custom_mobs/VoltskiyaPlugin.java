@@ -2,8 +2,9 @@ package apple.voltskiya.custom_mobs;
 
 import apple.voltskiya.custom_mobs.abilities.AbilitiesModule;
 import apple.voltskiya.custom_mobs.ai.AiModule;
+import apple.voltskiya.custom_mobs.leap.LeapModule;
 import apple.voltskiya.custom_mobs.nms.NmsPlugin;
-import apple.voltskiya.custom_mobs.reload.EnableModule;
+import apple.voltskiya.custom_mobs.sound.SoundModule;
 import apple.voltskiya.custom_mobs.util.PluginUtils;
 import apple.voltskiya.custom_mobs.util.ticking.Ticking;
 import com.voltskiya.lib.AbstractModule;
@@ -26,8 +27,7 @@ public class VoltskiyaPlugin extends AbstractVoltPlugin {
 
     @Override
     public Collection<AbstractModule> getModules() {
-        return List.of(new Ticking(), // this has to go first
-            new PluginUtils(), new AbilitiesModule(), new NmsPlugin(), new EnableModule(),
-            new AiModule());
+        return List.of(new Ticking(), new SoundModule(), // this has to go first
+            new PluginUtils(), new AbilitiesModule(), new NmsPlugin(), new LeapModule(), new AiModule());
     }
 }
