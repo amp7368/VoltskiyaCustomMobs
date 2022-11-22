@@ -38,14 +38,11 @@ public class OrbitalStrike<Config extends OrbitalStrikeConfig> {
 
     public synchronized void sound() {
         if (config.getType() == OrbitalStrikeType.SMALL) {
-            location.getWorld()
-                .playSound(location, Sound.ENTITY_WITHER_SPAWN, SoundCategory.HOSTILE, 30, 2f);
+            location.getWorld().playSound(location, Sound.ENTITY_WITHER_SPAWN, SoundCategory.HOSTILE, 20, 2f);
         } else if (config.getType() == OrbitalStrikeType.MEDIUM) {
-            location.getWorld()
-                .playSound(location, Sound.ENTITY_WITHER_SPAWN, SoundCategory.HOSTILE, 30, 1.2f);
+            location.getWorld().playSound(location, Sound.ENTITY_WITHER_SPAWN, SoundCategory.HOSTILE, 20, 1.2f);
         } else if (config.getType() == OrbitalStrikeType.LARGE) {
-            location.getWorld()
-                .playSound(location, Sound.BLOCK_END_PORTAL_SPAWN, SoundCategory.HOSTILE, 50, 1.5f);
+            location.getWorld().playSound(location, Sound.BLOCK_END_PORTAL_SPAWN, SoundCategory.HOSTILE, 35, 1.5f);
         }
     }
 
@@ -66,8 +63,7 @@ public class OrbitalStrike<Config extends OrbitalStrikeConfig> {
 
     public void fireball() {
         Location higherLocation = location.clone().add(0, 1, 0);
-        for (; higherLocation.getY() < location.getY() + config.totalHeight;
-            higherLocation.add(0, 1, 0)) {
+        for (; higherLocation.getY() < location.getY() + config.totalHeight; higherLocation.add(0, 1, 0)) {
             if (!higherLocation.getBlock().getType().isAir()) {
                 higherLocation.subtract(0, 1, 0);
                 break;
@@ -84,12 +80,11 @@ public class OrbitalStrike<Config extends OrbitalStrikeConfig> {
             final EntityType firebll = config.fireballEntityType(i);
             if (firebll == null)
                 continue;
-            getWorld().spawnEntity(higherLocation, firebll, CreatureSpawnEvent.SpawnReason.SPELL,
-                fire -> {
-                    if (random.nextDouble() < .8)
-                        ((Fireball) fire).setIsIncendiary(false);
-                    fire.setVelocity(direction);
-                });
+            getWorld().spawnEntity(higherLocation, firebll, CreatureSpawnEvent.SpawnReason.SPELL, fire -> {
+                if (random.nextDouble() < .95)
+                    ((Fireball) fire).setIsIncendiary(false);
+                fire.setVelocity(direction);
+            });
         }
     }
 
@@ -98,8 +93,7 @@ public class OrbitalStrike<Config extends OrbitalStrikeConfig> {
         if (previousLocations.isEmpty())
             targetLocation = location.clone();
         else
-            targetLocation = previousLocations.get(
-                Math.max(0, previousLocations.size() - config.movementTargetLag));
+            targetLocation = previousLocations.get(Math.max(0, previousLocations.size() - config.movementTargetLag));
         double xt = targetLocation.getX();
         double yt = targetLocation.getY();
         double zt = targetLocation.getZ();
@@ -142,8 +136,7 @@ public class OrbitalStrike<Config extends OrbitalStrikeConfig> {
             final int particlesMine = particles * 4 / 10;
             double xInterval = (x2 - x1) / particlesMine;
             double zInterval = (z2 - z1) / particlesMine;
-            for (double i = 0, x = x1, z = z1; i < particlesMine;
-                x += xInterval, z += zInterval, i++) {
+            for (double i = 0, x = x1, z = z1; i < particlesMine; x += xInterval, z += zInterval, i++) {
                 double y = random.nextDouble() * 0.3;
                 getWorld().spawnParticle(Particle.REDSTONE, xt + x, yt + y, zt + z, 5, 0, 0, 0, 1,
                     new Particle.DustOptions(Color.fromBGR(0, 0, 36), config.particleSize));
