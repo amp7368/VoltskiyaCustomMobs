@@ -28,6 +28,11 @@ public class LeapRevenantAbility<Config extends LeapRevenantConfig> extends Leap
     }
 
 
+    @Override
+    protected boolean isAbilityBlocking() {
+        return false;
+    }
+
     @Nullable
     @Override
     protected Location findTarget() {

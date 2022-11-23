@@ -1,6 +1,5 @@
 package apple.voltskiya.custom_mobs.leap.parent;
 
-import apple.mc.utilities.world.vector.VectorUtils;
 import apple.utilities.util.NumberUtils;
 import apple.voltskiya.custom_mobs.leap.common.Kinematics;
 import org.bukkit.Location;
@@ -111,7 +110,6 @@ public class LeapMath {
         double distanceXZ = Kinematics.magnitude(distanceX, distanceZ);
         double distanceY = targetLocation.getY() - initialLocation.getY();
 
-        return NumberUtils.betweenInclusiveDouble(this.minRange(), distanceXZ, this.maxRange()) && NumberUtils.betweenInclusiveDouble(
-            this.minPeakHeight(), distanceY, this.maxPeakHeight());
+        return NumberUtils.betweenInclusiveDouble(this.minRange(), distanceXZ, this.maxRange()) && distanceY < this.maxPeakHeight();
     }
 }

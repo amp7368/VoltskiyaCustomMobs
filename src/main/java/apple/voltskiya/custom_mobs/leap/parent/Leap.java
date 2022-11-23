@@ -19,21 +19,12 @@ public class Leap<Config extends LeapConfig> extends LeapStage<Config> {
             this.cancel();
     }
 
-    @Override
-    public void onStart() {
-        getMob().setAware(false);
-    }
 
     public void tick() {
         Mob mob = getMob();
         mob.setVelocity(this.velocity);
         mob.lookAt(mob.getLocation().add(this.velocity.getX(), 0, this.velocity.getZ()));
         this.velocity.add(gravity);
-    }
-
-    @Override
-    public void onAnyFinish() {
-        getMob().setAware(true);
     }
 
     protected boolean isFinished() {
