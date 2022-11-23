@@ -5,9 +5,7 @@ import apple.voltskiya.custom_mobs.leap.parent.LeapAbility;
 import apple.voltskiya.mob_manager.mob.MMSpawned;
 import java.util.List;
 import java.util.UUID;
-import org.bukkit.Location;
 import org.bukkit.attribute.AttributeModifier;
-import org.bukkit.entity.LivingEntity;
 
 public class LeapPounceAbility<Config extends PounceConfig> extends LeapAbility<Config> {
 
@@ -18,11 +16,6 @@ public class LeapPounceAbility<Config extends PounceConfig> extends LeapAbility<
         super(mob, config);
     }
 
-    @Override
-    protected Location findTarget() {
-        LivingEntity target = getTarget();
-        return target == null ? null : target.getEyeLocation();
-    }
 
     @Override
     protected List<CreateLeapStage<Config>> leapStages() {

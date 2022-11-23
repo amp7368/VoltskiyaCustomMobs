@@ -3,7 +3,7 @@ package apple.voltskiya.custom_mobs.leap.basic;
 import apple.voltskiya.custom_mobs.leap.parent.CreateLeapStage;
 import apple.voltskiya.custom_mobs.leap.parent.Leap;
 import apple.voltskiya.custom_mobs.leap.parent.LeapAbility;
-import apple.voltskiya.custom_mobs.leap.parent.LeapConfig;
+import apple.voltskiya.custom_mobs.leap.parent.config.LeapConfig;
 import apple.voltskiya.mob_manager.mob.MMSpawned;
 import java.util.List;
 

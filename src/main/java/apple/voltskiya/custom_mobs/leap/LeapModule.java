@@ -1,9 +1,12 @@
 package apple.voltskiya.custom_mobs.leap;
 
+import apple.utilities.json.gson.GsonBuilderDynamic;
 import apple.voltskiya.custom_mobs.leap.basic.LeapBasicSpawner;
+import apple.voltskiya.custom_mobs.leap.parent.targeting.TargetingConfigType;
 import apple.voltskiya.custom_mobs.leap.pounce.LeapPounceSpawner;
 import apple.voltskiya.custom_mobs.leap.revenant.LeapRevenantSpawner;
 import apple.voltskiya.mob_manager.listen.SpawnListenerHolder;
+import com.google.gson.Gson;
 import com.voltskiya.lib.AbstractModule;
 import com.voltskiya.lib.configs.data.config.AppleConfig;
 import com.voltskiya.lib.configs.data.config.AppleConfig.Builder;
@@ -44,6 +47,7 @@ public class LeapModule extends AbstractModule {
     }
 
     private AppleConfigLike add(Builder<? extends SpawnListenerHolder> builder) {
+        builder.asJson(TargetingConfigType.register(new GsonBuilderDynamic()).create());
         this.configs.add(builder.getConfig());
         return builder;
     }

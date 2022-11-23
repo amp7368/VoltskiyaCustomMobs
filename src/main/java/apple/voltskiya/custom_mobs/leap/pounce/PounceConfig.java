@@ -1,7 +1,7 @@
 package apple.voltskiya.custom_mobs.leap.pounce;
 
-import apple.voltskiya.custom_mobs.leap.parent.LeapConfig;
-import apple.voltskiya.custom_mobs.leap.parent.LeapStageConfig;
+import apple.voltskiya.custom_mobs.leap.parent.config.LeapConfig;
+import apple.voltskiya.custom_mobs.leap.parent.config.LeapStageConfig;
 import apple.voltskiya.mob_manager.mob.MMSpawned;
 
 public class PounceConfig extends LeapConfig {

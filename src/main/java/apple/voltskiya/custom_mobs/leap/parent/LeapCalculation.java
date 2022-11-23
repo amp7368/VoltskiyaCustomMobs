@@ -4,6 +4,8 @@ import apple.utilities.util.NumberUtils;
 import apple.voltskiya.custom_mobs.leap.LeapModule;
 import apple.voltskiya.custom_mobs.leap.common.Kinematics;
 import apple.voltskiya.custom_mobs.leap.common.PlusOrMinus;
+import apple.voltskiya.custom_mobs.leap.parent.config.LeapMath;
+import apple.voltskiya.custom_mobs.leap.parent.config.LeapMoveConfig;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 

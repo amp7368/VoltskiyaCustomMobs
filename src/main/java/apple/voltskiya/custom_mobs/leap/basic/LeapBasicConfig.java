@@ -1,7 +1,7 @@
 package apple.voltskiya.custom_mobs.leap.basic;
 
 import apple.utilities.database.SaveFileable;
-import apple.voltskiya.custom_mobs.leap.parent.LeapConfig;
+import apple.voltskiya.custom_mobs.leap.parent.config.LeapConfig;
 import apple.voltskiya.mob_manager.mob.MMSpawned;
 
 public class LeapBasicConfig extends LeapConfig implements SaveFileable {
@@ -14,6 +14,12 @@ public class LeapBasicConfig extends LeapConfig implements SaveFileable {
     }
 
     public LeapBasicConfig() {
+    }
+
+    @Override
+    public String getBriefTag() {
+        return this.tag;
+        // use the serialized tag instead
     }
 
     @Override

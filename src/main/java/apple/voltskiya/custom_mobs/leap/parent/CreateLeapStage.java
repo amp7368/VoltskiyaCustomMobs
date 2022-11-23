@@ -1,5 +1,6 @@
 package apple.voltskiya.custom_mobs.leap.parent;
 
+import apple.voltskiya.custom_mobs.leap.parent.config.LeapConfig;
 import apple.voltskiya.mob_manager.mob.MMSpawned;
 import org.bukkit.Location;
 
