@@ -7,6 +7,7 @@ import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 public abstract class LeapAbility<Config extends LeapConfig> extends MMAbility<Config> {
 
@@ -25,10 +26,16 @@ public abstract class LeapAbility<Config extends LeapConfig> extends MMAbility<C
         this.tick();
     }
 
+    @Override
+    protected boolean canStartAbility() {
+        this.targetLocation = this.findTarget();
+        return this.targetLocation != null && this.config.leap.math().estimateIsInRange(this.targetLocation, this.getLocation());
+    }
+
     protected Location findTarget() {
         if (!this.isMob())
             return null;
-        LivingEntity target = this.getMob().getTarget();
+        LivingEntity target = this.getTarget();
         return target == null ? null : target.getLocation();
     }
 
@@ -41,9 +48,18 @@ public abstract class LeapAbility<Config extends LeapConfig> extends MMAbility<C
             this.finishAbility();
             return;
         }
-        this.targetLocation = this.findTarget();
+        onStageChange();
+        if (this.leapInProgress != null)
+            this.targetLocation = this.leapInProgress.targetLocation;
+        if (this.targetLocation == null) {
+            this.finishAbility();
+            return;
+        }
         this.leapInProgress = stages.get(leapStage).create(mob, config, targetLocation);
         this.leapInProgress.onStart();
+    }
+
+    protected void onStageChange() {
     }
 
     private void stageNormalFinish() {
@@ -62,19 +78,19 @@ public abstract class LeapAbility<Config extends LeapConfig> extends MMAbility<C
 
 
     protected void tick() {
-        if (!isLeapInProgress())
+        if (!leapInProgressCheck())
             return;
         this.leapInProgress.tick_();
         VoltskiyaPlugin.get().scheduleSyncDelayedTask(this::tick, 1);
     }
 
-    private boolean isLeapInProgress() {
+    private boolean leapInProgressCheck() {
         if (this.leapInProgress == null)
             return false;
         if (this.leapInProgress.isFinished()) {
             leapStage++;
             nextLeap();
-            return this.isLeapInProgress();
+            return this.leapInProgressCheck();
         }
         return true;
     }
@@ -88,6 +104,10 @@ public abstract class LeapAbility<Config extends LeapConfig> extends MMAbility<C
 
     @Override
     public void onDamage(EntityDamageEvent event) {
+        if (this.leapInProgress != null && event.getCause() == DamageCause.FALL) {
+            event.setCancelled(true);
+            return;
+        }
         this.stageCancel();
         this.finishAbility();
     }
