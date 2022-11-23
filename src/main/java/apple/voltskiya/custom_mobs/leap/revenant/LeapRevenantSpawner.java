@@ -7,7 +7,7 @@ import java.util.List;
 
 public class LeapRevenantSpawner implements SpawnListenerHolder {
 
-    public LeapRevenantConfig basic = new LeapRevenantConfig("revenant.leap.basic");
+    public LeapRevenantConfig basic = new LeapRevenantConfig("revenant.basic");
 
     @Override
     public Collection<SpawnListener> getListeners() {

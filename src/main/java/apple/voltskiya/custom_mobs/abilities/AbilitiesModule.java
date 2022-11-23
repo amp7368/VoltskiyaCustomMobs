@@ -5,6 +5,7 @@ import apple.voltskiya.custom_mobs.abilities.common.micro_missile.MicroMissileMa
 import apple.voltskiya.custom_mobs.abilities.common.micro_missile.MicroMissileShooter;
 import apple.voltskiya.custom_mobs.abilities.common.reviver.ReviverAbilitySpawner;
 import apple.voltskiya.custom_mobs.abilities.common.reviver.dead.ReviveDeadManager;
+import apple.voltskiya.custom_mobs.abilities.nether.charger.ChargerConfig;
 import apple.voltskiya.custom_mobs.abilities.nether.charger.ChargerManagerTicker;
 import apple.voltskiya.custom_mobs.abilities.nether.fire_fangs.FireFangsSpawner;
 import apple.voltskiya.custom_mobs.abilities.nether.fireball.FireballAbilitySpawner;
@@ -65,6 +66,7 @@ public class AbilitiesModule extends AbstractModule {
             add(configJson(OrbitalStrikeAbilitySpawner.class, "OrbitalStrikeConfig", "OrbitalStrike")),
             add(configJson(FireFangsSpawner.class, "FireFangsConfig", "FireFangs")),
             add(configJson(WarperConfigSpawner.class, "WarperConfig")),
+            configJson(ChargerConfig.class, "ChargerConfig"),
             configJson(BlemishSoulConfig.class, "BlemishSoulConfig"),
             configJson(MicroMissileConfig.class, "MicroMissileConfig"));
 

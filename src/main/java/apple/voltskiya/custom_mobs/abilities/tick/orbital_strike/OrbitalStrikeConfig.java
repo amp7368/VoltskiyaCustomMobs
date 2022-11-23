@@ -3,7 +3,10 @@ package apple.voltskiya.custom_mobs.abilities.tick.orbital_strike;
 import apple.voltskiya.custom_mobs.abilities.tick.orbital_strike.OrbitalStrike.OrbitalStrikeType;
 import apple.voltskiya.mob_manager.mob.MMSpawned;
 import apple.voltskiya.mob_manager.mob.ability.MMAbilityConfig;
+import apple.voltskiya.mob_manager.mob.ability.activation.Activation;
 import apple.voltskiya.mob_manager.mob.ability.activation.ActivationRange;
+import java.util.Collection;
+import java.util.List;
 import java.util.Random;
 import org.bukkit.entity.EntityType;
 import org.jetbrains.annotations.Nullable;
@@ -47,6 +50,11 @@ public abstract class OrbitalStrikeConfig extends MMAbilityConfig {
 
     @Nullable
     public abstract EntityType fireballEntityType(int fireballIndex);
+
+    @Override
+    public Collection<Activation> getActivations() {
+        return List.of(this.range);
+    }
 
     public abstract OrbitalStrikeType getType();
 

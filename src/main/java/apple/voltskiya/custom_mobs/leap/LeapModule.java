@@ -1,6 +1,6 @@
 package apple.voltskiya.custom_mobs.leap;
 
-import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
+import apple.voltskiya.custom_mobs.leap.basic.LeapBasicSpawner;
 import apple.voltskiya.custom_mobs.leap.pounce.LeapPounceSpawner;
 import apple.voltskiya.custom_mobs.leap.revenant.LeapRevenantSpawner;
 import apple.voltskiya.mob_manager.listen.SpawnListenerHolder;
@@ -29,6 +29,7 @@ public class LeapModule extends AbstractModule {
     @Override
     public void enable() {
         configs.stream().map(AppleConfig::getInstance).forEach(SpawnListenerHolder::registerListeners);
+        new LeapBasicSpawner();
     }
 
     @Override
