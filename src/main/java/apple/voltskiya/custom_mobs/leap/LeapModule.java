@@ -1,6 +1,8 @@
 package apple.voltskiya.custom_mobs.leap;
 
+import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.leap.pounce.LeapPounceSpawner;
+import apple.voltskiya.custom_mobs.leap.revenant.LeapRevenantSpawner;
 import apple.voltskiya.mob_manager.listen.SpawnListenerHolder;
 import com.voltskiya.lib.AbstractModule;
 import com.voltskiya.lib.configs.data.config.AppleConfig;
@@ -12,7 +14,17 @@ import java.util.List;
 
 public class LeapModule extends AbstractModule {
 
+    private static LeapModule instance;
+
+    public static LeapModule get() {
+        return instance;
+    }
+
     private final Collection<AppleConfig<? extends SpawnListenerHolder>> configs = new ArrayList<>();
+
+    public LeapModule() {
+        instance = this;
+    }
 
     @Override
     public void enable() {
@@ -26,7 +38,8 @@ public class LeapModule extends AbstractModule {
 
     @Override
     public List<AppleConfigLike> getConfigs() {
-        return List.of(add(configJson(LeapPounceSpawner.class, "PounceConfig", "Pounce")));
+        return List.of(add(configJson(LeapPounceSpawner.class, "PounceConfig", "Pounce")),
+            add(configJson(LeapRevenantSpawner.class, "RevenantConfig", "Revenant")));
     }
 
     private AppleConfigLike add(Builder<? extends SpawnListenerHolder> builder) {

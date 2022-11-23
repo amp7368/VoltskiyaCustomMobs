@@ -13,6 +13,9 @@ public class PounceConfig extends LeapConfig {
         super(tag);
     }
 
+    public PounceConfig() {
+    }
+
     @Override
     public void doSpawn(MMSpawned mob) {
         new LeapPounceAbility<>(mob, this);

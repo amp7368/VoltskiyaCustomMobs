@@ -97,7 +97,6 @@ public class NmsMobRegisterConfigable<
         EntityType<T> builtEntityType = EntityTypeBuilder.a(mobName);
         int currentId = DecodeIRegistry.getId(registry, builtEntityType);
         if (currentId != failId) {
-            System.err.println(currentId);
             return builtEntityType;
         }
         // register it

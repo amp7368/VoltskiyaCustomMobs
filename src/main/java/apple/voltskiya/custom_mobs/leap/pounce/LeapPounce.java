@@ -23,11 +23,12 @@ public class LeapPounce<Config extends PounceConfig> extends Leap<Config> {
 
     @Override
     public void onAnyFinish() {
+        super.onAnyFinish();
         this.checkPounce();
     }
 
     private boolean checkPounce() {
-        List<Entity> nearby = getEntity().getNearbyEntities(1.5, 2, 1.5);
+        List<Entity> nearby = getEntity().getNearbyEntities(1, 2, 1);
         boolean pounce = false;
         for (Entity entity : nearby) {
             if (entity instanceof Player living) {
