@@ -1,7 +1,8 @@
-package apple.voltskiya.custom_mobs.leap.parent;
+package apple.voltskiya.custom_mobs.leap.parent.config;
 
 import apple.utilities.util.NumberUtils;
 import apple.voltskiya.custom_mobs.leap.common.Kinematics;
+import apple.voltskiya.custom_mobs.leap.parent.config.LeapMoveConfig;
 import org.bukkit.Location;
 
 public class LeapMath {

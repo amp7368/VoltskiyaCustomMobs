@@ -1,11 +1,11 @@
 package apple.voltskiya.custom_mobs.leap.parent;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
+import apple.voltskiya.custom_mobs.leap.parent.config.LeapConfig;
 import apple.voltskiya.mob_manager.mob.MMSpawned;
 import apple.voltskiya.mob_manager.mob.ability.MMAbility;
 import java.util.List;
 import org.bukkit.Location;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
@@ -28,15 +28,14 @@ public abstract class LeapAbility<Config extends LeapConfig> extends MMAbility<C
 
     @Override
     protected boolean canStartAbility() {
+        if (!this.getEntity().isOnGround())
+            return false;
         this.targetLocation = this.findTarget();
         return this.targetLocation != null && this.config.leap.math().estimateIsInRange(this.targetLocation, this.getLocation());
     }
 
     protected Location findTarget() {
-        if (!this.isMob())
-            return null;
-        LivingEntity target = this.getTarget();
-        return target == null ? null : target.getLocation();
+        return this.config.targeting.findTarget(this.mob, this.config);
     }
 
     protected abstract List<CreateLeapStage<Config>> leapStages();

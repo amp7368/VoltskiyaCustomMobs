@@ -1,4 +1,4 @@
-package apple.voltskiya.custom_mobs.leap.parent;
+package apple.voltskiya.custom_mobs.leap.parent.config;
 
 public class LeapMoveConfig {
 
