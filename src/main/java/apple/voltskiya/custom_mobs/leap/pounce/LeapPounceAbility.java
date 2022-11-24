@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.UUID;
 import org.bukkit.attribute.AttributeModifier;
 
-public class LeapPounceAbility<Config extends PounceConfig> extends LeapAbility<Config> {
+public class LeapPounceAbility<Config extends LeapPounceConfig> extends LeapAbility<Config> {
 
     public static final AttributeModifier NO_MOVE_ATTRIBUTE = new AttributeModifier(UUID.randomUUID(), "no_move", -100,
         AttributeModifier.Operation.ADD_SCALAR);

@@ -2,8 +2,6 @@ package apple.voltskiya.custom_mobs.leap.pounce;
 
 import apple.voltskiya.custom_mobs.leap.parent.LeapStage;
 import apple.voltskiya.custom_mobs.sound.PlaySounds;
-import apple.voltskiya.custom_mobs.sound.SoundModule;
-import apple.voltskiya.custom_mobs.sound.leap.LeapSounds;
 import apple.voltskiya.mob_manager.mob.MMSpawned;
 import java.util.UUID;
 import org.bukkit.Location;
@@ -12,7 +10,7 @@ import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.attribute.AttributeModifier.Operation;
 
-public class PreLeapPounce<Config extends PounceConfig> extends LeapStage<Config> {
+public class PreLeapPounce<Config extends LeapPounceConfig> extends LeapStage<Config> {
 
     private static final AttributeModifier READY_LEAP = new AttributeModifier(UUID.randomUUID(), "ready_leap", -100,
         Operation.ADD_SCALAR);

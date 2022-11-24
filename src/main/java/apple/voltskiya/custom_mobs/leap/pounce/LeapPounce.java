@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-public class LeapPounce<Config extends PounceConfig> extends Leap<Config> {
+public class LeapPounce<Config extends LeapPounceConfig> extends Leap<Config> {
 
     public LeapPounce(MMSpawned mob, Config config, Location target) {
         super(mob, config, target);

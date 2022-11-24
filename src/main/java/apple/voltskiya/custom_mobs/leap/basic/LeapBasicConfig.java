@@ -6,29 +6,16 @@ import apple.voltskiya.mob_manager.mob.MMSpawned;
 
 public class LeapBasicConfig extends LeapConfig implements SaveFileable {
 
-    public String tag;
-
-    public LeapBasicConfig(String tag) {
-        super(tag);
-        this.tag = tag;
+    public LeapBasicConfig(String prefix, String tag) {
+        super(prefix, tag);
     }
 
     public LeapBasicConfig() {
-    }
-
-    @Override
-    public String getBriefTag() {
-        return this.tag;
-        // use the serialized tag instead
+        super();
     }
 
     @Override
     public void doSpawn(MMSpawned mob) {
         new LeapBasicAbility<>(mob, this);
-    }
-
-    @Override
-    public String getSaveFileName() {
-        return extensionJson(tag);
     }
 }

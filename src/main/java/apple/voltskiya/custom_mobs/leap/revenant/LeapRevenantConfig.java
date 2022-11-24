@@ -6,11 +6,12 @@ import apple.voltskiya.mob_manager.mob.MMSpawned;
 public class LeapRevenantConfig extends LeapConfig {
 
 
-    public LeapRevenantConfig(String tag) {
-        super(tag);
+    public LeapRevenantConfig(String prefix, String tag) {
+        super(prefix, tag);
     }
 
     public LeapRevenantConfig() {
+        super();
     }
 
     @Override
