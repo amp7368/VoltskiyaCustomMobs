@@ -7,8 +7,8 @@ import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.GoalRandomStrollLand;
 import net.minecraft.world.entity.ai.goal.GoalSelector;
 import org.bukkit.*;
-import org.bukkit.craftbukkit.v1_19_R1.entity.CraftCreature;
-import org.bukkit.craftbukkit.v1_19_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_19_R3.entity.CraftCreature;
+import org.bukkit.craftbukkit.v1_19_R3.entity.CraftEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.util.Vector;
 

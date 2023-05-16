@@ -1,20 +1,20 @@
 package apple.voltskiya.custom_mobs.nms.nether.revenant;
 
-import apple.voltskiya.custom_mobs.nms.NmsSpawner;
+import apple.voltskiya.custom_mobs.nms.base.NmsSpawner;
+import apple.voltskiya.custom_mobs.nms.base.VoltEntityFactory;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EntityType.EntityFactory;
 import net.minecraft.world.entity.monster.Skeleton;
 
-public class RevenantSpawner extends NmsSpawner<Skeleton> {
-
-    public RevenantSpawner() {
-        super("revenant");
-    }
-
+public class RevenantSpawner extends NmsSpawner<MobRevenant, Skeleton> {
 
     @Override
-    protected EntityFactory<Skeleton> getEntityFactory() {
-        return NmsRevenant::new;
+    public String getName() {
+        return "revenant";
+    }
+
+    @Override
+    protected VoltEntityFactory<MobRevenant, Skeleton> getEntityFactory() {
+        return MobRevenant::new;
     }
 
     @Override

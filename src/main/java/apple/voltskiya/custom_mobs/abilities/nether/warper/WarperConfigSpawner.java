@@ -7,8 +7,8 @@ import java.util.List;
 
 public class WarperConfigSpawner implements SpawnListenerHolder {
 
-    private WarperConfig warper = new WarperConfig("warper");
-    private WarperConfig warperBroken = new WarperConfig("warper.broken");
+    private final WarperConfig warper = new WarperConfig("warper");
+    private final WarperConfig warperBroken = new WarperConfig("warper.broken");
 
     @Override
     public Collection<SpawnListener> getListeners() {

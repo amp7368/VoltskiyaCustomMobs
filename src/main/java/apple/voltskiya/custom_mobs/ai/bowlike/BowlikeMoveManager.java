@@ -1,13 +1,14 @@
 package apple.voltskiya.custom_mobs.ai.bowlike;
 
 import apple.nms.decoding.entity.DecodeEntity;
+import apple.voltskiya.custom_mobs.ai.AiModule;
 import apple.voltskiya.custom_mobs.pathfinders.PathfinderGoalBowShootNoBow;
 import apple.voltskiya.mob_manager.listen.SpawnListener;
 import apple.voltskiya.mob_manager.mob.MMSpawned;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.RangedAttackMob;
-import org.bukkit.craftbukkit.v1_19_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_19_R3.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 
 public class BowlikeMoveManager implements SpawnListener {
@@ -32,7 +33,7 @@ public class BowlikeMoveManager implements SpawnListener {
 
     @Override
     public String getExtensionTag() {
-        return "ai";
+        return AiModule.EXTENSION_TAG;
     }
 
     @Override

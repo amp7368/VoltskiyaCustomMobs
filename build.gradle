@@ -26,29 +26,25 @@ project.group groupValue
 project.version versionValue
 
 configurations {
-    all {
+    configureEach {
         resolutionStrategy.cacheDynamicVersionsFor 1, 'seconds'
         resolutionStrategy.cacheChangingModulesFor 1, 'seconds'
     }
 }
 
 dependencies {
-    compileOnly 'mc.pmc:VoltPluginManager:3.2-SNAPSHOT'
+    compileOnly 'mc.pmc:voltpluginmanager:3.2-SNAPSHOT'
     compileOnly 'mc.apple:AppleMCUtil:1.0-SNAPSHOT'
-    compileOnly 'mc.nms:DecodingNms:1.19.2-2.0-SNAPSHOT'
+    compileOnly 'mc.nms:DecodingNms:1.19.4-2.0-SNAPSHOT'
     compileOnly 'voltskiya.utilities:VoltskiyaUtilities:2.0-SNAPSHOT'
     compileOnly 'voltskiya.mob:VoltskiyaMobManager:2.0-SNAPSHOT'
 
-    compileOnly 'org.spigotmc:spigot:1.19.2-R0.1-SNAPSHOT:remapped-mojang'
-    compileOnly 'io.papermc.paper:paper-api:1.19.2-R0.1-SNAPSHOT'
+    compileOnly 'org.spigotmc:spigot:1.19.4-R0.1-SNAPSHOT:remapped-mojang'
+    compileOnly 'io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT'
     compileOnly 'co.aikar:acf-paper:0.5.1-SNAPSHOT'
-
-    compileOnly 'de.tr7zw:item-nbt-api-plugin:2.10.0'
-
-    compileOnly 'org.jetbrains:annotations:23.0.0'
 }
 remap {
-    version.set '1.19.2'
+    version.set '1.19.4'
     dependsOn(jar)
     doLast {
         copy {

@@ -9,7 +9,6 @@ import apple.voltskiya.custom_mobs.leap.parent.config.LeapConfig;
 import apple.voltskiya.custom_mobs.leap.parent.targeting.TargetingConfigType;
 import apple.voltskiya.mob_manager.listen.SpawnListener;
 import apple.voltskiya.mob_manager.listen.SpawnListenerHolder;
-import com.google.gson.Gson;
 import com.voltskiya.lib.pmc.FileIOServiceNow;
 import java.io.File;
 import java.util.ArrayList;
@@ -31,6 +30,7 @@ public class LeapSpawner<Config extends LeapConfig & SpawnListener> implements S
             manager.saveInFolder(config);
             this.configs.add(config);
         }
+
         loaded.forEach(manager::saveInFolderNow);
         registerListeners();
     }

@@ -1,19 +1,20 @@
 package apple.voltskiya.custom_mobs.nms.parent.config;
 
+import com.voltskiya.lib.AbstractModule;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 public abstract class ConfigManager {
+
     private static final String defaultConfig = "config";
-    private File folder = null;
     private final Map<String, YamlConfiguration> ymls = new HashMap<>();
+    private File folder = null;
 
     /**
      * @return the name of the sub_module (a step below a module)
@@ -53,8 +54,8 @@ public abstract class ConfigManager {
     }
 
     /**
-     * sets the value of a field if that field doesn't already have a value
-     * this allows for deeper folders and allows you to set the file name
+     * sets the value of a field if that field doesn't already have a value this allows for deeper folders and allows you to set the
+     * file name
      *
      * @param fileName the name of the yml file
      * @param path     the path of the variable to set
@@ -64,10 +65,10 @@ public abstract class ConfigManager {
      */
     public void setValueIfNotExists(String fileName, String path, Object value, String... parents) throws IOException {
         File file = new File(getDatafolder() + (
-                parents.length == 0 ? "" : File.separator) + String.join(File.separator, parents));
+            parents.length == 0 ? "" : File.separator) + String.join(File.separator, parents));
         if (!file.exists()) file.mkdirs();
         file = new File(getDatafolder() + (
-                parents.length == 0 ? "" : File.separator) + String.join(File.separator, parents), fileName + ".yml");
+            parents.length == 0 ? "" : File.separator) + String.join(File.separator, parents), fileName + ".yml");
         if (!file.exists()) file.createNewFile();
         YamlConfiguration yml = getConfig(fileName, file);
         @Nullable ConfigurationSection config = yml.getConfigurationSection(defaultConfig);
@@ -145,8 +146,8 @@ public abstract class ConfigManager {
     @Nullable
     protected Object getValue(String fileName, String path, String... parents) throws IOException {
         File file = new File(getDatafolder() + (
-                parents.length == 0 ? "" : File.separator) +
-                                     String.join(File.separator, parents), fileName + ".yml");
+            parents.length == 0 ? "" : File.separator) +
+            String.join(File.separator, parents), fileName + ".yml");
         if (!file.exists()) file.createNewFile();
         YamlConfiguration yml = getConfig(fileName, file);
         @Nullable ConfigurationSection config = yml.getConfigurationSection(defaultConfig);
@@ -178,8 +179,7 @@ public abstract class ConfigManager {
     }
 
     /**
-     * gets the value at the path,
-     * and if the variable doesn't exist, initialize the yml with default values
+     * gets the value at the path, and if the variable doesn't exist, initialize the yml with default values
      *
      * @param path the path for the value
      * @return the value at the specified path
@@ -191,8 +191,7 @@ public abstract class ConfigManager {
     }
 
     /**
-     * gess the value at the specified path
-     * and if the variable doesn't exist, initialize the yml with default values
+     * gess the value at the specified path and if the variable doesn't exist, initialize the yml with default values
      *
      * @param fileName the name of the yml file
      * @param path     the path for the value
@@ -203,7 +202,7 @@ public abstract class ConfigManager {
     @NotNull
     public Object getValueOrInit(String fileName, String path, String... parents) throws IOException {
         final String pathname = getDatafolder() + (
-                parents.length == 0 ? "" : File.separator
+            parents.length == 0 ? "" : File.separator
         ) + String.join(File.separator, parents);
         File file = new File(pathname);
         if (!file.exists()) file.mkdirs();

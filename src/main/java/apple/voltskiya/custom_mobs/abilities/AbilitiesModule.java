@@ -35,6 +35,9 @@ public class AbilitiesModule extends AbstractModule {
         instance = this;
     }
 
+    public static AbilitiesModule get() {
+        return instance;
+    }
 
     @Override
     public void enable() {
@@ -46,10 +49,6 @@ public class AbilitiesModule extends AbstractModule {
         new MicroMissileShooter();
         new BlemishSpawnManager();
         new LostSoulManagerTicker();
-    }
-
-    public static AbilitiesModule get() {
-        return instance;
     }
 
     @Override

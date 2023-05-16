@@ -4,10 +4,11 @@ import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
 public class FireFangLine {
+
     private final Vector direction;
     private final Location location;
-    private int ticksToLive;
     private final int fireLength;
+    private int ticksToLive;
 
     public FireFangLine(Vector direction, Location location, int ticksToLive, int fireLength) {
         this.direction = direction;

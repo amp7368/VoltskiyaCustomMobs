@@ -44,6 +44,7 @@ public class LeapCalculation {
         double maxTime = Kinematics.time(distanceY, maxVelocityYAdjust, math.gravity()).max();
         PlusOrMinus timeRange = new PlusOrMinus(minTime, maxTime);
         if (timeRange.isEitherFail()) {
+            // can only happen with a rounding error
             LeapModule.get().logger()
                 .error(String.format("TimeRange: '%s' failed with adjusted velocity <%f,%f>", timeRange, minTime, maxTime));
             return;
