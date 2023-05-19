@@ -1,5 +1,6 @@
 package apple.voltskiya.custom_mobs.ai;
 
+import apple.voltskiya.custom_mobs.ai.aggro.AntiAmnesia;
 import apple.voltskiya.custom_mobs.ai.aggro.LineOfSightAggroListener;
 import apple.voltskiya.custom_mobs.ai.aggro.NoAlertOthers;
 import apple.voltskiya.custom_mobs.ai.bowlike.BowlikeMoveManager;
@@ -14,6 +15,7 @@ public class AiModule extends AbstractModule {
         new BowlikeMoveManager();
         new LineOfSightAggroListener();
         new NoAlertOthers();
+        new AntiAmnesia();
     }
 
     @Override

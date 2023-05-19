@@ -3,6 +3,7 @@ package apple.voltskiya.custom_mobs.ai.aggro;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.ai.AiModule;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -19,15 +20,18 @@ public class LineOfSightAggroListener implements Listener {
 
     @EventHandler
     public void onNewTarget(EntityTargetEvent event) {
-        if (event.getReason() != TargetReason.CLOSEST_PLAYER) return;
-        if (event.getEntity() instanceof Mob mob) {
-            if (!mob.getScoreboardTags().contains(LOS_TAG)) return;
-            Entity newTarget = event.getTarget();
-            if (newTarget == null) return;
-            if (mob.hasLineOfSight(newTarget)) return;
+        if (!(event.getEntity() instanceof Mob mob)) return;
+        Entity newTarget = event.getTarget();
+        LivingEntity oldTarget = mob.getTarget();
 
-            event.setCancelled(true);
-            if (newTarget.equals(mob.getTarget())) mob.setTarget(null);
+        if (event.getReason() != TargetReason.CLOSEST_PLAYER) return;
+        if (!mob.getScoreboardTags().contains(LOS_TAG)) return;
+
+        if (newTarget == null) return;
+        if (oldTarget != null && oldTarget.equals(newTarget)) {
+            return;
         }
+        if (!mob.hasLineOfSight(newTarget))
+            event.setCancelled(true);
     }
 }
