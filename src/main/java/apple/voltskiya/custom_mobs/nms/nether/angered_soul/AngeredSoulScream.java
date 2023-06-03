@@ -2,7 +2,8 @@ package apple.voltskiya.custom_mobs.nms.nether.angered_soul;
 
 import apple.nms.decoding.entity.DecodeEntity;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import net.minecraft.world.entity.EntityLiving;
+import javax.annotation.Nullable;
+import net.minecraft.world.entity.LivingEntity;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -10,9 +11,8 @@ import org.bukkit.SoundCategory;
 import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
 
-import javax.annotation.Nullable;
-
 public class AngeredSoulScream implements Runnable {
+
     private static final double VELOCITY = .6;
     private final MobAngeredSoul me;
     private final Entity bukkitMe;
@@ -27,14 +27,14 @@ public class AngeredSoulScream implements Runnable {
     }
 
     @Override
-    public void run() {
+    public synchronized void run() {
         if (this.ran) return;
         this.ran = true;
-        @Nullable EntityLiving targetEntity = DecodeEntity.getLastTarget(this.me);
+        @Nullable LivingEntity targetEntity = DecodeEntity.getLastTarget(this.me);
         final Location myLocation = this.me.getBukkitEntity().getLocation();
         this.velocity = (targetEntity == null) ?
-                myLocation.getDirection() :
-                targetEntity.getBukkitEntity().getLocation().toVector().subtract(myLocation.toVector()).normalize().multiply(VELOCITY);
+            myLocation.getDirection() :
+            targetEntity.getBukkitEntity().getLocation().toVector().subtract(myLocation.toVector()).normalize().multiply(VELOCITY);
         this.firstSound();
         for (int i = 0; i < 27; i += 3) {
             Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), this::face, i);
@@ -43,11 +43,11 @@ public class AngeredSoulScream implements Runnable {
     }
 
     private void postRun() {
-        @Nullable EntityLiving targetEntity = DecodeEntity.getLastTarget(this.me);
+        @Nullable LivingEntity targetEntity = DecodeEntity.getLastTarget(this.me);
         final Location myLocation = this.me.getBukkitEntity().getLocation();
         this.velocity = (targetEntity == null) ?
-                myLocation.getDirection() :
-                targetEntity.getBukkitEntity().getLocation().toVector().subtract(myLocation.toVector()).normalize().multiply(VELOCITY);
+            myLocation.getDirection() :
+            targetEntity.getBukkitEntity().getLocation().toVector().subtract(myLocation.toVector()).normalize().multiply(VELOCITY);
         face();
         this.sound();
         this.velocity();
@@ -59,7 +59,7 @@ public class AngeredSoulScream implements Runnable {
 
     private void velocity() {
         if (!this.me.getBukkitEntity().isDead()) {
-            if (velocityTick++ == 60) {
+            if (velocityTick++ == 40) {
                 this.me.explode();
             }
             this.bukkitMe.setVelocity(velocity);

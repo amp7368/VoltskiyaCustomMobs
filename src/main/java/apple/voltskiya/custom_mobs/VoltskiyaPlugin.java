@@ -30,4 +30,5 @@ public class VoltskiyaPlugin extends AbstractVoltPlugin {
         return List.of(new Ticking(), new SoundModule(), // this has to go first
             new PluginUtils(), new AbilitiesModule(), new NmsPlugin(), new LeapModule(), new AiModule());
     }
+
 }
