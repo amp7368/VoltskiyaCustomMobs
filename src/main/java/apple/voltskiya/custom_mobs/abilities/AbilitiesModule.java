@@ -1,5 +1,8 @@
 package apple.voltskiya.custom_mobs.abilities;
 
+import apple.voltskiya.custom_mobs.abilities.common.grenade.player.GrenadeRecipes;
+import apple.voltskiya.custom_mobs.abilities.common.grenade.player.PlayerGrenadeConfig;
+import apple.voltskiya.custom_mobs.abilities.common.grenade.player.PlayerThrowGrenade;
 import apple.voltskiya.custom_mobs.abilities.common.micro_missile.MicroMissileConfig;
 import apple.voltskiya.custom_mobs.abilities.common.micro_missile.MicroMissileManager;
 import apple.voltskiya.custom_mobs.abilities.common.micro_missile.MicroMissileShooter;
@@ -43,6 +46,9 @@ public class AbilitiesModule extends AbstractModule {
     public void enable() {
         configs.stream().map(AppleConfig::getInstance).forEach(SpawnListenerHolder::registerListeners);
 
+        new PlayerThrowGrenade();
+        GrenadeRecipes.load();
+
         new ReviveDeadManager();
         new ChargerManagerTicker();
         new MicroMissileManager();
@@ -67,7 +73,9 @@ public class AbilitiesModule extends AbstractModule {
             add(configJson(WarperConfigSpawner.class, "WarperConfig")),
             configJson(ChargerConfig.class, "ChargerConfig"),
             configJson(BlemishSoulConfig.class, "BlemishSoulConfig"),
-            configJson(MicroMissileConfig.class, "MicroMissileConfig"));
+            configJson(MicroMissileConfig.class, "MicroMissileConfig"),
+            configJson(PlayerGrenadeConfig.class, "GrenadePlayerConfig")
+        );
 
     }
 

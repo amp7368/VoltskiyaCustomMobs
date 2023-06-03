@@ -11,9 +11,9 @@ public class DeadRecordedMob {
 
     private static final int DEAD_TOO_LONG = 600000;
     private final CompoundTag nbt;
-    private Location location;
     private final EntityType entityType;
     private final long diedAtTime;
+    private Location location;
     private long cooldownIsUpAt = System.currentTimeMillis() + 1000;
 
     public DeadRecordedMob(Entity entity) {
@@ -30,6 +30,10 @@ public class DeadRecordedMob {
 
     public Location getLocation() {
         return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
     }
 
     public void resetCooldown(int ticksTillOkay) {
@@ -54,9 +58,5 @@ public class DeadRecordedMob {
 
     public boolean isDeadTooLong(int deadTooLong) {
         return diedAtTime + deadTooLong < System.currentTimeMillis();
-    }
-
-    public void setLocation(Location location) {
-        this.location = location;
     }
 }

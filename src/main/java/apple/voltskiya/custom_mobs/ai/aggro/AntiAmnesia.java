@@ -46,6 +46,7 @@ public class AntiAmnesia implements Listener {
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onForget(EntityTargetEvent event) {
+        if (event.getTarget() != null) return;
         if (event.getReason() != TargetReason.FORGOT_TARGET && event.getReason() != TargetReason.TARGET_INVALID) return;
         Entity entity = event.getEntity();
         if (!entity.getScoreboardTags().contains(ANTI_AMNESIA_TAG)) return;

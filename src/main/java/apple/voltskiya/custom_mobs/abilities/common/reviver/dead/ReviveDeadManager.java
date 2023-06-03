@@ -14,6 +14,10 @@ public class ReviveDeadManager implements SpawnListener {
 
     private static final List<DeadRecordedMob> deadMobs = new ArrayList<>();
 
+    public ReviveDeadManager() {
+        this.registerSpawnListener();
+    }
+
     public static DeadRecordedMob getNearestMob(int deadTooLong, Location location) {
         DeadRecordedMob closest = null;
         double distance = Double.MAX_VALUE;
@@ -61,10 +65,6 @@ public class ReviveDeadManager implements SpawnListener {
         synchronized (deadMobs) {
             deadMobs.remove(dead);
         }
-    }
-
-    public ReviveDeadManager() {
-        this.registerSpawnListener();
     }
 
     public void doSpawn(MMSpawned mmSpawned) {

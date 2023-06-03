@@ -5,6 +5,7 @@ import apple.voltskiya.custom_mobs.ai.aggro.LineOfSightAggroListener;
 import apple.voltskiya.custom_mobs.ai.aggro.NoAlertOthers;
 import apple.voltskiya.custom_mobs.ai.aggro.spread.AiSpread;
 import apple.voltskiya.custom_mobs.ai.aggro.stare.DelayPathfinding;
+import apple.voltskiya.custom_mobs.ai.anger.AngryWolf;
 import apple.voltskiya.custom_mobs.ai.bowlike.BowlikeMoveManager;
 import com.voltskiya.lib.AbstractModule;
 
@@ -19,6 +20,7 @@ public class AiModule extends AbstractModule {
         new NoAlertOthers();
         new AntiAmnesia();
         new AiSpread();
+        new AngryWolf();
         new DelayPathfinding();
     }
 
