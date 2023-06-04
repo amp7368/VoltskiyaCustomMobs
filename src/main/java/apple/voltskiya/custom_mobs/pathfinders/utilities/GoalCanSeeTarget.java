@@ -35,7 +35,6 @@ public class GoalCanSeeTarget<T extends LivingEntity> extends
         if (angle > DEFAULT_FOV) return false;
 
         boolean canSee = bukkitMob.hasLineOfSight(themLocation);
-        System.out.println(canSee);
         if (canSee) this.setTarget = them;
         return canSee;
     }
