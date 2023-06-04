@@ -18,7 +18,4 @@ public class FlashbangConfig extends GrenadeConfig {
         return "flashbang";
     }
 
-    public float velocity() {
-        return 5f;
-    }
 }

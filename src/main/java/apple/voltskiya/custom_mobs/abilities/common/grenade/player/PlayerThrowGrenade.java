@@ -2,6 +2,7 @@ package apple.voltskiya.custom_mobs.abilities.common.grenade.player;
 
 import apple.mc.utilities.inventory.item.InventoryUtils;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
+import apple.voltskiya.custom_mobs.abilities.common.grenade.bomb.ThrowBomb;
 import apple.voltskiya.custom_mobs.abilities.common.grenade.flashbang.ThrowFlashbang;
 import apple.voltskiya.custom_mobs.sound.PlaySound;
 import java.time.Duration;
@@ -95,9 +96,10 @@ public class PlayerThrowGrenade implements Listener {
         int fuseDuration = (int) ((MAX_FUSE_DURATION - MIN_FUSE_DURATION) * velocityIncrement + MIN_FUSE_DURATION);
         velocity.multiply(velocityMultiplier);
         item.setAmount(item.getAmount() - 1);
-        if (itemFlags.contains(GrenadeRecipes.GRENADE_BOMB)) {
-
+        if (itemFlags.contains(GrenadeRecipes.GRENADE_FLASHBANG)) {
             new ThrowFlashbang(PlayerGrenadeConfig.get().flashbang).start(startLocation, velocity, fuseDuration);
+        } else if (itemFlags.contains(GrenadeRecipes.GRENADE_BOMB)) {
+            new ThrowBomb(PlayerGrenadeConfig.get().bomb).start(startLocation, velocity, fuseDuration);
         }
     }
 

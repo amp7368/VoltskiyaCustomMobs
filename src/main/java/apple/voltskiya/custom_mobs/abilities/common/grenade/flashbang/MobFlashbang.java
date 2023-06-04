@@ -17,7 +17,7 @@ public class MobFlashbang extends MMAbility<FlashbangConfig> {
         Location startLocation = getMob().getEyeLocation();
         Vector velocity = startLocation.getDirection();
         startLocation.add(velocity);
-        velocity.multiply(config.velocity());
+        velocity.multiply(5f);
         new ThrowFlashbang(config).start(startLocation, velocity, 60);
     }
 
