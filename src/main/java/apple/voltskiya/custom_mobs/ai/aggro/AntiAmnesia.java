@@ -16,6 +16,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
 import org.jetbrains.annotations.NotNull;
+import voltskiya.apple.utilities.minecraft.TagConstants;
 import voltskiya.apple.utilities.minecraft.player.PlayerUtils;
 
 public class AntiAmnesia implements Listener {
@@ -50,6 +51,10 @@ public class AntiAmnesia implements Listener {
         if (event.getReason() != TargetReason.FORGOT_TARGET && event.getReason() != TargetReason.TARGET_INVALID) return;
         Entity entity = event.getEntity();
         if (!entity.getScoreboardTags().contains(ANTI_AMNESIA_TAG)) return;
+
+        System.err.println(entity.getScoreboardTags());
+        boolean exception = entity.getScoreboardTags().contains(TagConstants.FORCE_TARGET);
+        if (exception) return;
         if (!(event.getEntity() instanceof Mob mob)) return;
         AmnesiaAggro aggro = getAggro(entity.getUniqueId());
 
@@ -57,6 +62,7 @@ public class AntiAmnesia implements Listener {
         if (target == null || target.isDead()) return;
         if (target instanceof Player player && !PlayerUtils.isSurvival(player)) return;
         if (aggro.isRecentTargetChange(NO_FORGET_QUICK)) {
+
             if (mob.hasLineOfSight(target)) aggro.changeTarget();
             event.setCancelled(true);
         }

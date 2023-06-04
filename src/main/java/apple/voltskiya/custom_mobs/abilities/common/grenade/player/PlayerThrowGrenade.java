@@ -35,10 +35,11 @@ public class PlayerThrowGrenade implements Listener {
     public static final TextComponent EMPTY_SQUARE = Component.text("\u25A1", TextColor.color(0xffffff));
     public static final PlaySound GRENADE_INCREMENT_SOUND = new PlaySound(SoundCategory.PLAYERS, Sound.UI_STONECUTTER_SELECT_RECIPE,
         1f, 1f);
+    public static final int MAX_FUSE_DURATION = 90;
+    public static final int MIN_FUSE_DURATION = 30;
     private static final int MAX_VELOCITY_INCREMENT = 5;
-
-    private static final float MAX_VELOCITY = 2.5f;
-    private static final float MIN_VELOCITY = 0.2f;
+    private static final float MAX_VELOCITY = 1.7f;
+    private static final float MIN_VELOCITY = 0.3f;
 
     public PlayerThrowGrenade() {
         VoltskiyaPlugin.get().registerEvents(this);
@@ -80,6 +81,7 @@ public class PlayerThrowGrenade implements Listener {
         List<String> itemFlags = Arrays.asList(InventoryUtils.get().getItemFlags(item));
 
         if (itemFlags.stream().noneMatch(GrenadeRecipes.ALL_GRENADES::contains)) return;
+        event.setCancelled(true);
         if (event.getAction().isLeftClick()) {
             incrementVelocity(event.getPlayer(), item);
             return;
@@ -90,9 +92,12 @@ public class PlayerThrowGrenade implements Listener {
         float velocityIncrement =
             getVelocityMultiplier(item.getItemMeta().getPersistentDataContainer()) / (MAX_VELOCITY_INCREMENT - 1f);
         float velocityMultiplier = (MAX_VELOCITY - MIN_VELOCITY) * velocityIncrement + MIN_VELOCITY;
+        int fuseDuration = (int) ((MAX_FUSE_DURATION - MIN_FUSE_DURATION) * velocityIncrement + MIN_FUSE_DURATION);
         velocity.multiply(velocityMultiplier);
+        item.setAmount(item.getAmount() - 1);
         if (itemFlags.contains(GrenadeRecipes.GRENADE_BOMB)) {
-            new ThrowFlashbang(PlayerGrenadeConfig.get().flashbang).start(startLocation, velocity);
+
+            new ThrowFlashbang(PlayerGrenadeConfig.get().flashbang).start(startLocation, velocity, fuseDuration);
         }
     }
 

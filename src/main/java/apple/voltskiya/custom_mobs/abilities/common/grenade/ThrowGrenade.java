@@ -18,27 +18,31 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
+import voltskiya.apple.utilities.minecraft.TagConstants;
 import voltskiya.apple.utilities.minecraft.world.BlockCollideUtils;
 
 public abstract class ThrowGrenade<Config> {
 
-    public static final int REMOVE_AFTER_TICKS = 5 * 20;
+
     public static final double ANGLE_SAME_DIRECTION = Math.toRadians(90);
     private static final double BOUNCE_DEGRADE = 0.8;
     protected final Config config;
     private final Random random = new Random();
     protected Item grenade;
     private int tick = 0;
+    private int fuseDuration;
 
     public ThrowGrenade(Config config) {
         this.config = config;
     }
 
-    public void start(Location startLocation, Vector velocity) {
+    public void start(Location startLocation, Vector velocity, int fuseDuration) {
+        this.fuseDuration = fuseDuration;
         grenade = startLocation.getWorld().dropItem(startLocation, makeItem(), (item) -> {
             item.setVelocity(velocity);
             item.setCanPlayerPickup(false);
             item.setCanMobPickup(false);
+            item.addScoreboardTag(TagConstants.CLEANUP_KILL);
         });
         VoltskiyaPlugin.get().scheduleSyncDelayedTask(this::tick);
     }
@@ -75,7 +79,7 @@ public abstract class ThrowGrenade<Config> {
     }
 
     private void finishTick() {
-        if (++tick < REMOVE_AFTER_TICKS) {
+        if (++tick < fuseDuration) {
             VoltskiyaPlugin.get().scheduleSyncDelayedTask(this::tick, 1);
         } else {
             this.explode();
@@ -98,7 +102,7 @@ public abstract class ThrowGrenade<Config> {
             for (Location loc : possibleHits) {
                 Vector difference = loc.subtract(center).toVector();
                 RayTraceResult ray = world.rayTraceBlocks(center, difference, difference.length(), FluidCollisionMode.NEVER, true);
-                if (ray != null) count++;
+                if (ray == null) count++;
             }
             double distance = entity.getLocation().distance(center);
             double hitPercentage = (double) count / possibleHits.size();

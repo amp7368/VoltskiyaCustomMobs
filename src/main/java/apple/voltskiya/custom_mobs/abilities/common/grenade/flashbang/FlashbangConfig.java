@@ -5,8 +5,8 @@ import apple.voltskiya.mob_manager.mob.MMSpawned;
 
 public class FlashbangConfig extends GrenadeConfig {
 
-    public double explosionRadius = 20;
-    public long maxBlindnessDuration = 6 * 20;
+    public double explosionRadius = 7;
+    public int maxBlindnessDuration = 9 * 20;
 
     @Override
     public void doSpawn(MMSpawned mmSpawned) {
