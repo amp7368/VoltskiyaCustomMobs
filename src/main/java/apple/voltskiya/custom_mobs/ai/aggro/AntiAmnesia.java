@@ -52,7 +52,6 @@ public class AntiAmnesia implements Listener {
         Entity entity = event.getEntity();
         if (!entity.getScoreboardTags().contains(ANTI_AMNESIA_TAG)) return;
 
-        System.err.println(entity.getScoreboardTags());
         boolean exception = entity.getScoreboardTags().contains(TagConstants.FORCE_TARGET);
         if (exception) return;
         if (!(event.getEntity() instanceof Mob mob)) return;

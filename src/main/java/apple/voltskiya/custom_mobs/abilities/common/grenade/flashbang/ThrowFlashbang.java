@@ -78,17 +78,21 @@ public class ThrowFlashbang extends ThrowGrenade<FlashbangConfig> implements Par
             return;
         }
         double hitImpact = impact.hitImpactLog(explosionRadius());
-        int duration = (int) (this.config.maxBlindnessDuration * hitImpact);
+        double duration = (int) (this.config.maxBlindnessDuration * hitImpact);
         if (isFacing(entity)) duration /= 2;
-
+        if (hasNightVision(entity)) duration *= 1.5;
         if (impact.isPlayer()) {
             Player player = impact.getPlayer();
             if (!PlayerUtils.isSurvival(player)) return;
-            this.players.add(new Pair<>(player, duration));
+            this.players.add(new Pair<>(player, (int) duration));
             actionManger.startAction("sound");
         } else duration *= 3;
-        entity.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, duration, 0));
-        entity.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, duration, 0));
+        entity.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, (int) duration, 0));
+        entity.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, (int) duration, 0));
+    }
+
+    private boolean hasNightVision(LivingEntity entity) {
+        return entity.getPotionEffect(PotionEffectType.NIGHT_VISION) != null;
     }
 
     private boolean isFacing(LivingEntity player) {
