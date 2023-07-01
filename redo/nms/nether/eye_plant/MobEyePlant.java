@@ -25,12 +25,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.World;
 import net.minecraft.world.phys.Vec3;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_19_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
 public class MobEyePlant extends EntityZombie implements RegisteredCustomMob, NmsModelHolderQOL<MobEyePlant> {
+
     private static NmsSpawnWrapperModel<MobEyePlant> spawner;
     private final NmsMobWrapperQOLModel<MobEyePlant> selfWrapper = new NmsMobWrapperQOLModel<>(this);
 
@@ -46,10 +47,10 @@ public class MobEyePlant extends EntityZombie implements RegisteredCustomMob, Nm
     private static NmsSpawnWrapperModel<MobEyePlant> makeSpawner() {
         NmsModelHandler.ModelConfigName model = NmsModelHandler.ModelConfigName.EYE_PLANT;
         return new NmsSpawnWrapperModel<>(
-                model.getName(),
-                MobEyePlant::new,
-                DecodeEntityType.ZOMBIE,
-                model
+            model.getName(),
+            MobEyePlant::new,
+            DecodeEntityType.ZOMBIE,
+            model
         );
     }
 
@@ -60,11 +61,11 @@ public class MobEyePlant extends EntityZombie implements RegisteredCustomMob, Nm
     @Override
     public NmsMobEntitySupers makeEntitySupers() {
         return new NmsMobEntitySupers(
-                super::b, // change world
-                super::a, // move
-                super::g, //load
-                super::f, //save
-                super::a // die
+            super::b, // change world
+            super::a, // move
+            super::g, //load
+            super::f, //save
+            super::a // die
         );
     }
 

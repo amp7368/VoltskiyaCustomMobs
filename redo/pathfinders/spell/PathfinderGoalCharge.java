@@ -10,7 +10,7 @@ import net.minecraft.world.entity.ai.goal.Goal;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_19_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class GoalCharge extends Goal {
+
     private static final int MAX_LOCATION_TRACKING = 20;
     private final double minSpeed;
     private final Location target;
@@ -33,13 +34,14 @@ public class GoalCharge extends Goal {
     private final int giveUpTick;
     private final Consumer<ChargeResult> callBack;
     private final double speed;
-    private boolean calledBack = false;
-    private ChargeResult chargeResult = null;
     private final CraftEntity bukkitEntity;
     private final List<Location> lastLocations = new ArrayList<>();
+    private boolean calledBack = false;
+    private ChargeResult chargeResult = null;
     private boolean isCircling = false;
 
-    public GoalCharge(Mob me, Location target, double speed, int giveUpTick, Collection<ChargeResult> bothOn, Consumer<ChargeResult> callBack) {
+    public GoalCharge(Mob me, Location target, double speed, int giveUpTick, Collection<ChargeResult> bothOn,
+        Consumer<ChargeResult> callBack) {
         this.me = me;
         this.target = target.clone();
         this.bothOn = bothOn;
@@ -65,7 +67,8 @@ public class GoalCharge extends Goal {
             } else {
                 final World world = here.getWorld();
                 here.add(this.target.clone().subtract(here).toVector().setY(0).normalize());
-                if (!MaterialUtils.isWalkThroughable(world.getBlockAt(here).getType()) && !MaterialUtils.isWalkThroughable(world.getBlockAt(here.add(0, 1, 0)).getType())) {
+                if (!MaterialUtils.isWalkThroughable(world.getBlockAt(here).getType()) && !MaterialUtils.isWalkThroughable(
+                    world.getBlockAt(here.add(0, 1, 0)).getType())) {
                     chargeResultTemp = ChargeResult.HIT_WALL;
                 } else {
                     final List<Entity> nearbyEntities = this.bukkitEntity.getNearbyEntities(2d, 2d, 2d);
@@ -131,11 +134,12 @@ public class GoalCharge extends Goal {
     }
 
     @Override
-public void tick() {
+    public void tick() {
         Location here = this.bukkitEntity.getLocation();
         this.lastLocations.add(here);
         while (this.lastLocations.size() > MAX_LOCATION_TRACKING) this.lastLocations.remove(0);
-        if (this.lastLocations.size() == MAX_LOCATION_TRACKING && VectorUtils.magnitude(this.lastLocations.get(0), here) < minSpeed * MAX_LOCATION_TRACKING) {
+        if (this.lastLocations.size() == MAX_LOCATION_TRACKING
+            && VectorUtils.magnitude(this.lastLocations.get(0), here) < minSpeed * MAX_LOCATION_TRACKING) {
             this.isCircling = true;
         }
         here = here.clone();
@@ -151,10 +155,10 @@ public void tick() {
         this.me.getBukkitEntity().teleport(newLoc);
         DecodeNavigation.cancelNavigation(DecodeEntity.getNavigation(this.me));
         DecodeEntity.getControllerMove(this.me).a(
-                newLoc.getX() + direction.getX(),
-                newLoc.getY() + direction.getY(),
-                newLoc.getZ() + direction.getZ(),
-                speed);
+            newLoc.getX() + direction.getX(),
+            newLoc.getY() + direction.getY(),
+            newLoc.getZ() + direction.getZ(),
+            speed);
     }
 
     public enum ChargeResult {

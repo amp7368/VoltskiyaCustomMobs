@@ -7,26 +7,32 @@ import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.GoalRandomStrollLand;
 import net.minecraft.world.entity.ai.goal.GoalSelector;
 import org.bukkit.*;
-import org.bukkit.craftbukkit.v1_19_R3.entity.CraftCreature;
-import org.bukkit.craftbukkit.v1_19_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftCreature;
+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.util.Vector;
 
 import java.util.Random;
 
 public class MobInfected {
+
     public static final String PARASITE_INFECTED_TAG = "PARASITE_INFECTED";
     private static final long EXPLODE_TO_PARASITES_DELAY = 20 * 30;
-    private PathfinderMob entity;
     private final Random random = new Random();
+    private PathfinderMob entity;
 
     public MobInfected(PathfinderMob entity) {
         this.entity = entity;
         this.entity.getBukkitEntity().addScoreboardTag(PARASITE_INFECTED_TAG);
         this.rabidAI();
-        Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> this.explodeToParasites(3, false), EXPLODE_TO_PARASITES_DELAY);
+        Bukkit.getScheduler()
+            .scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> this.explodeToParasites(3, false), EXPLODE_TO_PARASITES_DELAY);
         this.sound(this.entity.getBukkitEntity());
         this.particles();
+    }
+
+    public static void spawnEat(CreatureSpawnEvent event) {
+        new MobInfected(((CraftCreature) event.getEntity()).getHandle());
     }
 
     private void particles() {
@@ -81,10 +87,6 @@ public class MobInfected {
     private Vector randomVelocity() {
         Random random = new Random();
         return new Vector(random.nextDouble() - .5, random.nextDouble() - .5, random.nextDouble() - .5);
-    }
-
-    public static void spawnEat(CreatureSpawnEvent event) {
-        new MobInfected(((CraftCreature) event.getEntity()).getHandle());
     }
 
     private void rabidAI() {

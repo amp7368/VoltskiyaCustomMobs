@@ -58,7 +58,7 @@ public class MobHealthPack extends ArmorStand implements INmsMob<MobHealthPack> 
 
     @Override
     public void tick() {
-        List<Player> collision = getLevel().getEntities(EntityType.PLAYER, getBoundingBox(),
+        List<Player> collision = level().getEntities(EntityType.PLAYER, getBoundingBox(),
             (p) -> PlayerUtils.isSurvival(p.getBukkitEntity().getGameMode()));
         for (Player collide : collision) {
             this.healPlayer(collide);

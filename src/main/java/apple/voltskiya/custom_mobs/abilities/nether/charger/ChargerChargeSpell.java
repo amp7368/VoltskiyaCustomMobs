@@ -9,7 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_19_R3.entity.CraftMob;
+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftMob;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.potion.PotionEffect;
@@ -21,8 +21,8 @@ public class ChargerChargeSpell {
 
     protected final Charger charger;
     protected final Mob chargerMob;
-    protected Location finalLocation;
     protected final net.minecraft.world.entity.Mob chargerHandle;
+    protected Location finalLocation;
     protected ChargingState state = ChargingState.CHARGE_UP;
 
     public ChargerChargeSpell(Charger charger, Entity target) {
@@ -54,6 +54,13 @@ public class ChargerChargeSpell {
             case HIT_WALL -> new ChargeStun(this.charger.getType().getChargeStunTime()).run();
             case TIRED -> new ChargeStun(this.charger.getType().getChargeTiredTime()).run();
         }
+    }
+
+    protected enum ChargingState {
+        CHARGE_UP,
+        RUN,
+        HIT_WALL,
+        TIRED
     }
 
     protected class ChargeUp implements Runnable {
@@ -109,13 +116,6 @@ public class ChargerChargeSpell {
                 }
             }
         }
-    }
-
-    protected enum ChargingState {
-        CHARGE_UP,
-        RUN,
-        HIT_WALL,
-        TIRED
     }
 
     protected class ChargeStun {

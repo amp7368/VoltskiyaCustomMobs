@@ -3,7 +3,7 @@ package apple.voltskiya.custom_mobs.nms.parent.register;
 import apple.voltskiya.custom_mobs.sql.MobListSql;
 import net.minecraft.world.entity.Mob;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_19_R3.entity.CraftMob;
+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftMob;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface RegisteredEntityEater {
+
     /**
      * eat all the mobs in the database
      */
@@ -52,9 +53,8 @@ public interface RegisteredEntityEater {
     }
 
     /**
-     * eat an entity
-     * please override one of the eatEntity events
-     * (there's 3 cause it makes things easier and lets the programmer choose what they need)
+     * eat an entity please override one of the eatEntity events (there's 3 cause it makes things easier and lets the programmer choose
+     * what they need)
      *
      * @param entity the entity to eat
      */
@@ -62,9 +62,8 @@ public interface RegisteredEntityEater {
     }
 
     /**
-     * eat an entity
-     * please override one of the eatEntity events
-     * (there's 3 cause it makes things easier and lets the programmer choose what they need)
+     * eat an entity please override one of the eatEntity events (there's 3 cause it makes things easier and lets the programmer choose
+     * what they need)
      *
      * @param entity the entity to eat
      */
@@ -72,9 +71,8 @@ public interface RegisteredEntityEater {
     }
 
     /**
-     * eat an entity
-     * please override one of the eatEntity events
-     * (there's 3 cause it makes things easier and lets the programmer choose what they need)
+     * eat an entity please override one of the eatEntity events (there's 3 cause it makes things easier and lets the programmer choose
+     * what they need)
      *
      * @param entity the entity to eat
      */

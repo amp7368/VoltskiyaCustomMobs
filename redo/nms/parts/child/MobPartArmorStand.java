@@ -31,8 +31,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.World;
 import net.minecraft.world.phys.Vec3;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_19_R3.entity.CraftArmorStand;
-import org.bukkit.craftbukkit.v1_19_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftArmorStand;
+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.util.BoundingBox;
@@ -43,15 +43,16 @@ import apple.mc.utilities.world.vector.VectorUtils;
 import java.util.Objects;
 
 public class MobPartArmorStand extends EntityArmorStand implements MobPartChild, RegisteredCustomMob, NmsHolderQOL<MobPartArmorStand> {
-    private static final String REGISTERED_NAME = "mobpart_armorstand";
 
-    private MobPartMother mainMob;
+    private static final String REGISTERED_NAME = "mobpart_armorstand";
     private static NmsSpawnWrapper<MobPartArmorStand> spawner;
+    private MobPartMother mainMob;
     private EntityLocation entityLocation;
     private NmsModelEntityConfig config;
     private NmsMobWrapperQOL<MobPartArmorStand> wrapper;
 
-    public MobPartArmorStand(EntityType<MobPartArmorStand> EntityType, World world, MobPartMother mother, NmsModelEntityConfig config) {
+    public MobPartArmorStand(EntityType<MobPartArmorStand> EntityType, World world, MobPartMother mother,
+        NmsModelEntityConfig config) {
         super(DecodeEntityType.ARMOR_STAND, world);
         this.mainMob = mother;
         this.config = config;
@@ -77,9 +78,9 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild,
 
     public static NmsSpawnWrapper<MobPartArmorStand> makeSpawner() {
         return new NmsSpawnWrapper<>(
-                REGISTERED_NAME,
-                MobPartArmorStand::new,
-                DecodeEntityType.ILLUSIONER
+            REGISTERED_NAME,
+            MobPartArmorStand::new,
+            DecodeEntityType.ILLUSIONER
         );
     }
 
@@ -87,13 +88,13 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild,
         CraftArmorStand bukkitEntity = (CraftArmorStand) this.getBukkitEntity();
         final CustomModelDataEntity entity = config.getData();
         this.entityLocation = new EntityLocation(
-                bukkitEntity.getUniqueId(),
-                entity.x,
-                entity.y,
-                entity.z,
-                entity.facingX,
-                entity.facingY,
-                entity.facingZ
+            bukkitEntity.getUniqueId(),
+            entity.x,
+            entity.y,
+            entity.z,
+            entity.facingX,
+            entity.facingY,
+            entity.facingZ
         ); // for simpler rotations
         DecodeEntity.load(this, entity.nbt);
         bukkitEntity.setInvisible(true);
@@ -166,10 +167,10 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild,
         org.bukkit.World world = bukkitEntity.getWorld();
         for (int i = 0; i < particlesToSpawn; i++) {
             world.spawnParticle(org.bukkit.Particle.SMOKE_NORMAL,
-                    minX + getRandom().nextDouble() * x,
-                    minY + getRandom().nextDouble() * y,
-                    minZ + getRandom().nextDouble() * z,
-                    1
+                minX + getRandom().nextDouble() * x,
+                minY + getRandom().nextDouble() * y,
+                minZ + getRandom().nextDouble() * z,
+                1
             );
         }
     }
@@ -238,11 +239,11 @@ public class MobPartArmorStand extends EntityArmorStand implements MobPartChild,
     @Override
     public NmsMobEntitySupers makeEntitySupers() {
         return new NmsMobEntitySupers(
-                super::b, // change world
-                super::a, // move
-                super::g, //load
-                super::f, //save
-                super::a // die
+            super::b, // change world
+            super::a, // move
+            super::g, //load
+            super::f, //save
+            super::a // die
         );
     }
 

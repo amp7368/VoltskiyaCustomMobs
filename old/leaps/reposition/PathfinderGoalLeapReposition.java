@@ -13,7 +13,7 @@ import net.minecraft.world.entity.EntityLiving;
 import net.minecraft.world.entity.ai.util.RandomPositionGenerator;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_19_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity;
 import org.jetbrains.annotations.Nullable;
 import voltskiya.apple.utilities.constants.TagConstants;
 import voltskiya.apple.utilities.data_structures.Triple;
@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Random;
 
 public class GoalLeapReposition extends GoalLeap {
+
     private static final int OUTER_RADIUS = 10;
     private static final int INNER_RADIUS = 1;
     private static final int BELOW_PLAYER_Y = 7;
@@ -39,10 +40,10 @@ public class GoalLeapReposition extends GoalLeap {
     @Override
     public boolean a() {
         return this.random.nextInt(config.getCheckInterval()) == 0 &&
-                (this.currentLeap == null || !this.currentLeap.isLeaping()) &&
-                !this.postConfig.shouldStopCurrentLeap(null) &&
-                this.postConfig.isOnGround() &&
-                !this.me.getBukkitEntity().getScoreboardTags().contains(TagConstants.IS_DOING_ABILITY);
+            (this.currentLeap == null || !this.currentLeap.isLeaping()) &&
+            !this.postConfig.shouldStopCurrentLeap(null) &&
+            this.postConfig.isOnGround() &&
+            !this.me.getBukkitEntity().getScoreboardTags().contains(TagConstants.IS_DOING_ABILITY);
     }
 
 
@@ -69,9 +70,9 @@ public class GoalLeapReposition extends GoalLeap {
             CraftEntity bukkitEntity = this.me.getBukkitEntity();
             Location location = bukkitEntity.getLocation();
             targetLocation = new Location(bukkitEntity.getWorld(),
-                    DecodeBlockPosition.getX(loc) + location.getX(),
-                    DecodeBlockPosition.getY(loc) + location.getY(),
-                    DecodeBlockPosition.getZ(loc) + location.getZ());
+                DecodeBlockPosition.getX(loc) + location.getX(),
+                DecodeBlockPosition.getY(loc) + location.getY(),
+                DecodeBlockPosition.getZ(loc) + location.getZ());
         } else {
             targetLocation = goalTarget.getBukkitEntity().getLocation();
         }

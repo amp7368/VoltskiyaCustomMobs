@@ -28,13 +28,14 @@ import net.minecraft.world.level.World;
 import net.minecraft.world.phys.Vec3;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_19_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity;
 import org.bukkit.util.Vector;
 
 import java.util.Collections;
 import java.util.Objects;
 
 public class MobParasite extends EntityZombie implements RegisteredCustomMob, NmsModelHolderQOL<MobParasite> {
+
     private static NmsSpawnWrapperModel<MobParasite> spawner;
     private NmsMobWrapperQOLModel<MobParasite> wrapper;
 
@@ -57,10 +58,10 @@ public class MobParasite extends EntityZombie implements RegisteredCustomMob, Nm
     public static NmsSpawnWrapperModel<MobParasite> makeSpawner() {
         NmsModelHandler.ModelConfigName model = ModelConfigName.PARASITE;
         return new NmsSpawnWrapperModel<>(
-                model.getName(),
-                MobParasite::new,
-                DecodeEntityType.ZOMBIE,
-                model
+            model.getName(),
+            MobParasite::new,
+            DecodeEntityType.ZOMBIE,
+            model
         );
     }
 
@@ -89,7 +90,8 @@ public class MobParasite extends EntityZombie implements RegisteredCustomMob, Nm
         final int chanceToCheck = 20;
         int chanceToCheckPlayer = 60;
         GoalSelector targetSelector = DecodeEntity.getTargetSelector(this);
-        targetSelector.a(1, new NearestAttackableTargetGoal<>(this, EntityAnimal.class, chanceToCheck, true, false, (entityLiving) -> !entityLiving.getBukkitEntity().getScoreboardTags().contains(MobInfected.PARASITE_INFECTED_TAG)));
+        targetSelector.a(1, new NearestAttackableTargetGoal<>(this, EntityAnimal.class, chanceToCheck, true, false,
+            (entityLiving) -> !entityLiving.getBukkitEntity().getScoreboardTags().contains(MobInfected.PARASITE_INFECTED_TAG)));
         targetSelector.a(2, new NearestAttackableTargetGoal<>(this, EntityPlayer.class, chanceToCheckPlayer, true, false, null));
         double speed = 1.2;
         GoalSelector goalSelector = DecodeEntity.getGoalSelector(this);
@@ -100,7 +102,8 @@ public class MobParasite extends EntityZombie implements RegisteredCustomMob, Nm
     // attack entity
     @Override
     public boolean z(Entity e) {
-        if (!(e instanceof PathfinderMob entity) || e.getBukkitEntity().getScoreboardTags().contains(MobInfected.PARASITE_INFECTED_TAG)) {
+        if (!(e instanceof PathfinderMob entity) || e.getBukkitEntity().getScoreboardTags()
+            .contains(MobInfected.PARASITE_INFECTED_TAG)) {
             return super.z(e);
         }
         new MobInfected(entity);
@@ -132,11 +135,11 @@ public class MobParasite extends EntityZombie implements RegisteredCustomMob, Nm
     @Override
     public NmsMobEntitySupers makeEntitySupers() {
         return new NmsMobEntitySupers(
-                super::b, // change world
-                super::a, // move
-                super::g, //load
-                super::f, //save
-                super::a // die
+            super::b, // change world
+            super::a, // move
+            super::g, //load
+            super::f, //save
+            super::a // die
         );
     }
 

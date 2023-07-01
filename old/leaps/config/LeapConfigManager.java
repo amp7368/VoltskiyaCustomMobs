@@ -9,7 +9,7 @@ import apple.voltskiya.custom_mobs.sql.MobListSql;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.v1_19_R3.entity.CraftMob;
+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftMob;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,8 +20,9 @@ import java.util.*;
 
 
 public class LeapConfigManager extends ConfigManager {
-    private final Map<String, LeapPreConfig> leapTypeNames = new HashMap<>();
+
     private static LeapConfigManager instance;
+    private final Map<String, LeapPreConfig> leapTypeNames = new HashMap<>();
 
     public LeapConfigManager() throws IOException {
         instance = this;
@@ -40,6 +41,15 @@ public class LeapConfigManager extends ConfigManager {
             }
         }
         registerLeaps();
+    }
+
+    public static LeapConfigManager get() {
+        return instance;
+    }
+
+    @Nullable
+    public static LeapPreConfig getLeap(String name) {
+        return get().leapTypeNames.get(name);
     }
 
     private void registerLeaps() {
@@ -63,15 +73,6 @@ public class LeapConfigManager extends ConfigManager {
                 else MobListSql.removeMob(uuid);
             }
         }
-    }
-
-    public static LeapConfigManager get() {
-        return instance;
-    }
-
-    @Nullable
-    public static LeapPreConfig getLeap(String name) {
-        return get().leapTypeNames.get(name);
     }
 
     @Override
@@ -107,12 +108,12 @@ public class LeapConfigManager extends ConfigManager {
 
         public static LeapPreConfig getLeapConfig(ConfigurationSection config) {
             return new LeapPreConfig(
-                    config.getDouble(TIME_FULL.path),
-                    config.getDouble(PEAK.path),
-                    config.getDouble(DISTANCE_MIN.path),
-                    config.getDouble(DISTANCE_MAX.path),
-                    config.getInt(CHECK_INTERVAL.path),
-                    config.getInt(COOLDOWN.path)
+                config.getDouble(TIME_FULL.path),
+                config.getDouble(PEAK.path),
+                config.getDouble(DISTANCE_MIN.path),
+                config.getDouble(DISTANCE_MAX.path),
+                config.getInt(CHECK_INTERVAL.path),
+                config.getInt(COOLDOWN.path)
             );
         }
 

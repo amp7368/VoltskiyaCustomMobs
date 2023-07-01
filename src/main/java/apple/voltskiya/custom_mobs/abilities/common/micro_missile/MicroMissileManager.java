@@ -14,7 +14,7 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_19_R3.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftLivingEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -23,12 +23,12 @@ import org.bukkit.util.Vector;
 
 public class MicroMissileManager implements Tickable {
 
+    private static final Random random = new Random();
     private static MicroMissileManager instance;
     private final TickGiverable giver;
     private final ArrayList<MicroMissile> missiles = new ArrayList<>();
     private boolean isTicking = false;
     private long myTickerUid = -1;
-    private static final Random random = new Random();
 
     public MicroMissileManager() {
         instance = this;
@@ -60,16 +60,16 @@ public class MicroMissileManager implements Tickable {
         }
     }
 
+    public static MicroMissileManager get() {
+        return instance;
+    }
+
     private void giveMissile(MicroMissile microMissile) {
         this.missiles.add(microMissile);
         if (!isTicking) {
             isTicking = true;
             this.myTickerUid = giver.add(this::tick);
         }
-    }
-
-    public static MicroMissileManager get() {
-        return instance;
     }
 
     @Override
@@ -102,12 +102,12 @@ public class MicroMissileManager implements Tickable {
         private final int ticksToLive;
         private final double speed;
         private final double damage;
-        private boolean isDead = false;
-        private Vector acceleration = new Vector();
         private final Vector velocity;
         private final Location location;
-        private int ticksLived = 0;
         private final Random random = new Random();
+        private boolean isDead = false;
+        private Vector acceleration = new Vector();
+        private int ticksLived = 0;
 
         public MicroMissile(Location spawnLocation, Location targetLocation, double speed,
             int minTicksToLive, double damage) {
@@ -121,6 +121,12 @@ public class MicroMissileManager implements Tickable {
             this.ticksToLive =
                 random.nextInt(MicroMissileConfig.get().additionalTicksToLive) + minTicksToLive;
             this.randomizeAcceleration();
+        }
+
+        private static void particles(Location location) {
+            location.getWorld().spawnParticle(Particle.FLAME, location, 1, 0.01, 0.01, 0.01, 0.014);
+            location.getWorld()
+                .spawnParticle(Particle.SMOKE_NORMAL, location, 10, 0.04, 0.04, 0.04, 0.02);
         }
 
         public boolean isDead() {
@@ -189,12 +195,6 @@ public class MicroMissileManager implements Tickable {
                 location.getWorld().playSound(location, Sound.ENTITY_GENERIC_EXPLODE, 0.3f, 1.8f);
                 this.isDead = true;
             }
-        }
-
-        private static void particles(Location location) {
-            location.getWorld().spawnParticle(Particle.FLAME, location, 1, 0.01, 0.01, 0.01, 0.014);
-            location.getWorld()
-                .spawnParticle(Particle.SMOKE_NORMAL, location, 10, 0.04, 0.04, 0.04, 0.02);
         }
     }
 }

@@ -22,7 +22,7 @@ import net.minecraft.world.entity.monster.Skeleton;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_19_R3.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftLivingEntity;
 import org.bukkit.util.Vector;
 import voltskiya.apple.utilities.minecraft.TagConstants;
 import voltskiya.apple.utilities.minecraft.player.PlayerUtils;
@@ -145,7 +145,7 @@ public class MobAngeredSoul extends Skeleton implements INmsMob<MobAngeredSoul> 
     @Override
     public void registerGoals() {
         //navigation
-        this.navigation = new FlyingPathNavigation(this, getLevel());
+        this.navigation = new FlyingPathNavigation(this, level());
         this.navigation.setCanFloat(true);
 
         this.moveControl = new FlyingMoveControl(this, 1, true); // no gravity true

@@ -10,7 +10,7 @@ import org.bukkit.FluidCollisionMode;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityTargetEvent;
@@ -23,6 +23,7 @@ import apple.mc.utilities.world.vector.VectorUtils;
 import java.util.*;
 
 public class GoalClosestPlayer extends Goal {
+
     private final Mob me;
     private final double sight;
     private final boolean seeThroughBlocks;
@@ -48,12 +49,13 @@ public class GoalClosestPlayer extends Goal {
         Mob bukkitEntity = (Mob) this.me.getBukkitEntity();
         Location myLocation = bukkitEntity.getLocation();
         @NotNull Collection<Player> nearbyPlayers = myLocation.getNearbyPlayers(sight, sight / 2, sight,
-                p -> p.getGameMode() == GameMode.SURVIVAL);
+            p -> p.getGameMode() == GameMode.SURVIVAL);
         for (Iterator<Player> iterator = nearbyPlayers.iterator(); iterator.hasNext(); ) {
             Player nearby = iterator.next();
             Vector difference = nearby.getLocation().subtract(myLocation).toVector();
             myLocation.setDirection(difference);
-            @Nullable RayTraceResult rayTrace = myLocation.getWorld().rayTrace(myLocation, myLocation.getDirection(), sight, FluidCollisionMode.NEVER, true, 0.01, null);
+            @Nullable RayTraceResult rayTrace = myLocation.getWorld()
+                .rayTrace(myLocation, myLocation.getDirection(), sight, FluidCollisionMode.NEVER, true, 0.01, null);
             if (rayTrace == null || rayTrace.getHitEntity() != nearby) {
                 iterator.remove();
                 continue;
@@ -67,7 +69,8 @@ public class GoalClosestPlayer extends Goal {
                 }
             }
         }
-        Optional<Player> closest = nearbyPlayers.stream().min(Comparator.comparingDouble(p -> VectorUtils.magnitude(p.getLocation(), myLocation)));
+        Optional<Player> closest = nearbyPlayers.stream()
+            .min(Comparator.comparingDouble(p -> VectorUtils.magnitude(p.getLocation(), myLocation)));
         if (closest.isPresent()) {
             newTarget = ((CraftPlayer) closest.get()).getHandle();
             isRunning = true;

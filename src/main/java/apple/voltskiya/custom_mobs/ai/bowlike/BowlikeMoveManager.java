@@ -8,7 +8,7 @@ import apple.voltskiya.mob_manager.mob.MMSpawned;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.RangedAttackMob;
-import org.bukkit.craftbukkit.v1_19_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 
 public class BowlikeMoveManager implements SpawnListener {

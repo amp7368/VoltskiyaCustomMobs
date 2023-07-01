@@ -14,7 +14,7 @@ import net.minecraft.world.entity.ai.goal.Goal;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_19_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -31,10 +31,10 @@ public class PathfinderGoalCharge extends Goal {
     private final int giveUpTick;
     private final Consumer<ChargeResult> callBack;
     private final double speed;
-    private boolean calledBack = false;
-    private ChargeResult chargeResult = null;
     private final CraftEntity bukkitEntity;
     private final List<Location> lastLocations = new ArrayList<>();
+    private boolean calledBack = false;
+    private ChargeResult chargeResult = null;
     private boolean isCircling = false;
 
     public PathfinderGoalCharge(Mob me, Location target, double speed, int giveUpTick,

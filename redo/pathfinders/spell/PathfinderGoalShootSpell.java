@@ -7,7 +7,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.EntityLiving;
 import net.minecraft.world.entity.ai.goal.Goal;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_19_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity;
 
 public class GoalShootSpell<Caster extends GoalShootSpell.SpellCaster> extends
     Goal {

@@ -10,7 +10,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_19_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
 
 public abstract class NmsSpawner<Self extends Entity, MC extends Entity> implements ReSpawnListener {
 
