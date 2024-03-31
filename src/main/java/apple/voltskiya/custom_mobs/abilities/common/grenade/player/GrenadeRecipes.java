@@ -5,7 +5,7 @@ import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftShapedRecipe;
+import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftShapedRecipe;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 

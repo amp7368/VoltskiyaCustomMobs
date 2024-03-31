@@ -3,7 +3,7 @@ package apple.voltskiya.custom_mobs.abilities.common.reviver.dead;
 import apple.nms.decoding.entity.DecodeEntity;
 import net.minecraft.nbt.CompoundTag;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_20_R3.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 

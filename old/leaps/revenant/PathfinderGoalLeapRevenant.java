@@ -13,7 +13,7 @@ import net.minecraft.world.entity.EntityLiving;
 import net.minecraft.world.entity.ai.util.RandomPositionGenerator;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_20_R3.entity.CraftEntity;
 import org.jetbrains.annotations.Nullable;
 import voltskiya.apple.utilities.constants.TagConstants;
 import voltskiya.apple.utilities.data_structures.Triple;

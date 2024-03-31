@@ -1,13 +1,19 @@
 package apple.voltskiya.custom_mobs.abilities.nether.charger;
 
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
-import org.bukkit.*;
+import java.util.Random;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
+import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Random;
-
 public class ChargerChargeHelper {
+
     private static final Random random = new Random();
 
     public static void stunParticles(Location eyeLocation, long upper) {
@@ -45,7 +51,8 @@ public class ChargerChargeHelper {
             double xi = random.nextDouble() * 2 - 1;
             double yi = random.nextDouble() * 2 - 1;
             double zi = random.nextDouble() * 2 - 1;
-            world.spawnParticle(Particle.BLOCK_DUST, x + xi, y + yi, z + zi, 1, blockdata);
+
+            world.spawnParticle(Particle.BLOCK_CRACK, x + xi, y + yi, z + zi, 1, blockdata);
         }
     }
 }

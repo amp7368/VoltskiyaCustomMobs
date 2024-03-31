@@ -1,7 +1,7 @@
 package apple.voltskiya.custom_mobs.abilities.nether.charger;
 
 import apple.nms.decoding.entity.DecodeEntity;
-import org.bukkit.craftbukkit.v1_20_R1.entity.CraftMob;
+import org.bukkit.craftbukkit.v1_20_R3.entity.CraftMob;
 import org.bukkit.entity.Mob;
 import org.jetbrains.annotations.NotNull;
 import voltskiya.apple.utilities.minecraft.TagConstants;

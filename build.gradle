@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id "io.github.patrick.remapper" version "1.4.0"
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
 repositories {
@@ -18,7 +19,7 @@ repositories {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
+        languageVersion.set(JavaLanguageVersion.of(18))
     }
 }
 
@@ -35,17 +36,19 @@ configurations {
 dependencies {
     compileOnly 'mc.pmc:voltpluginmanager:3.2-SNAPSHOT'
     compileOnly 'mc.apple:AppleMCUtil:1.0-SNAPSHOT'
-    compileOnly 'mc.nms:DecodingNms:1.20.1-2.0-SNAPSHOT'
+    compileOnly 'mc.nms:DecodingNms:1.20.4-2.0-SNAPSHOT'
     compileOnly 'voltskiya.utilities:VoltskiyaUtilities:2.0-SNAPSHOT'
     compileOnly 'voltskiya.mob:VoltskiyaMobManager:2.0-SNAPSHOT'
 
-    compileOnly 'org.spigotmc:spigot:1.20.1-R0.1-SNAPSHOT:remapped-mojang'
-    compileOnly 'io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT'
+    compileOnly 'org.spigotmc:spigot:1.20.4-R0.1-SNAPSHOT:remapped-mojang'
+    compileOnly 'io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT'
     compileOnly 'co.aikar:acf-paper:0.5.1-SNAPSHOT'
 }
+shadowJar.archiveClassifier.set ''
 remap {
-    version.set '1.20.1'
-    dependsOn(jar)
+    version.set '1.20.4'
+    dependsOn(shadowJar)
+    inputTask.set(shadowJar)
     doLast {
         copy {
             from jar.getArchiveFile()

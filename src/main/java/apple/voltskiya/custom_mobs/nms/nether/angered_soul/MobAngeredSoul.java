@@ -22,7 +22,7 @@ import net.minecraft.world.entity.monster.Skeleton;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_20_R1.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_20_R3.entity.CraftLivingEntity;
 import org.bukkit.util.Vector;
 import voltskiya.apple.utilities.minecraft.TagConstants;
 import voltskiya.apple.utilities.minecraft.player.PlayerUtils;

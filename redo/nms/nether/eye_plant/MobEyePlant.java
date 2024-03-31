@@ -25,7 +25,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.World;
 import net.minecraft.world.phys.Vec3;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_20_R3.entity.CraftEntity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
