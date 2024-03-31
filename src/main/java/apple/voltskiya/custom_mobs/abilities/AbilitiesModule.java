@@ -8,6 +8,7 @@ import apple.voltskiya.custom_mobs.abilities.common.micro_missile.MicroMissileMa
 import apple.voltskiya.custom_mobs.abilities.common.micro_missile.MicroMissileShooter;
 import apple.voltskiya.custom_mobs.abilities.common.reviver.ReviverAbilitySpawner;
 import apple.voltskiya.custom_mobs.abilities.common.reviver.dead.ReviveDeadManager;
+import apple.voltskiya.custom_mobs.abilities.common.sweb.SWebConfig;
 import apple.voltskiya.custom_mobs.abilities.nether.charger.ChargerConfig;
 import apple.voltskiya.custom_mobs.abilities.nether.charger.ChargerManagerTicker;
 import apple.voltskiya.custom_mobs.abilities.nether.fire_fangs.FireFangsSpawner;
@@ -44,7 +45,8 @@ public class AbilitiesModule extends AbstractModule {
 
     @Override
     public void enable() {
-        configs.stream().map(AppleConfig::getInstance).forEach(SpawnListenerHolder::registerListeners);
+        configs.stream().map(AppleConfig::getInstance)
+            .forEach(SpawnListenerHolder::registerListeners);
 
         new PlayerThrowGrenade();
         GrenadeRecipes.load();
@@ -71,12 +73,12 @@ public class AbilitiesModule extends AbstractModule {
             add(configJson(OrbitalStrikeAbilitySpawner.class, "OrbitalStrikeConfig", "OrbitalStrike")),
             add(configJson(FireFangsSpawner.class, "FireFangsConfig", "FireFangs")),
             add(configJson(WarperConfigSpawner.class, "WarperConfig")),
+            add(configJson(SWebConfig.class, "SWeb")),
             configJson(ChargerConfig.class, "ChargerConfig"),
             configJson(BlemishSoulConfig.class, "BlemishSoulConfig"),
             configJson(MicroMissileConfig.class, "MicroMissileConfig"),
             configJson(PlayerGrenadeConfig.class, "GrenadePlayerConfig")
         );
-
     }
 
     private AppleConfigLike add(Builder<? extends SpawnListenerHolder> builder) {
