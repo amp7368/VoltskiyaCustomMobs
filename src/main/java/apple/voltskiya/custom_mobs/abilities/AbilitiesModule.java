@@ -9,6 +9,7 @@ import apple.voltskiya.custom_mobs.abilities.common.micro_missile.MicroMissileSh
 import apple.voltskiya.custom_mobs.abilities.common.reviver.ReviverAbilitySpawner;
 import apple.voltskiya.custom_mobs.abilities.common.reviver.dead.ReviveDeadManager;
 import apple.voltskiya.custom_mobs.abilities.common.sweb.SWebConfig;
+import apple.voltskiya.custom_mobs.abilities.common.sweb.SWebInit;
 import apple.voltskiya.custom_mobs.abilities.nether.charger.ChargerConfig;
 import apple.voltskiya.custom_mobs.abilities.nether.charger.ChargerManagerTicker;
 import apple.voltskiya.custom_mobs.abilities.nether.fire_fangs.FireFangsSpawner;
@@ -51,6 +52,8 @@ public class AbilitiesModule extends AbstractModule {
         new PlayerThrowGrenade();
         GrenadeRecipes.load();
 
+        SWebInit.initialize();
+        
         new ReviveDeadManager();
         new ChargerManagerTicker();
         new MicroMissileManager();

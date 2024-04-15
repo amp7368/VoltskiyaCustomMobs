@@ -7,12 +7,16 @@ import java.util.List;
 import java.util.Random;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.World;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import voltskiya.apple.utilities.minecraft.player.PlayerUtils;
 
 public class SWebEffect {
 
@@ -45,6 +49,7 @@ public class SWebEffect {
                     falling.setTicksLived(Integer.MAX_VALUE);
                     falling.setCancelDrop(true);
                     falling.setInvulnerable(true);
+                    falling.addScoreboardTag(SWebConfig.SWEB_WEB_TAG);
                 });
                 webs.add(web);
             }
@@ -53,8 +58,13 @@ public class SWebEffect {
     }
 
     private void applyEffects() {
-        @NotNull Collection<LivingEntity> caughtEntities = center.getNearbyLivingEntities(1.5, .5, 1.5);
+        @NotNull Collection<LivingEntity> caughtEntities = center.getNearbyLivingEntities(1.5, .5, 1.5,
+            e -> !e.getScoreboardTags().contains(SWebConfig.SWEB_IGNORE_PASSIVE));
+
         for (LivingEntity caughtEntity : caughtEntities) {
+            if (caughtEntity instanceof Player player) {
+                if (!PlayerUtils.isSurvival(player)) continue;
+            }
             Vector velocity = caughtEntity.getVelocity();
             velocity.setY(velocity.getY() * config.slowJump);
             velocity.setX(velocity.getX() * config.slowMove);
@@ -77,6 +87,9 @@ public class SWebEffect {
     }
 
     public void start() {
+        World world = this.center.getWorld();
+        world.playSound(this.center, Sound.BLOCK_HONEY_BLOCK_HIT, SoundCategory.HOSTILE, 2, 0.7f);
+        world.playSound(this.center, Sound.ENTITY_COD_DEATH, SoundCategory.HOSTILE, 2, 1.5f);
         VoltskiyaPlugin.get().scheduleSyncDelayedTask(this::applyEffects, 0);
     }
 }

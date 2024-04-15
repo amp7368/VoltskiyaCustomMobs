@@ -36,8 +36,7 @@ public class ReviveDeadManager implements SpawnListener {
         return closest;
     }
 
-    public static List<DeadRecordedMob> removeMobsInRadius(int deadTooLong, Location location,
-        double distance) {
+    public static List<DeadRecordedMob> removeMobsInRadius(int deadTooLong, Location location, double radius) {
         List<DeadRecordedMob> mobs = new ArrayList<>();
         synchronized (deadMobs) {
             deadMobs.removeIf(DeadRecordedMob::isDeadTooLong);
@@ -45,7 +44,7 @@ public class ReviveDeadManager implements SpawnListener {
                 DeadRecordedMob mob = iterator.next();
                 if (mob.isCooldownUp() && !mob.isDeadTooLong(deadTooLong)) {
                     double d = VectorUtils.distance(location, mob.getLocation());
-                    if (d < distance) {
+                    if (d < radius) {
                         mobs.add(mob);
                         iterator.remove();
                     }

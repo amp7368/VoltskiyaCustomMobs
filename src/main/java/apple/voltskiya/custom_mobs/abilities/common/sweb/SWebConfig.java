@@ -9,10 +9,14 @@ import java.util.List;
 
 public class SWebConfig extends MMAbilityConfig implements SpawnListenerHolder {
 
+    public static String SWEB_WEB_TAG = "internal.sweb.spider_web_block";
+    public static String SWEB_IGNORE_PASSIVE = "passive.sweb.ignore_effect";
 
     public double slowJump = 0.5;
     public double slowMove = 0.4;
     public int spellDuration = 5 * 20;
+    public double projectileVelocity = 8;
+    public double maxProjectileDistance = 16;
 
     @Override
     public void doSpawn(MMSpawned mmSpawned) {

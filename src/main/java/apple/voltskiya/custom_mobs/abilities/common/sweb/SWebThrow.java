@@ -1,5 +1,6 @@
 package apple.voltskiya.custom_mobs.abilities.common.sweb;
 
+import apple.mc.utilities.item.material.MaterialUtils;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -9,22 +10,18 @@ import org.bukkit.util.Vector;
 
 public class SWebThrow {
 
-    private static final double MAX_DISTANCE = 16;
-    private static final double SPEED = 8 / 20d;
     private final SWebConfig config;
     private final Location location;
-    private final Location end;
     private final Vector direction;
-    private double distanceTraveled = 0;
     private final double targetDistance;
+    private double distanceTraveled = 0;
 
     public SWebThrow(SWebConfig config, Location start, Location end) {
         this.config = config;
         this.location = start;
-        this.end = end;
         this.direction = end.toVector().subtract(start.toVector());
-        this.targetDistance = Math.min(direction.length(), MAX_DISTANCE);
-        this.direction.normalize().multiply(SPEED);
+        this.targetDistance = Math.min(direction.length(), config.maxProjectileDistance);
+        this.direction.normalize().multiply(config.projectileVelocity / 20f);
         progressWebThrow();
     }
 
@@ -33,7 +30,8 @@ public class SWebThrow {
         location.add(direction);
 
         distanceTraveled += direction.length();
-        if (distanceTraveled > targetDistance) {
+        boolean hitImpassable = !MaterialUtils.isPassable(location.getBlock().getType());
+        if (distanceTraveled > targetDistance || hitImpassable) {
             SWebEffect effect = new SWebEffect(config, location.subtract(0, 0.1, 0));
             effect.start();
             return;

@@ -12,8 +12,8 @@ public class MissileLaserAbilitySpawner implements SpawnListenerHolder {
 
     @Override
     public Collection<SpawnListener> getListeners() {
-        normal.tag = "ability.missile_laser.normal";
-        overseer.tag = "ability.missile_laser.overseer";
+        normal.tag = "missile_laser.normal";
+        overseer.tag = "missile_laser.overseer";
         return List.of(normal, overseer);
     }
 

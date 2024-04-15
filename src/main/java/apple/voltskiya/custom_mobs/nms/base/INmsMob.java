@@ -3,6 +3,7 @@ package apple.voltskiya.custom_mobs.nms.base;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Entity.RemovalReason;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.phys.Vec3;
 import org.bukkit.World;
@@ -10,7 +11,6 @@ import org.bukkit.World;
 public interface INmsMob<Self extends Entity> {
 
     Self getSelf();
-
 
     NmsMob<Self> wrapper();
 
@@ -45,7 +45,7 @@ public interface INmsMob<Self extends Entity> {
         return supers().saveWithoutId().apply(nbt);
     }
 
-    default void remove(Entity.RemovalReason removalReason) {
+    default void remove(RemovalReason removalReason) {
         supers().remove().accept(removalReason);
     }
 
