@@ -1,7 +1,5 @@
 package apple.voltskiya.custom_mobs.abilities.common.reviver.mob;
 
-import apple.nms.decoding.entity.DecodeEntity;
-import apple.nms.decoding.nbt.DecodeNBT;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.abilities.common.reviver.config.ReviverConfig;
 import apple.voltskiya.custom_mobs.abilities.common.reviver.dead.DeadRecordedMob;
@@ -10,20 +8,16 @@ import apple.voltskiya.mob_manager.mob.ability.MMAbility;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import net.minecraft.nbt.CompoundTag;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.craftbukkit.v1_20_R3.entity.CraftEntity;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
-import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.loot.LootTables;
+import voltskiya.apple.utilities.minecraft.TagConstants;
 
 public abstract class MobReviver<Config extends ReviverConfig> extends MMAbility<Config> {
 
@@ -41,51 +35,47 @@ public abstract class MobReviver<Config extends ReviverConfig> extends MMAbility
     }
 
     protected void doReviveSummon(DeadRecordedMob reviveMe) {
-        Location reviveMeLocation = reviveMe.getLocation();
-        reviveMeLocation.getWorld().spawnEntity(reviveMeLocation, reviveMe.getEntityType(),
-            CreatureSpawnEvent.SpawnReason.CUSTOM,
-            newMob -> dealWithSummonedMob(reviveMe, newMob)
-        );
+        reviveMe.spawn(newMob -> dealWithSummonedMob(reviveMe, (Mob) newMob));
     }
 
-    private void dealWithSummonedMob(DeadRecordedMob reviveMe, Entity newMob) {
-        Location reviveMeLocation = reviveMe.getLocation();
-        CompoundTag nbt = reviveMe.getNbt();
+    private void dealWithSummonedMob(DeadRecordedMob reviveMe, Mob newMob) {
         this.linkMob(newMob);
-        DecodeNBT.removeKey(nbt, "UUID");
-        DecodeNBT.removeKey(nbt, "DeathTime");
-        DecodeEntity.load(((CraftEntity) newMob).getHandle(), nbt);
-        LivingEntity newMobLiving = (LivingEntity) newMob;
-        double health = newMobLiving.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
-        newMobLiving.setHealth(health);
+
+        // init mob
+        double health = newMob.getAttribute(Attribute.MAX_HEALTH).getValue();
+        newMob.setHealth(health);
+        newMob.setAI(false);
+        newMob.setInvulnerable(true);
+
+        // cancel infinite revivals
         if (newMob.getScoreboardTags().contains("was_revived_1")) {
             newMob.addScoreboardTag("was_revived_2");
         } else {
             newMob.addScoreboardTag("was_revived_1");
         }
-        newMobLiving.setAI(false);
-        newMob.setInvulnerable(true);
+
+        Location reviveMeLocation = reviveMe.getLocation();
         reviveMeLocation.add(0, -2, 0);
         reviveMeLocation.setPitch(-55);
         newMob.teleport(reviveMeLocation);
         double interval = 3d / TIME_TO_RISE;
         for (int time = 0; time < TIME_TO_RISE; time++) {
             if (time % 3 == 0)
-                Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
+                VoltskiyaPlugin.get().scheduleSyncDelayedTask(() -> {
                     getLocation().getWorld()
                         .playSound(getLocation(), Sound.BLOCK_GRAVEL_BREAK, 6, 0.75f);
                 }, time);
-            Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
+            VoltskiyaPlugin.get().scheduleSyncDelayedTask(() -> {
                 Location newLocation = newMob.getLocation();
                 particles(newLocation);
                 newLocation.add(0, interval, 0);
                 newMob.teleport(newLocation);
             }, time);
         }
-        Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> {
-            newMobLiving.setAI(true);
+        VoltskiyaPlugin.get().scheduleSyncDelayedTask(() -> {
+            newMob.setAI(true);
             newMob.setInvulnerable(false);
-            ((Mob) newMob).setLootTable(LootTables.EMPTY.getLootTable());
+            newMob.addScoreboardTag(TagConstants.LOOT_EMPTY);
             reviveMe.remove();
         }, TIME_TO_RISE);
     }
@@ -101,7 +91,7 @@ public abstract class MobReviver<Config extends ReviverConfig> extends MMAbility
             double x = Math.cos(Math.toRadians(theta)) * radius;
             double z = Math.sin(Math.toRadians(theta)) * radius;
             double y = random.nextDouble() * 2;
-            location.getWorld().spawnParticle(Particle.SPELL_WITCH, xi + x, yi + y, zi + z, 1);
+            location.getWorld().spawnParticle(Particle.WITCH, xi + x, yi + y, zi + z, 1);
         }
     }
 
@@ -124,7 +114,7 @@ public abstract class MobReviver<Config extends ReviverConfig> extends MMAbility
             double xi = random.nextDouble() - .5;
             double yi = random.nextDouble() * 2;
             double zi = random.nextDouble() - .5;
-            location.getWorld().spawnParticle(Particle.SMOKE_LARGE, location, 1, xi, yi, zi, 1);
+            location.getWorld().spawnParticle(Particle.LARGE_SMOKE, location, 1, xi, yi, zi, 1);
         }
         location.getWorld()
             .playSound(location, Sound.ITEM_TOTEM_USE, SoundCategory.HOSTILE, 10, 1.3f);

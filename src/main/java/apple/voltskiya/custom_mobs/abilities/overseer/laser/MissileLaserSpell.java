@@ -157,7 +157,7 @@ public class MissileLaserSpell<Config extends MissileLaserConfig> {
             final Vector difference = predictedLocation.toVector().subtract(myLocation.toVector());
             Vector directionVector = difference.normalize().multiply(LASER_STEP);
             for (double currentStep = 0; currentStep <= distance; currentStep += LASER_STEP) {
-                myLocation.getWorld().spawnParticle(Particle.REDSTONE, myLocation, 0,
+                myLocation.getWorld().spawnParticle(Particle.DUST, myLocation, 0,
                     new Particle.DustOptions(Color.fromRGB(115, 0, 0), 2));
                 myLocation.add(directionVector);
             }
@@ -236,7 +236,7 @@ public class MissileLaserSpell<Config extends MissileLaserConfig> {
         }
 
         private void finishedShotCallback(Location location) {
-            location.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, location, 1);
+            location.getWorld().spawnParticle(Particle.EXPLOSION, location, 1);
             location.getWorld().playSound(location, Sound.ENTITY_GENERIC_EXPLODE, 0.4f, 1.8f);
 
             Collection<Entity> caughtEntities = location.getNearbyEntities(EXPLOSION_RADIUS,

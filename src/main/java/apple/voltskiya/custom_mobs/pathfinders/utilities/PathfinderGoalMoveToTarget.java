@@ -1,7 +1,6 @@
 package apple.voltskiya.custom_mobs.pathfinders.utilities;
 
 import apple.mc.utilities.world.vector.VectorUtils;
-import apple.nms.decoding.entity.DecodeEntity;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -21,7 +20,7 @@ public class PathfinderGoalMoveToTarget extends Goal {
     public PathfinderGoalMoveToTarget(Mob me, Location target, int speed, int giveUpTick, Runnable callBack) {
         this.me = me;
         this.target = target;
-        this.giveUpTick = DecodeEntity.getTicksLived(me) + giveUpTick;
+        this.giveUpTick = this.me.tickCount + giveUpTick;
         this.speed = speed;
         this.callBack = callBack;
     }
@@ -31,7 +30,7 @@ public class PathfinderGoalMoveToTarget extends Goal {
      */
     @Override
     public boolean canUse() {
-        return DecodeEntity.getTicksLived(me) < giveUpTick
+        return this.me.tickCount < giveUpTick
             && VectorUtils.distance(this.me.getBukkitEntity().getLocation(), this.target) >= 1.25;
     }
 
@@ -44,20 +43,9 @@ public class PathfinderGoalMoveToTarget extends Goal {
     }
 
     @Override
-    public boolean requiresUpdateEveryTick() {
-        return true;
-    }
-
-    @Override
     public void start() {
         Path path = this.me.getNavigation().createPath(this.target.getX(), this.target.getY(), this.target.getZ(), speed);
         this.me.getNavigation().moveTo(path, this.speed);
-    }
-
-    @Override
-    public void tick() {
-        // go to the location
-        this.me.getNavigation().recomputePath();
     }
 
     /**
@@ -71,7 +59,18 @@ public class PathfinderGoalMoveToTarget extends Goal {
             Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), callBack);
             calledBack = true;
         }
-        Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> DecodeEntity.getGoalSelector(me).removeGoal(this));
+        Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> this.me.goalSelector.removeGoal(this));
+    }
+
+    @Override
+    public boolean requiresUpdateEveryTick() {
+        return true;
+    }
+
+    @Override
+    public void tick() {
+        // go to the location
+        this.me.getNavigation().recomputePath();
     }
 
 }

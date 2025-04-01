@@ -1,6 +1,5 @@
 package apple.voltskiya.custom_mobs.nms.nether.angered_soul;
 
-import apple.nms.decoding.entity.DecodeEntity;
 import apple.voltskiya.custom_mobs.nms.base.INmsMob;
 import apple.voltskiya.custom_mobs.nms.base.NmsMob;
 import apple.voltskiya.custom_mobs.nms.base.NmsMobSupers;
@@ -14,7 +13,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.FlyingMoveControl;
-import net.minecraft.world.entity.ai.goal.GoalSelector;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.monster.Monster;
@@ -22,7 +20,7 @@ import net.minecraft.world.entity.monster.Skeleton;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_20_R3.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.util.Vector;
 import voltskiya.apple.utilities.minecraft.TagConstants;
 import voltskiya.apple.utilities.minecraft.player.PlayerUtils;
@@ -65,7 +63,7 @@ public class MobAngeredSoul extends Skeleton implements INmsMob<MobAngeredSoul> 
     @Override
     public NmsMobSupers<MobAngeredSoul> makeEntitySupers() {
         return new NmsMobSupers<>(
-            super::changeDimension,
+            super::teleport,
             super::move,
             super::load,
             super::save,
@@ -78,19 +76,6 @@ public class MobAngeredSoul extends Skeleton implements INmsMob<MobAngeredSoul> 
     public void prepare() {
         this.setNoGravity(true);
         this.getBukkitEntity().addScoreboardTag(TagConstants.NO_FALL_DAMAGE);
-    }
-
-    @Override
-    public boolean isPushable() {
-        return true;
-    }
-
-    @Override
-    public void push(Entity entity) {
-        super.push(entity);
-        if (entity instanceof Player) {
-            this.explode();
-        }
     }
 
     public void explode() {
@@ -108,7 +93,7 @@ public class MobAngeredSoul extends Skeleton implements INmsMob<MobAngeredSoul> 
             }
         }
         final Location location = this.getBukkitEntity().getLocation();
-        location.getWorld().spawnParticle(org.bukkit.Particle.EXPLOSION_LARGE, location, 1);
+        location.getWorld().spawnParticle(org.bukkit.Particle.EXPLOSION, location, 1);
         this.remove(RemovalReason.KILLED);
     }
 
@@ -132,7 +117,20 @@ public class MobAngeredSoul extends Skeleton implements INmsMob<MobAngeredSoul> 
     }
 
     @Override
-    protected boolean isSunBurnTick() {
+    public void push(Entity entity) {
+        super.push(entity);
+        if (entity instanceof Player) {
+            this.explode();
+        }
+    }
+
+    @Override
+    public boolean isPushable() {
+        return true;
+    }
+
+    @Override
+    public boolean isSunBurnTick() {
         return false;
     }
 
@@ -149,8 +147,6 @@ public class MobAngeredSoul extends Skeleton implements INmsMob<MobAngeredSoul> 
         this.navigation.setCanFloat(true);
 
         this.moveControl = new FlyingMoveControl(this, 1, true); // no gravity true
-        GoalSelector goalSelector = DecodeEntity.getGoalSelector(this);
-        GoalSelector targetSelector = DecodeEntity.getTargetSelector(this);
         goalSelector.addGoal(1, new PathfinderGoalApproachSlowly(this, 1, 10, new AngeredSoulScream(this)));
         goalSelector.addGoal(0, new LookAtPlayerGoal(this, Player.class, 1));
         targetSelector.addGoal(0, new PathfinderGoalClosestPlayer(this, SIGHT, true));

@@ -3,6 +3,7 @@ package apple.voltskiya.custom_mobs.pathfinders.utilities;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
@@ -25,9 +26,11 @@ public class GoalCanSeeTarget<T extends LivingEntity> extends
     }
 
 
-    private boolean canSee(LivingEntity them) {
+    private boolean canSee(LivingEntity them, ServerLevel world) {
         Location myLocation = bukkitMob.getEyeLocation();
         Location themLocation = ((org.bukkit.entity.LivingEntity) them.getBukkitEntity()).getEyeLocation();
+
+        if (!myLocation.getWorld().getUID().equals(themLocation.getWorld().getUID())) return false;
 
         Vector realDirection = themLocation.clone().subtract(myLocation).toVector();
         Vector lookDirection = myLocation.getDirection();

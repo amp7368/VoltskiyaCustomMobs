@@ -1,7 +1,6 @@
 package apple.voltskiya.custom_mobs.abilities.nether.charger;
 
 import apple.mc.utilities.item.material.MaterialUtils;
-import apple.nms.decoding.entity.DecodeEntity;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.pathfinders.spell.PathfinderGoalCharge;
 import java.util.Collections;
@@ -9,7 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_20_R3.entity.CraftMob;
+import org.bukkit.craftbukkit.entity.CraftMob;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.potion.PotionEffect;
@@ -92,12 +91,12 @@ public class ChargerChargeSpell {
     protected class ChargeRun implements Runnable {
 
         public void run() {
-            PotionEffect strength = new PotionEffect(PotionEffectType.INCREASE_DAMAGE,
+            PotionEffect strength = new PotionEffect(PotionEffectType.STRENGTH,
                 charger.getType().getMaxChargeTime(), 1, false, false);
             chargerMob.addPotionEffect(strength);
             ChargerChargeHelper.chargeSound(chargerMob.getLocation());
             chargerMob.setAI(true);
-            DecodeEntity.getGoalSelector(chargerHandle).addGoal(-1,
+            chargerHandle.goalSelector.addGoal(-1,
                 new PathfinderGoalCharge(chargerHandle, finalLocation,
                     charger.getType().getOvershootSpeed(), 1000,
                     Collections.singletonList(PathfinderGoalCharge.ChargeResult.HIT_ENTITY),
@@ -136,7 +135,7 @@ public class ChargerChargeSpell {
 
             chargerMob.setVelocity(new Vector(0, 0, 0));
             ChargerChargeHelper.runFeetParticles(chargerMob.getEyeLocation(), blockInFront, 50);
-            chargerMob.removePotionEffect(PotionEffectType.INCREASE_DAMAGE);
+            chargerMob.removePotionEffect(PotionEffectType.STRENGTH);
             chargerMob.setAI(false);
             Location newLocation = chargerMob.getLocation();
             newLocation.setDirection(newLocation.getDirection().setY(-1));

@@ -1,7 +1,5 @@
 package apple.voltskiya.custom_mobs.pathfinders.spell;
 
-import apple.nms.decoding.entity.DecodeEntity;
-import apple.nms.decoding.pathfinder.DecodeMoveType;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.abilities.common.micro_missile.MicroMissileManager;
 import apple.voltskiya.custom_mobs.abilities.common.micro_missile.MicroMissileShooter;
@@ -24,8 +22,8 @@ public class PathfinderGoalShootMicroMissle extends Goal {
     private final Mob me;
     private final int cooldown;
     private final int count;
-    private int lastShot = 0;
     private final MicroMissileShooter.MissileType missileType;
+    private int lastShot = 0;
 
     public PathfinderGoalShootMicroMissle(Mob me, int cooldown, int count,
         MicroMissileShooter.MissileType missileType) {
@@ -33,7 +31,7 @@ public class PathfinderGoalShootMicroMissle extends Goal {
         this.cooldown = cooldown;
         this.count = count;
         this.missileType = missileType;
-        this.setFlags(EnumSet.of(DecodeMoveType.TARGET.encode()));
+        this.setFlags(EnumSet.of(Flag.TARGET));
     }
 
     /**
@@ -42,8 +40,8 @@ public class PathfinderGoalShootMicroMissle extends Goal {
     @Override
     public boolean canUse() {
         boolean successChanced = random.nextFloat() < SHOOT_FREQUENCY;
-        boolean hasTarget = DecodeEntity.getLastTarget(this.me) != null;
-        boolean recentlyHit = DecodeEntity.getTicksLived(me) - this.lastShot >= cooldown;
+        boolean hasTarget = this.me.getTarget() != null;
+        boolean recentlyHit = me.tickCount - this.lastShot >= cooldown;
         return successChanced && hasTarget && recentlyHit;
     }
 
@@ -51,7 +49,7 @@ public class PathfinderGoalShootMicroMissle extends Goal {
     public void tick() {
         final Location targetLocation = getTargetLocation();
         if (targetLocation != null) {
-            this.lastShot = DecodeEntity.getTicksLived(me);
+            this.lastShot = me.tickCount;
             Location shootFromLocation = ((LivingEntity) this.me.getBukkitEntity()).getEyeLocation();
             if (missileType == MicroMissileShooter.MissileType.FLURRY) {
                 sounds();
@@ -108,8 +106,7 @@ public class PathfinderGoalShootMicroMissle extends Goal {
 
     @Nullable
     private Location getTargetLocation() {
-        final net.minecraft.world.entity.LivingEntity goalTarget = DecodeEntity.getLastTarget(
-            this.me);
+        final net.minecraft.world.entity.LivingEntity goalTarget = this.me.getTarget();
         if (goalTarget == null)
             return null;
         return ((LivingEntity) goalTarget.getBukkitEntity()).getEyeLocation();

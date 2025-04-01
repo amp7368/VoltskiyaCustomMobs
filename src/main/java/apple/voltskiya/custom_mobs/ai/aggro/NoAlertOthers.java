@@ -4,7 +4,8 @@ import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.ai.AiModule;
 import apple.voltskiya.mob_manager.listen.SpawnListener;
 import apple.voltskiya.mob_manager.mob.MMSpawned;
-import java.util.stream.Stream;
+import java.util.Set;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.GoalSelector;
 import net.minecraft.world.entity.ai.goal.WrappedGoal;
@@ -21,16 +22,20 @@ public class NoAlertOthers implements SpawnListener {
         Mob mob = mm.getNmsMob();
         VoltskiyaPlugin.get().scheduleSyncDelayedTask(() -> {
             GoalSelector selector = mob.targetSelector;
-            Class<?> mobSameType = mob.getClass();
-            checkGoals(selector.getAvailableGoals().stream(), mobSameType);
-            checkGoals(selector.getRunningGoals(), mobSameType);
+            checkGoals(selector.getAvailableGoals());
         });
     }
 
-    private void checkGoals(Stream<WrappedGoal> goals, Class<?> mobSameType) {
+    @Override
+    public String getExtensionTag() {
+        return AiModule.EXTENSION_TAG;
+    }
+
+    private void checkGoals(Set<WrappedGoal> goals) {
         goals.forEach((goal) -> {
             if (goal.getGoal() instanceof HurtByTargetGoal hurt) {
-                hurt.setAlertOthers(mobSameType); // should be named setIgnoreAlertOthers
+                Class<?> ignoreAlerting = Entity.class;
+                hurt.setAlertOthers(ignoreAlerting); // should be named setIgnoreAlertOthers
             }
         });
     }
@@ -38,11 +43,6 @@ public class NoAlertOthers implements SpawnListener {
     @Override
     public boolean isOnlyMobs() {
         return true;
-    }
-
-    @Override
-    public String getExtensionTag() {
-        return AiModule.EXTENSION_TAG;
     }
 
     @Override

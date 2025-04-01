@@ -10,7 +10,7 @@ import net.minecraft.world.entity.ai.goal.Goal;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_20_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -45,7 +45,7 @@ public class GoalCharge extends Goal {
         this.me = me;
         this.target = target.clone();
         this.bothOn = bothOn;
-        this.giveUpTick = DecodeEntity.getTicksLived(me) + giveUpTick;
+        this.giveUpTick = this.me.tickCount + giveUpTick;
         this.callBack = callBack;
         this.speed = speed;
         this.minSpeed = speed / 5000;
@@ -58,7 +58,7 @@ public class GoalCharge extends Goal {
     @Override
     public boolean a() {
         ChargeResult chargeResultTemp = null;
-        if (DecodeEntity.getTicksLived(me) > this.giveUpTick) {
+        if (this.me.tickCount > this.giveUpTick) {
             chargeResultTemp = ChargeResult.HIT_NOTHING;
         } else {
             Location here = this.bukkitEntity.getLocation();
@@ -128,7 +128,7 @@ public class GoalCharge extends Goal {
             calledBack = true;
         }
         try {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> DecodeEntity.getGoalSelector(me).a(this));
+            Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> this.me.goalSelector.a(this));
         } catch (IllegalPluginAccessException ignored) {
         }
     }

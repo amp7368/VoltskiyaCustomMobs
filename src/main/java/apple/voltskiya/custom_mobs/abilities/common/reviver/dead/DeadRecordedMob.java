@@ -1,31 +1,23 @@
 package apple.voltskiya.custom_mobs.abilities.common.reviver.dead;
 
-import apple.nms.decoding.entity.DecodeEntity;
-import net.minecraft.nbt.CompoundTag;
+import apple.mc.utilities.data.serialize.EntitySerializable;
+import java.util.function.Consumer;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_20_R3.entity.CraftEntity;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
+import org.jetbrains.annotations.Nullable;
 
 public class DeadRecordedMob {
 
     private static final int DEAD_TOO_LONG = 600000;
-    private final CompoundTag nbt;
-    private final EntityType entityType;
     private final long diedAtTime;
+    private final EntitySerializable entity;
     private Location location;
     private long cooldownIsUpAt = System.currentTimeMillis() + 1000;
 
     public DeadRecordedMob(Entity entity) {
-        final net.minecraft.world.entity.Entity original = ((CraftEntity) entity).getHandle();
-        this.nbt = DecodeEntity.save(original);
+        this.entity = new EntitySerializable(entity);
         this.location = entity.getLocation();
-        this.entityType = entity.getType();
         this.diedAtTime = System.currentTimeMillis();
-    }
-
-    public CompoundTag getNbt() {
-        return nbt;
     }
 
     public Location getLocation() {
@@ -38,10 +30,6 @@ public class DeadRecordedMob {
 
     public void resetCooldown(int ticksTillOkay) {
         this.cooldownIsUpAt = System.currentTimeMillis() + ticksTillOkay * 50L;
-    }
-
-    public EntityType getEntityType() {
-        return entityType;
     }
 
     public boolean isCooldownUp() {
@@ -58,5 +46,9 @@ public class DeadRecordedMob {
 
     public boolean isDeadTooLong(int deadTooLong) {
         return diedAtTime + deadTooLong < System.currentTimeMillis();
+    }
+
+    public void spawn(@Nullable Consumer<Entity> handleSpawn) {
+        entity.spawn(location, handleSpawn);
     }
 }

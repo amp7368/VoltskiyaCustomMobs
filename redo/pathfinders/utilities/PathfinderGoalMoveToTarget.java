@@ -11,19 +11,20 @@ import org.bukkit.Location;
 import apple.mc.utilities.world.vector.VectorUtils;
 
 public class GoalMoveToTarget extends Goal {
+
     private final Location target;
     private final Mob me;
     private final int giveUpTick;
     private final Runnable callBack;
     private final double speed;
-    private boolean calledBack = false;
     private final NmsUtilityWrapper<Mob> wrapper;
+    private boolean calledBack = false;
 
     public GoalMoveToTarget(Mob me, Location target, double speed, int giveUpTick, Runnable callBack) {
         this.me = me;
         this.wrapper = new NmsUtilityWrapper<>(this.me);
         this.target = target;
-        this.giveUpTick = DecodeEntity.getTicksLived(me) + giveUpTick;
+        this.giveUpTick = this.me.tickCount + giveUpTick;
         this.speed = speed;
         this.callBack = callBack;
     }
@@ -33,7 +34,7 @@ public class GoalMoveToTarget extends Goal {
      */
     @Override
     public boolean a() {
-        return DecodeEntity.getTicksLived(me) < giveUpTick && VectorUtils.magnitude(this.me.getBukkitEntity().getLocation(), this.target) >= 1.25;
+        return this.me.tickCount < giveUpTick && VectorUtils.magnitude(this.me.getBukkitEntity().getLocation(), this.target) >= 1.25;
     }
 
     /**
@@ -60,7 +61,7 @@ public class GoalMoveToTarget extends Goal {
     }
 
     @Override
-public void tick() {
+    public void tick() {
         // go to the location
         this.wrapper.getNavigation().a(this.target.getX(), this.target.getY(), this.target.getZ(), speed);
     }
@@ -76,7 +77,7 @@ public void tick() {
             Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), callBack);
             calledBack = true;
         }
-        Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> DecodeEntity.getGoalSelector(me).a(this));
+        Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(), () -> this.me.goalSelector.a(this));
     }
 
 }

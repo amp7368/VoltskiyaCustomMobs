@@ -7,7 +7,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.EntityLiving;
 import net.minecraft.world.entity.ai.goal.Goal;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_20_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.entity.CraftEntity;
 
 public class GoalShootSpell<Caster extends GoalShootSpell.SpellCaster> extends
     Goal {
@@ -32,7 +32,7 @@ public class GoalShootSpell<Caster extends GoalShootSpell.SpellCaster> extends
         CraftEntity bukkitEntity = this.me.getBukkitEntity();
         EntityLiving lastTarget = DecodeEntity.getLastTarget(me);
         return bukkitEntity.isDead()
-            && DecodeEntity.getTicksLived(me) - lastShot >= type.getCooldown() && lastTarget != null
+            && this.me.tickCount - lastShot >= type.getCooldown() && lastTarget != null
             && type.inRange(VectorUtils.distance(lastTarget.getBukkitEntity().getLocation(),
             bukkitEntity.getLocation()));
     }
@@ -54,7 +54,7 @@ public class GoalShootSpell<Caster extends GoalShootSpell.SpellCaster> extends
     public void c() {
         Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(),
             type.construct(spellCaster)::stateChoice);
-        this.lastShot = DecodeEntity.getTicksLived(me);
+        this.lastShot = this.me.tickCount;
     }
 
     public interface SpellType<Caster extends SpellCaster> {

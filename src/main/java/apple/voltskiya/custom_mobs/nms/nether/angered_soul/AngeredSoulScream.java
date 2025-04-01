@@ -1,6 +1,5 @@
 package apple.voltskiya.custom_mobs.nms.nether.angered_soul;
 
-import apple.nms.decoding.entity.DecodeEntity;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import javax.annotation.Nullable;
 import net.minecraft.world.entity.LivingEntity;
@@ -30,7 +29,7 @@ public class AngeredSoulScream implements Runnable {
     public synchronized void run() {
         if (this.ran) return;
         this.ran = true;
-        @Nullable LivingEntity targetEntity = DecodeEntity.getLastTarget(this.me);
+        @Nullable LivingEntity targetEntity = this.me.getTarget();
         final Location myLocation = this.me.getBukkitEntity().getLocation();
         this.velocity = (targetEntity == null) ?
             myLocation.getDirection() :
@@ -43,7 +42,7 @@ public class AngeredSoulScream implements Runnable {
     }
 
     private void postRun() {
-        @Nullable LivingEntity targetEntity = DecodeEntity.getLastTarget(this.me);
+        @Nullable LivingEntity targetEntity = this.me.getTarget();
         final Location myLocation = this.me.getBukkitEntity().getLocation();
         this.velocity = (targetEntity == null) ?
             myLocation.getDirection() :

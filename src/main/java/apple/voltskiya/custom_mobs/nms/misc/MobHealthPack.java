@@ -28,8 +28,8 @@ public class MobHealthPack extends ArmorStand implements INmsMob<MobHealthPack> 
     }
 
     @Override
-    public NmsSpawner<MobHealthPack, ?> getInstSpawner() {
-        return spawner();
+    public MobHealthPack getSelf() {
+        return this;
     }
 
     @Override
@@ -39,15 +39,14 @@ public class MobHealthPack extends ArmorStand implements INmsMob<MobHealthPack> 
     }
 
     @Override
-    public MobHealthPack getSelf() {
-        return this;
+    public NmsSpawner<MobHealthPack, ?> getInstSpawner() {
+        return spawner();
     }
-
 
     @Override
     public NmsMobSupers<MobHealthPack> makeEntitySupers() {
         return new NmsMobSupers<>(
-            super::changeDimension,
+            super::teleport,
             super::move,
             super::load,
             super::save,

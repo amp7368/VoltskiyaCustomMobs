@@ -6,6 +6,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Entity.RemovalReason;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.phys.Vec3;
+import org.apache.commons.lang.NotImplementedException;
 import org.bukkit.World;
 
 public interface INmsMob<Self extends Entity> {
@@ -25,8 +26,8 @@ public interface INmsMob<Self extends Entity> {
     default void prepare() {
     }
 
-    default Entity nmsChangeWorlds(ServerLevel ServerLevel) {
-        return supers().changeWorlds().apply(ServerLevel);
+    default Entity nmsChangeWorlds(ServerLevel server) {
+        throw new NotImplementedException();
     }
 
     default void nmsMove(MoverType moverType, Vec3 Vec3) {

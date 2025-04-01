@@ -82,7 +82,7 @@ public class MobReviverPulse extends MobReviver<ReviverConfigPulse> {
         ParticleCircle particleCircle = new ParticleCircle(getLocation().add(0, 1, 0));
         Location[] locations = particleCircle.innerToOuter(1.2, .75, 0, 1);
         particleCircle.particles(locations,
-            (world, location) -> world.spawnParticle(Particle.VILLAGER_ANGRY, location, 1));
+            (world, location) -> world.spawnParticle(Particle.ANGRY_VILLAGER, location, 1));
         getWorld().playSound(getLocation(), Sound.ENTITY_POLAR_BEAR_WARNING, SoundCategory.HOSTILE,
             2, 0.5f);
     }
@@ -121,7 +121,7 @@ public class MobReviverPulse extends MobReviver<ReviverConfigPulse> {
                 density *= 1;
                 particle = Particle.SOUL_FIRE_FLAME;
             } else {
-                particle = Particle.CRIT_MAGIC;
+                particle = Particle.ENCHANTED_HIT;
             }
             double nowRadius = Math.max(
                 ((meta.currentTick() - 1) % config.ticksForPulse) / (double) config.ticksForPulse

@@ -67,15 +67,14 @@ public class MobMancubus<Config extends MancubusConfig> extends MMAbility<Config
             .registerFinally(this::quitBurst);
     }
 
+    @Override
+    protected boolean canStartAbility() {
+        return hasTarget();
+    }
 
     @Override
     protected void startAbility() {
         burst.startActionAndStart(DO_START);
-    }
-
-    @Override
-    protected boolean canStartAbility() {
-        return hasTarget();
     }
 
     @Override
@@ -104,7 +103,7 @@ public class MobMancubus<Config extends MancubusConfig> extends MMAbility<Config
 
     private void angerParticles() {
         particle.setCenter(getLocation());
-        getWorld().spawnParticle(Particle.VILLAGER_ANGRY, getLocation(), 10, 0.3, 0.3, 0.3, 0);
+        getWorld().spawnParticle(Particle.ANGRY_VILLAGER, getLocation(), 10, 0.3, 0.3, 0.3, 0);
     }
 
     private void throwParticles() {

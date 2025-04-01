@@ -40,6 +40,6 @@ public class LeapPounce<Config extends LeapPounceConfig> extends Leap<Config> {
     }
 
     private void pounceStun(LivingEntity toStun) {
-        toStun.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, fullConfig.stunTime, 7, true));
+        toStun.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, fullConfig.stunTime, 7, true));
     }
 }
