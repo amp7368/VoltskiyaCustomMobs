@@ -45,7 +45,7 @@ public class GoalShootMicroMissle extends Goal {
     public boolean a() {
         boolean successChanced = random.nextFloat() < SHOOT_FREQUENCY;
         boolean hasTarget = DecodeEntity.getLastTarget(this.me) != null;
-        boolean recentlyHit = DecodeEntity.getTicksLived(me) - this.lastShot >= cooldown;
+        boolean recentlyHit = this.me.tickCount - this.lastShot >= cooldown;
         return successChanced && hasTarget && recentlyHit;
     }
 
@@ -53,7 +53,7 @@ public class GoalShootMicroMissle extends Goal {
     public void c() {
         final Location targetLocation = getTargetLocation();
         if (targetLocation != null) {
-            this.lastShot = DecodeEntity.getTicksLived(me);
+            this.lastShot = this.me.tickCount;
             Location shootFromLocation = ((LivingEntity) this.me.getBukkitEntity()).getEyeLocation();
             if (missileType == MicroMissleShooter.MissileType.FLURRY) {
                 sounds();

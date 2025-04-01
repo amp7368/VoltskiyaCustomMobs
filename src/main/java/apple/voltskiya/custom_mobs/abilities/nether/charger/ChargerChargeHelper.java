@@ -52,7 +52,7 @@ public class ChargerChargeHelper {
             double yi = random.nextDouble() * 2 - 1;
             double zi = random.nextDouble() * 2 - 1;
 
-            world.spawnParticle(Particle.BLOCK_CRACK, x + xi, y + yi, z + zi, 1, blockdata);
+            world.spawnParticle(Particle.BLOCK, x + xi, y + yi, z + zi, 1, blockdata);
         }
     }
 }

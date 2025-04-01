@@ -46,7 +46,7 @@ public class SWebThrow {
     }
 
     private void particles() {
-        location.getWorld().spawnParticle(Particle.REDSTONE, location, 1, 0, 0, 0,
+        location.getWorld().spawnParticle(Particle.DUST, location, 1, 0, 0, 0,
             new Particle.DustOptions(Color.fromRGB(0xFFFFFF), 1.4f));
     }
 }

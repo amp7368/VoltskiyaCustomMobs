@@ -24,8 +24,8 @@ public class MobRevenant extends Skeleton implements INmsMob<MobRevenant> {
     }
 
     @Override
-    public NmsSpawner<MobRevenant, ?> getInstSpawner() {
-        return spawner();
+    public MobRevenant getSelf() {
+        return this;
     }
 
     @Override
@@ -35,15 +35,14 @@ public class MobRevenant extends Skeleton implements INmsMob<MobRevenant> {
     }
 
     @Override
-    public MobRevenant getSelf() {
-        return this;
+    public NmsSpawner<MobRevenant, ?> getInstSpawner() {
+        return spawner();
     }
-
 
     @Override
     public NmsMobSupers<MobRevenant> makeEntitySupers() {
         return new NmsMobSupers<>(
-            super::changeDimension,
+            super::teleport,
             super::move,
             super::load,
             super::save,

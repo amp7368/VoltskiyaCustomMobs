@@ -1,57 +1,66 @@
 plugins {
     id 'java'
-    id "io.github.patrick.remapper" version "1.4.0"
-    id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'io.papermc.paperweight.userdev' version '2.0.0-beta.16'
+    id 'xyz.jpenilla.resource-factory-bukkit-convention' version '1.2.0'
+    id 'com.gradleup.shadow' version '9.0.0-beta11'
 }
 
 repositories {
-    maven { url "https://reposilite.appleptr16.com/appleptr16" }
-    maven { url 'https://papermc.io/repo/repository/maven-public/' }
-    maven { url 'https://repo.aikar.co/content/groups/aikar/' }
-    mavenCentral()
     mavenLocal()
-    maven {
-        name 'CodeMC'
-        url 'https://repo.codemc.org/repository/maven-public/'
-    }
+    mavenCentral()
+    maven { url = 'https://reposilite.appleptr16.com/appleptr16' }
+    maven { url = 'https://repo.codemc.io/repository/maven-public/' }
+    maven { url = 'https://repo.aikar.co/content/groups/aikar/' }
+    maven { url = "https://maven.enginehub.org/repo/" }
 }
-
 
 java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(18))
-    }
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
 }
 
-project.group groupValue
-project.version versionValue
+project.group = groupValue
+project.version = versionValue
 
-configurations {
-    configureEach {
-        resolutionStrategy.cacheDynamicVersionsFor 1, 'seconds'
-        resolutionStrategy.cacheChangingModulesFor 1, 'seconds'
-    }
+configurations.configureEach {
+    resolutionStrategy.cacheDynamicVersionsFor 1, 'seconds'
+    resolutionStrategy.cacheChangingModulesFor 1, 'seconds'
 }
+
 
 dependencies {
+    // Base server Paper and Spigot
+    paperweight.paperDevBundle('1.21.4-R0.1-SNAPSHOT')
+
+    // Minecraft Libraries
+    compileOnly 'de.tr7zw:item-nbt-api-plugin:2.12.2'
+
+    // appleptr16 Libraries
     compileOnly 'mc.pmc:voltpluginmanager:3.2-SNAPSHOT'
     compileOnly 'mc.apple:AppleMCUtil:1.0-SNAPSHOT'
-    compileOnly 'mc.nms:DecodingNms:1.20.4-2.0-SNAPSHOT'
     compileOnly 'voltskiya.utilities:VoltskiyaUtilities:2.0-SNAPSHOT'
     compileOnly 'voltskiya.mob:VoltskiyaMobManager:2.0-SNAPSHOT'
-
-    compileOnly 'org.spigotmc:spigot:1.20.4-R0.1-SNAPSHOT:remapped-mojang'
-    compileOnly 'io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT'
-    compileOnly 'co.aikar:acf-paper:0.5.1-SNAPSHOT'
 }
-shadowJar.archiveClassifier.set ''
-remap {
-    version.set '1.20.4'
-    dependsOn(shadowJar)
-    inputTask.set(shadowJar)
+
+bukkitPluginYaml {
+    name.set 'VoltskiyaCustomMobs'
+    version.set versionValue
+    main.set 'apple.voltskiya.custom_mobs.VoltskiyaPlugin'
+    apiVersion.set mcVersion
+    depend.addAll 'VoltPluginManager', 'AppleMCUtil', 'VoltskiyaUtilities', 'VoltskiyaMobManager'
+    authors.add 'appleptr16'
+}
+
+
+shadowJar {
+    archiveClassifier.set ''
+    manifest {
+        attributes 'Multi-Release': true
+    }
+    mergeServiceFiles()
+    outputs.upToDateWhen { false }
     doLast {
         copy {
-            from jar.getArchiveFile()
+            from shadowJar.getArchiveFile()
             into file(serverBuildDir)
         }
     }

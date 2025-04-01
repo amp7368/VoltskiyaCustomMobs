@@ -2,8 +2,6 @@ package apple.voltskiya.custom_mobs.pathfinders.spell;
 
 import apple.mc.utilities.item.material.MaterialUtils;
 import apple.mc.utilities.world.vector.VectorUtils;
-import apple.nms.decoding.entity.DecodeEntity;
-import apple.nms.decoding.entity.DecodeNavigation;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -14,7 +12,7 @@ import net.minecraft.world.entity.ai.goal.Goal;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_20_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -42,7 +40,7 @@ public class PathfinderGoalCharge extends Goal {
         this.me = me;
         this.target = target.clone();
         this.bothOn = bothOn;
-        this.giveUpTick = DecodeEntity.getTicksLived(me) + giveUpTick;
+        this.giveUpTick = me.tickCount + giveUpTick;
         this.callBack = callBack;
         this.speed = speed;
         this.minSpeed = speed / 5000;
@@ -55,7 +53,7 @@ public class PathfinderGoalCharge extends Goal {
     @Override
     public boolean canUse() {
         ChargeResult chargeResultTemp = null;
-        if (DecodeEntity.getTicksLived(me) > this.giveUpTick) {
+        if (me.tickCount > this.giveUpTick) {
             chargeResultTemp = ChargeResult.HIT_NOTHING;
         } else {
             Location here = this.bukkitEntity.getLocation();
@@ -100,14 +98,6 @@ public class PathfinderGoalCharge extends Goal {
     }
 
     /**
-     * @return something
-     */
-    @Override
-    public boolean requiresUpdateEveryTick() {
-        return true;
-    }
-
-    /**
      * on completion of goal, do what?
      */
     @Override
@@ -115,7 +105,7 @@ public class PathfinderGoalCharge extends Goal {
         if (chargeResult == null)
             chargeResult = ChargeResult.HIT_NOTHING;
         // quit going to the location
-        DecodeNavigation.cancelNavigation(DecodeEntity.getNavigation(this.me));
+        this.me.getNavigation().stop();
         if (!calledBack) {
             try {
                 Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(),
@@ -126,9 +116,17 @@ public class PathfinderGoalCharge extends Goal {
         }
         try {
             Bukkit.getScheduler().scheduleSyncDelayedTask(VoltskiyaPlugin.get(),
-                () -> DecodeEntity.getGoalSelector(me).removeGoal(this));
+                () -> me.goalSelector.removeGoal(this));
         } catch (IllegalPluginAccessException ignored) {
         }
+    }
+
+    /**
+     * @return something
+     */
+    @Override
+    public boolean requiresUpdateEveryTick() {
+        return true;
     }
 
     @Override
@@ -136,9 +134,9 @@ public class PathfinderGoalCharge extends Goal {
         Location here = this.bukkitEntity.getLocation();
         this.lastLocations.add(here);
         while (this.lastLocations.size() > MAX_LOCATION_TRACKING)
-            this.lastLocations.remove(0);
+            this.lastLocations.removeFirst();
         if (this.lastLocations.size() == MAX_LOCATION_TRACKING
-            && VectorUtils.distance(this.lastLocations.get(0), here)
+            && VectorUtils.distance(this.lastLocations.getFirst(), here)
             < minSpeed * MAX_LOCATION_TRACKING) {
             this.isCircling = true;
         }
@@ -149,14 +147,14 @@ public class PathfinderGoalCharge extends Goal {
         here.setDirection(direction);
         if (!MaterialUtils.isWalkThroughable(
             here.getWorld().getBlockAt(here.add(direction)).getType())) {
-            DecodeNavigation.jump(DecodeEntity.getJumpControl(this.me));
+            this.me.getJumpControl().jump();
         }
         Location newLoc = this.me.getBukkitEntity().getLocation();
         newLoc.setPitch(0f);
         newLoc.setYaw(here.getYaw());
         this.me.getBukkitEntity().teleport(newLoc);
-        DecodeNavigation.cancelNavigation(DecodeEntity.getNavigation(this.me));
-        DecodeEntity.getMoveControl(this.me)
+        this.me.getNavigation().stop();
+        this.me.getMoveControl()
             .setWantedPosition(newLoc.getX() + direction.getX(), newLoc.getY() + direction.getY(),
                 newLoc.getZ() + direction.getZ(), speed);
     }

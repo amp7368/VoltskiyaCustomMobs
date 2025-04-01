@@ -1,6 +1,5 @@
 package apple.voltskiya.custom_mobs.pathfinders.target_selector;
 
-import apple.nms.decoding.pathfinder.DecodeMoveType;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.Optional;
@@ -8,8 +7,8 @@ import java.util.Random;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.target.TargetGoal;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_20_R3.entity.CraftMob;
-import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.entity.CraftMob;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
@@ -29,7 +28,7 @@ public class PathfinderGoalClosestPlayer extends TargetGoal {
         this.me = me;
         this.sight = sight;
         this.seeThroughBlocks = seeThroughBlocks;
-        this.setFlags(EnumSet.of(DecodeMoveType.TARGET.encode()));
+        this.setFlags(EnumSet.of(Flag.TARGET));
     }
 
     @Override

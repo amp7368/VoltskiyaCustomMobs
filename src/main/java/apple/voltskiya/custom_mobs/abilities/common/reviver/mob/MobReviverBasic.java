@@ -1,7 +1,6 @@
 package apple.voltskiya.custom_mobs.abilities.common.reviver.mob;
 
 import apple.mc.utilities.world.vector.VectorUtils;
-import apple.nms.decoding.entity.DecodeEntity;
 import apple.voltskiya.custom_mobs.VoltskiyaPlugin;
 import apple.voltskiya.custom_mobs.abilities.common.reviver.config.ReviverConfigBasic;
 import apple.voltskiya.custom_mobs.abilities.common.reviver.dead.DeadRecordedMob;
@@ -55,7 +54,7 @@ public class MobReviverBasic extends MobReviver<ReviverConfigBasic> {
         }
         targetLocation = targetLocation.getBlock().getLocation().add(0.5, 1, 0.5);
         this.reviveMe.setLocation(targetLocation);
-        DecodeEntity.getGoalSelector(getNmsMob()).addGoal(0,
+        getNmsMob().goalSelector.addGoal(0,
             new PathfinderGoalMoveToTarget(getNmsMob(), targetLocation, (int) 1.6, config.giveUpTick,
                 () -> action.startActionAndStart(DO_START)));
     }
@@ -120,7 +119,7 @@ public class MobReviverBasic extends MobReviver<ReviverConfigBasic> {
             double xi = random.nextDouble() - .5;
             double yi = random.nextDouble() * 2;
             double zi = random.nextDouble() - .5;
-            world.spawnParticle(Particle.REDSTONE, xLoc + xi, yLoc + yi, zLoc + zi, 1, new Particle.DustOptions(Color.RED, 1f));
+            world.spawnParticle(Particle.DUST, xLoc + xi, yLoc + yi, zLoc + zi, 1, new Particle.DustOptions(Color.RED, 1f));
         }
         return ActionReturn.go();
     }

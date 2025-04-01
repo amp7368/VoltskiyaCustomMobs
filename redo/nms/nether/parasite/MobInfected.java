@@ -7,8 +7,8 @@ import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.GoalRandomStrollLand;
 import net.minecraft.world.entity.ai.goal.GoalSelector;
 import org.bukkit.*;
-import org.bukkit.craftbukkit.v1_20_R3.entity.CraftCreature;
-import org.bukkit.craftbukkit.v1_20_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.entity.CraftCreature;
+import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.util.Vector;
 
@@ -73,7 +73,7 @@ public class MobInfected {
             double zi = (random.nextDouble() - .5) * 2.25;
             bukkitEntity.getLocation().getWorld().spawnParticle(Particle.CRIMSON_SPORE, x + xi, y + yi, z + zi, 2, 0, 0, 0, 0.04);
             Particle.DustOptions dust = new Particle.DustOptions(Color.fromRGB(random.nextBoolean() ? 99 : 172, 0, 0), 1.5f);
-            bukkitEntity.getLocation().getWorld().spawnParticle(Particle.REDSTONE, x + xi, y + yi, z + zi, 2, 0, 0, 0, 0.04, dust);
+            bukkitEntity.getLocation().getWorld().spawnParticle(Particle.DUST, x + xi, y + yi, z + zi, 2, 0, 0, 0, 0.04, dust);
         }
         DecodeEntity.die(this.entity, DecodeDamageSource.OUT_OF_WORLD);
         bukkitEntity.getWorld().playSound(bukkitEntity.getLocation(), Sound.ENTITY_ENDERMITE_DEATH, SoundCategory.HOSTILE, 1, 0.1f);

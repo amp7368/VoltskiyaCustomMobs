@@ -22,12 +22,12 @@ import org.jetbrains.annotations.NotNull;
 
 public class OrbitalStrike<Config extends OrbitalStrikeConfig> {
 
+    private static final Random random = new Random();
     private final Config config;
     private final Location location;
-    private int currentTick = 0;
     private final VoltskiyaPlugin plugin = VoltskiyaPlugin.get();
-    private static final Random random = new Random();
     private final List<Location> previousLocations = new ArrayList<>();
+    private int currentTick = 0;
 
     public OrbitalStrike(Location targetLocation, Config config) {
         this.config = config;
@@ -107,7 +107,7 @@ public class OrbitalStrike<Config extends OrbitalStrikeConfig> {
             if (config.getType() == OrbitalStrikeType.LARGE && random.nextDouble() < 0.1) {
                 getWorld().spawnParticle(Particle.LAVA, xt + x, yt + y, zt + z, 1);
             }
-            getWorld().spawnParticle(Particle.REDSTONE, xt + x, yt + y, zt + z, 5, 0, 0, 0, 1,
+            getWorld().spawnParticle(Particle.DUST, xt + x, yt + y, zt + z, 5, 0, 0, 0, 1,
                 new Particle.DustOptions(Color.fromBGR(0, 0, 99), config.particleSize));
         }
 
@@ -119,7 +119,7 @@ public class OrbitalStrike<Config extends OrbitalStrikeConfig> {
             double x = Math.cos(Math.toRadians(theta)) * (radius + radiusOffset);
             double z = Math.sin(Math.toRadians(theta)) * (radius + radiusOffset);
             double y = random.nextDouble() * .3;
-            getWorld().spawnParticle(Particle.REDSTONE, xt + x, yt + y, zt + z, 5, 0, 0, 0, 1,
+            getWorld().spawnParticle(Particle.DUST, xt + x, yt + y, zt + z, 5, 0, 0, 0, 1,
                 new Particle.DustOptions(Color.fromBGR(0, 0, 36), config.particleSize));
         }
         // make flame pentagram
@@ -138,7 +138,7 @@ public class OrbitalStrike<Config extends OrbitalStrikeConfig> {
             double zInterval = (z2 - z1) / particlesMine;
             for (double i = 0, x = x1, z = z1; i < particlesMine; x += xInterval, z += zInterval, i++) {
                 double y = random.nextDouble() * 0.3;
-                getWorld().spawnParticle(Particle.REDSTONE, xt + x, yt + y, zt + z, 5, 0, 0, 0, 1,
+                getWorld().spawnParticle(Particle.DUST, xt + x, yt + y, zt + z, 5, 0, 0, 0, 1,
                     new Particle.DustOptions(Color.fromBGR(0, 0, 36), config.particleSize));
             }
         }

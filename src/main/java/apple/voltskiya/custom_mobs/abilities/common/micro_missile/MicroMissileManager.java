@@ -14,7 +14,7 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_20_R3.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -126,7 +126,7 @@ public class MicroMissileManager implements Tickable {
         private static void particles(Location location) {
             location.getWorld().spawnParticle(Particle.FLAME, location, 1, 0.01, 0.01, 0.01, 0.014);
             location.getWorld()
-                .spawnParticle(Particle.SMOKE_NORMAL, location, 10, 0.04, 0.04, 0.04, 0.02);
+                .spawnParticle(Particle.SMOKE, location, 10, 0.04, 0.04, 0.04, 0.02);
         }
 
         public boolean isDead() {
@@ -191,7 +191,7 @@ public class MicroMissileManager implements Tickable {
 
         private void die() {
             if (!this.isDead) {
-                location.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, location, 0);
+                location.getWorld().spawnParticle(Particle.EXPLOSION, location, 0);
                 location.getWorld().playSound(location, Sound.ENTITY_GENERIC_EXPLODE, 0.3f, 1.8f);
                 this.isDead = true;
             }
